@@ -25,7 +25,7 @@ class Component_ID {
   virtual ~Component_ID();
 
   //---------------------------------------------------------------------------
-  // Description : Returns the instance of this Component_ID
+  // Description : Returns the current instance of this Component_ID
   //---------------------------------------------------------------------------
   static Component_ID* GetInstance();
 
@@ -41,7 +41,11 @@ class Component_ID {
   Component_ID();
 
  private:
+  //---------------------------------------------------------------------------
+  // Description : Current instance of this Singleton
+  //---------------------------------------------------------------------------
   static Component_ID* m_instance;
+
   //---------------------------------------------------------------------------
   // Description : Integer ID - starts at 0 and increments by 1's.
   //---------------------------------------------------------------------------

@@ -82,9 +82,11 @@
     <ClCompile Include="src\Component_ID.cc" />
     <ClCompile Include="src\Controller_Composite.cc" />
     <ClCompile Include="src\Controller.cc" />
+    <ClCompile Include="src\Direct3D11_View.cc" />
     <ClCompile Include="src\Engine.cc" />
     <ClCompile Include="src\Message_Wrapper.cc" />
     <ClCompile Include="src\Tunnelour_Launcher.cc" />
+    <ClCompile Include="src\Tunnelour_View.cc" />
     <ClCompile Include="src\View.cc" />
     <ClCompile Include="src\View_Composite.cc" />
   </ItemGroup>
@@ -94,10 +96,12 @@
     <ClInclude Include="include\Component_ID.h" />
     <ClInclude Include="include\Controller_Composite.h" />
     <ClInclude Include="include\Controller.h" />
+    <ClInclude Include="include\Direct3D11_View.h" />
     <ClInclude Include="include\Engine.h" />
     <ClInclude Include="include\Exceptions.h" />
     <ClInclude Include="include\Message_Wrapper.h" />
     <ClInclude Include="include\Tunnelour_Launcher.h" />
+    <ClInclude Include="include\Tunnelour_View.h" />
     <ClInclude Include="include\View.h" />
     <ClInclude Include="include\View_Composite.h" />
   </ItemGroup>

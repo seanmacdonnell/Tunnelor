@@ -14,6 +14,7 @@
 //
 
 #include "View.h"
+#include "Exceptions.h"
 
 namespace Tunnelour {
 
@@ -21,7 +22,7 @@ namespace Tunnelour {
 // public:
 //------------------------------------------------------------------------------
 View::View() {
-  m_model = 0;
+  m_model = NULL;
 }
 
 //------------------------------------------------------------------------------

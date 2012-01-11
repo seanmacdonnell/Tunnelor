@@ -45,6 +45,12 @@
     <ClCompile Include="src\View_Composite.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Direct3D11_View.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tunnelour_View.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine.h">
@@ -78,6 +84,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\View_Composite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Direct3D11_View.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Tunnelour_View.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

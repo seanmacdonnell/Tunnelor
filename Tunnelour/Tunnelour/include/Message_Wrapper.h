@@ -46,9 +46,9 @@ class Message_Wrapper {
   //               windows that the message has been handled.
   //----------------------------------------------------------------------------
   static LRESULT CALLBACK Message_Wrapper::WindowProc(HWND hWnd,
-                                                            UINT message,
-                                                            WPARAM wParam,
-                                                            LPARAM lParam);
+                                                      UINT message,
+                                                      WPARAM wParam,
+                                                      LPARAM lParam);
 
   //----------------------------------------------------------------------------
   // Description : HandleMessages uses PeekMessage to check if the Windows
@@ -66,7 +66,12 @@ class Message_Wrapper {
   //----------------------------------------------------------------------------
   MSG Message_Wrapper::GetLastMessage();
 
+ protected:
+
  private:
+  //---------------------------------------------------------------------------
+  // Description : Current MSG from the MSG Queue
+  //---------------------------------------------------------------------------
   MSG m_msg;
 };
 }  // namespace Engine

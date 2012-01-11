@@ -25,9 +25,9 @@
 namespace Tunnelour {
 namespace Exceptions {
 
-class uninisialised_error : public std::runtime_error {
+class uninitialised_error : public std::runtime_error {
  public:
-  explicit uninisialised_error(std::string message) : std::runtime_error(message) { }
+  explicit uninitialised_error(std::string message) : std::runtime_error(message) { }
 };
 
 }  // namespace Exceptions

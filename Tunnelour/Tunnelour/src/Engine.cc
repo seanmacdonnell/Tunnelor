@@ -18,6 +18,7 @@
 #include "Engine.h"
 #include "Message_Wrapper.h"
 #include "Exceptions.h"
+#include "Tunnelour_View.h"
 
 namespace Tunnelour {
 
@@ -43,7 +44,7 @@ void Engine::Init(bool IncludeView, bool IncludeController) {
   m_model->Init();
 
   if (IncludeView) {
-    m_view = new Tunnelour::View_Composite();
+    m_view = new Tunnelour::Tunnelour_View();
     m_view->Init(m_model);
   }
 
@@ -56,7 +57,7 @@ void Engine::Init(bool IncludeView, bool IncludeController) {
 //------------------------------------------------------------------------------
 int Engine::Start() {
   if ((!IsControllerInit()) && (!IsViewInit())) {
-    throw Tunnelour::Exceptions::uninisialised_error(
+    throw Tunnelour::Exceptions::uninitialised_error(
       "You need to initialise the View and/or the Controller!");
   }
 

@@ -19,7 +19,7 @@
 #include "Component_Composite.h"
 
 namespace Tunnelour {
-class View {
+class View: public Tunnelour::Component_Composite {
  public:
   //---------------------------------------------------------------------------
   // Description : Constructor
