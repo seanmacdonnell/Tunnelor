@@ -45,6 +45,7 @@ class Tunnelour_View: public Tunnelour::View_Composite {
 
  protected:
   Tunnelour::Direct3D11_View *m_D3D11_view;
+  bool m_initialized;
 
  private:
 };

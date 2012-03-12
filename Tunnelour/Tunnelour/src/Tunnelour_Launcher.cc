@@ -35,5 +35,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
   // Run Engine
   engine->Start();
 
+  // Kill Engine
+  delete engine;
+
   return result;
 }

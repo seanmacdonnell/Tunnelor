@@ -27,6 +27,24 @@ Direct3D11_View::Direct3D11_View() {
 
 //------------------------------------------------------------------------------
 Direct3D11_View::~Direct3D11_View() {
+  if (m_is_window_created) {
+    // Show the mouse cursor.
+	  ShowCursor(true);
+
+	  // Fix the display settings if leaving full screen mode.
+	  if(m_is_full_screen)
+	  {
+		  ChangeDisplaySettings(NULL, 0);
+	  }
+
+	  // Remove the window.
+	  DestroyWindow(m_hwnd);
+	  m_hwnd = NULL;
+
+	  // Remove the application instance.
+	  UnregisterClass(m_application_name, m_hinstance);
+	  m_hinstance = NULL;
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -112,10 +130,10 @@ void Direct3D11_View::Create_Window() {
   }
 
   // Create the window with the screen settings and get the handle to it.
-  m_hwnd = CreateWindowEx(WS_EX_APPWINDOW,
+  m_hwnd = CreateWindowEx(NULL,
                           m_application_name,
                           m_application_name,
-                          WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP,
+                          WS_TILEDWINDOW,
                           posX,
                           posY,
                           m_screen_width,

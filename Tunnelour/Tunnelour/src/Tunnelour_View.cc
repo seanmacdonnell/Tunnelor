@@ -23,20 +23,29 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 Tunnelour_View::Tunnelour_View() {
   m_D3D11_view = NULL;
+  m_initialized = false;
 }
 
 //------------------------------------------------------------------------------
 Tunnelour_View::~Tunnelour_View() {
+  if (m_initialized) {
+    delete m_D3D11_view;
+    m_initialized = false;
+  }
 }
 
 //------------------------------------------------------------------------------
 void Tunnelour_View::Init(Tunnelour::Component_Composite *model) {
-  View_Composite::Init(model);
+    if (m_initialized) { return; }
 
-  m_D3D11_view = new Tunnelour::Direct3D11_View();
-  m_D3D11_view->Init(model);
+    View_Composite::Init(model);
 
-  Add(m_D3D11_view);
+    m_D3D11_view = new Tunnelour::Direct3D11_View();
+    m_D3D11_view->Init(model);
+
+    Add(m_D3D11_view);
+
+    m_initialized = true;
 }
 
 //------------------------------------------------------------------------------

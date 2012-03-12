@@ -56,6 +56,7 @@ class View_Composite {
  protected:
   Tunnelour::Component_Composite* m_model;
   std::list<Tunnelour::View*> m_views;
+  bool m_initialized;
  private:
 };
 }

@@ -22,7 +22,7 @@
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
-// Most of the code here was copied and pasted verbatum from the tutorials at
+// Most of the code here was copied and pasted from the tutorials at
 // http://rastertek.com/dx11tut02.html
 //-----------------------------------------------------------------------------
 class Direct3D11_View : public Tunnelour::View {
@@ -51,9 +51,9 @@ class Direct3D11_View : public Tunnelour::View {
   Tunnelour::Component_Composite *m_model;
 
  private:
-   LPCWSTR m_application_name;
-   HINSTANCE m_hinstance;
-   HWND m_hwnd;
+  LPCWSTR m_application_name;
+  HINSTANCE m_hinstance;
+  HWND m_hwnd;
   int m_screen_width;
   int m_screen_height;
   bool m_is_window_created;

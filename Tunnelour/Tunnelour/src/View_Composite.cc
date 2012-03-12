@@ -22,6 +22,7 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 View_Composite::View_Composite() {
   m_model = 0;
+  m_initialized = false;
 }
 
 //------------------------------------------------------------------------------
@@ -33,7 +34,9 @@ View_Composite::~View_Composite() {
 
 //------------------------------------------------------------------------------
 void View_Composite::Init(Tunnelour::Component_Composite* model) {
+  if (m_initialized) { return; }
   m_model = model;
+  m_initialized = true;
 }
 
 //---------------------------------------------------------------------------

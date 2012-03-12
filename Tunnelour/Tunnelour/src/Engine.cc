@@ -33,9 +33,9 @@ Engine::Engine() {
 
 //------------------------------------------------------------------------------
 Engine::~Engine() {
-  delete m_view;
-  delete m_controller;
-  delete m_model;
+  if (m_view != NULL) { delete m_view; }
+  if (m_controller != NULL) { delete m_controller; }
+  if (m_model != NULL) { delete m_model; }
 }
 
 //------------------------------------------------------------------------------
