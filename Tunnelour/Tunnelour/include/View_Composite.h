@@ -40,8 +40,9 @@ class View_Composite {
 
   //---------------------------------------------------------------------------
   // Description : Add a View
+  // Return      : Pointer to the Added view.
   //---------------------------------------------------------------------------
-  void Add(Tunnelour::View *view);
+  Tunnelour::View* Add(Tunnelour::View *view);
 
   //---------------------------------------------------------------------------
   // Description : Remove a View

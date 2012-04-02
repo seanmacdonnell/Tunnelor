@@ -19,6 +19,7 @@
 #include "Message_Wrapper.h"
 #include "Exceptions.h"
 #include "Tunnelour_View.h"
+#include "Tunnelour_Controller.h"
 
 namespace Tunnelour {
 
@@ -33,9 +34,9 @@ Engine::Engine() {
 
 //------------------------------------------------------------------------------
 Engine::~Engine() {
-  if (m_view != NULL) { delete m_view; }
-  if (m_controller != NULL) { delete m_controller; }
   if (m_model != NULL) { delete m_model; }
+  if (m_controller != NULL) { delete m_controller; }
+  if (m_view != NULL) { delete m_view; }
 }
 
 //------------------------------------------------------------------------------
@@ -43,14 +44,14 @@ void Engine::Init(bool IncludeView, bool IncludeController) {
   m_model = new Tunnelour::Component_Composite();
   m_model->Init();
 
+  if (IncludeController) {
+    m_controller = new Tunnelour::Tunnelour_Controller();
+    m_controller->Init(m_model);
+  }
+
   if (IncludeView) {
     m_view = new Tunnelour::Tunnelour_View();
     m_view->Init(m_model);
-  }
-
-  if (IncludeController) {
-    m_controller = new Tunnelour::Controller_Composite();
-    m_controller->Init(m_model);
   }
 }
 

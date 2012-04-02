@@ -35,8 +35,9 @@ void Component_Composite::Init() {
 }
 
 //------------------------------------------------------------------------------
-void Component_Composite::Add(Tunnelour::Component *component) {
+Tunnelour::Component* Component_Composite::Add(Tunnelour::Component *component) {
   m_components.push_back(component);
+  return m_components.back();
 }
 
 //------------------------------------------------------------------------------

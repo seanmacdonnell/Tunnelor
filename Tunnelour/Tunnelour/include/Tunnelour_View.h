@@ -18,7 +18,7 @@
 
 #include "View_Composite.h"
 #include "Component_Composite.h"
-#include "Direct3D11_View.h"
+
 
 namespace Tunnelour {
 class Tunnelour_View: public Tunnelour::View_Composite {
@@ -44,7 +44,6 @@ class Tunnelour_View: public Tunnelour::View_Composite {
   virtual void Run();
 
  protected:
-  Tunnelour::Direct3D11_View *m_D3D11_view;
   bool m_initialized;
 
  private:

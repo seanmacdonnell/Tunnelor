@@ -14,6 +14,7 @@
 //
 
 #include "View_Composite.h"
+#include "Exceptions.h"
 
 namespace Tunnelour {
 
@@ -28,7 +29,7 @@ View_Composite::View_Composite() {
 //------------------------------------------------------------------------------
 View_Composite::~View_Composite() {
   for each ( Tunnelour::View* view in m_views ) {
-    m_views.remove(view);
+    Remove(view);
   }
 }
 
@@ -40,20 +41,25 @@ void View_Composite::Init(Tunnelour::Component_Composite* model) {
 }
 
 //---------------------------------------------------------------------------
-void View_Composite::Add(Tunnelour::View *view) {
+Tunnelour::View* View_Composite::Add(Tunnelour::View *view) {
   m_views.push_back(view);
+  return m_views.back();
 }
 
 //---------------------------------------------------------------------------
 void View_Composite::Remove(Tunnelour::View *view) {
-  m_views.remove(view);
   delete view;
+  m_views.remove(view);
 }
 
 //---------------------------------------------------------------------------
 void View_Composite::Run() {
   for each ( Tunnelour::View* view in m_views ) {
-    view->Run();
+    if (!view->IsInitialised()) { 
+      throw Tunnelour::Exceptions::uninitialised_error("View is UnInitialised!");
+    } else {
+      view->Run();
+    }
   }
 }
 //------------------------------------------------------------------------------

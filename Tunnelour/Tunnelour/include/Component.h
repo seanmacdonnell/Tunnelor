@@ -27,19 +27,9 @@ class Component {
   class Component_Mutator {
    public:
     //-------------------------------------------------------------------------
-    // Description : Constructor
-    //-------------------------------------------------------------------------
-    Component_Mutator();
-
-    //-------------------------------------------------------------------------
-    // Description : Deconstructor
-    //-------------------------------------------------------------------------
-    virtual ~Component_Mutator();
-
-    //-------------------------------------------------------------------------
     // Description : Mutator function, pass it a component to mutate.
     //-------------------------------------------------------------------------
-    virtual void Mutate(const Tunnelour::Component *component) = 0;
+    virtual void Mutate(Tunnelour::Component *component) = 0;
   };
   //---------------------------------------------------------------------------
   // Description : Inheritable Observer class for this component.

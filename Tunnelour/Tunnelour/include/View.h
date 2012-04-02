@@ -41,10 +41,17 @@ class View: public Tunnelour::Component_Composite {
   //---------------------------------------------------------------------------
   virtual void Run();
 
+  //---------------------------------------------------------------------------
+  // Description : Has this View been Inisalised?
+  //---------------------------------------------------------------------------
+  virtual bool IsInitialised();
+
  protected:
   Tunnelour::Component_Composite *m_model;
+  bool m_is_initialised;
 
  private:
+
 };
 }  // namespace Tunnelour
 

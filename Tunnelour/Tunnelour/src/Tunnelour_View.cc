@@ -16,22 +16,19 @@
 #include "Tunnelour_View.h"
 #include "Exceptions.h"
 
+#include "Direct3D11_View.h"
+
 namespace Tunnelour {
 
 //------------------------------------------------------------------------------
 // public:
 //------------------------------------------------------------------------------
 Tunnelour_View::Tunnelour_View() {
-  m_D3D11_view = NULL;
   m_initialized = false;
 }
 
 //------------------------------------------------------------------------------
 Tunnelour_View::~Tunnelour_View() {
-  if (m_initialized) {
-    delete m_D3D11_view;
-    m_initialized = false;
-  }
 }
 
 //------------------------------------------------------------------------------
@@ -40,22 +37,15 @@ void Tunnelour_View::Init(Tunnelour::Component_Composite *model) {
 
     View_Composite::Init(model);
 
-    m_D3D11_view = new Tunnelour::Direct3D11_View();
-    m_D3D11_view->Init(model);
-
-    Add(m_D3D11_view);
+    Tunnelour::View* D3D11_view; 
+    D3D11_view = Add(new Tunnelour::Direct3D11_View());
+    D3D11_view->Init(model);
 
     m_initialized = true;
 }
 
 //------------------------------------------------------------------------------
 void Tunnelour_View::Run() {
-  if (m_D3D11_view == NULL) { 
-    throw Tunnelour::Exceptions::uninitialised_error(
-      "DirectX 3D 11 View is Uninitialised!");
-  }
-
-  m_D3D11_view->Run();
 }
 
 //------------------------------------------------------------------------------

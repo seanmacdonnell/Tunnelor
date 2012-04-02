@@ -41,8 +41,14 @@ class Controller {
   //---------------------------------------------------------------------------
   virtual void Run();
 
+  //---------------------------------------------------------------------------
+  // Description : Accessor for whether this controller can be removed
+  //---------------------------------------------------------------------------
+  bool IsFinished();
+
  protected:
   Tunnelour::Component_Composite *m_model;
+  bool m_is_finished;
 
  private:
 };

@@ -30,6 +30,16 @@ class uninitialised_error : public std::runtime_error {
   explicit uninitialised_error(std::string message) : std::runtime_error(message) { }
 };
 
+class unfinished_error : public std::runtime_error {
+ public:
+  explicit unfinished_error(std::string message) : std::runtime_error(message) { }
+};
+
+class initialising_error : public std::runtime_error {
+ public:
+  explicit initialising_error(std::string message) : std::runtime_error(message) { }
+};
+
 }  // namespace Exceptions
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_EXCEPTIONS_H_

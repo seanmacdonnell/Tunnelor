@@ -41,7 +41,7 @@ class Controller_Composite {
   //---------------------------------------------------------------------------
   // Description : Add a Controller
   //---------------------------------------------------------------------------
-  void Add(Tunnelour::Controller *controller);
+  Tunnelour::Controller* Add(Tunnelour::Controller *controller);
 
   //---------------------------------------------------------------------------
   // Description : Remove a Controller

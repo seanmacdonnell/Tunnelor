@@ -41,7 +41,7 @@ namespace Tunnelour {
   //---------------------------------------------------------------------------
   // Description : Adds a copy of the provided component into the manager
   //---------------------------------------------------------------------------
-  void Add(Tunnelour::Component *component);
+  Tunnelour::Component* Add(Tunnelour::Component *component);
 
   //---------------------------------------------------------------------------
   // Description : Removes the component with the provided id from the manager
@@ -49,17 +49,18 @@ namespace Tunnelour {
   void Remove(Tunnelour::Component *component);
 
   //---------------------------------------------------------------------------
-  // Description : Returns a pointer to a component which matches the id
+  // Description : Applies the mutator to all the components in this composite
   //---------------------------------------------------------------------------
   void Apply(Tunnelour::Component::Component_Mutator *mutator);
 
  protected:
-
- private:
   //---------------------------------------------------------------------------
   // Description : Component Storage
   //---------------------------------------------------------------------------
   std::list<Tunnelour::Component*> m_components;
+
+ private:
+
 };
 }
 #endif  // TUNNELOUR_COMPONENT_COMPOSITE_H_

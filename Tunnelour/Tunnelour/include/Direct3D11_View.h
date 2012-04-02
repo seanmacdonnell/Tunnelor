@@ -16,9 +16,22 @@
 #ifndef TUNNELOUR_DIRECT3D11_VIEW_H_
 #define TUNNELOUR_DIRECT3D11_VIEW_H_
 
+#pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "d3dx11.lib")
+#pragma comment(lib, "d3dx10.lib")
+
 #include "Component_Composite.h"
 #include "View.h"
+#include "Background_Component.h"
+#include "Component.h"
 #include <windows.h>
+#include <iostream>
+
+#include <dxgi.h>
+#include <d3dcommon.h>
+#include <d3d11.h>
+#include <d3dx10math.h>
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -56,10 +69,33 @@ class Direct3D11_View : public Tunnelour::View {
   HWND m_hwnd;
   int m_screen_width;
   int m_screen_height;
-  bool m_is_window_created;
+
+  bool m_is_window_init;
+  bool m_is_d3d11_init;
   bool m_is_full_screen;
 
-  void Create_Window();
+  float m_screen_depth;
+  float m_screen_near;
+
+  void Init_Window();
+  void Init_D3D11();
+
+  bool m_vsync_enabled;
+  int m_videoCardMemory;
+  char m_videoCardDescription[128];
+  IDXGISwapChain* m_swapChain;
+  ID3D11Device* m_device;
+  ID3D11DeviceContext* m_deviceContext;
+  ID3D11RenderTargetView* m_renderTargetView;
+  ID3D11Texture2D* m_depthStencilBuffer;
+  ID3D11DepthStencilState* m_depthStencilState;
+  ID3D11DepthStencilView* m_depthStencilView;
+  ID3D11RasterizerState* m_rasterState;
+  D3DXMATRIX m_projectionMatrix;
+  D3DXMATRIX m_worldMatrix;
+  D3DXMATRIX m_orthoMatrix;
+
+  float m_back_buffer_color[4];
 };
 }  // namespace Tunnelour
 
