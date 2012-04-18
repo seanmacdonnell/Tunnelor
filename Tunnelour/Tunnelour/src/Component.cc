@@ -24,6 +24,7 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 Component::Component() {
   m_id = Tunnelour::Component_ID::GetInstance()->Next();
+  m_is_initialised = false;
 }
 
 //------------------------------------------------------------------------------
@@ -49,6 +50,11 @@ void Component::Ignore(Component_Observer* component_observer) {
 }
 
 //------------------------------------------------------------------------------
+bool Component::IsInitialised() {
+  return m_is_initialised;
+}
+
+//------------------------------------------------------------------------------
 // protected:
 //------------------------------------------------------------------------------
 
@@ -57,7 +63,7 @@ void Component::Ignore(Component_Observer* component_observer) {
 //------------------------------------------------------------------------------
 void Component::Notify() {
   for each( Component_Observer* observer in m_observers ) {
-    observer->handleEvent(*this);
+    observer->HandleEvent(*this);
   }
 }
 

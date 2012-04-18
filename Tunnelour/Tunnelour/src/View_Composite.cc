@@ -28,8 +28,9 @@ View_Composite::View_Composite() {
 
 //------------------------------------------------------------------------------
 View_Composite::~View_Composite() {
-  for each ( Tunnelour::View* view in m_views ) {
-    Remove(view);
+  while(!m_views.empty()) {
+    delete m_views.front();
+    m_views.pop_back();
   }
 }
 

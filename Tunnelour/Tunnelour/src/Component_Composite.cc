@@ -25,8 +25,9 @@ Component_Composite::Component_Composite() {
 
 //------------------------------------------------------------------------------
 Component_Composite::~Component_Composite() {
-  for each ( Tunnelour::Component* component in m_components ) {
-    m_components.remove(component);
+  while(!m_components.empty()) {
+    delete m_components.front();
+    m_components.pop_back();
   }
 }
 

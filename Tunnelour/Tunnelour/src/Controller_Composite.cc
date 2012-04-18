@@ -26,8 +26,9 @@ Controller_Composite::Controller_Composite() {
 
 //------------------------------------------------------------------------------
 Controller_Composite::~Controller_Composite() {
-  for each ( Tunnelour::Controller* controller in m_controllers ) {
-    m_controllers.remove(controller);
+  while(!m_controllers.empty()) {
+    delete m_controllers.front();
+    m_controllers.pop_back();
   }
 }
 

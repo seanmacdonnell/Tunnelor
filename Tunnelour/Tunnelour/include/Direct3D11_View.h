@@ -12,6 +12,10 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
+//-----------------------------------------------------------------------------
+// The code here was copied and pasted and modified from the tutorials at
+// http://rastertek.com/dx11tut02.html
+//-----------------------------------------------------------------------------
 
 #ifndef TUNNELOUR_DIRECT3D11_VIEW_H_
 #define TUNNELOUR_DIRECT3D11_VIEW_H_
@@ -25,6 +29,10 @@
 #include "View.h"
 #include "Background_Component.h"
 #include "Component.h"
+#include "Direct3D11_View_ColorShader.h"
+#include "Camera_Component.h"
+#include "Mesh_Component.h"
+
 #include <windows.h>
 #include <iostream>
 
@@ -34,11 +42,7 @@
 #include <d3dx10math.h>
 
 namespace Tunnelour {
-//-----------------------------------------------------------------------------
-// Most of the code here was copied and pasted from the tutorials at
-// http://rastertek.com/dx11tut02.html
-//-----------------------------------------------------------------------------
-class Direct3D11_View : public Tunnelour::View {
+ class Direct3D11_View : public Tunnelour::View {
  public:
   //---------------------------------------------------------------------------
   // Description : Constructor
@@ -96,6 +100,9 @@ class Direct3D11_View : public Tunnelour::View {
   D3DXMATRIX m_orthoMatrix;
 
   float m_back_buffer_color[4];
+  Tunnelour::Camera_Component *m_camera;
+  Tunnelour::Mesh_Component *m_mesh;
+  Direct3D11_View_ColorShader *m_color_shader;
 };
 }  // namespace Tunnelour
 

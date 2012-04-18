@@ -15,6 +15,8 @@
 
 #include "Init_Controller.h"
 #include "Background_Component.h"
+#include "Camera_Component.h"
+#include "Mesh_Component.h"
 
 namespace Tunnelour {
 
@@ -37,6 +39,13 @@ void Init_Controller::Init(Tunnelour::Component_Composite *model) {
 void Init_Controller::Run() {
   Tunnelour::Component *background = m_model->Add(new Tunnelour::Background_Component());
   background->Init();
+
+  Tunnelour::Component *camera = m_model->Add(new Tunnelour::Camera_Component());
+  camera->Init();
+
+  Tunnelour::Component *mesh = m_model->Add(new Tunnelour::Mesh_Component());
+  mesh->Init();
+
   m_is_finished = true;
 }
 

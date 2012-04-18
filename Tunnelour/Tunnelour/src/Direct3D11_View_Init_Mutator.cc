@@ -27,6 +27,10 @@ Direct3D11_View_Init_Mutator::Direct3D11_View_Init_Mutator() {
   m_back_buffer_color[2] = 0.0;
   m_back_buffer_color[3] = 1.0;
   m_found_back_buffer_color = false;
+  m_camera_component = 0;
+  m_found_camera = false;
+  m_mesh_component = 0;
+  m_found_mesh = false;
 }
 
 //------------------------------------------------------------------------------
@@ -35,14 +39,28 @@ Direct3D11_View_Init_Mutator::~Direct3D11_View_Init_Mutator() {
 
 //------------------------------------------------------------------------------
 void Direct3D11_View_Init_Mutator::Mutate(Tunnelour::Component *component) {
-  Tunnelour::Background_Component *background_c = dynamic_cast<Tunnelour::Background_Component*>(component);
-  if (background_c) {
+  Tunnelour::Background_Component *background = dynamic_cast<Tunnelour::Background_Component*>(component);
+  if (background) {
     //Found Background_Component
-    m_back_buffer_color[0] = background_c->GetRed();
-	  m_back_buffer_color[1] = background_c->GetGreen();
-	  m_back_buffer_color[2] = background_c->GetBlue();
-	  m_back_buffer_color[3] = background_c->GetAlpha();
+    m_back_buffer_color[0] = background->GetRed();
+    m_back_buffer_color[1] = background->GetGreen();
+    m_back_buffer_color[2] = background->GetBlue();
+    m_back_buffer_color[3] = background->GetAlpha();
     m_found_back_buffer_color = true;
+  }
+
+  Tunnelour::Camera_Component *camera = dynamic_cast<Tunnelour::Camera_Component*>(component);
+  if (camera) {
+    //Found Camera_Component
+    m_camera_component = camera;
+    m_found_camera = true;
+  }
+
+  Tunnelour::Mesh_Component *mesh = dynamic_cast<Tunnelour::Mesh_Component*>(component);
+  if (mesh) {
+    //Found Mesh_Component
+    m_mesh_component = mesh;
+    m_found_mesh = true;
   }
 }
 

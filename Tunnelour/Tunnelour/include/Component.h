@@ -37,19 +37,9 @@ class Component {
   class Component_Observer {
    public:
     //-------------------------------------------------------------------------
-    // Description : Constructor
+    // Description : HandleEvent is called when the component changes.
     //-------------------------------------------------------------------------
-    Component_Observer();
-
-    //-------------------------------------------------------------------------
-    // Description : Deconstructor
-    //-------------------------------------------------------------------------
-    virtual ~Component_Observer();
-
-    //-------------------------------------------------------------------------
-    // Description : handleEvent is called when the component changes.
-    //-------------------------------------------------------------------------
-    virtual void handleEvent(const Component&) = 0;
+    virtual void HandleEvent(const Component& component) = 0;
   };
 
   //---------------------------------------------------------------------------
@@ -82,11 +72,21 @@ class Component {
   //---------------------------------------------------------------------------
   void Ignore(Component_Observer* component_observer);
 
+  //---------------------------------------------------------------------------
+  // Description : Returns whether this component has been initalised
+  //---------------------------------------------------------------------------
+  bool IsInitialised();
+
  protected:
   //---------------------------------------------------------------------------
   // Description : Notify all observers
   //---------------------------------------------------------------------------
   void Notify();
+
+  //---------------------------------------------------------------------------
+  // Description : Has this component been initialised?
+  //---------------------------------------------------------------------------
+  bool m_is_initialised;
 
  private:
   //---------------------------------------------------------------------------

@@ -63,6 +63,15 @@
     <ClCompile Include="src\Direct3D11_View_Init_Mutator.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Camera_Component.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Mesh_Component.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Direct3D11_View_ColorShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine.h">
@@ -116,5 +125,22 @@
     <ClInclude Include="include\Direct3D11_View_Init_Mutator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Camera_Component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Mesh_Component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Direct3D11_View_ColorShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resource\Direct3D11_View_ColorShader.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resource\Direct3D11_View_ColorShader.ps">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

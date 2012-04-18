@@ -17,6 +17,8 @@
 #define TUNNELOUR_DIRECT3D11_VIEW_MUTATOR_H_
 
 #include "Component.h"
+#include "Camera_Component.h"
+#include "Mesh_Component.h"
 
 namespace Tunnelour {
 class Direct3D11_View_Init_Mutator: public Tunnelour::Component::Component_Mutator  {
@@ -38,6 +40,11 @@ class Direct3D11_View_Init_Mutator: public Tunnelour::Component::Component_Mutat
 
   float m_back_buffer_color[4];
   bool m_found_back_buffer_color;
-  };
+  Tunnelour::Camera_Component* m_camera_component;
+  bool m_found_camera;
+  Tunnelour::Mesh_Component* m_mesh_component;
+  bool m_found_mesh;
+
+};
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_DIRECT3D11_VIEW_MUTATOR_H_

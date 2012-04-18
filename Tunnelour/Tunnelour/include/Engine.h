@@ -44,7 +44,7 @@ class Engine {
   void Init(bool IncludeView, bool IncludeController);
 
   //--------------------------------------------------------------------------
-  // Description : Starts the BouncyBallGame Game Loop
+  // Description : Starts the Tunnelour Game Loop
   //--------------------------------------------------------------------------
   int Start();
 

@@ -46,6 +46,11 @@ Direct3D11_View::Direct3D11_View() {
   m_depthStencilState = NULL;
   m_depthStencilView = NULL;
   m_rasterState = NULL;
+  m_color_shader = NULL;
+
+  m_camera = NULL;
+  m_mesh = NULL;
+  m_color_shader = NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -70,60 +75,65 @@ Direct3D11_View::~Direct3D11_View() {
   }
 
   if (m_is_d3d11_init) {
-	  // Before shutting down set to windowed mode or when you release the swap chain it will throw an exception.
-	  if(m_swapChain)
-	  {
-		  m_swapChain->SetFullscreenState(false, NULL);
-	  }
+    // Before shutting down set to windowed mode or when you release the swap chain it will throw an exception.
+    if(m_swapChain)
+    {
+     m_swapChain->SetFullscreenState(false, NULL);
+    }
 
-	  if(m_rasterState)
-	  {
-		  m_rasterState->Release();
-		  m_rasterState = 0;
-	  }
+    if(m_rasterState)
+    {
+     m_rasterState->Release();
+     m_rasterState = 0;
+    }
 
-	  if(m_depthStencilView)
-	  {
-		  m_depthStencilView->Release();
-		  m_depthStencilView = 0;
-	  }
+    if(m_depthStencilView)
+    {
+    m_depthStencilView->Release();
+    m_depthStencilView = 0;
+    }
 
-	  if(m_depthStencilState)
-	  {
-		  m_depthStencilState->Release();
-		  m_depthStencilState = 0;
-	  }
+    if(m_depthStencilState)
+    {
+    m_depthStencilState->Release();
+    m_depthStencilState = 0;
+    }
 
-	  if(m_depthStencilBuffer)
-	  {
-		  m_depthStencilBuffer->Release();
-		  m_depthStencilBuffer = 0;
-	  }
+    if(m_depthStencilBuffer)
+    {
+    m_depthStencilBuffer->Release();
+    m_depthStencilBuffer = 0;
+    }
 
-	  if(m_renderTargetView)
-	  {
-		  m_renderTargetView->Release();
-		  m_renderTargetView = 0;
-	  }
+    if(m_renderTargetView)
+    {
+    m_renderTargetView->Release();
+    m_renderTargetView = 0;
+    }
 
-	  if(m_deviceContext)
-	  {
-		  m_deviceContext->Release();
-		  m_deviceContext = 0;
-	  }
+    if(m_deviceContext)
+    {
+    m_deviceContext->Release();
+    m_deviceContext = 0;
+    }
 
-	  if(m_device)
-	  {
-		  m_device->Release();
-		  m_device = 0;
-	  }
+    if(m_device)
+    {
+    m_device->Release();
+    m_device = 0;
+    }
 
-	  if(m_swapChain)
-	  {
-		  m_swapChain->Release();
-		  m_swapChain = 0;
-	  }
-  }
+    if(m_swapChain)
+    {
+    m_swapChain->Release();
+    m_swapChain = 0;
+    }
+
+    if (m_color_shader) {
+      delete m_color_shader;
+      m_color_shader = NULL;
+    }
+ }
 }
 
 //------------------------------------------------------------------------------
@@ -133,6 +143,10 @@ void Direct3D11_View::Init(Tunnelour::Component_Composite *model) {
   if (!m_is_initialised) {
     if (!m_is_window_init) { Init_Window(); }
     if (!m_is_d3d11_init) { Init_D3D11(); }
+    if (!m_color_shader) {
+      m_color_shader = new Tunnelour::Direct3D11_View_ColorShader(m_device, &m_hwnd);
+      m_color_shader->Init();
+    }
     m_is_initialised = true;
   }
 
@@ -147,34 +161,44 @@ void Direct3D11_View::Run() {
   m_model->Apply(&mutator);
   if (mutator.m_found_back_buffer_color)  {
     m_back_buffer_color[0] = mutator.m_back_buffer_color[0];
-	  m_back_buffer_color[1] = mutator.m_back_buffer_color[1];
-	  m_back_buffer_color[2] = mutator.m_back_buffer_color[2];
-	  m_back_buffer_color[3] = mutator.m_back_buffer_color[3];
+    m_back_buffer_color[1] = mutator.m_back_buffer_color[1];
+    m_back_buffer_color[2] = mutator.m_back_buffer_color[2];
+    m_back_buffer_color[3] = mutator.m_back_buffer_color[3];
   } else {
     //Default Back Buffer Color is Black
     m_back_buffer_color[0] = 0.0;
-	  m_back_buffer_color[1] = 0.0;
-	  m_back_buffer_color[2] = 0.0;
-	  m_back_buffer_color[3] = 1.0;
+    m_back_buffer_color[1] = 0.0;
+    m_back_buffer_color[2] = 0.0;
+    m_back_buffer_color[3] = 1.0;
   }
 
-	// Clear the back buffer.
-	m_deviceContext->ClearRenderTargetView(m_renderTargetView, m_back_buffer_color);
+  if (mutator.m_found_camera)  {
+    m_camera = mutator.m_camera_component;
+    if (!m_camera->IsInitialised()) { m_camera->Init(); }
+  }
+
+  if (mutator.m_found_mesh)  {
+    m_mesh = mutator.m_mesh_component;
+    if (!m_mesh->IsInitialised()) { m_mesh->Init(m_device); }
+  }
+
+ // Clear the back buffer.
+ m_deviceContext->ClearRenderTargetView(m_renderTargetView, m_back_buffer_color);
     
-	// Clear the depth buffer.
-	m_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+ // Clear the depth buffer.
+ m_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
   // Present the back buffer to the screen since rendering is complete.
-	if(m_vsync_enabled)
-	{
-		// Lock to screen refresh rate.
-		m_swapChain->Present(1, 0);
-	}
-	else
-	{
-		// Present as fast as possible.
-		m_swapChain->Present(0, 0);
-	}
+ if(m_vsync_enabled)
+ {
+  // Lock to screen refresh rate.
+  m_swapChain->Present(1, 0);
+ }
+ else
+ {
+  // Present as fast as possible.
+  m_swapChain->Present(0, 0);
+ }
 
 }
 
