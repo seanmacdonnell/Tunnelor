@@ -33,11 +33,13 @@ Background_Component::~Background_Component() {
 
 //------------------------------------------------------------------------------
 void Background_Component::Init() {
+  /*
   // Set to Grey
   m_alpha = 0.5f;
   m_blue = 0.5f;
   m_green = 0.5f;
   m_red = 0.5f;
+  */
 }
 
 //------------------------------------------------------------------------------

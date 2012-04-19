@@ -77,7 +77,6 @@ bool Direct3D11_View_ColorShader::Init()
  unsigned int numElements;
  D3D11_BUFFER_DESC matrixBufferDesc;
 
-
  // Initialize the pointers this function will use to null.
  errorMessage = 0;
  vertexShaderBuffer = 0;
@@ -299,9 +298,9 @@ void Direct3D11_View_ColorShader::RenderShader(ID3D11DeviceContext* deviceContex
  // Set the vertex input layout.
  deviceContext->IASetInputLayout(m_layout);
 
-    // Set the vertex and pixel shaders that will be used to render this triangle.
-    deviceContext->VSSetShader(m_vertexShader, NULL, 0);
-    deviceContext->PSSetShader(m_pixelShader, NULL, 0);
+ // Set the vertex and pixel shaders that will be used to render this triangle.
+ deviceContext->VSSetShader(m_vertexShader, NULL, 0);
+ deviceContext->PSSetShader(m_pixelShader, NULL, 0);
 
  // Render the triangle.
  deviceContext->DrawIndexed(indexCount, 0, 0);

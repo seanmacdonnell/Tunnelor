@@ -181,25 +181,69 @@ void Direct3D11_View::Run() {
     m_mesh = mutator.m_mesh_component;
     if (!m_mesh->IsInitialised()) { m_mesh->Init(m_device); }
   }
+  D3DXMATRIX viewMatrix;
 
- // Clear the back buffer.
- m_deviceContext->ClearRenderTargetView(m_renderTargetView, m_back_buffer_color);
+	// Clear the back buffer.
+	m_deviceContext->ClearRenderTargetView(m_renderTargetView, m_back_buffer_color);
     
- // Clear the depth buffer.
- m_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	// Clear the depth buffer.
+	m_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-  // Present the back buffer to the screen since rendering is complete.
- if(m_vsync_enabled)
- {
-  // Lock to screen refresh rate.
-  m_swapChain->Present(1, 0);
- }
- else
- {
-  // Present as fast as possible.
-  m_swapChain->Present(0, 0);
- }
+	D3DXMATRIX rotationMatrix;
+  D3DXVECTOR3 rotationVector = *m_camera->GetRotationInRadians();
+  D3DXVECTOR3 LookingAtVector = *m_camera->GetLookingAtPosition();
+  D3DXVECTOR3 UpVector = *m_camera->GetUpDirection();
+  D3DXVECTOR3 PosVector = *m_camera->GetPosition();
 
+	// Create the rotation matrix from the yaw, pitch, and roll values.
+	D3DXMatrixRotationYawPitchRoll(&rotationMatrix, rotationVector.x, rotationVector.y, rotationVector.z);
+
+	// Transform the lookAt and up vector by the rotation matrix so the view is correctly rotated at the origin.
+	D3DXVec3TransformCoord(&LookingAtVector, &LookingAtVector, &rotationMatrix);
+	D3DXVec3TransformCoord(&UpVector, &UpVector, &rotationMatrix);
+
+	// Translate the rotated camera position to the location of the viewer.
+	LookingAtVector = PosVector + LookingAtVector;
+
+	// Finally create the view matrix from the three updated vectors.
+	D3DXMatrixLookAtLH(&viewMatrix, &PosVector, &LookingAtVector, &UpVector);
+  /**********YOUAREHERE**************/
+	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	// Set vertex buffer stride and offset.
+	unsigned int stride = sizeof(Tunnelour::Mesh_Component::VertexType); 
+	unsigned int offset = 0;
+  ID3D11Buffer *vertexbuffer, *indexbuffer;
+
+  vertexbuffer = m_mesh->GetVertexBuffer();
+  indexbuffer = m_mesh->GetIndexBuffer();
+
+	// Set the vertex buffer to active in the input assembler so it can be rendered.
+	m_deviceContext->IASetVertexBuffers(0, 1, &vertexbuffer, &stride, &offset);
+
+    // Set the index buffer to active in the input assembler so it can be rendered.
+	m_deviceContext->IASetIndexBuffer(indexbuffer, DXGI_FORMAT_R32_UINT, 0);
+
+    // Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
+	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	// Render the model using the color shader.
+	if(!m_color_shader->Render(m_deviceContext, m_mesh->GetIndexCount(), m_worldMatrix, viewMatrix, m_projectionMatrix))
+	{
+		 throw Tunnelour::Exceptions::initialising_error("ColorShading Failed!");
+	}
+
+	// Present the rendered scene to the screen.
+	// Present the back buffer to the screen since rendering is complete.
+	if(m_vsync_enabled)
+	{
+		// Lock to screen refresh rate.
+		m_swapChain->Present(1, 0);
+	}
+	else
+	{
+		// Present as fast as possible.
+		m_swapChain->Present(0, 0);
+	}
 }
 
 //------------------------------------------------------------------------------

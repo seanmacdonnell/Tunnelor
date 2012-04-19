@@ -48,7 +48,7 @@ Mesh_Component::~Mesh_Component() {
 
 //------------------------------------------------------------------------------
 void Mesh_Component::Init(ID3D11Device* d3d11device) {
- m_d3d11device  = d3d11device;
+ m_d3d11device = d3d11device;
  VertexType* vertices;
  unsigned long* indices;
  D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
@@ -139,6 +139,22 @@ void Mesh_Component::Init(ID3D11Device* d3d11device) {
 
  m_is_initialised = true;
 }
+
+//------------------------------------------------------------------------------
+ID3D11Buffer* Mesh_Component::GetVertexBuffer() {
+  return m_vertexbuffer;
+}
+
+//------------------------------------------------------------------------------
+ID3D11Buffer* Mesh_Component::GetIndexBuffer() {
+  return m_indexbuffer;
+}
+
+//------------------------------------------------------------------------------
+int Mesh_Component::GetIndexCount() {
+  return m_indexcount;
+}
+
 
 //------------------------------------------------------------------------------
 // protected:

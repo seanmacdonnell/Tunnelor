@@ -21,9 +21,10 @@ namespace Tunnelour {
 // public:
 //------------------------------------------------------------------------------
 Camera_Component::Camera_Component() {
-  m_position = new D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-  m_at = new D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+  m_position = new D3DXVECTOR3(0.0f, 0.0f, -10.0f);
+  m_at = new D3DXVECTOR3(0.0f, 0.0f, 1.0f);
   m_up = new D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+  m_rotation = new D3DXVECTOR3(0.0f, 0.0f, 0.0f);
   m_fov = 0;
 }
 
@@ -32,11 +33,12 @@ Camera_Component::~Camera_Component() {
   delete m_position;
   delete m_at;
   delete m_up;
+  delete m_rotation;
   m_fov = 0;
 }
 
 //------------------------------------------------------------------------------
-const D3DXVECTOR3* Camera_Component::GetPosition() const {
+D3DXVECTOR3* Camera_Component::GetPosition() const {
   return m_position;
 }
 
@@ -55,7 +57,7 @@ void Camera_Component::SetPosition(const float x, const float y, const float z) 
 }
 
 //------------------------------------------------------------------------------
-const D3DXVECTOR3* Camera_Component::GetLookingAtPosition() const {
+D3DXVECTOR3* Camera_Component::GetLookingAtPosition() const {
   return m_at;
 }
 
@@ -74,7 +76,7 @@ void Camera_Component::SetLookingAtPosition(const float x, const float y, const 
 }
 
 //------------------------------------------------------------------------------
-const D3DXVECTOR3* Camera_Component::GetUpDirection() const {
+D3DXVECTOR3* Camera_Component::GetUpDirection() const {
   return m_up;
 }
 
@@ -89,6 +91,25 @@ void Camera_Component::SetUpDirection(const float x, const float y, const float 
   m_up->x = x;
   m_up->y = y;
   m_up->z = z;
+  Notify();
+}
+
+//------------------------------------------------------------------------------
+D3DXVECTOR3* Camera_Component::GetRotationInRadians() const {
+  return m_rotation;
+}
+
+//------------------------------------------------------------------------------
+void Camera_Component::SetRotationInRadians(const D3DXVECTOR3& rotation) {
+  *m_rotation = rotation;
+  Notify();
+}
+
+//------------------------------------------------------------------------------
+void Camera_Component::SetRotationInRadians(const float pitch, const float yaw, const float roll) {
+  m_rotation->x = pitch;
+  m_rotation->y = yaw;
+  m_rotation->z = roll;
   Notify();
 }
 

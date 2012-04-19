@@ -44,7 +44,7 @@ namespace Tunnelour {
   //---------------------------------------------------------------------------
   // Description : Returns the position vector
   //---------------------------------------------------------------------------
-  const D3DXVECTOR3* GetPosition() const;
+  D3DXVECTOR3* GetPosition() const;
 
   //---------------------------------------------------------------------------
   // Description : Sets the position vector
@@ -55,7 +55,7 @@ namespace Tunnelour {
   //---------------------------------------------------------------------------
   // Description : Returns the vector which indicates what this camera is lookin at
   //---------------------------------------------------------------------------
-  const D3DXVECTOR3* GetLookingAtPosition() const;
+  D3DXVECTOR3* GetLookingAtPosition() const;
 
   //---------------------------------------------------------------------------
   // Description : Sets the position vector
@@ -66,13 +66,24 @@ namespace Tunnelour {
   //---------------------------------------------------------------------------
   // Description : Returns the vector which indicates what this camera is lookin at
   //---------------------------------------------------------------------------
-  const D3DXVECTOR3* GetUpDirection() const;
+  D3DXVECTOR3* GetUpDirection() const;
 
   //---------------------------------------------------------------------------
   // Description : Sets the position vector
   //---------------------------------------------------------------------------
   void SetUpDirection(const D3DXVECTOR3& orientation);
   void SetUpDirection(const float x, const float y, const float z);
+
+  //---------------------------------------------------------------------------
+  // Description : Returns the vector which indicates what this camera is lookin at
+  //---------------------------------------------------------------------------
+  D3DXVECTOR3* GetRotationInRadians() const;
+
+  //---------------------------------------------------------------------------
+  // Description : Sets the rotation vector in radians (x0.0174532925f)
+  //---------------------------------------------------------------------------
+  void SetRotationInRadians(const D3DXVECTOR3& rotation);
+  void SetRotationInRadians(const float pitch, const float yaw, const float roll);
 
   //---------------------------------------------------------------------------
   // Description : Returns the field of view in radians
@@ -88,6 +99,7 @@ namespace Tunnelour {
   D3DXVECTOR3 *m_position;
   D3DXVECTOR3 *m_at;
   D3DXVECTOR3 *m_up;
+  D3DXVECTOR3 *m_rotation;
   float m_fov;
 
  private:

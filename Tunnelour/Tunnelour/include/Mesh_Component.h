@@ -33,10 +33,8 @@ namespace Tunnelour {
 class Mesh_Component: public Tunnelour::Component {
  public:
   // Vertex format
-   struct VertexType {
+  struct VertexType {
     D3DXVECTOR3 position;
-    D3DXVECTOR3 normal;
-    D3DXVECTOR2 texcoord;
     D3DXVECTOR4 color;
   };
 
@@ -54,6 +52,21 @@ class Mesh_Component: public Tunnelour::Component {
   // Description : Initialise this Component
   //---------------------------------------------------------------------------
   virtual void Init(ID3D11Device* pD3D10Device);
+
+  //---------------------------------------------------------------------------
+  // Description : Accessor for the Vertex Buffer
+  //---------------------------------------------------------------------------
+  ID3D11Buffer* GetVertexBuffer();
+
+  //---------------------------------------------------------------------------
+  // Description : Accessor for the Index Buffer
+  //---------------------------------------------------------------------------
+  ID3D11Buffer* GetIndexBuffer();
+
+  //---------------------------------------------------------------------------
+  // Description : Accessor for the Index Count
+  //---------------------------------------------------------------------------
+  int GetIndexCount();
 
  protected:
 
