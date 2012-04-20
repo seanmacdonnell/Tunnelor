@@ -1,4 +1,4 @@
-//  Copyright 2011 Sean MacDonnell
+//  Copyright 2012 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 
 #ifndef TUNNELOUR_BACKGROUND_COMPONENT_H_
 #define TUNNELOUR_BACKGROUND_COMPONENT_H_
-
 
 #include "Component.h"
 
@@ -38,34 +37,49 @@ class Background_Component: public Tunnelour::Component {
   virtual void Init();
 
   //---------------------------------------------------------------------------
-  // Description : Accessor and Mutator for the Alpha
+  // Description : Accessor for the Alpha
   //---------------------------------------------------------------------------
   float GetAlpha();
+
+  //---------------------------------------------------------------------------
+  // Description : Mutator for the Alpha
+  //---------------------------------------------------------------------------
   void SetAlpha(float alpha);
 
   //---------------------------------------------------------------------------
-  // Description : Accessor and Mutator for the intensity of the color Blue
+  // Description : Accessor for the intensity of the color Blue
   //---------------------------------------------------------------------------
   float GetBlue();
+
+  //---------------------------------------------------------------------------
+  // Description : Mutator for the intensity of the color Blue
+  //---------------------------------------------------------------------------
   void SetBlue(float intensity);
 
   //---------------------------------------------------------------------------
-  // Description : Accessor and Mutator for the intensity of the color Green
+  // Description : Accessor for the intensity of the color Green
   //---------------------------------------------------------------------------
   float GetGreen();
+
+  //---------------------------------------------------------------------------
+  // Description : Mutator for the intensity of the color Green
+  //---------------------------------------------------------------------------
   void SetGreen(float intensity);
 
   //---------------------------------------------------------------------------
-  // Description : Accessor and Mutator for the intensity of the color Red
+  // Description : Accessor for the intensity of the color Red
   //---------------------------------------------------------------------------
   float GetRed();
+
+  //---------------------------------------------------------------------------
+  // Description : Mutator for the intensity of the color Red
+  //---------------------------------------------------------------------------
   void SetRed(float intensity);
 
  protected:
 
  private:
-   float m_alpha, m_blue, m_green, m_red;
-
+  float m_alpha, m_blue, m_green, m_red;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_COMPONENT_H_

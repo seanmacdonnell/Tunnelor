@@ -16,20 +16,19 @@
 #ifndef TUNNELOUR_CAMERA_COMPONENT_H_
 #define TUNNELOUR_CAMERA_COMPONENT_H_
 
-#include "Component.h"
-
 //-----------------------------------------------------------------------------
-// NOTE: d3d11 is not required for this class, I am inclduing it as a  
-//       tempory fix for a compatibility error of including d3dx10math 
-//       before d3d11.
-// TODO: Either replace d3dx10math with a different maths library or fix
-//       the include order dependancy.
+// NOTE(sean): d3d11 is not required for this class, I am inclduing it as a
+//             tempory fix for a compatibility error of including d3dx10math
+//             before d3d11.
+// TODO(sean): Either replace d3dx10math with a different maths library or fix
+//             the include order dependancy.
 //-----------------------------------------------------------------------------
 #include <d3d11.h>
 #include <d3dx10math.h>
+#include "Component.h"
 
 namespace Tunnelour {
-  class Camera_Component: public Tunnelour::Component {
+class Camera_Component: public Tunnelour::Component {
  public:
   //---------------------------------------------------------------------------
   // Description : Constructor
@@ -39,56 +38,65 @@ namespace Tunnelour {
   //---------------------------------------------------------------------------
   // Description : Deconstructor
   //---------------------------------------------------------------------------
-  virtual ~Camera_Component();
+  ~Camera_Component();
+
+  //---------------------------------------------------------------------------
+  // Description : Initialise this Component
+  //---------------------------------------------------------------------------
+  void Init();
 
   //---------------------------------------------------------------------------
   // Description : Returns the position vector
   //---------------------------------------------------------------------------
-  D3DXVECTOR3* GetPosition() const;
+  D3DXVECTOR3 GetPosition();
 
   //---------------------------------------------------------------------------
   // Description : Sets the position vector
   //---------------------------------------------------------------------------
-  void SetPosition(const D3DXVECTOR3& position);
-  void SetPosition(const float x, const float y, const float z);
+  void SetPosition(D3DXVECTOR3 const & position);
+  void SetPosition(float x, float y, float z);
 
   //---------------------------------------------------------------------------
-  // Description : Returns the vector which indicates what this camera is lookin at
+  // Description : Returns the vector which indicates the position that this
+  //               camera is looking at
   //---------------------------------------------------------------------------
-  D3DXVECTOR3* GetLookingAtPosition() const;
+  D3DXVECTOR3 GetLookingAtPosition();
 
   //---------------------------------------------------------------------------
-  // Description : Sets the position vector
+  // Description : Sets the vector which indicates the position that this
+  //               camera is looking at
   //---------------------------------------------------------------------------
-  void SetLookingAtPosition(const D3DXVECTOR3& position);
-  void SetLookingAtPosition(const float x, const float y, const float z);
+  void SetLookingAtPosition(D3DXVECTOR3 const & at);
+  void SetLookingAtPosition(float x, float y, float z);
 
   //---------------------------------------------------------------------------
-  // Description : Returns the vector which indicates what this camera is lookin at
+  // Description : Returns the vector which indicates which direction is
+  //               "up" for this camera.
   //---------------------------------------------------------------------------
-  D3DXVECTOR3* GetUpDirection() const;
+  D3DXVECTOR3 GetUpDirection();
 
   //---------------------------------------------------------------------------
-  // Description : Sets the position vector
+  // Description : Sets the vector which indicates which direction is
+  //               "up" for this camera.
   //---------------------------------------------------------------------------
-  void SetUpDirection(const D3DXVECTOR3& orientation);
-  void SetUpDirection(const float x, const float y, const float z);
+  void SetUpDirection(D3DXVECTOR3 const & up);
+  void SetUpDirection(float x, float y, float z);
 
   //---------------------------------------------------------------------------
-  // Description : Returns the vector which indicates what this camera is lookin at
+  // Description : Returns the rotation vector in radians (x0.0174532925f)
   //---------------------------------------------------------------------------
-  D3DXVECTOR3* GetRotationInRadians() const;
+  D3DXVECTOR3 GetRotationInRadians();
 
   //---------------------------------------------------------------------------
   // Description : Sets the rotation vector in radians (x0.0174532925f)
   //---------------------------------------------------------------------------
-  void SetRotationInRadians(const D3DXVECTOR3& rotation);
-  void SetRotationInRadians(const float pitch, const float yaw, const float roll);
+  void SetRotationInRadians(D3DXVECTOR3 const & rotation);
+  void SetRotationInRadians(float pitch, float yaw, float roll);
 
   //---------------------------------------------------------------------------
   // Description : Returns the field of view in radians
   //---------------------------------------------------------------------------
-  const float GetFieldOfViewInRadians() const;
+  float GetFieldOfViewInRadians();
 
   //---------------------------------------------------------------------------
   // Description : Sets the fov in radians
@@ -96,14 +104,13 @@ namespace Tunnelour {
   void SetFieldOfViewInRadians(float radians);
 
  protected:
-  D3DXVECTOR3 *m_position;
-  D3DXVECTOR3 *m_at;
-  D3DXVECTOR3 *m_up;
-  D3DXVECTOR3 *m_rotation;
+  D3DXVECTOR3 m_position;
+  D3DXVECTOR3 m_at;
+  D3DXVECTOR3 m_up;
+  D3DXVECTOR3 m_rotation;
   float m_fov;
 
  private:
-
 };
-} // namespace Tunnelour
-#endif  // TUNNELOUR_CAMERA_COMPONENT_H_
+}  // namespace Tunnelour
+#endif  //  TUNNELOUR_CAMERA_COMPONENT_H_

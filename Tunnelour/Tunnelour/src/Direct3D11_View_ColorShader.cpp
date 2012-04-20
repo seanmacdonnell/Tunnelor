@@ -42,25 +42,25 @@ Direct3D11_View_ColorShader::~Direct3D11_View_ColorShader()
  m_d3d11device = 0;
 
   // Release the matrix constant buffer.
- if(m_matrixBuffer) {
+ if (m_matrixBuffer) {
   m_matrixBuffer->Release();
   m_matrixBuffer = 0;
  }
 
  // Release the layout.
- if(m_layout) {
+ if (m_layout) {
   m_layout->Release();
   m_layout = 0;
  }
 
  // Release the pixel shader.
- if(m_pixelShader) {
+ if (m_pixelShader) {
   m_pixelShader->Release();
   m_pixelShader = 0;
  }
 
  // Release the vertex shader.
- if(m_vertexShader) {
+ if (m_vertexShader) {
   m_vertexShader->Release();
   m_vertexShader = 0;
  }
@@ -85,10 +85,10 @@ bool Direct3D11_View_ColorShader::Init()
     // Compile the vertex shader code.
  result = D3DX11CompileFromFile(m_vertexshaderfile, NULL, NULL, "ColorVertexShader", "vs_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, 
            &vertexShaderBuffer, &errorMessage, NULL);
- if(FAILED(result))
+ if (FAILED(result))
  {
   // If the shader failed to compile it should have writen something to the error message.
-  if(errorMessage)
+  if (errorMessage)
   {
    OutputShaderErrorMessage(errorMessage, *m_hwnd, m_vertexshaderfile);
   }
@@ -104,10 +104,10 @@ bool Direct3D11_View_ColorShader::Init()
     // Compile the pixel shader code.
  result = D3DX11CompileFromFile(m_pixelshaderfile, NULL, NULL, "ColorPixelShader", "ps_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, 
            &pixelShaderBuffer, &errorMessage, NULL);
- if(FAILED(result))
+ if (FAILED(result))
  {
   // If the shader failed to compile it should have writen something to the error message.
-  if(errorMessage)
+  if (errorMessage)
   {
    OutputShaderErrorMessage(errorMessage, *m_hwnd, m_pixelshaderfile);
   }
@@ -122,14 +122,14 @@ bool Direct3D11_View_ColorShader::Init()
 
     // Create the vertex shader from the buffer.
     result = m_d3d11device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &m_vertexShader);
- if(FAILED(result))
+ if (FAILED(result))
  {
   return false;
  }
 
     // Create the pixel shader from the buffer.
     result = m_d3d11device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &m_pixelShader);
- if(FAILED(result))
+ if (FAILED(result))
  {
   return false;
  }
@@ -158,7 +158,7 @@ bool Direct3D11_View_ColorShader::Init()
  // Create the vertex input layout.
  result = m_d3d11device->CreateInputLayout(polygonLayout, numElements, vertexShaderBuffer->GetBufferPointer(), 
             vertexShaderBuffer->GetBufferSize(), &m_layout);
- if(FAILED(result))
+ if (FAILED(result))
  {
   return false;
  }
@@ -180,7 +180,7 @@ bool Direct3D11_View_ColorShader::Init()
 
  // Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
  result = m_d3d11device->CreateBuffer(&matrixBufferDesc, NULL, &m_matrixBuffer);
- if(FAILED(result))
+ if (FAILED(result))
  {
   return false;
  }
@@ -198,7 +198,7 @@ bool Direct3D11_View_ColorShader::Render(ID3D11DeviceContext* deviceContext, int
 
  // Set the shader parameters that it will use for rendering.
  result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix);
- if(!result)
+ if (!result)
  {
   return false;
  }
@@ -267,7 +267,7 @@ bool Direct3D11_View_ColorShader::SetShaderParameters(ID3D11DeviceContext* devic
 
  // Lock the constant buffer so it can be written to.
  result = deviceContext->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
- if(FAILED(result))
+ if (FAILED(result))
  {
   return false;
  }

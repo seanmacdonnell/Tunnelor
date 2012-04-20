@@ -1,4 +1,4 @@
-//  Copyright 2011 Sean MacDonnell
+//  Copyright 2012 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 Background_Component::Background_Component() {
   m_alpha = 1.0;
-  m_blue = 0.0;
-  m_green = 0.0;
-  m_red = 0.0;
+  m_blue = 1.0;
+  m_green = 1.0;
+  m_red = 1.0;
 }
 
 //------------------------------------------------------------------------------
@@ -33,13 +33,11 @@ Background_Component::~Background_Component() {
 
 //------------------------------------------------------------------------------
 void Background_Component::Init() {
-  /*
-  // Set to Grey
-  m_alpha = 0.5f;
-  m_blue = 0.5f;
-  m_green = 0.5f;
-  m_red = 0.5f;
-  */
+  // Set to Black
+  m_alpha = 1.0;
+  m_blue = 0.0;
+  m_green = 0.0;
+  m_red = 0.0;
 }
 
 //------------------------------------------------------------------------------

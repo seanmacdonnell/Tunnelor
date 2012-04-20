@@ -1,4 +1,4 @@
-//  Copyright 2011 Sean MacDonnell
+//  Copyright 2012 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -60,8 +60,7 @@ Direct3D11_View::~Direct3D11_View() {
     ShowCursor(true);
 
     // Fix the display settings if leaving full screen mode.
-    if(m_is_full_screen)
-    {
+    if (m_is_full_screen) {
       ChangeDisplaySettings(NULL, 0);
     }
 
@@ -76,55 +75,46 @@ Direct3D11_View::~Direct3D11_View() {
 
   if (m_is_d3d11_init) {
     // Before shutting down set to windowed mode or when you release the swap chain it will throw an exception.
-    if(m_swapChain)
-    {
+    if (m_swapChain) {
      m_swapChain->SetFullscreenState(false, NULL);
     }
 
-    if(m_rasterState)
-    {
+    if (m_rasterState) {
      m_rasterState->Release();
      m_rasterState = 0;
     }
 
-    if(m_depthStencilView)
-    {
+    if (m_depthStencilView) {
     m_depthStencilView->Release();
     m_depthStencilView = 0;
     }
 
-    if(m_depthStencilState)
-    {
+    if (m_depthStencilState) {
     m_depthStencilState->Release();
     m_depthStencilState = 0;
     }
 
-    if(m_depthStencilBuffer)
-    {
+    if (m_depthStencilBuffer) {
     m_depthStencilBuffer->Release();
     m_depthStencilBuffer = 0;
     }
 
-    if(m_renderTargetView)
-    {
+    if (m_renderTargetView) {
     m_renderTargetView->Release();
     m_renderTargetView = 0;
     }
 
-    if(m_deviceContext)
-    {
+    if (m_deviceContext) {
     m_deviceContext->Release();
     m_deviceContext = 0;
     }
 
-    if(m_device)
-    {
+    if (m_device) {
     m_device->Release();
     m_device = 0;
     }
 
-    if(m_swapChain)
-    {
+    if (m_swapChain) {
     m_swapChain->Release();
     m_swapChain = 0;
     }
@@ -172,78 +162,74 @@ void Direct3D11_View::Run() {
     m_back_buffer_color[3] = 1.0;
   }
 
-  if (mutator.m_found_camera)  {
+  if (mutator.m_found_camera) {
     m_camera = mutator.m_camera_component;
     if (!m_camera->IsInitialised()) { m_camera->Init(); }
   }
 
-  if (mutator.m_found_mesh)  {
+  if (mutator.m_found_mesh) {
     m_mesh = mutator.m_mesh_component;
     if (!m_mesh->IsInitialised()) { m_mesh->Init(m_device); }
   }
   D3DXMATRIX viewMatrix;
 
-	// Clear the back buffer.
-	m_deviceContext->ClearRenderTargetView(m_renderTargetView, m_back_buffer_color);
+ // Clear the back buffer.
+ m_deviceContext->ClearRenderTargetView(m_renderTargetView, m_back_buffer_color);
     
-	// Clear the depth buffer.
-	m_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+ // Clear the depth buffer.
+ m_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-	D3DXMATRIX rotationMatrix;
-  D3DXVECTOR3 rotationVector = *m_camera->GetRotationInRadians();
-  D3DXVECTOR3 LookingAtVector = *m_camera->GetLookingAtPosition();
-  D3DXVECTOR3 UpVector = *m_camera->GetUpDirection();
-  D3DXVECTOR3 PosVector = *m_camera->GetPosition();
+ D3DXMATRIX rotationMatrix;
+ D3DXVECTOR3 rotationVector = m_camera->GetRotationInRadians();
+ D3DXVECTOR3 LookingAtVector = m_camera->GetLookingAtPosition();
+ D3DXVECTOR3 UpVector = m_camera->GetUpDirection();
+ D3DXVECTOR3 PosVector = m_camera->GetPosition();
 
-	// Create the rotation matrix from the yaw, pitch, and roll values.
-	D3DXMatrixRotationYawPitchRoll(&rotationMatrix, rotationVector.x, rotationVector.y, rotationVector.z);
+ // Create the rotation matrix from the yaw, pitch, and roll values.
+ D3DXMatrixRotationYawPitchRoll(&rotationMatrix, rotationVector.x, rotationVector.y, rotationVector.z);
 
-	// Transform the lookAt and up vector by the rotation matrix so the view is correctly rotated at the origin.
-	D3DXVec3TransformCoord(&LookingAtVector, &LookingAtVector, &rotationMatrix);
-	D3DXVec3TransformCoord(&UpVector, &UpVector, &rotationMatrix);
+ // Transform the lookAt and up vector by the rotation matrix so the view is correctly rotated at the origin.
+ D3DXVec3TransformCoord(&LookingAtVector, &LookingAtVector, &rotationMatrix);
+ D3DXVec3TransformCoord(&UpVector, &UpVector, &rotationMatrix);
 
-	// Translate the rotated camera position to the location of the viewer.
-	LookingAtVector = PosVector + LookingAtVector;
+ // Translate the rotated camera position to the location of the viewer.
+ LookingAtVector = PosVector + LookingAtVector;
 
-	// Finally create the view matrix from the three updated vectors.
-	D3DXMatrixLookAtLH(&viewMatrix, &PosVector, &LookingAtVector, &UpVector);
-  /**********YOUAREHERE**************/
-	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	// Set vertex buffer stride and offset.
-	unsigned int stride = sizeof(Tunnelour::Mesh_Component::VertexType); 
-	unsigned int offset = 0;
+ // Finally create the view matrix from the three updated vectors.
+ D3DXMatrixLookAtLH(&viewMatrix, &PosVector, &LookingAtVector, &UpVector);
+
+ // Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+ // Set vertex buffer stride and offset.
+ unsigned int stride = sizeof(Tunnelour::Mesh_Component::VertexType); 
+ unsigned int offset = 0;
   ID3D11Buffer *vertexbuffer, *indexbuffer;
 
   vertexbuffer = m_mesh->GetVertexBuffer();
   indexbuffer = m_mesh->GetIndexBuffer();
 
-	// Set the vertex buffer to active in the input assembler so it can be rendered.
-	m_deviceContext->IASetVertexBuffers(0, 1, &vertexbuffer, &stride, &offset);
+ // Set the vertex buffer to active in the input assembler so it can be rendered.
+ m_deviceContext->IASetVertexBuffers(0, 1, &vertexbuffer, &stride, &offset);
 
     // Set the index buffer to active in the input assembler so it can be rendered.
-	m_deviceContext->IASetIndexBuffer(indexbuffer, DXGI_FORMAT_R32_UINT, 0);
+ m_deviceContext->IASetIndexBuffer(indexbuffer, DXGI_FORMAT_R32_UINT, 0);
 
     // Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
-	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+ m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	// Render the model using the color shader.
-	if(!m_color_shader->Render(m_deviceContext, m_mesh->GetIndexCount(), m_worldMatrix, viewMatrix, m_projectionMatrix))
-	{
-		 throw Tunnelour::Exceptions::initialising_error("ColorShading Failed!");
-	}
+ // Render the model using the color shader.
+ if (!m_color_shader->Render(m_deviceContext, m_mesh->GetIndexCount(), m_worldMatrix, viewMatrix, m_projectionMatrix)) {
+   throw Tunnelour::Exceptions::initialising_error("ColorShading Failed!");
+ }
 
-	// Present the rendered scene to the screen.
-	// Present the back buffer to the screen since rendering is complete.
-	if(m_vsync_enabled)
-	{
-		// Lock to screen refresh rate.
-		m_swapChain->Present(1, 0);
-	}
-	else
-	{
-		// Present as fast as possible.
-		m_swapChain->Present(0, 0);
-	}
+ // Present the rendered scene to the screen.
+ // Present the back buffer to the screen since rendering is complete.
+ if (m_vsync_enabled) {
+  // Lock to screen refresh rate.
+  m_swapChain->Present(1, 0);
+ } else {
+  // Present as fast as possible.
+  m_swapChain->Present(0, 0);
+ }
 }
 
 //------------------------------------------------------------------------------
@@ -360,54 +346,45 @@ void Direct3D11_View::Init_D3D11() {
 
   // Create a DirectX graphics interface factory.
   result = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory);
-  if(FAILED(result))
-  {
+  if (FAILED(result)) {
     throw Tunnelour::Exceptions::initialising_error("CreateDXGIFactory Failed!");
   }
 
   // Use the factory to create an adapter for the primary graphics interface (video card).
   result = factory->EnumAdapters(0, &adapter);
-  if(FAILED(result))
-  {
+  if (FAILED(result)) {
     throw Tunnelour::Exceptions::initialising_error("EnumAdapters Failed!");
   }
 
   // Enumerate the primary adapter output (monitor).
   result = adapter->EnumOutputs(0, &adapterOutput);
-  if(FAILED(result))
-  {
+  if (FAILED(result)) {
     throw Tunnelour::Exceptions::initialising_error("EnumOutputs Failed!");
   }
 
   // Get the number of modes that fit the DXGI_FORMAT_R8G8B8A8_UNORM display format for the adapter output (monitor).
   result = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, NULL);
-  if(FAILED(result))
-  {
+  if (FAILED(result)) {
     throw Tunnelour::Exceptions::initialising_error("GetDisplayModeList Failed!");
   }
 
   // Create a list to hold all the possible display modes for this monitor/video card combination.
   displayModeList = new DXGI_MODE_DESC[numModes];
-  if(!displayModeList)
-  {
+  if (!displayModeList) {
     throw Tunnelour::Exceptions::initialising_error("displayModeList Failed!");
   }
 
   // Now fill the display mode list structures.
   result = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, displayModeList);
-  if(FAILED(result))
-  {
+  if (FAILED(result)) {
     throw Tunnelour::Exceptions::initialising_error("GetDisplayModeList Failed!");
   }
 
   // Now go through all the display modes and find the one that matches the screen width and height.
   // When a match is found store the numerator and denominator of the refresh rate for that monitor.
-  for(i=0; i<numModes; i++)
-  {
-    if(displayModeList[i].Width == (unsigned int)m_screen_width)
-    {
-      if(displayModeList[i].Height == (unsigned int)m_screen_height)
-      {
+  for(i=0; i<numModes; i++) {
+    if (displayModeList[i].Width == (unsigned int)m_screen_width) {
+      if (displayModeList[i].Height == (unsigned int)m_screen_height) {
         numerator = displayModeList[i].RefreshRate.Numerator;
         denominator = displayModeList[i].RefreshRate.Denominator;
       }
@@ -416,8 +393,7 @@ void Direct3D11_View::Init_D3D11() {
 
   // Get the adapter (video card) description.
   result = adapter->GetDesc(&adapterDesc);
-  if(FAILED(result))
-  {
+  if (FAILED(result)) {
     throw Tunnelour::Exceptions::initialising_error("GetDesc Failed!");
   }
 
@@ -426,8 +402,7 @@ void Direct3D11_View::Init_D3D11() {
 
   // Convert the name of the video card to a character array and store it.
   error = wcstombs_s(&stringLength, m_videoCardDescription, 128, adapterDesc.Description, 128);
-  if(error != 0)
-  {
+  if (error != 0) {
     throw Tunnelour::Exceptions::initialising_error("wcstombs_s Failed!");
   }
 
@@ -461,13 +436,10 @@ void Direct3D11_View::Init_D3D11() {
     swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 
   // Set the refresh rate of the back buffer.
-  if(m_vsync_enabled)
-  {
+  if (m_vsync_enabled) {
       swapChainDesc.BufferDesc.RefreshRate.Numerator = numerator;
     swapChainDesc.BufferDesc.RefreshRate.Denominator = denominator;
-  }
-  else
-  {
+  } else {
       swapChainDesc.BufferDesc.RefreshRate.Numerator = 0;
     swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
   }
@@ -483,12 +455,9 @@ void Direct3D11_View::Init_D3D11() {
     swapChainDesc.SampleDesc.Quality = 0;
 
   // Set to full screen or windowed mode.
-  if(m_is_full_screen)
-  {
+  if (m_is_full_screen) {
     swapChainDesc.Windowed = false;
-  }
-  else
-  {
+  } else {
     swapChainDesc.Windowed = true;
   }
 
@@ -508,22 +477,19 @@ void Direct3D11_View::Init_D3D11() {
   // Create the swap chain, Direct3D device, and Direct3D device context.
   result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &featureLevel, 1, 
                        D3D11_SDK_VERSION, &swapChainDesc, &m_swapChain, &m_device, NULL, &m_deviceContext);
-  if(FAILED(result))
-  {
+  if (FAILED(result)) {
     throw Tunnelour::Exceptions::initialising_error("D3D11CreateDeviceAndSwapChain Failed!");
   }
 
   // Get the pointer to the back buffer.
   result = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBufferPtr);
-  if(FAILED(result))
-  {
+  if (FAILED(result)) {
     throw Tunnelour::Exceptions::initialising_error("GetBuffer Failed!");
   }
 
   // Create the render target view with the back buffer pointer.
   result = m_device->CreateRenderTargetView(backBufferPtr, NULL, &m_renderTargetView);
-  if(FAILED(result))
-  {
+  if (FAILED(result)) {
     throw Tunnelour::Exceptions::initialising_error("CreateRenderTargetView Failed!");
   }
 
@@ -549,8 +515,7 @@ void Direct3D11_View::Init_D3D11() {
 
   // Create the texture for the depth buffer using the filled out description.
   result = m_device->CreateTexture2D(&depthBufferDesc, NULL, &m_depthStencilBuffer);
-  if(FAILED(result))
-  {
+  if (FAILED(result)) {
     throw Tunnelour::Exceptions::initialising_error("CreateTexture2D Failed!");
   }
 
@@ -580,8 +545,7 @@ void Direct3D11_View::Init_D3D11() {
 
   // Create the depth stencil state.
   result = m_device->CreateDepthStencilState(&depthStencilDesc, &m_depthStencilState);
-  if(FAILED(result))
-  {
+  if (FAILED(result)) {
     throw Tunnelour::Exceptions::initialising_error("CreateDepthStencilState Failed!");
   }
 
@@ -598,8 +562,7 @@ void Direct3D11_View::Init_D3D11() {
 
   // Create the depth stencil view.
   result = m_device->CreateDepthStencilView(m_depthStencilBuffer, &depthStencilViewDesc, &m_depthStencilView);
-  if(FAILED(result))
-  {
+  if (FAILED(result)) {
     throw Tunnelour::Exceptions::initialising_error("CreateDepthStencilView Failed!");
   }
 
@@ -620,8 +583,7 @@ void Direct3D11_View::Init_D3D11() {
 
   // Create the rasterizer state from the description we just filled out.
   result = m_device->CreateRasterizerState(&rasterDesc, &m_rasterState);
-  if(FAILED(result))
-  {
+  if (FAILED(result)) {
     throw Tunnelour::Exceptions::initialising_error("CreateRasterizerState Failed!");
   }
 

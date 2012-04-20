@@ -1,4 +1,4 @@
-//  Copyright 2009 Sean MacDonnell
+//  Copyright 2012 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -32,14 +32,14 @@ Mesh_Component::Mesh_Component(): Component() {
 //------------------------------------------------------------------------------
 Mesh_Component::~Mesh_Component() {
  // Release the index buffer.
- if(m_indexbuffer)
+ if (m_indexbuffer)
  {
   m_indexbuffer->Release();
   m_indexbuffer = 0;
  }
 
  // Release the vertex buffer.
- if(m_vertexbuffer)
+ if (m_vertexbuffer)
  {
   m_vertexbuffer->Release();
   m_vertexbuffer = 0;
@@ -63,27 +63,27 @@ void Mesh_Component::Init(ID3D11Device* d3d11device) {
 
  // Create the vertex array.
  vertices = new VertexType[m_vertexCount];
- if(!vertices)
+ if (!vertices)
  {
     throw Tunnelour::Exceptions::initialising_error("Creating the vertex array Failed!");
  }
 
  // Create the index array.
  indices = new unsigned long[m_indexcount];
- if(!indices)
+ if (!indices)
  {
   throw Tunnelour::Exceptions::initialising_error("Creating the index array Failed!");
  }
 
  // Load the vertex array with data.
  vertices[0].position = D3DXVECTOR3(-1.0f, -1.0f, 0.0f);  // Bottom left.
- vertices[0].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
+ vertices[0].color = D3DXVECTOR4(1.0f, 0.0f, 0.0f, 1.0f);
 
  vertices[1].position = D3DXVECTOR3(0.0f, 1.0f, 0.0f);  // Top middle.
  vertices[1].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
 
  vertices[2].position = D3DXVECTOR3(1.0f, -1.0f, 0.0f);  // Bottom right.
- vertices[2].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
+ vertices[2].color = D3DXVECTOR4(0.0f, 0.0f, 1.0f, 1.0f);
 
  // Load the index array with data.
  indices[0] = 0;  // Bottom left.
@@ -105,7 +105,7 @@ void Mesh_Component::Init(ID3D11Device* d3d11device) {
 
  // Now create the vertex buffer.
  result = m_d3d11device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexbuffer);
- if(FAILED(result))
+ if (FAILED(result))
  {
   throw Tunnelour::Exceptions::initialising_error("Creating the vertex buffer Failed!");
  }
@@ -125,7 +125,7 @@ void Mesh_Component::Init(ID3D11Device* d3d11device) {
 
  // Create the index buffer.
  result = m_d3d11device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexbuffer);
- if(FAILED(result))
+ if (FAILED(result))
  {
   throw Tunnelour::Exceptions::initialising_error("Creating the index buffer Failed!");
  }

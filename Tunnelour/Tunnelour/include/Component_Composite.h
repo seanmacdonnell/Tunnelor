@@ -1,4 +1,4 @@
-//  Copyright 2011 Sean MacDonnell
+//  Copyright 2012 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -41,17 +41,17 @@ namespace Tunnelour {
   //---------------------------------------------------------------------------
   // Description : Adds a copy of the provided component into the manager
   //---------------------------------------------------------------------------
-  Tunnelour::Component* Add(Tunnelour::Component *component);
+  Tunnelour::Component * const Add(Tunnelour::Component * const component);
 
   //---------------------------------------------------------------------------
-  // Description : Removes the component with the provided id from the manager
+  // Description : Removes the provided component from the manager
   //---------------------------------------------------------------------------
-  void Remove(Tunnelour::Component *component);
+  void Remove(Tunnelour::Component * const component);
 
   //---------------------------------------------------------------------------
   // Description : Applies the mutator to all the components in this composite
   //---------------------------------------------------------------------------
-  void Apply(Tunnelour::Component::Component_Mutator *mutator);
+  void Apply(Tunnelour::Component::Component_Mutator * const mutator);
 
  protected:
   //---------------------------------------------------------------------------
@@ -60,7 +60,6 @@ namespace Tunnelour {
   std::list<Tunnelour::Component*> m_components;
 
  private:
-
 };
 }
 #endif  // TUNNELOUR_COMPONENT_COMPOSITE_H_

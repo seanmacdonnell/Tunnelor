@@ -1,4 +1,4 @@
-//  Copyright 2011 Sean MacDonnell
+//  Copyright 2012 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
 //
 
 #include "Component.h"
-
 #include "Component_ID.h"
 
 namespace Tunnelour {

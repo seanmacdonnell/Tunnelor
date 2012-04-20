@@ -1,4 +1,4 @@
-//  Copyright 2011 Sean MacDonnell
+//  Copyright 2012 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ Component_Composite::Component_Composite() {
 
 //------------------------------------------------------------------------------
 Component_Composite::~Component_Composite() {
-  while(!m_components.empty()) {
+  while (!m_components.empty()) {
     delete m_components.front();
     m_components.pop_back();
   }
@@ -36,21 +36,19 @@ void Component_Composite::Init() {
 }
 
 //------------------------------------------------------------------------------
-Tunnelour::Component* Component_Composite::Add(Tunnelour::Component *component) {
+Tunnelour::Component * const Component_Composite::Add(Tunnelour::Component * const component) {
   m_components.push_back(component);
   return m_components.back();
 }
 
 //------------------------------------------------------------------------------
-void Component_Composite::Remove(Tunnelour::Component *component) {
+void Component_Composite::Remove(Tunnelour::Component * const component) {
   m_components.remove(component);
   delete component;
 }
 
 //------------------------------------------------------------------------------
-void Component_Composite::Apply(Tunnelour::Component::Component_Mutator *mutator) {
-  // This is unusual, why am I applying the component to the mutator?
-  // Maybe hard to read.
+void Component_Composite::Apply(Tunnelour::Component::Component_Mutator * const mutator) {
   for each ( Tunnelour::Component* component in m_components ) {
     mutator->Mutate(component);
   }

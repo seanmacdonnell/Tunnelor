@@ -21,100 +21,101 @@ namespace Tunnelour {
 // public:
 //------------------------------------------------------------------------------
 Camera_Component::Camera_Component() {
-  m_position = new D3DXVECTOR3(0.0f, 0.0f, -10.0f);
-  m_at = new D3DXVECTOR3(0.0f, 0.0f, 1.0f);
-  m_up = new D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-  m_rotation = new D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+  m_position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+  m_at = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+  m_up = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+  m_rotation = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
   m_fov = 0;
 }
 
 //------------------------------------------------------------------------------
 Camera_Component::~Camera_Component() {
-  delete m_position;
-  delete m_at;
-  delete m_up;
-  delete m_rotation;
+  m_position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+  m_at = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+  m_up = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+  m_rotation = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
   m_fov = 0;
 }
 
 //------------------------------------------------------------------------------
-D3DXVECTOR3* Camera_Component::GetPosition() const {
+void Camera_Component::Init() {
+  m_position = D3DXVECTOR3(0.0f, 0.0f, -10.0f);
+  m_at = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
+  m_up = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+  m_rotation = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+  m_is_initialised = true;
+}
+
+//------------------------------------------------------------------------------
+D3DXVECTOR3 Camera_Component::GetPosition() {
   return m_position;
 }
 
 //------------------------------------------------------------------------------
-void Camera_Component::SetPosition(const D3DXVECTOR3& position) {
-  *m_position = position;
+void Camera_Component::SetPosition(D3DXVECTOR3 const & position) {
+  m_position = position;
   Notify();
 }
 
 //------------------------------------------------------------------------------
-void Camera_Component::SetPosition(const float x, const float y, const float z) {
-  m_position->x = x;
-  m_position->y = y;
-  m_position->z = z;
+void Camera_Component::SetPosition(float x, float y, float z) {
+  m_position = D3DXVECTOR3(x, y, z);
   Notify();
 }
 
 //------------------------------------------------------------------------------
-D3DXVECTOR3* Camera_Component::GetLookingAtPosition() const {
+D3DXVECTOR3 Camera_Component::GetLookingAtPosition() {
   return m_at;
 }
 
 //------------------------------------------------------------------------------
-void Camera_Component::SetLookingAtPosition(const D3DXVECTOR3& position) {
-  *m_at = position;
-   Notify();
-}
-
-//------------------------------------------------------------------------------
-void Camera_Component::SetLookingAtPosition(const float x, const float y, const float z) {
-  m_at->x = x;
-  m_at->y = y;
-  m_at->z = z;
+void Camera_Component::SetLookingAtPosition(D3DXVECTOR3 const & at) {
+  m_at = at;
   Notify();
 }
 
 //------------------------------------------------------------------------------
-D3DXVECTOR3* Camera_Component::GetUpDirection() const {
+void Camera_Component::SetLookingAtPosition(float x, float y, float z) {
+  m_at = D3DXVECTOR3(x, y, z);
+  Notify();
+}
+
+//------------------------------------------------------------------------------
+D3DXVECTOR3 Camera_Component::GetUpDirection() {
   return m_up;
 }
 
 //------------------------------------------------------------------------------
-void Camera_Component::SetUpDirection(const D3DXVECTOR3& orientation) {
-  *m_up = orientation;
+void Camera_Component::SetUpDirection(D3DXVECTOR3 const & up) {
+  m_up = up;
   Notify();
 }
 
 //------------------------------------------------------------------------------
-void Camera_Component::SetUpDirection(const float x, const float y, const float z) {
-  m_up->x = x;
-  m_up->y = y;
-  m_up->z = z;
+void Camera_Component::SetUpDirection(float x, float y, float z) {
+  m_up = D3DXVECTOR3(x, y, z);
   Notify();
 }
 
 //------------------------------------------------------------------------------
-D3DXVECTOR3* Camera_Component::GetRotationInRadians() const {
+D3DXVECTOR3 Camera_Component::GetRotationInRadians() {
   return m_rotation;
 }
 
 //------------------------------------------------------------------------------
 void Camera_Component::SetRotationInRadians(const D3DXVECTOR3& rotation) {
-  *m_rotation = rotation;
+  m_rotation = rotation;
   Notify();
 }
 
 //------------------------------------------------------------------------------
-void Camera_Component::SetRotationInRadians(const float pitch, const float yaw, const float roll) {
-  m_rotation->x = pitch;
-  m_rotation->y = yaw;
-  m_rotation->z = roll;
-  Notify();
+void Camera_Component::SetRotationInRadians(float pitch, float yaw, float roll) {
+  m_rotation = D3DXVECTOR3(pitch, yaw, roll);
 }
 
 //------------------------------------------------------------------------------
-const float Camera_Component::GetFieldOfViewInRadians() const {
+float Camera_Component::GetFieldOfViewInRadians() {
   return m_fov;
 }
 
@@ -124,4 +125,4 @@ void Camera_Component::SetFieldOfViewInRadians(float radians) {
   Notify();
 }
 
-} // namespace Tunnelour
+}  // namespace Tunnelour
