@@ -36,7 +36,7 @@ class View_Composite {
   //---------------------------------------------------------------------------
   // Description : Initialise this View_Composite
   //---------------------------------------------------------------------------
-  virtual void Init(Tunnelour::Component_Composite* model);
+  virtual void Init(Tunnelour::Component_Composite * const model);
 
   //---------------------------------------------------------------------------
   // Description : Add a View

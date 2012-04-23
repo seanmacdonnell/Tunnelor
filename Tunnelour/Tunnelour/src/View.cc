@@ -31,9 +31,8 @@ View::~View() {
 }
 
 //------------------------------------------------------------------------------
-void View::Init(Tunnelour::Component_Composite *model) {
+void View::Init(Tunnelour::Component_Composite * const model) {
   m_model = model;
-  m_is_initialised = true;
 }
 
 //------------------------------------------------------------------------------

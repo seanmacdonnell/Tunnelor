@@ -34,7 +34,7 @@ class View: public Tunnelour::Component_Composite {
   //---------------------------------------------------------------------------
   // Description : Mutator for this views model
   //---------------------------------------------------------------------------
-  virtual void Init(Tunnelour::Component_Composite *model);
+  virtual void Init(Tunnelour::Component_Composite * const model);
 
   //---------------------------------------------------------------------------
   // Description : View Runner

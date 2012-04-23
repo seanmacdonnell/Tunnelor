@@ -29,8 +29,9 @@ Tunnelour_Controller::~Tunnelour_Controller() {
 }
 
 //------------------------------------------------------------------------------
-void Tunnelour_Controller::Init(Tunnelour::Component_Composite *model) {
-  m_model = model;
+void Tunnelour_Controller::Init(Tunnelour::Component_Composite * const model) {
+  Controller_Composite::Init(model);
+  
   Tunnelour::Controller* controller;
   controller = Add(new Tunnelour::Init_Controller());
   controller->Init(m_model);

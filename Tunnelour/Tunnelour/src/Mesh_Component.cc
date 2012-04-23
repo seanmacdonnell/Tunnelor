@@ -47,7 +47,7 @@ Mesh_Component::~Mesh_Component() {
 }
 
 //------------------------------------------------------------------------------
-void Mesh_Component::Init(ID3D11Device* d3d11device) {
+void Mesh_Component::Init(ID3D11Device * const d3d11device) {
  m_d3d11device = d3d11device;
  VertexType* vertices;
  unsigned long* indices;
@@ -65,14 +65,14 @@ void Mesh_Component::Init(ID3D11Device* d3d11device) {
  vertices = new VertexType[m_vertexCount];
  if (!vertices)
  {
-    throw Tunnelour::Exceptions::initialising_error("Creating the vertex array Failed!");
+    throw Tunnelour::Exceptions::init_error("Creating the vertex array Failed!");
  }
 
  // Create the index array.
  indices = new unsigned long[m_indexcount];
  if (!indices)
  {
-  throw Tunnelour::Exceptions::initialising_error("Creating the index array Failed!");
+  throw Tunnelour::Exceptions::init_error("Creating the index array Failed!");
  }
 
  // Load the vertex array with data.
@@ -107,7 +107,7 @@ void Mesh_Component::Init(ID3D11Device* d3d11device) {
  result = m_d3d11device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexbuffer);
  if (FAILED(result))
  {
-  throw Tunnelour::Exceptions::initialising_error("Creating the vertex buffer Failed!");
+  throw Tunnelour::Exceptions::init_error("Creating the vertex buffer Failed!");
  }
 
  // Set up the description of the static index buffer.
@@ -127,7 +127,7 @@ void Mesh_Component::Init(ID3D11Device* d3d11device) {
  result = m_d3d11device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexbuffer);
  if (FAILED(result))
  {
-  throw Tunnelour::Exceptions::initialising_error("Creating the index buffer Failed!");
+  throw Tunnelour::Exceptions::init_error("Creating the index buffer Failed!");
  }
 
  // Release the arrays now that the vertex and index buffers have been created and loaded.

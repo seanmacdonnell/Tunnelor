@@ -26,7 +26,7 @@ Controller_Composite::Controller_Composite() {
 
 //------------------------------------------------------------------------------
 Controller_Composite::~Controller_Composite() {
-  while(!m_controllers.empty()) {
+  while (!m_controllers.empty()) {
     delete m_controllers.front();
     m_controllers.pop_back();
   }
@@ -37,8 +37,8 @@ void Controller_Composite::Init(Tunnelour::Component_Composite *model) {
   m_model = model;
 }
 
-//---------------------------------------------------------------------------
-Tunnelour::Controller* Controller_Composite::Add(Tunnelour::Controller *controller) {
+//------------------------------------------------------------------------------
+Tunnelour::Controller * const Controller_Composite::Add(Tunnelour::Controller * const controller) {
   m_controllers.push_back(controller);
   return m_controllers.back();
 }
@@ -51,12 +51,12 @@ void Controller_Composite::Remove(Tunnelour::Controller *controller) {
 
 //---------------------------------------------------------------------------
 void Controller_Composite::Run() {
-  //This algorithm was provided by John Barker
-  //Run controllers who are not finished, and remove controllers who are.
+  // This algorithm was provided by John Barker
+  // Run controllers who are not finished, and remove controllers that are.
   std::list<Tunnelour::Controller*>::iterator it;
   for (it = m_controllers.begin(); it != m_controllers.end(); ) {
     if ((*it)->IsFinished()) {
-      it = m_controllers.erase (it);
+      it = m_controllers.erase(it);
     } else {
       (*it++)->Run();
     }

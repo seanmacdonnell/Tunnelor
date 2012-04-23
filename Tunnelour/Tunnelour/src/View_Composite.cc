@@ -35,7 +35,7 @@ View_Composite::~View_Composite() {
 }
 
 //------------------------------------------------------------------------------
-void View_Composite::Init(Tunnelour::Component_Composite* model) {
+void View_Composite::Init(Tunnelour::Component_Composite * const model) {
   if (m_initialized) { return; }
   m_model = model;
   m_initialized = true;
@@ -57,7 +57,7 @@ void View_Composite::Remove(Tunnelour::View *view) {
 void View_Composite::Run() {
   for each ( Tunnelour::View* view in m_views ) {
     if (!view->IsInitialised()) { 
-      throw Tunnelour::Exceptions::uninitialised_error("View is UnInitialised!");
+      throw Tunnelour::Exceptions::uninit_error("View is UnInitialised!");
     } else {
       view->Run();
     }

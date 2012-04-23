@@ -31,7 +31,7 @@ Init_Controller::~Init_Controller() {
 }
 
 //------------------------------------------------------------------------------
-void Init_Controller::Init(Tunnelour::Component_Composite *model) {
+void Init_Controller::Init(Tunnelour::Component_Composite * const model) {
   Tunnelour::Controller::Init(model);
 }
 

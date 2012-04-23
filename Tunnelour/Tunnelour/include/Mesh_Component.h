@@ -51,7 +51,7 @@ class Mesh_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   // Description : Initialise this Component
   //---------------------------------------------------------------------------
-  virtual void Init(ID3D11Device* pD3D10Device);
+  virtual void Init(ID3D11Device * const d3d11device);
 
   //---------------------------------------------------------------------------
   // Description : Accessor for the Vertex Buffer

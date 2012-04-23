@@ -42,15 +42,18 @@ Tunnelour::Component * const Component_Composite::Add(Tunnelour::Component * con
 }
 
 //------------------------------------------------------------------------------
-void Component_Composite::Remove(Tunnelour::Component * const component) {
+void Component_Composite::Remove(Tunnelour::Component * component) {
   m_components.remove(component);
   delete component;
 }
 
 //------------------------------------------------------------------------------
 void Component_Composite::Apply(Tunnelour::Component::Component_Mutator * const mutator) {
-  for each ( Tunnelour::Component* component in m_components ) {
-    mutator->Mutate(component);
+  if (mutator && !m_components.empty()) {
+    std::list<Tunnelour::Component*>::iterator it;
+    for (it = m_components.begin(); it != m_components.end(); ) {
+      (*mutator).Mutate(*it++);
+    }
   }
 }
 

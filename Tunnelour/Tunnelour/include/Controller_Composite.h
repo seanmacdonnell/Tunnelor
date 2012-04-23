@@ -16,9 +16,10 @@
 #ifndef TUNNELOUR_CONTROLLER_COMPOSITE_H_
 #define TUNNELOUR_CONTROLLER_COMPOSITE_H_
 
+#include <list>
+
 #include "Controller.h"
 #include "Component_Composite.h"
-#include <list>
 
 namespace Tunnelour {
 class Controller_Composite {
@@ -36,17 +37,17 @@ class Controller_Composite {
   //---------------------------------------------------------------------------
   // Description : Initialise this Composite Controller
   //---------------------------------------------------------------------------
-  virtual void Init(Tunnelour::Component_Composite* model);
+  virtual void Init(Tunnelour::Component_Composite * const model);
 
   //---------------------------------------------------------------------------
   // Description : Add a Controller
   //---------------------------------------------------------------------------
-  Tunnelour::Controller* Add(Tunnelour::Controller *controller);
+  Tunnelour::Controller * const Add(Tunnelour::Controller * const controller);
 
   //---------------------------------------------------------------------------
   // Description : Remove a Controller
   //---------------------------------------------------------------------------
-  void Remove(Tunnelour::Controller *controller);
+  void Remove(Tunnelour::Controller * controller);
 
   //---------------------------------------------------------------------------
   // Description : Run all Controllers

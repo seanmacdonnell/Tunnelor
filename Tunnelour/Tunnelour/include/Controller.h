@@ -34,7 +34,7 @@ class Controller {
   //---------------------------------------------------------------------------
   // Description : Initialisation function for the Controller
   //---------------------------------------------------------------------------
-  virtual void Init(Tunnelour::Component_Composite *model);
+  virtual void Init(Tunnelour::Component_Composite * const model);
 
   //---------------------------------------------------------------------------
   // Description : Controller Runner

@@ -46,7 +46,7 @@ namespace Tunnelour {
   //---------------------------------------------------------------------------
   // Description : Removes the provided component from the manager
   //---------------------------------------------------------------------------
-  void Remove(Tunnelour::Component * const component);
+  void Remove(Tunnelour::Component * component);
 
   //---------------------------------------------------------------------------
   // Description : Applies the mutator to all the components in this composite

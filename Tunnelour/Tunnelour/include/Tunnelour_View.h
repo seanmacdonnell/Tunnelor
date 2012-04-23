@@ -36,7 +36,7 @@ class Tunnelour_View: public Tunnelour::View_Composite {
   //---------------------------------------------------------------------------
   // Description : Initialisation Function
   //---------------------------------------------------------------------------
-  virtual void Init(Tunnelour::Component_Composite *model);
+  virtual void Init(Tunnelour::Component_Composite * const model);
 
   //---------------------------------------------------------------------------
   // Description : View Runner

@@ -27,30 +27,43 @@
 using namespace std;
 
 namespace Tunnelour {
-class Direct3D11_View_ColorShader
-{
-public:
- struct MatrixBufferType
- {
-  D3DXMATRIX world;
-  D3DXMATRIX view;
-  D3DXMATRIX projection;
- };
-
- Direct3D11_View_ColorShader(ID3D11Device *d3d11device, HWND *hwnd);
- ~Direct3D11_View_ColorShader();
-
- bool Init();
- bool Render(ID3D11DeviceContext*, int, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX);
+class Direct3D11_View_ColorShader {
+ public:
   //---------------------------------------------------------------------------
-  // Description : Returns whether this component has been initalised
+  // Description : Struct for the world, view and projection matrices
+  //---------------------------------------------------------------------------
+  struct MatrixBufferType {
+    D3DXMATRIX world;
+    D3DXMATRIX view;
+    D3DXMATRIX projection;
+  };
+
+  //---------------------------------------------------------------------------
+  // Description : Constructor
+  //---------------------------------------------------------------------------
+  Direct3D11_View_ColorShader();
+
+  //---------------------------------------------------------------------------
+  // Description : Deconstructor
+  //---------------------------------------------------------------------------
+  ~Direct3D11_View_ColorShader();
+
+  //---------------------------------------------------------------------------
+  // Description : Initialises this class.
+  //---------------------------------------------------------------------------
+  void Init(ID3D11Device *d3d11device, HWND *hwnd);
+
+  //---------------------------------------------------------------------------
+  // Description : Renders the world using the provided matricies.
+  //---------------------------------------------------------------------------
+  void Render(ID3D11DeviceContext*, int, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX);
+
+  //---------------------------------------------------------------------------
+  // Description : Returns whether this class has been initalised
   //---------------------------------------------------------------------------
   bool IsInitialised();
 
 private:
- void OutputShaderErrorMessage(ID3D10Blob*, HWND, WCHAR*);
- bool SetShaderParameters(ID3D11DeviceContext*, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX);
- void RenderShader(ID3D11DeviceContext*, int);
 
  HWND *m_hwnd;
  ID3D11Device *m_d3d11device;

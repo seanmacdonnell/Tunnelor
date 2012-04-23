@@ -27,10 +27,11 @@ Controller::Controller() {
 
 //------------------------------------------------------------------------------
 Controller::~Controller() {
+  m_model = 0;
 }
 
 //------------------------------------------------------------------------------
-void Controller::Init(Tunnelour::Component_Composite *model) {
+void Controller::Init(Tunnelour::Component_Composite * const model) {
   m_model = model;
 }
 

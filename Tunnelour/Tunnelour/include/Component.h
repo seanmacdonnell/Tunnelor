@@ -95,7 +95,7 @@ class Component {
   int m_id;
   //---------------------------------------------------------------------------
   // Description : Map of Component_Observers Observing this component
-  //               Is a map because it makes it smoother to delete Observers
+  //               Is a list because it makes it smoother to delete Observers
   //               who want to ignore this component.
   // TODO(Sean) :  Evaluate whether a Map or a List or a Vector is faster for
   //               this.

@@ -32,7 +32,7 @@ Tunnelour_View::~Tunnelour_View() {
 }
 
 //------------------------------------------------------------------------------
-void Tunnelour_View::Init(Tunnelour::Component_Composite *model) {
+void Tunnelour_View::Init(Tunnelour::Component_Composite * const model) {
     if (m_initialized) { return; }
 
     View_Composite::Init(model);

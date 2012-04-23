@@ -58,7 +58,7 @@ void Engine::Init(bool IncludeView, bool IncludeController) {
 //------------------------------------------------------------------------------
 int Engine::Start() {
   if ((!IsControllerInit()) && (!IsViewInit())) {
-    throw Tunnelour::Exceptions::uninitialised_error(
+    throw Tunnelour::Exceptions::uninit_error(
       "You need to initialise the View and/or the Controller!");
   }
 
