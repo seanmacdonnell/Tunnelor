@@ -27,7 +27,7 @@ Component_Composite::Component_Composite() {
 Component_Composite::~Component_Composite() {
   while (!m_components.empty()) {
     delete m_components.front();
-    m_components.pop_back();
+    m_components.pop_front();
   }
 }
 
@@ -36,7 +36,7 @@ void Component_Composite::Init() {
 }
 
 //------------------------------------------------------------------------------
-Tunnelour::Component * const Component_Composite::Add(Tunnelour::Component * const component) {
+Tunnelour::Component * const Component_Composite::Add(Tunnelour::Component * component) {
   m_components.push_back(component);
   return m_components.back();
 }

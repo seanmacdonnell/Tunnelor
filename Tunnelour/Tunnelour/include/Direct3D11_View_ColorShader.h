@@ -24,7 +24,6 @@
 #include <d3dx10math.h>
 #include <d3dx11async.h>
 #include <fstream>
-using namespace std;
 
 namespace Tunnelour {
 class Direct3D11_View_ColorShader {
@@ -56,28 +55,31 @@ class Direct3D11_View_ColorShader {
   //---------------------------------------------------------------------------
   // Description : Renders the world using the provided matricies.
   //---------------------------------------------------------------------------
-  void Render(ID3D11DeviceContext*, int, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX);
+  void Render(ID3D11DeviceContext* devicecontext,
+              int index,
+              D3DXMATRIX world,
+              D3DXMATRIX view,
+              D3DXMATRIX projection);
 
   //---------------------------------------------------------------------------
   // Description : Returns whether this class has been initalised
   //---------------------------------------------------------------------------
   bool IsInitialised();
 
-private:
+ private:
+  HWND *m_hwnd;
+  ID3D11Device *m_d3d11device;
+  ID3D11VertexShader *m_vertexshader;
+  ID3D11PixelShader *m_pixelshader;
+  ID3D11InputLayout *m_layout;
+  ID3D11Buffer *m_matrixbuffer;
 
- HWND *m_hwnd;
- ID3D11Device *m_d3d11device;
- ID3D11VertexShader *m_vertexShader;
- ID3D11PixelShader *m_pixelShader;
- ID3D11InputLayout *m_layout;
- ID3D11Buffer *m_matrixBuffer;
+  wchar_t *m_vertexshaderfile, *m_pixelshaderfile;
 
- wchar_t *m_vertexshaderfile, *m_pixelshaderfile;
   //---------------------------------------------------------------------------
   // Description : Has this component been initialised?
   //---------------------------------------------------------------------------
   bool m_is_initialised;
-
-}; // class Direct3D11_View_ColorShader
-} // namespace Tunnelour
+};  // class Direct3D11_View_ColorShader
+}  // namespace Tunnelour
 #endif  // TUNNELOUR_DIRECT3D11_VIEW_COLORSHADER_H_

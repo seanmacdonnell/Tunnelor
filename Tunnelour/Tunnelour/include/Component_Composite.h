@@ -41,7 +41,7 @@ namespace Tunnelour {
   //---------------------------------------------------------------------------
   // Description : Adds a copy of the provided component into the manager
   //---------------------------------------------------------------------------
-  Tunnelour::Component * const Add(Tunnelour::Component * const component);
+  Tunnelour::Component * const Add(Tunnelour::Component * component);
 
   //---------------------------------------------------------------------------
   // Description : Removes the provided component from the manager

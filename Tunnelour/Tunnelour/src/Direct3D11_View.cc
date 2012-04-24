@@ -39,7 +39,7 @@ Direct3D11_View::Direct3D11_View() {
 
   m_swapChain = NULL;
   m_device = NULL;
-  m_deviceContext = NULL;
+  m_devicecontext = NULL;
   m_renderTargetView = NULL;
   m_depthStencilBuffer = NULL;
   m_depthStencilState = NULL;
@@ -104,9 +104,9 @@ Direct3D11_View::~Direct3D11_View() {
     m_renderTargetView = 0;
     }
 
-    if (m_deviceContext) {
-    m_deviceContext->Release();
-    m_deviceContext = 0;
+    if (m_devicecontext) {
+    m_devicecontext->Release();
+    m_devicecontext = 0;
     }
 
     if (m_device) {
@@ -183,13 +183,13 @@ void Direct3D11_View::Run() {
     m_mesh = mutator->m_mesh_component;
     if (!m_mesh->IsInitialised()) { m_mesh->Init(m_device); }
   }
-  D3DXMATRIX viewMatrix;
+  D3DXMATRIX viewmatrix;
 
   // Clear the back buffer.
-  m_deviceContext->ClearRenderTargetView(m_renderTargetView, m_back_buffer_color);
+  m_devicecontext->ClearRenderTargetView(m_renderTargetView, m_back_buffer_color);
 
   // Clear the depth buffer.
-  m_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+  m_devicecontext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
   D3DXMATRIX rotationMatrix;
   D3DXVECTOR3 rotationVector = m_camera->GetRotationInRadians();
@@ -208,7 +208,7 @@ void Direct3D11_View::Run() {
   LookingAtVector = PosVector + LookingAtVector;
 
   // Finally create the view matrix from the three updated vectors.
-  D3DXMatrixLookAtLH(&viewMatrix, &PosVector, &LookingAtVector, &UpVector);
+  D3DXMatrixLookAtLH(&viewmatrix, &PosVector, &LookingAtVector, &UpVector);
 
   // Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
   // Set vertex buffer stride and offset.
@@ -220,16 +220,16 @@ void Direct3D11_View::Run() {
   indexbuffer = m_mesh->GetIndexBuffer();
 
   // Set the vertex buffer to active in the input assembler so it can be rendered.
-  m_deviceContext->IASetVertexBuffers(0, 1, &vertexbuffer, &stride, &offset);
+  m_devicecontext->IASetVertexBuffers(0, 1, &vertexbuffer, &stride, &offset);
 
     // Set the index buffer to active in the input assembler so it can be rendered.
-  m_deviceContext->IASetIndexBuffer(indexbuffer, DXGI_FORMAT_R32_UINT, 0);
+  m_devicecontext->IASetIndexBuffer(indexbuffer, DXGI_FORMAT_R32_UINT, 0);
 
     // Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
-  m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+  m_devicecontext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
   // Render the model using the color shader.
-  m_color_shader->Render(m_deviceContext, m_mesh->GetIndexCount(), m_worldMatrix, viewMatrix, m_projectionMatrix);
+  m_color_shader->Render(m_devicecontext, m_mesh->GetIndexCount(), m_worldmatrix, viewmatrix, m_projectionmatrix);
   
   // Present the rendered scene to the screen.
   // Present the back buffer to the screen since rendering is complete.
@@ -486,7 +486,7 @@ void Direct3D11_View::Init_D3D11() {
 
   // Create the swap chain, Direct3D device, and Direct3D device context.
   result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &featureLevel, 1,
-                       D3D11_SDK_VERSION, &swapChainDesc, &m_swapChain, &m_device, NULL, &m_deviceContext);
+                       D3D11_SDK_VERSION, &swapChainDesc, &m_swapChain, &m_device, NULL, &m_devicecontext);
   if (FAILED(result)) {
     throw Tunnelour::Exceptions::init_error("D3D11CreateDeviceAndSwapChain Failed!");
   }
@@ -560,7 +560,7 @@ void Direct3D11_View::Init_D3D11() {
   }
 
   // Set the depth stencil state.
-  m_deviceContext->OMSetDepthStencilState(m_depthStencilState, 1);
+  m_devicecontext->OMSetDepthStencilState(m_depthStencilState, 1);
 
   // Initialize the depth stencil view.
   ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
@@ -577,7 +577,7 @@ void Direct3D11_View::Init_D3D11() {
   }
 
   // Bind the render target view and depth stencil buffer to the output render pipeline.
-  m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
+  m_devicecontext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
 
   // Setup the raster description which will determine how and what polygons will be drawn.
   rasterDesc.AntialiasedLineEnable = false;
@@ -598,7 +598,7 @@ void Direct3D11_View::Init_D3D11() {
   }
 
   // Now set the rasterizer state.
-  m_deviceContext->RSSetState(m_rasterState);
+  m_devicecontext->RSSetState(m_rasterState);
 
   // Setup the viewport for rendering.
   viewport.Width = static_cast<float>(m_screen_width);
@@ -609,17 +609,17 @@ void Direct3D11_View::Init_D3D11() {
   viewport.TopLeftY = 0.0f;
 
   // Create the viewport.
-  m_deviceContext->RSSetViewports(1, &viewport);
+  m_devicecontext->RSSetViewports(1, &viewport);
 
   // Setup the projection matrix.
   fieldOfView = static_cast<float>(D3DX_PI) / 4.0f;
   screenAspect = static_cast<float>(m_screen_width) / static_cast<float>(m_screen_height);
 
   // Create the projection matrix for 3D rendering.
-  D3DXMatrixPerspectiveFovLH(&m_projectionMatrix, fieldOfView, screenAspect, m_screen_near, m_screen_depth);
+  D3DXMatrixPerspectiveFovLH(&m_projectionmatrix, fieldOfView, screenAspect, m_screen_near, m_screen_depth);
 
   // Initialize the world matrix to the identity matrix.
-  D3DXMatrixIdentity(&m_worldMatrix);
+  D3DXMatrixIdentity(&m_worldmatrix);
 
   // Create an orthographic projection matrix for 2D rendering.
   D3DXMatrixOrthoLH(&m_orthoMatrix, static_cast<float>(m_screen_width), static_cast<float>(m_screen_height), m_screen_near, m_screen_depth);
