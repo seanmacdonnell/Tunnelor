@@ -90,7 +90,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Controller.cc" />
     <ClCompile Include="src\Direct3D11_View.cc" />
     <ClCompile Include="src\Direct3D11_View_ColorShader.cpp" />
-    <ClCompile Include="src\Direct3D11_View_Init_Mutator.cc" />
+    <ClCompile Include="src\Direct3D11_View_Mutator.cc" />
     <ClCompile Include="src\Engine.cc" />
     <ClCompile Include="src\Init_Controller.cc" />
     <ClCompile Include="src\Mesh_Component.cc" />
@@ -111,7 +111,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Controller.h" />
     <ClInclude Include="include\Direct3D11_View.h" />
     <ClInclude Include="include\Direct3D11_View_ColorShader.h" />
-    <ClInclude Include="include\Direct3D11_View_Init_Mutator.h" />
+    <ClInclude Include="include\Direct3D11_View_Mutator.h" />
     <ClInclude Include="include\Engine.h" />
     <ClInclude Include="include\Exceptions.h" />
     <ClInclude Include="include\Init_Controller.h" />

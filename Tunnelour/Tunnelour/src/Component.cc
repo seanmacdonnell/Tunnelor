@@ -62,7 +62,7 @@ bool Component::IsInitialised() {
 //------------------------------------------------------------------------------
 void Component::Notify() {
   for each( Component_Observer* observer in m_observers ) {
-    observer->HandleEvent(*this);
+    observer->HandleEvent(this);
   }
 }
 

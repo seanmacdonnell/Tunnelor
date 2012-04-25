@@ -16,7 +16,7 @@
 #include "Direct3D11_View.h"
 #include "Message_Wrapper.h"
 #include "Exceptions.h"
-#include "Direct3D11_View_Init_Mutator.h"
+#include "Direct3D11_View_Mutator.h"
 
 namespace Tunnelour {
 
@@ -156,16 +156,19 @@ void Direct3D11_View::Init(Tunnelour::Component_Composite * const model) {
 //------------------------------------------------------------------------------
 void Direct3D11_View::Run() {
   // Get Relevant Components from the model with the Mutator.
-  Tunnelour::Direct3D11_View_Init_Mutator* mutator;
+  Tunnelour::Direct3D11_View_Mutator mutator;
 
-  mutator = new Tunnelour::Direct3D11_View_Init_Mutator();
+  m_model->Apply(&mutator);
 
-  m_model->Apply(mutator);
-  if (mutator->m_found_back_buffer_color)  {
-    m_back_buffer_color[0] = mutator->m_back_buffer_color[0];
-    m_back_buffer_color[1] = mutator->m_back_buffer_color[1];
-    m_back_buffer_color[2] = mutator->m_back_buffer_color[2];
-    m_back_buffer_color[3] = mutator->m_back_buffer_color[3];
+  Tunnelour::Background_Component* m_background;
+
+  if (mutator.FoundBackground())  {
+    m_background = mutator.GetBackground();
+    m_back_buffer_color[0] = m_background->GetRed();
+    m_back_buffer_color[1] = m_background->GetGreen();
+    m_back_buffer_color[2] = m_background->GetBlue();
+    m_back_buffer_color[3] = m_background->GetAlpha();
+
   } else {
     // Default Back Buffer Color is Black
     m_back_buffer_color[0] = 0.0;
@@ -174,13 +177,13 @@ void Direct3D11_View::Run() {
     m_back_buffer_color[3] = 1.0;
   }
 
-  if (mutator->m_found_camera) {
-    m_camera = mutator->m_camera_component;
+  if (mutator.FoundCamera()) {
+    m_camera = mutator.GetCamera();
     if (!m_camera->IsInitialised()) { m_camera->Init(); }
   }
 
-  if (mutator->m_found_mesh) {
-    m_mesh = mutator->m_mesh_component;
+  if (mutator.FoundMesh()) {
+    m_mesh = mutator.GetMesh();
     if (!m_mesh->IsInitialised()) { m_mesh->Init(m_device); }
   }
   D3DXMATRIX viewmatrix;

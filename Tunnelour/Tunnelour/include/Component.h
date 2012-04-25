@@ -29,7 +29,7 @@ class Component {
     //-------------------------------------------------------------------------
     // Description : Mutator function, pass it a component to mutate.
     //-------------------------------------------------------------------------
-    virtual void Mutate(Tunnelour::Component *component) = 0;
+    virtual void Mutate(Tunnelour::Component * const component) = 0;
   };
   //---------------------------------------------------------------------------
   // Description : Inheritable Observer class for this component.
@@ -39,7 +39,7 @@ class Component {
     //-------------------------------------------------------------------------
     // Description : HandleEvent is called when the component changes.
     //-------------------------------------------------------------------------
-    virtual void HandleEvent(const Component& component) = 0;
+    virtual void HandleEvent(Tunnelour::Component * const component) = 0;
   };
 
   //---------------------------------------------------------------------------
