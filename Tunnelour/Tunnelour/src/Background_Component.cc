@@ -21,10 +21,9 @@ namespace Tunnelour {
 // public:
 //------------------------------------------------------------------------------
 Background_Component::Background_Component() {
-  m_alpha = 1.0;
-  m_blue = 1.0;
-  m_green = 1.0;
-  m_red = 1.0;
+  // red, green, blue, alpha
+  // Set to Black as Default
+  m_color = D3DXCOLOR(1.0, 1.0, 1.0, 1.0);
 }
 
 //------------------------------------------------------------------------------
@@ -33,51 +32,21 @@ Background_Component::~Background_Component() {
 
 //------------------------------------------------------------------------------
 void Background_Component::Init() {
-  // Set to Black
-  m_alpha = 1.0;
-  m_blue = 0.0;
-  m_green = 0.0;
-  m_red = 0.0;
 }
 
 //------------------------------------------------------------------------------
-float Background_Component::GetAlpha() {
-  return m_alpha;
+D3DXCOLOR Background_Component::GetColor() {
+  return m_color;
 }
 
 //------------------------------------------------------------------------------
-void Background_Component::SetAlpha(float alpha) {
-  m_alpha = alpha;
+void Background_Component::SetColor(D3DXCOLOR & color) {
+  m_color = color;
 }
 
 //------------------------------------------------------------------------------
-float Background_Component::GetBlue() {
-  return m_blue;
-}
-
-//------------------------------------------------------------------------------
-void Background_Component::SetBlue(float intensity) {
-  m_blue = intensity;
-}
-
-//------------------------------------------------------------------------------
-float Background_Component::GetGreen() {
-  return m_green;
-}
-
-//------------------------------------------------------------------------------
-void Background_Component::SetGreen(float intensity) {
-  m_green = intensity;
-}
-
-//------------------------------------------------------------------------------
-float Background_Component::GetRed() {
-  return m_red;
-}
-
-//------------------------------------------------------------------------------
-void Background_Component::SetRed(float intensity) {
-  m_red = intensity;
+void Background_Component::SetColor(float red, float green, float blue, float alpha) {
+  m_color = D3DXCOLOR(red, green, blue, alpha);
 }
 
 //------------------------------------------------------------------------------

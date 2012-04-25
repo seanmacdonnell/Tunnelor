@@ -16,6 +16,15 @@
 #ifndef TUNNELOUR_BACKGROUND_COMPONENT_H_
 #define TUNNELOUR_BACKGROUND_COMPONENT_H_
 
+//-----------------------------------------------------------------------------
+// NOTE(sean): d3d11 is not required for this class, I am inclduing it as a
+//             tempory fix for a compatibility error of including d3dx10math
+//             before d3d11.
+// TODO(sean): Either replace d3dx10math with a different maths library or fix
+//             the include order dependancy.
+//-----------------------------------------------------------------------------
+#include <d3d11.h>
+#include <d3dx10math.h>
 #include "Component.h"
 
 namespace Tunnelour {
@@ -37,49 +46,20 @@ class Background_Component: public Tunnelour::Component {
   virtual void Init();
 
   //---------------------------------------------------------------------------
-  // Description : Accessor for the Alpha
+  // Description : Accessor for the color
   //---------------------------------------------------------------------------
-  float GetAlpha();
+  D3DXCOLOR GetColor();
 
   //---------------------------------------------------------------------------
-  // Description : Mutator for the Alpha
+  // Description : Mutator for the color
   //---------------------------------------------------------------------------
-  void SetAlpha(float alpha);
-
-  //---------------------------------------------------------------------------
-  // Description : Accessor for the intensity of the color Blue
-  //---------------------------------------------------------------------------
-  float GetBlue();
-
-  //---------------------------------------------------------------------------
-  // Description : Mutator for the intensity of the color Blue
-  //---------------------------------------------------------------------------
-  void SetBlue(float intensity);
-
-  //---------------------------------------------------------------------------
-  // Description : Accessor for the intensity of the color Green
-  //---------------------------------------------------------------------------
-  float GetGreen();
-
-  //---------------------------------------------------------------------------
-  // Description : Mutator for the intensity of the color Green
-  //---------------------------------------------------------------------------
-  void SetGreen(float intensity);
-
-  //---------------------------------------------------------------------------
-  // Description : Accessor for the intensity of the color Red
-  //---------------------------------------------------------------------------
-  float GetRed();
-
-  //---------------------------------------------------------------------------
-  // Description : Mutator for the intensity of the color Red
-  //---------------------------------------------------------------------------
-  void SetRed(float intensity);
+  void SetColor(D3DXCOLOR & color);
+  void SetColor(float red, float green, float blue, float alpha);
 
  protected:
 
  private:
-  float m_alpha, m_blue, m_green, m_red;
+  D3DXCOLOR m_color;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_COMPONENT_H_

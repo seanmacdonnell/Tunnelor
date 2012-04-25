@@ -160,37 +160,31 @@ void Direct3D11_View::Run() {
 
   m_model->Apply(&mutator);
 
-  Tunnelour::Background_Component* m_background;
-
   if (mutator.FoundBackground())  {
     m_background = mutator.GetBackground();
-    m_back_buffer_color[0] = m_background->GetRed();
-    m_back_buffer_color[1] = m_background->GetGreen();
-    m_back_buffer_color[2] = m_background->GetBlue();
-    m_back_buffer_color[3] = m_background->GetAlpha();
-
   } else {
-    // Default Back Buffer Color is Black
-    m_back_buffer_color[0] = 0.0;
-    m_back_buffer_color[1] = 0.0;
-    m_back_buffer_color[2] = 0.0;
-    m_back_buffer_color[3] = 1.0;
+    throw Tunnelour::Exceptions::run_error("Can't find Background component!");
   }
 
   if (mutator.FoundCamera()) {
     m_camera = mutator.GetCamera();
     if (!m_camera->IsInitialised()) { m_camera->Init(); }
+  } else {
+    throw Tunnelour::Exceptions::run_error("Can't find Camera component!");
   }
 
   if (mutator.FoundMesh()) {
     m_mesh = mutator.GetMesh();
     if (!m_mesh->IsInitialised()) { m_mesh->Init(m_device); }
+  } else {
+    throw Tunnelour::Exceptions::run_error("Can't find Mesh component!");
   }
+
   D3DXMATRIX viewmatrix;
 
   // Clear the back buffer.
   m_device_context->ClearRenderTargetView(m_render_target_view,
-                                          m_back_buffer_color);
+                                          m_background->GetColor());
 
   // Clear the depth buffer.
   m_device_context->ClearDepthStencilView(m_depth_stencil_view,

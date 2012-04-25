@@ -40,6 +40,11 @@ class init_error : public std::runtime_error {
   explicit init_error(std::string message) : std::runtime_error(message) { }
 };
 
+class run_error : public std::runtime_error {
+ public:
+  explicit run_error(std::string message) : std::runtime_error(message) { }
+};
+
 }  // namespace Exceptions
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_EXCEPTIONS_H_
