@@ -12,10 +12,6 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
-//-----------------------------------------------------------------------------
-// The code here was copied and pasted and modified from the tutorials at
-// http://rastertek.com/dx11tut02.html
-//-----------------------------------------------------------------------------
 
 #ifndef TUNNELOUR_DIRECT3D11_VIEW_H_
 #define TUNNELOUR_DIRECT3D11_VIEW_H_
@@ -43,6 +39,14 @@
 
 namespace Tunnelour {
 class Direct3D11_View : public Tunnelour::View {
+//-----------------------------------------------------------------------------
+//  Author(s)   : Sean MacDonnell
+//  Description : Direct3D11_View contains all the information
+//                for using rendering a directx 11 environment.
+//                It also contains all the windows window management code.
+//                The code here was copied and pasted and modified from
+//                the tutorials at http://rastertek.com/dx11tut02.html
+//-----------------------------------------------------------------------------
  public:
   //---------------------------------------------------------------------------
   // Description : Constructor

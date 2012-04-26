@@ -19,6 +19,11 @@
 #include "Component_Composite.h"
 
 namespace Tunnelour {
+//-----------------------------------------------------------------------------
+//  Author(s)   : Sean MacDonnell
+//  Description : View is a base type for an object which interprets the
+//                provided Component_Composite (model) into output.
+//-----------------------------------------------------------------------------
 class View: public Tunnelour::Component_Composite {
  public:
   //---------------------------------------------------------------------------
@@ -51,7 +56,6 @@ class View: public Tunnelour::Component_Composite {
   bool m_is_initialised;
 
  private:
-
 };
 }  // namespace Tunnelour
 

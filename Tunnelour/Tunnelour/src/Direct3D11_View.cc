@@ -218,7 +218,7 @@ void Direct3D11_View::Run() {
   // Put the model vertex and index buffers on the graphics pipeline to
   // prepare them for drawing.
   // Set vertex buffer stride and offset.
-  unsigned int stride = sizeof(Tunnelour::Mesh_Component::VertexType);
+  unsigned int stride = sizeof(Tunnelour::Mesh_Component::Vertex_Type);
   unsigned int offset = 0;
   ID3D11Buffer *vertexbuffer, *indexbuffer;
 

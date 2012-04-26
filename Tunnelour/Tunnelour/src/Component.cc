@@ -24,6 +24,7 @@ namespace Tunnelour {
 Component::Component() {
   m_id = Tunnelour::Component_ID::GetInstance()->Next();
   m_is_initialised = false;
+  m_type = "Component";
 }
 
 //------------------------------------------------------------------------------
@@ -51,6 +52,16 @@ void Component::Ignore(Component_Observer* component_observer) {
 //------------------------------------------------------------------------------
 bool Component::IsInitialised() {
   return m_is_initialised;
+}
+
+//------------------------------------------------------------------------------
+std::string const Component::GetType() {
+  return m_type;
+}
+
+//------------------------------------------------------------------------------
+void Component::SetType(std::string const type) {
+  m_type = type;
 }
 
 //------------------------------------------------------------------------------

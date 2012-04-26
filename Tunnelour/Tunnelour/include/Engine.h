@@ -26,6 +26,12 @@
 #include "View_Composite.h"
 
 namespace Tunnelour {
+//-----------------------------------------------------------------------------
+//  Author(s)   : Sean MacDonnell
+//  Description : Engine is the main engine class for this game engine.
+//                It maintains a controller, view and model - and runs
+//                the main game loop.
+//-----------------------------------------------------------------------------
 class Engine {
  public:
   //---------------------------------------------------------------------------
@@ -41,30 +47,8 @@ class Engine {
   //--------------------------------------------------------------------------
   // Description : Initialises this engine
   //--------------------------------------------------------------------------
-  void Init(bool IncludeView, bool IncludeController);
+  void Init(bool include_view, bool include_controller);
 
-  //--------------------------------------------------------------------------
-  // Description : Starts the Tunnelour Game Loop
-  //--------------------------------------------------------------------------
-  int Start();
-
- protected:
-  //--------------------------------------------------------------------------
-  // Description : The Model
-  //--------------------------------------------------------------------------
-  Engine::Component_Composite *m_model;
-
-  //--------------------------------------------------------------------------
-  // Description : The View
-  //--------------------------------------------------------------------------
-  Engine::View_Composite *m_view;
-
-  //--------------------------------------------------------------------------
-  // Description : The Controller
-  //--------------------------------------------------------------------------
-  Engine::Controller_Composite *m_controller;
-
- private:
   //--------------------------------------------------------------------------
   // Description : Accessor for if the Model has been initialised
   //--------------------------------------------------------------------------
@@ -80,6 +64,17 @@ class Engine {
   //--------------------------------------------------------------------------
   bool IsControllerInit();
 
+  //--------------------------------------------------------------------------
+  // Description : Starts the Tunnelour Game Loop
+  //--------------------------------------------------------------------------
+  int Start();
+
+ protected:
+  Engine::Component_Composite *m_model;
+  Engine::View_Composite *m_view;
+  Engine::Controller_Composite *m_controller;
+
+ private:
   //--------------------------------------------------------------------------
   // Description : The game loop, loops untill a WM_QUIT message is recieved.
   //               Or the Quit flag has been set.

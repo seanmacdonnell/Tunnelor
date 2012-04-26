@@ -22,18 +22,17 @@
 
 #include <d3d11.h>
 #include <d3dx10math.h>
-
 #include "Component.h"
 
-#include <vector>
-
-using std::vector;
-
 namespace Tunnelour {
+//-----------------------------------------------------------------------------
+//  Author(s)   : Sean MacDonnell
+//  Description : Mesh_Component is a renderable set of verticies and indicies
+//-----------------------------------------------------------------------------
 class Mesh_Component: public Tunnelour::Component {
  public:
   // Vertex format
-  struct VertexType {
+  struct Vertex_Type {
     D3DXVECTOR3 position;
     D3DXVECTOR4 color;
   };
@@ -56,12 +55,12 @@ class Mesh_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   // Description : Accessor for the Vertex Buffer
   //---------------------------------------------------------------------------
-  ID3D11Buffer* GetVertexBuffer();
+  ID3D11Buffer * const GetVertexBuffer();
 
   //---------------------------------------------------------------------------
   // Description : Accessor for the Index Buffer
   //---------------------------------------------------------------------------
-  ID3D11Buffer* GetIndexBuffer();
+  ID3D11Buffer * const GetIndexBuffer();
 
   //---------------------------------------------------------------------------
   // Description : Accessor for the Index Count
@@ -71,10 +70,9 @@ class Mesh_Component: public Tunnelour::Component {
  protected:
 
  private:
-  ID3D11Device* m_d3d11device;
-  ID3D11Buffer *m_vertexbuffer, *m_indexbuffer;
-  int m_vertexCount, m_indexcount;
-
-}; // class Mesh_Component
-} // namespace Tunnelour
+  ID3D11Device * m_d3d11device;
+  ID3D11Buffer * m_vertexbuffer, * m_indexbuffer;
+  int m_vertex_count, m_index_count;
+};  // class Mesh_Component
+}  // namespace Tunnelour
 #endif  // TUNNELOUR_MESH_COMPONENT_H_

@@ -139,7 +139,7 @@ void Direct3D11_View_ColorShader::Init(ID3D11Device *d3d11device, HWND *hwnd) {
   }
 
   // Create the vertex input layout description.
-  // This setup needs to match the VertexType stucture in the
+  // This setup needs to match the Vertex_Type stucture in the
   // ModelClass and in the shader.
   polygonlayout[0].SemanticName = "POSITION";
   polygonlayout[0].SemanticIndex = 0;

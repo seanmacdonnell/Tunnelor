@@ -21,6 +21,10 @@
 #include "View.h"
 
 namespace Tunnelour {
+//-----------------------------------------------------------------------------
+//  Author(s)   : Sean MacDonnell
+//  Description : View_Composite maintains a list of View objects.
+//-----------------------------------------------------------------------------
 class View_Composite {
  public:
   //---------------------------------------------------------------------------

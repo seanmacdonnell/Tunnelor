@@ -37,7 +37,7 @@ void Tunnelour_View::Init(Tunnelour::Component_Composite * const model) {
 
     View_Composite::Init(model);
 
-    Tunnelour::View* D3D11_view; 
+    Tunnelour::View* D3D11_view;
     D3D11_view = Add(new Tunnelour::Direct3D11_View());
     D3D11_view->Init(model);
 

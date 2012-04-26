@@ -28,9 +28,9 @@ Message_Wrapper::~Message_Wrapper() {
 
 //------------------------------------------------------------------------------
 LRESULT CALLBACK Message_Wrapper::WindowProc(HWND hWnd,
-                                                   UINT message,
-                                                   WPARAM wParam,
-                                                   LPARAM lParam) {
+                                             UINT message,
+                                             WPARAM wParam,
+                                             LPARAM lParam) {
   switch (message) {
     case WM_DESTROY: {
       PostQuitMessage(0);

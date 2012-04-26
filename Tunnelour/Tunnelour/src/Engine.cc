@@ -40,37 +40,21 @@ Engine::~Engine() {
 }
 
 //------------------------------------------------------------------------------
-void Engine::Init(bool IncludeView, bool IncludeController) {
+void Engine::Init(bool include_view, bool include_controller) {
   m_model = new Tunnelour::Component_Composite();
   m_model->Init();
 
-  if (IncludeController) {
+  if (include_controller) {
     m_controller = new Tunnelour::Tunnelour_Controller();
     m_controller->Init(m_model);
   }
 
-  if (IncludeView) {
+  if (include_view) {
     m_view = new Tunnelour::Tunnelour_View();
     m_view->Init(m_model);
   }
 }
 
-//------------------------------------------------------------------------------
-int Engine::Start() {
-  if ((!IsControllerInit()) && (!IsViewInit())) {
-    throw Tunnelour::Exceptions::uninit_error(
-      "You need to initialise the View and/or the Controller!");
-  }
-
-  return Loop();
-}
-
-//------------------------------------------------------------------------------
-// protected:
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-// private:
 //------------------------------------------------------------------------------
 bool Engine::IsModelInit() {
   if (m_model == NULL) { return false; }
@@ -89,6 +73,22 @@ bool Engine::IsControllerInit() {
   return true;
 }
 
+//------------------------------------------------------------------------------
+int Engine::Start() {
+  if ((!IsControllerInit()) && (!IsViewInit())) {
+    throw Tunnelour::Exceptions::uninit_error(
+      "You need to initialise the View and/or the Controller!");
+  }
+
+  return Loop();
+}
+
+//------------------------------------------------------------------------------
+// protected:
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+// private:
 //------------------------------------------------------------------------------
 int Engine::Loop() {
   Tunnelour::Message_Wrapper message_handler;

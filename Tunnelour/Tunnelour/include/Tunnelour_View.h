@@ -21,6 +21,11 @@
 
 
 namespace Tunnelour {
+//-----------------------------------------------------------------------------
+//  Author(s)   : Sean MacDonnell
+//  Description : Tunnelour_View is the specialised view for the
+//                tunnelour game program.
+//-----------------------------------------------------------------------------
 class Tunnelour_View: public Tunnelour::View_Composite {
  public:
   //---------------------------------------------------------------------------

@@ -20,12 +20,13 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 // public:
 //------------------------------------------------------------------------------
-Camera_Component::Camera_Component() {
+Camera_Component::Camera_Component(): Component() {
   m_position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
   m_at = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
   m_up = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
   m_rotation = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
   m_fov = 0;
+  m_type = "Camera_Component";
 }
 
 //------------------------------------------------------------------------------

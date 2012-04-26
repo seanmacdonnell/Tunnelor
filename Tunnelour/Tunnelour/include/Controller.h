@@ -19,6 +19,11 @@
 #include "Component_Composite.h"
 
 namespace Tunnelour {
+//-----------------------------------------------------------------------------
+//  Author(s)   : Sean MacDonnell
+//  Description : Controller is a base type for controllers, they are designed
+//                to read and modify the Composite_Component class (the model)
+//-----------------------------------------------------------------------------
 class Controller {
  public:
   //---------------------------------------------------------------------------

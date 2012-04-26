@@ -22,6 +22,11 @@
 #include "Component_Composite.h"
 
 namespace Tunnelour {
+//-----------------------------------------------------------------------------
+//  Author(s)   : Sean MacDonnell
+//  Description : Controller_Composite contains all the code required to
+//                maintain a list of Controllers.
+//-----------------------------------------------------------------------------
 class Controller_Composite {
  public:
   //---------------------------------------------------------------------------

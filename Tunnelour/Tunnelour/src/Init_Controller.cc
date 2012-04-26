@@ -37,13 +37,16 @@ void Init_Controller::Init(Tunnelour::Component_Composite * const model) {
 
 //------------------------------------------------------------------------------
 void Init_Controller::Run() {
-  Tunnelour::Component *background = m_model->Add(new Tunnelour::Background_Component());
+  Tunnelour::Component *background = 0;
+  background = m_model->Add(new Tunnelour::Background_Component());
   background->Init();
 
-  Tunnelour::Component *camera = m_model->Add(new Tunnelour::Camera_Component());
+  Tunnelour::Component *camera = 0;
+  camera = m_model->Add(new Tunnelour::Camera_Component());
   camera->Init();
 
-  Tunnelour::Component *mesh = m_model->Add(new Tunnelour::Mesh_Component());
+  Tunnelour::Component *mesh = 0;
+  mesh = m_model->Add(new Tunnelour::Mesh_Component());
   mesh->Init();
 
   m_is_finished = true;

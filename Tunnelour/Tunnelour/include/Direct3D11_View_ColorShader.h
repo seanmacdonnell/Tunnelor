@@ -12,10 +12,6 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
-//-----------------------------------------------------------------------------
-// The code here was copied pasted and modified from the tutorials at
-// http://rastertek.com/dx11tut04.html
-//-----------------------------------------------------------------------------
 
 #ifndef TUNNELOUR_DIRECT3D11_VIEW_COLORSHADER_H_
 #define TUNNELOUR_DIRECT3D11_VIEW_COLORSHADER_H_
@@ -26,6 +22,13 @@
 #include <fstream>
 
 namespace Tunnelour {
+//-----------------------------------------------------------------------------
+//  Author(s)   : Sean MacDonnell
+//  Description : Direct3D11_View_ColorShader contains all the information
+//                for using rendering vertex and pixel shaders.
+//                The code here was copied and pasted and modified from
+//                the tutorials at http://rastertek.com/dx11tut02.html
+//-----------------------------------------------------------------------------
 class Direct3D11_View_ColorShader {
  public:
   //---------------------------------------------------------------------------

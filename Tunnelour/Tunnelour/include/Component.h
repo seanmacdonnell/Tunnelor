@@ -17,12 +17,20 @@
 #define TUNNELOUR_COMPONENT_H_
 
 #include <list>
+#include <string>
 
 namespace Tunnelour {
+//-----------------------------------------------------------------------------
+//  Author(s)   : Sean MacDonnell
+//  Description : Component is a base type for storing all the information
+//                about the game world.
+//-----------------------------------------------------------------------------
 class Component {
  public:
   //---------------------------------------------------------------------------
-  // Description : Mutator for this component type
+  // Author(s)   : Sean MacDonnell
+  // Description : Mutator for this component type, a class which modifies
+  //               the component by overloading the Mutate function call.
   //---------------------------------------------------------------------------
   class Component_Mutator {
    public:
@@ -32,6 +40,7 @@ class Component {
     virtual void Mutate(Tunnelour::Component * const component) = 0;
   };
   //---------------------------------------------------------------------------
+  // Author(s)   : Sean MacDonnell
   // Description : Inheritable Observer class for this component.
   //---------------------------------------------------------------------------
   class Component_Observer {
@@ -77,6 +86,16 @@ class Component {
   //---------------------------------------------------------------------------
   bool IsInitialised();
 
+  //---------------------------------------------------------------------------
+  // Description : Accessor for the type of this component
+  //---------------------------------------------------------------------------
+  std::string const GetType();
+
+  //---------------------------------------------------------------------------
+  // Description : Mutator for the type of this component
+  //---------------------------------------------------------------------------
+  void SetType(std::string const type);
+
  protected:
   //---------------------------------------------------------------------------
   // Description : Notify all observers
@@ -87,6 +106,11 @@ class Component {
   // Description : Has this component been initialised?
   //---------------------------------------------------------------------------
   bool m_is_initialised;
+
+  //---------------------------------------------------------------------------
+  // Description : Type of this component as a string.
+  //---------------------------------------------------------------------------
+  std::string m_type;
 
  private:
   //---------------------------------------------------------------------------

@@ -17,6 +17,11 @@
 #define TUNNELOUR_COMPONENT_ID_H_
 
 namespace Tunnelour {
+//-----------------------------------------------------------------------------
+//  Author(s)   : Sean MacDonnell
+//  Description : Component_ID is desgined to provide a unique int indentifier
+//                to every component.
+//-----------------------------------------------------------------------------
 class Component_ID {
  public:
   //---------------------------------------------------------------------------

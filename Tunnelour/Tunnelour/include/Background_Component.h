@@ -28,6 +28,11 @@
 #include "Component.h"
 
 namespace Tunnelour {
+//-----------------------------------------------------------------------------
+//  Author(s)   : Sean MacDonnell
+//  Description : Background_Component contains all the information
+//               for setting the backbuffer of the window.
+//-----------------------------------------------------------------------------
 class Background_Component: public Tunnelour::Component {
  public:
   //---------------------------------------------------------------------------

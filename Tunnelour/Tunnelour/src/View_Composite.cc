@@ -28,7 +28,7 @@ View_Composite::View_Composite() {
 
 //------------------------------------------------------------------------------
 View_Composite::~View_Composite() {
-  while(!m_views.empty()) {
+  while (!m_views.empty()) {
     delete m_views.front();
     m_views.pop_back();
   }
@@ -56,7 +56,7 @@ void View_Composite::Remove(Tunnelour::View *view) {
 //---------------------------------------------------------------------------
 void View_Composite::Run() {
   for each ( Tunnelour::View* view in m_views ) {
-    if (!view->IsInitialised()) { 
+    if (!view->IsInitialised()) {
       throw Tunnelour::Exceptions::uninit_error("View is UnInitialised!");
     } else {
       view->Run();

@@ -21,7 +21,13 @@
 #include <list>
 
 namespace Tunnelour {
-  class Component_Composite: public Component {
+//-----------------------------------------------------------------------------
+//  Author(s)   : Sean MacDonnell
+//  Description : Component_Composite contains all the code required to
+//                maintain a list of components.
+//                This class is a model.
+//-----------------------------------------------------------------------------
+class Component_Composite: public Component {
  public:
   //---------------------------------------------------------------------------
   // Description : Constructor

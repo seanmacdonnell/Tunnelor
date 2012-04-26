@@ -28,6 +28,11 @@
 #include "Component.h"
 
 namespace Tunnelour {
+//-----------------------------------------------------------------------------
+//  Author(s)   : Sean MacDonnell
+//  Description : Camera_Component contains all the information
+//               for using a camera in a 3d environment.
+//-----------------------------------------------------------------------------
 class Camera_Component: public Tunnelour::Component {
  public:
   //---------------------------------------------------------------------------

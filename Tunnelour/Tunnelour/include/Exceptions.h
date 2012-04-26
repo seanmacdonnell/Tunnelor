@@ -25,21 +25,37 @@
 namespace Tunnelour {
 namespace Exceptions {
 
+//-----------------------------------------------------------------------------
+//  Author(s)   : Sean MacDonnell
+//  Description : Exception for when an object has not been initialised
+//-----------------------------------------------------------------------------
 class uninit_error : public std::runtime_error {
  public:
   explicit uninit_error(std::string message) : std::runtime_error(message) { }
 };
 
+//-----------------------------------------------------------------------------
+//  Author(s)   : Sean MacDonnell
+//  Description : Exception for when an object has not been finshed
+//-----------------------------------------------------------------------------
 class unfinished_error : public std::runtime_error {
  public:
   explicit unfinished_error(std::string message) : std::runtime_error(message) { }
 };
 
+//-----------------------------------------------------------------------------
+//  Author(s)   : Sean MacDonnell
+//  Description : Exception for when an object is initialising and fails.
+//-----------------------------------------------------------------------------
 class init_error : public std::runtime_error {
  public:
   explicit init_error(std::string message) : std::runtime_error(message) { }
 };
 
+//-----------------------------------------------------------------------------
+//  Author(s)   : Sean MacDonnell
+//  Description : Exception for when an object throws an excepton in run
+//-----------------------------------------------------------------------------
 class run_error : public std::runtime_error {
  public:
   explicit run_error(std::string message) : std::runtime_error(message) { }

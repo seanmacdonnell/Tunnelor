@@ -20,6 +20,11 @@
 #include "Controller.h"
 
 namespace Tunnelour {
+//-----------------------------------------------------------------------------
+//  Author(s)   : Sean MacDonnell
+//  Description : This controller adds all the components to the model
+//                which are require for an intialised state.
+//-----------------------------------------------------------------------------
 class Init_Controller: public Tunnelour::Controller {
  public:
   //---------------------------------------------------------------------------

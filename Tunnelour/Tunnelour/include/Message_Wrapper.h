@@ -20,6 +20,11 @@
 #include <windowsx.h>
 
 namespace Tunnelour {
+//-----------------------------------------------------------------------------
+//  Author(s)   : Sean MacDonnell
+//  Description : Message_Wrapper wrapps all the windows message handling
+//                API calls into my own function calls.
+//-----------------------------------------------------------------------------
 class Message_Wrapper {
  public:
   //---------------------------------------------------------------------------

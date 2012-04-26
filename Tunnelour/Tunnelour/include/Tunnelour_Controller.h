@@ -20,6 +20,11 @@
 #include "Component_Composite.h"
 
 namespace Tunnelour {
+//-----------------------------------------------------------------------------
+//  Author(s)   : Sean MacDonnell
+//  Description : Tunnelour_Controller is the specialised controller for the
+//                tunnelour game program.
+//-----------------------------------------------------------------------------
 class Tunnelour_Controller: public Tunnelour::Controller_Composite {
  public:
   //---------------------------------------------------------------------------
