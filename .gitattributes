@@ -102,7 +102,6 @@ Tunnelour/Tunnelour/src/Controller.cc -text
 Tunnelour/Tunnelour/src/Controller_Composite.cc -text
 Tunnelour/Tunnelour/src/Direct3D11_View.cc -text
 Tunnelour/Tunnelour/src/Direct3D11_View_ColorShader.cpp -text
-Tunnelour/Tunnelour/src/Direct3D11_View_Init_Mutator.cc -text
 Tunnelour/Tunnelour/src/Direct3D11_View_Mutator.cc -text
 Tunnelour/Tunnelour/src/Engine.cc -text
 Tunnelour/Tunnelour/src/Init_Controller.cc -text

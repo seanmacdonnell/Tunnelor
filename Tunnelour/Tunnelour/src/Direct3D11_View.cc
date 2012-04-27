@@ -504,8 +504,11 @@ void Direct3D11_View::Init_D3D11() {
   // Don't set the advanced flags.
   swap_chain_desc.Flags = 0;
 
-  // Set the feature level to DirectX 11.
-  feature_level = D3D_FEATURE_LEVEL_10_0;
+  // find the feature level.
+  if(FAILED(D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, NULL, 0,
+                         D3D11_SDK_VERSION, NULL, &feature_level, NULL ))) {
+      throw Tunnelour::Exceptions::init_error("Finding Feature Level Failed!");
+  }
 
   // Create the Swap Chain, Direct3D device, and Direct3D device context.
   if (FAILED(D3D11CreateDeviceAndSwapChain(NULL,

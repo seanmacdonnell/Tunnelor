@@ -78,12 +78,20 @@ void Direct3D11_View_ColorShader::Init(ID3D11Device *d3d11device, HWND *hwnd) {
   unsigned int numberofelements;
   D3D11_BUFFER_DESC matrixbufferdescription;
 
+  LPCSTR pProfile;
+  if (d3d11device->GetFeatureLevel() == D3D_FEATURE_LEVEL_11_0) {
+    pProfile = "vs_5_0";
+  } 
+  else if (d3d11device->GetFeatureLevel() == D3D_FEATURE_LEVEL_10_0) {
+    pProfile = "vs_4_0";
+  }
+
   // Compile the vertex shader code.
   if (FAILED(D3DX11CompileFromFile(m_vertexshaderfile,
                                    NULL,
                                    NULL,
                                    "ColorVertexShader",
-                                   "vs_4_0",
+                                   pProfile,
                                    D3D10_SHADER_ENABLE_STRICTNESS,
                                    0,
                                    NULL,
@@ -108,12 +116,19 @@ void Direct3D11_View_ColorShader::Init(ID3D11Device *d3d11device, HWND *hwnd) {
     throw Tunnelour::Exceptions::init_error("CreateVertexShader Failed!");
   }
 
+  if (d3d11device->GetFeatureLevel() == D3D_FEATURE_LEVEL_11_0) {
+    pProfile = "ps_5_0";
+  } 
+  else if (d3d11device->GetFeatureLevel() == D3D_FEATURE_LEVEL_10_0) {
+    pProfile = "ps_4_0";
+  }
+
   // Compile the pixel shader code.
   if (FAILED(D3DX11CompileFromFile(m_pixelshaderfile,
                                    NULL,
                                    NULL,
                                    "ColorPixelShader",
-                                   "ps_4_0",
+                                   pProfile,
                                    D3D10_SHADER_ENABLE_STRICTNESS,
                                    0,
                                    NULL,
