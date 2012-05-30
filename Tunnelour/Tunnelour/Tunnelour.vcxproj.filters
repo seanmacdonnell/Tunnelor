@@ -66,10 +66,16 @@
     <ClCompile Include="src\Mesh_Component.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Direct3D11_View_ColorShader.cpp">
+    <ClCompile Include="src\Direct3D11_View_Mutator.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Direct3D11_View_Mutator.cc">
+    <ClCompile Include="src\Direct3D11_View_ColorShader.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Direct3D11_View_TextureShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Bitmap_Component.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -134,12 +140,24 @@
     <ClInclude Include="include\Direct3D11_View_Mutator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Direct3D11_View_TextureShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Bitmap_Component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resource\Direct3D11_View_ColorShader.vs">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="resource\Direct3D11_View_ColorShader.ps">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resource\Direct3D11_View_TexturePixelShader.ps">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resource\Direct3D11_View_TextureVertexShader.vs">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

@@ -33,9 +33,9 @@
 #include "View.h"
 #include "Background_Component.h"
 #include "Component.h"
-#include "Direct3D11_View_ColorShader.h"
+#include "Direct3D11_View_TextureShader.h"
 #include "Camera_Component.h"
-#include "Mesh_Component.h"
+#include "Bitmap_Component.h"
 
 namespace Tunnelour {
 class Direct3D11_View : public Tunnelour::View {
@@ -68,6 +68,16 @@ class Direct3D11_View : public Tunnelour::View {
   //---------------------------------------------------------------------------
   virtual void Run();
 
+  //---------------------------------------------------------------------------
+  // Description : View Runner
+  //---------------------------------------------------------------------------
+  void TurnZBufferOn();
+
+  //---------------------------------------------------------------------------
+  // Description : View Runner
+  //---------------------------------------------------------------------------
+  void TurnZBufferOff();
+
  protected:
 
  private:
@@ -98,14 +108,14 @@ class Direct3D11_View : public Tunnelour::View {
   ID3D11DepthStencilState * m_depth_stencil_state;
   ID3D11DepthStencilView * m_depth_stencil_view;
   ID3D11RasterizerState * m_raster_state;
-  D3DXMATRIX m_projection;
+  ID3D11DepthStencilState * m_depthDisabledStencilState;
   D3DXMATRIX m_world;
   D3DXMATRIX m_ortho;
 
   Tunnelour::Camera_Component * m_camera;
-  Tunnelour::Mesh_Component * m_mesh;
+  Tunnelour::Bitmap_Component * m_bitmap;
   Tunnelour::Background_Component * m_background;
-  Tunnelour::Direct3D11_View_ColorShader * m_color_shader;
+  Tunnelour::Direct3D11_View_TextureShader * m_texture_shader;
 };
 }  // namespace Tunnelour
 

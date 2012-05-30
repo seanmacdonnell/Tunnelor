@@ -17,6 +17,7 @@
 #include "Background_Component.h"
 #include "Camera_Component.h"
 #include "Mesh_Component.h"
+#include "Bitmap_Component.h"
 
 namespace Tunnelour {
 
@@ -37,6 +38,9 @@ void Init_Controller::Init(Tunnelour::Component_Composite * const model) {
 
 //------------------------------------------------------------------------------
 void Init_Controller::Run() {
+  // DO NOT DELETE THESE. I AM PASSING CONTROL TO THE MODEL FOR THESE.
+  // IT SHOULD DO ALL THE CLEANUP AND DELETION.
+
   Tunnelour::Component *background = 0;
   background = m_model->Add(new Tunnelour::Background_Component());
   background->Init();
@@ -45,9 +49,13 @@ void Init_Controller::Run() {
   camera = m_model->Add(new Tunnelour::Camera_Component());
   camera->Init();
 
-  Tunnelour::Component *mesh = 0;
-  mesh = m_model->Add(new Tunnelour::Mesh_Component());
-  mesh->Init();
+  //Tunnelour::Component *mesh = 0;
+  //mesh = m_model->Add(new Tunnelour::Mesh_Component());
+  //mesh->Init();
+
+  Tunnelour::Component *bitmap = 0;
+  bitmap = m_model->Add(new Tunnelour::Bitmap_Component());
+  bitmap->Init();
 
   m_is_finished = true;
 }

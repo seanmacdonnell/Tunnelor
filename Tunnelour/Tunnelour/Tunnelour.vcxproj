@@ -89,12 +89,14 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Controller_Composite.cc" />
     <ClCompile Include="src\Controller.cc" />
     <ClCompile Include="src\Direct3D11_View.cc" />
-    <ClCompile Include="src\Direct3D11_View_ColorShader.cpp" />
+    <ClCompile Include="src\Direct3D11_View_ColorShader.cc" />
     <ClCompile Include="src\Direct3D11_View_Mutator.cc" />
+    <ClCompile Include="src\Direct3D11_View_TextureShader.cpp" />
     <ClCompile Include="src\Engine.cc" />
     <ClCompile Include="src\Init_Controller.cc" />
     <ClCompile Include="src\Mesh_Component.cc" />
     <ClCompile Include="src\Message_Wrapper.cc" />
+    <ClCompile Include="src\Bitmap_Component.cc" />
     <ClCompile Include="src\Tunnelour_Controller.cc" />
     <ClCompile Include="src\Tunnelour_Launcher.cc" />
     <ClCompile Include="src\Tunnelour_View.cc" />
@@ -112,11 +114,13 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Direct3D11_View.h" />
     <ClInclude Include="include\Direct3D11_View_ColorShader.h" />
     <ClInclude Include="include\Direct3D11_View_Mutator.h" />
+    <ClInclude Include="include\Direct3D11_View_TextureShader.h" />
     <ClInclude Include="include\Engine.h" />
     <ClInclude Include="include\Exceptions.h" />
     <ClInclude Include="include\Init_Controller.h" />
     <ClInclude Include="include\Mesh_Component.h" />
     <ClInclude Include="include\Message_Wrapper.h" />
+    <ClInclude Include="include\Bitmap_Component.h" />
     <ClInclude Include="include\Tunnelour_Controller.h" />
     <ClInclude Include="include\Tunnelour_Launcher.h" />
     <ClInclude Include="include\Tunnelour_View.h" />
@@ -130,6 +134,8 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <None Include="resource\Direct3D11_View_ColorShader.vs">
       <FileType>Document</FileType>
     </None>
+    <None Include="resource\Direct3D11_View_TexturePixelShader.ps" />
+    <None Include="resource\Direct3D11_View_TextureVertexShader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

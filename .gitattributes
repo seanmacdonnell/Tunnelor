@@ -72,6 +72,7 @@ Tunnelour/Tunnelour/bin/Debug/rc.write.1.tlog -text
 Tunnelour/Tunnelour/bin/Debug/vc100.idb -text
 Tunnelour/Tunnelour/bin/Debug/vc100.pdb -text
 Tunnelour/Tunnelour/include/Background_Component.h -text
+Tunnelour/Tunnelour/include/Bitmap_Component.h -text
 Tunnelour/Tunnelour/include/Camera_Component.h -text
 Tunnelour/Tunnelour/include/Component.h -text
 Tunnelour/Tunnelour/include/Component_Composite.h -text
@@ -81,6 +82,7 @@ Tunnelour/Tunnelour/include/Controller_Composite.h -text
 Tunnelour/Tunnelour/include/Direct3D11_View.h -text
 Tunnelour/Tunnelour/include/Direct3D11_View_ColorShader.h -text
 Tunnelour/Tunnelour/include/Direct3D11_View_Mutator.h -text
+Tunnelour/Tunnelour/include/Direct3D11_View_TextureShader.h -text
 Tunnelour/Tunnelour/include/Engine.h -text
 Tunnelour/Tunnelour/include/Exceptions.h -text
 Tunnelour/Tunnelour/include/Init_Controller.h -text
@@ -93,7 +95,11 @@ Tunnelour/Tunnelour/include/View.h -text
 Tunnelour/Tunnelour/include/View_Composite.h -text
 Tunnelour/Tunnelour/resource/Direct3D11_View_ColorShader.ps -text
 Tunnelour/Tunnelour/resource/Direct3D11_View_ColorShader.vs -text
+Tunnelour/Tunnelour/resource/Direct3D11_View_TexturePixelShader.ps -text
+Tunnelour/Tunnelour/resource/Direct3D11_View_TextureVertexShader.vs -text
+Tunnelour/Tunnelour/resource/Seafloor_Texture_001.dds -text
 Tunnelour/Tunnelour/src/Background_Component.cc -text
+Tunnelour/Tunnelour/src/Bitmap_Component.cc -text
 Tunnelour/Tunnelour/src/Camera_Component.cc -text
 Tunnelour/Tunnelour/src/Component.cc -text
 Tunnelour/Tunnelour/src/Component_Composite.cc -text
@@ -103,6 +109,7 @@ Tunnelour/Tunnelour/src/Controller_Composite.cc -text
 Tunnelour/Tunnelour/src/Direct3D11_View.cc -text
 Tunnelour/Tunnelour/src/Direct3D11_View_ColorShader.cpp -text
 Tunnelour/Tunnelour/src/Direct3D11_View_Mutator.cc -text
+Tunnelour/Tunnelour/src/Direct3D11_View_TextureShader.cpp -text
 Tunnelour/Tunnelour/src/Engine.cc -text
 Tunnelour/Tunnelour/src/Init_Controller.cc -text
 Tunnelour/Tunnelour/src/Mesh_Component.cc -text

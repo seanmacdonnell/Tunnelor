@@ -27,6 +27,8 @@ Mesh_Component::Mesh_Component(): Component() {
   m_indexbuffer = 0;
   m_vertex_count = 0;
   m_index_count = 0;
+  m_texture = 0;
+  m_texture_name = 0;
   m_type = "Mesh_Component";
 }
 
@@ -43,11 +45,69 @@ Mesh_Component::~Mesh_Component() {
     m_vertexbuffer->Release();
     m_vertexbuffer = 0;
   }
+
+	// Release the texture resource.
+	if(m_texture)	{
+		m_texture->Release();
+		m_texture = 0;
+	}
 }
 
 //------------------------------------------------------------------------------
 void Mesh_Component::Init(ID3D11Device * const d3d11device) {
   m_d3d11device = d3d11device;
+
+  Init_Mesh();
+  Init_Texture();
+
+  m_is_initialised = true;
+}
+
+//------------------------------------------------------------------------------
+ID3D11Buffer * const Mesh_Component::GetVertexBuffer() {
+  return m_vertexbuffer;
+}
+
+//------------------------------------------------------------------------------
+ID3D11Buffer * const Mesh_Component::GetIndexBuffer() {
+  return m_indexbuffer;
+}
+
+//------------------------------------------------------------------------------
+int Mesh_Component::GetIndexCount() {
+  return m_index_count;
+}
+
+//---------------------------------------------------------------------------
+ID3D11ShaderResourceView * const Mesh_Component::GetTexture() {
+  return m_texture;
+}
+
+//---------------------------------------------------------------------------
+void Mesh_Component::SetTexture(ID3D11ShaderResourceView * texture) {
+  m_texture = texture;
+}
+
+//---------------------------------------------------------------------------
+WCHAR * const Mesh_Component::GetTextureName() {
+  return m_texture_name;
+}
+
+//---------------------------------------------------------------------------
+void Mesh_Component::SetTextureName(WCHAR * texture_name) {
+  m_texture_name = texture_name;
+}
+
+
+//------------------------------------------------------------------------------
+// protected:
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+// private:
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+void Mesh_Component::Init_Mesh() {
   Vertex_Type* vertices;
   unsigned long* indices;
   D3D11_BUFFER_DESC vertex_buffer_desc, index_buffer_desc;
@@ -73,13 +133,13 @@ void Mesh_Component::Init(ID3D11Device * const d3d11device) {
 
   // Load the vertex array with data.
   vertices[0].position = D3DXVECTOR3(-1.0f, -1.0f, 0.0f);  // Bottom left.
-  vertices[0].color = D3DXVECTOR4(1.0f, 0.0f, 0.0f, 1.0f);
+  vertices[0].texture  = D3DXVECTOR2(0.0f, 1.0f);
 
   vertices[1].position = D3DXVECTOR3(0.0f, 1.0f, 0.0f);  // Top middle.
-  vertices[1].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
+  vertices[1].texture  = D3DXVECTOR2(0.5f, 0.0f);
 
   vertices[2].position = D3DXVECTOR3(1.0f, -1.0f, 0.0f);  // Bottom right.
-  vertices[2].color = D3DXVECTOR4(0.0f, 0.0f, 1.0f, 1.0f);
+  vertices[2].texture  = D3DXVECTOR2(1.0f, 1.0f);
 
   // Load the index array with data.
   indices[0] = 0;  // Bottom left.
@@ -133,31 +193,23 @@ void Mesh_Component::Init(ID3D11Device * const d3d11device) {
   delete [] indices;
   indices = 0;
 
-  m_is_initialised = true;
 }
 
 //------------------------------------------------------------------------------
-ID3D11Buffer * const Mesh_Component::GetVertexBuffer() {
-  return m_vertexbuffer;
+void Mesh_Component::Init_Texture() {
+  m_texture_name = L"resource/Seafloor_Texture_001.dds";
+
+	// Load the texture in.
+	if(FAILED(D3DX11CreateShaderResourceViewFromFile(m_d3d11device,
+                                                   m_texture_name,
+                                                   NULL,
+                                                   NULL,
+                                                   &m_texture,
+                                                   NULL)))	{
+		throw Tunnelour::Exceptions::init_error("D3DX11CreateShaderResourceViewFromFile Failed!");
+	}
+
+
 }
-
-//------------------------------------------------------------------------------
-ID3D11Buffer * const Mesh_Component::GetIndexBuffer() {
-  return m_indexbuffer;
-}
-
-//------------------------------------------------------------------------------
-int Mesh_Component::GetIndexCount() {
-  return m_index_count;
-}
-
-
-//------------------------------------------------------------------------------
-// protected:
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-// private:
-//------------------------------------------------------------------------------
 
 }  // namespace Tunnelour

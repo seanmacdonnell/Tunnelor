@@ -23,6 +23,7 @@
 #include <d3d11.h>
 #include <d3dx10math.h>
 #include "Component.h"
+#include <d3dx11tex.h>
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -32,10 +33,10 @@ namespace Tunnelour {
 class Mesh_Component: public Tunnelour::Component {
  public:
   // Vertex format
-  struct Vertex_Type {
-    D3DXVECTOR3 position;
-    D3DXVECTOR4 color;
-  };
+	struct Vertex_Type	{
+		D3DXVECTOR3 position;
+		D3DXVECTOR2 texture;
+	};
 
   //---------------------------------------------------------------------------
   // Description : Constructor
@@ -67,12 +68,37 @@ class Mesh_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   int GetIndexCount();
 
+  //---------------------------------------------------------------------------
+  // Description : Accessor for the Texture
+  //---------------------------------------------------------------------------
+  ID3D11ShaderResourceView * const GetTexture();
+
+  //---------------------------------------------------------------------------
+  // Description : Mutator for the Texture
+  //---------------------------------------------------------------------------
+  void SetTexture(ID3D11ShaderResourceView * texture);
+
+  //---------------------------------------------------------------------------
+  // Description : Accessor for the Texture
+  //---------------------------------------------------------------------------
+  WCHAR * const GetTextureName();
+
+  //---------------------------------------------------------------------------
+  // Description : Mutator for the Texture
+  //---------------------------------------------------------------------------
+  void SetTextureName(WCHAR * texture_name);
+
  protected:
 
  private:
   ID3D11Device * m_d3d11device;
   ID3D11Buffer * m_vertexbuffer, * m_indexbuffer;
   int m_vertex_count, m_index_count;
+  ID3D11ShaderResourceView * m_texture;
+  WCHAR * m_texture_name;
+
+  void Init_Mesh();
+  void Init_Texture();
 };  // class Mesh_Component
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_MESH_COMPONENT_H_

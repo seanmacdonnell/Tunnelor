@@ -27,6 +27,8 @@ Direct3D11_View_Mutator::Direct3D11_View_Mutator() {
   m_found_camera = false;
   m_mesh = 0;
   m_found_mesh = false;
+  m_bitmap = 0;
+  m_found_bitmap = false;
 }
 
 //------------------------------------------------------------------------------
@@ -37,6 +39,8 @@ Direct3D11_View_Mutator::~Direct3D11_View_Mutator() {
   m_found_camera = false;
   m_mesh = 0;
   m_found_mesh = false;
+  m_bitmap = 0;
+  m_found_bitmap = false;
 }
 
 //------------------------------------------------------------------------------
@@ -63,6 +67,14 @@ void Direct3D11_View_Mutator::Mutate(Tunnelour::Component * const component) {
     mesh = static_cast<Tunnelour::Mesh_Component*>(component);
     m_mesh = mesh;
     m_found_mesh = true;
+  }
+
+  if (component->GetType().compare("Bitmap_Component") == 0) {
+    // Found Mesh_Component
+    Tunnelour::Bitmap_Component *bitmap = 0;
+    bitmap = static_cast<Tunnelour::Bitmap_Component*>(component);
+    m_bitmap = bitmap;
+    m_found_bitmap = true;
   }
 }
 
@@ -94,6 +106,16 @@ bool Direct3D11_View_Mutator::FoundMesh() {
 //------------------------------------------------------------------------------
 Tunnelour::Mesh_Component * const Direct3D11_View_Mutator::GetMesh() {
   return m_mesh;
+}
+
+//------------------------------------------------------------------------------
+bool Direct3D11_View_Mutator::FoundBitmap() {
+  return m_found_bitmap;
+}
+
+//------------------------------------------------------------------------------
+Tunnelour::Bitmap_Component * const Direct3D11_View_Mutator::GetBitmap() {
+  return m_bitmap;
 }
 
 

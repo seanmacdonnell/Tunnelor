@@ -45,11 +45,11 @@ Direct3D11_View::Direct3D11_View() {
   m_depth_stencil_state = NULL;
   m_depth_stencil_view = NULL;
   m_raster_state = NULL;
-  m_color_shader = NULL;
+  m_texture_shader = NULL;
+  m_depthDisabledStencilState = NULL;
 
   m_camera = NULL;
-  m_mesh = NULL;
-  m_color_shader = NULL;
+  m_texture_shader = NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -76,52 +76,57 @@ Direct3D11_View::~Direct3D11_View() {
     // Before shutting down set to windowed mode or
     // when you release the swap chain it will throw an exception.
     if (m_swap_chain) {
-     m_swap_chain->SetFullscreenState(false, NULL);
+      m_swap_chain->SetFullscreenState(false, NULL);
     }
 
     if (m_raster_state) {
-     m_raster_state->Release();
-     m_raster_state = 0;
+      m_raster_state->Release();
+      m_raster_state = 0;
     }
 
     if (m_depth_stencil_view) {
-    m_depth_stencil_view->Release();
-    m_depth_stencil_view = 0;
+      m_depth_stencil_view->Release();
+      m_depth_stencil_view = 0;
     }
 
     if (m_depth_stencil_state) {
-    m_depth_stencil_state->Release();
-    m_depth_stencil_state = 0;
+      m_depth_stencil_state->Release();
+      m_depth_stencil_state = 0;
     }
 
     if (m_depth_stencil_buffer) {
-    m_depth_stencil_buffer->Release();
-    m_depth_stencil_buffer = 0;
+      m_depth_stencil_buffer->Release();
+      m_depth_stencil_buffer = 0;
     }
 
     if (m_render_target_view) {
-    m_render_target_view->Release();
-    m_render_target_view = 0;
+      m_render_target_view->Release();
+      m_render_target_view = 0;
     }
 
     if (m_device_context) {
-    m_device_context->Release();
-    m_device_context = 0;
+      m_device_context->Release();
+      m_device_context = 0;
     }
 
     if (m_device) {
-    m_device->Release();
-    m_device = 0;
+      m_device->Release();
+      m_device = 0;
     }
 
     if (m_swap_chain) {
-    m_swap_chain->Release();
-    m_swap_chain = 0;
+      m_swap_chain->Release();
+      m_swap_chain = 0;
     }
 
-    if (m_color_shader) {
-      delete m_color_shader;
-      m_color_shader = NULL;
+    if (m_texture_shader) {
+      delete m_texture_shader;
+      m_texture_shader = NULL;
+    }
+
+    if (m_depthDisabledStencilState) {
+      delete m_depthDisabledStencilState;
+      m_depthDisabledStencilState = NULL;
     }
   }
 }
@@ -145,9 +150,9 @@ void Direct3D11_View::Init(Tunnelour::Component_Composite * const model) {
   if (!m_is_initialised) {
     if (!m_is_window_init) { Init_Window(); }
     if (!m_is_d3d11_init) { Init_D3D11(); }
-    if (!m_color_shader) {
-      m_color_shader = new Tunnelour::Direct3D11_View_ColorShader();
-      m_color_shader->Init(m_device, &m_hwnd);
+    if (!m_texture_shader) {
+      m_texture_shader = new Tunnelour::Direct3D11_View_TextureShader();
+      m_texture_shader->Init(m_device, &m_hwnd);
     }
     m_is_initialised = true;
   }
@@ -173,13 +178,14 @@ void Direct3D11_View::Run() {
     throw Tunnelour::Exceptions::run_error("Can't find Camera component!");
   }
 
-  if (mutator.FoundMesh()) {
-    m_mesh = mutator.GetMesh();
-    if (!m_mesh->IsInitialised()) { m_mesh->Init(m_device); }
+  if (mutator.FoundBitmap()) {
+    m_bitmap = mutator.GetBitmap();
+    if (!m_bitmap->IsInitialised()) { m_bitmap->Init(m_device); }
   } else {
-    throw Tunnelour::Exceptions::run_error("Can't find Mesh component!");
+    throw Tunnelour::Exceptions::run_error("Can't find Bitmap component!");
   }
 
+  // <BeginScene>
   D3DXMATRIX viewmatrix;
 
   // Clear the back buffer.
@@ -191,7 +197,8 @@ void Direct3D11_View::Run() {
                                           D3D11_CLEAR_DEPTH,
                                           1.0f,
                                           0);
-
+  // </BeginScene>
+  // <Camera Render>
   D3DXMATRIX rotationMatrix;
   D3DXVECTOR3 rotationVector = m_camera->GetRotationInRadians();
   D3DXVECTOR3 LookingAtVector = m_camera->GetLookingAtPosition();
@@ -215,6 +222,8 @@ void Direct3D11_View::Run() {
   // Finally create the view matrix from the three updated vectors.
   D3DXMatrixLookAtLH(&viewmatrix, &PosVector, &LookingAtVector, &UpVector);
 
+  // </Camera Render>
+
   // Put the model vertex and index buffers on the graphics pipeline to
   // prepare them for drawing.
   // Set vertex buffer stride and offset.
@@ -222,8 +231,8 @@ void Direct3D11_View::Run() {
   unsigned int offset = 0;
   ID3D11Buffer *vertexbuffer, *indexbuffer;
 
-  vertexbuffer = m_mesh->GetVertexBuffer();
-  indexbuffer = m_mesh->GetIndexBuffer();
+  vertexbuffer = m_bitmap->GetFrame()->vertex_buffer;
+  indexbuffer = m_bitmap->GetFrame()->index_buffer;
 
   // Set the vertex buffer to active in the input assembler
   // so it can be rendered.
@@ -238,21 +247,32 @@ void Direct3D11_View::Run() {
   m_device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
   // Render the model using the color shader.
-  m_color_shader->Render(m_device_context,
-                         m_mesh->GetIndexCount(),
-                         m_world,
-                         viewmatrix,
-                         m_projection);
+  m_texture_shader->Render(m_device_context,
+                           m_bitmap->GetFrame()->index_count,
+                           m_world,
+                           viewmatrix,
+                           m_ortho,
+                           m_bitmap->GetTexture()->texture);
 
   // Present the rendered scene to the screen.
   // Present the back buffer to the screen since rendering is complete.
   if (m_vsync_enabled) {
-  // Lock to screen refresh rate.
-  m_swap_chain->Present(1, 0);
+    // Lock to screen refresh rate.
+    m_swap_chain->Present(1, 0);
   } else {
-  // Present as fast as possible.
-  m_swap_chain->Present(0, 0);
+    // Present as fast as possible.
+    m_swap_chain->Present(0, 0);
   }
+}
+
+//------------------------------------------------------------------------------
+void Direct3D11_View::TurnZBufferOn() {
+  m_device_context->OMSetDepthStencilState(m_depth_stencil_state, 1);
+}
+
+//------------------------------------------------------------------------------
+void Direct3D11_View::TurnZBufferOff() {
+  m_device_context->OMSetDepthStencilState(m_depthDisabledStencilState, 1);
 }
 
 //------------------------------------------------------------------------------
@@ -365,6 +385,7 @@ void Direct3D11_View::Init_D3D11() {
   D3D11_RASTERIZER_DESC raster_desc;
   D3D11_VIEWPORT viewport;
   float fieldOfView, screen_aspect;
+  D3D11_DEPTH_STENCIL_DESC depthDisabledStencilDesc;
 
   // Create a DirectX graphics interface factory.
   if (FAILED(CreateDXGIFactory(__uuidof(IDXGIFactory),
@@ -659,13 +680,6 @@ void Direct3D11_View::Init_D3D11() {
   screen_aspect = static_cast<float>(m_screen_width) /
                  static_cast<float>(m_screen_height);
 
-  // Create the projection matrix for 3D rendering.
-  D3DXMatrixPerspectiveFovLH(&m_projection,
-                             fieldOfView,
-                             screen_aspect,
-                             m_screen_near,
-                             m_screen_depth);
-
   // Initialize the world matrix to the identity matrix.
   D3DXMatrixIdentity(&m_world);
 
@@ -675,6 +689,31 @@ void Direct3D11_View::Init_D3D11() {
                     static_cast<float>(m_screen_height),
                     m_screen_near,
                     m_screen_depth);
+
+	// Clear the second depth stencil state before setting the parameters.
+	ZeroMemory(&depthDisabledStencilDesc, sizeof(depthDisabledStencilDesc));
+
+	// Now create a second depth stencil state which turns off the Z buffer for 2D rendering.  The only difference is 
+	// that DepthEnable is set to false, all other parameters are the same as the other depth stencil state.
+	depthDisabledStencilDesc.DepthEnable = false;
+	depthDisabledStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depthDisabledStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	depthDisabledStencilDesc.StencilEnable = true;
+	depthDisabledStencilDesc.StencilReadMask = 0xFF;
+	depthDisabledStencilDesc.StencilWriteMask = 0xFF;
+	depthDisabledStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	depthDisabledStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	depthDisabledStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	depthDisabledStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	// Create the state using the device.
+	if(FAILED(m_device->CreateDepthStencilState(&depthDisabledStencilDesc, &m_depthDisabledStencilState)))	{
+		throw Tunnelour::Exceptions::init_error("CreateDepthStencilState Failed!");
+	}
 
   m_is_d3d11_init = true;
 }

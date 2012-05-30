@@ -1,10 +1,11 @@
-﻿Build started 4/27/2012 9:51:20 AM.
+﻿Build started 5/30/2012 9:28:49 AM.
      1>Project "D:\Sandbox\tunnelour\trunk\Tunnelour\Tunnelour\Tunnelour.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "bin\Debug\Tunnelour.unsuccessfulbuild" because "AlwaysCreate" was specified.
        ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"bin\Debug\\" /Fd"bin\Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt src\Background_Component.cc
-         Background_Component.cc
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"bin\Debug\\" /Fd"bin\Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt src\Bitmap_Component.cc
+         Bitmap_Component.cc
+     1>d:\sandbox\tunnelour\trunk\tunnelour\tunnelour\src\bitmap_component.cc(128): warning C4101: 'result' : unreferenced local variable
        ManifestResourceCompile:
          All outputs are up-to-date.
        Link:
@@ -19,10 +20,12 @@
          bin\Debug\Direct3D11_View.obj
          bin\Debug\Direct3D11_View_ColorShader.obj
          bin\Debug\Direct3D11_View_Mutator.obj
+         bin\Debug\Direct3D11_View_TextureShader.obj
          bin\Debug\Engine.obj
          bin\Debug\Init_Controller.obj
          bin\Debug\Mesh_Component.obj
          bin\Debug\Message_Wrapper.obj
+         bin\Debug\Bitmap_Component.obj
          bin\Debug\Tunnelour_Controller.obj
          bin\Debug\Tunnelour_Launcher.obj
          bin\Debug\Tunnelour_View.obj
@@ -39,7 +42,7 @@
          xcopy /E /I /Q /Y /Z "D:\Sandbox\tunnelour\trunk\Tunnelour\Tunnelour\resource" "D:\Sandbox\tunnelour\trunk\Tunnelour\bin\Debug\resource"
          :VCEnd
          A subdirectory or file D:\Sandbox\tunnelour\trunk\Tunnelour\bin\Debug\resource already exists.
-         2 File(s) copied
+         5 File(s) copied
        FinalizeBuildStatus:
          Deleting file "bin\Debug\Tunnelour.unsuccessfulbuild".
          Touching "bin\Debug\Tunnelour.lastbuildstate".
@@ -47,4 +50,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.79
+Time Elapsed 00:00:01.73

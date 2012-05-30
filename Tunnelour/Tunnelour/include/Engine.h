@@ -12,11 +12,6 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
-//  Author(s)  : Sean MacDonnell
-//  Description: Engine is a base class which combines the Model View and
-//               Controller in a Run loop. Derived classes specialise the
-//               Model View and Controller.
-//
 
 #ifndef TUNNELOUR_ENGINE_H_
 #define TUNNELOUR_ENGINE_H_
