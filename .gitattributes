@@ -26,8 +26,6 @@ Tunnelour/Tunnelour/include/Tunnelour_Launcher.h -text
 Tunnelour/Tunnelour/include/Tunnelour_View.h -text
 Tunnelour/Tunnelour/include/View.h -text
 Tunnelour/Tunnelour/include/View_Composite.h -text
-Tunnelour/Tunnelour/resource/Direct3D11_View_ColorShader.ps -text
-Tunnelour/Tunnelour/resource/Direct3D11_View_ColorShader.vs -text
 Tunnelour/Tunnelour/resource/Direct3D11_View_TexturePixelShader.ps -text
 Tunnelour/Tunnelour/resource/Direct3D11_View_TextureVertexShader.vs -text
 Tunnelour/Tunnelour/resource/Seafloor_Texture_001.dds -text
