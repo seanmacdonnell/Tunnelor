@@ -125,7 +125,6 @@ void Bitmap_Component::Init_Frame() {
   unsigned long* indices;
   D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
   D3D11_SUBRESOURCE_DATA vertexData, indexData;
-  HRESULT result;
 
   // Set the number of vertices in the vertex array.
   m_frame->vertex_count = 6;

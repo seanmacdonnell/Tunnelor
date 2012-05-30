@@ -16,7 +16,6 @@
 #include "Init_Controller.h"
 #include "Background_Component.h"
 #include "Camera_Component.h"
-#include "Mesh_Component.h"
 #include "Bitmap_Component.h"
 
 namespace Tunnelour {

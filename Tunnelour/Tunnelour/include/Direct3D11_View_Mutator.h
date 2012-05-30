@@ -18,7 +18,6 @@
 
 #include "Component.h"
 #include "Camera_Component.h"
-#include "Mesh_Component.h"
 #include "Background_Component.h"
 #include "Bitmap_Component.h"
 
@@ -68,16 +67,6 @@ class Direct3D11_View_Mutator: public Tunnelour::Component::Component_Mutator  {
   //-------------------------------------------------------------------------
   // Description : Has this component been found in the model?
   //-------------------------------------------------------------------------
-  bool FoundMesh();
-
-  //-------------------------------------------------------------------------
-  // Description : Accessors for Mesh Component
-  //-------------------------------------------------------------------------
-  Tunnelour::Mesh_Component * const GetMesh();
-
-  //-------------------------------------------------------------------------
-  // Description : Has this component been found in the model?
-  //-------------------------------------------------------------------------
   bool FoundBitmap();
 
   //-------------------------------------------------------------------------
@@ -88,7 +77,6 @@ class Direct3D11_View_Mutator: public Tunnelour::Component::Component_Mutator  {
  private:
   bool m_found_background, m_found_camera, m_found_mesh, m_found_bitmap;
   Tunnelour::Camera_Component * m_camera;
-  Tunnelour::Mesh_Component * m_mesh;
   Tunnelour::Background_Component * m_background;
   Tunnelour::Bitmap_Component * m_bitmap;
 };
