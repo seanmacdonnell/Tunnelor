@@ -80,13 +80,11 @@ Tunnelour/Tunnelour/include/Component_ID.h -text
 Tunnelour/Tunnelour/include/Controller.h -text
 Tunnelour/Tunnelour/include/Controller_Composite.h -text
 Tunnelour/Tunnelour/include/Direct3D11_View.h -text
-Tunnelour/Tunnelour/include/Direct3D11_View_ColorShader.h -text
 Tunnelour/Tunnelour/include/Direct3D11_View_Mutator.h -text
 Tunnelour/Tunnelour/include/Direct3D11_View_TextureShader.h -text
 Tunnelour/Tunnelour/include/Engine.h -text
 Tunnelour/Tunnelour/include/Exceptions.h -text
 Tunnelour/Tunnelour/include/Init_Controller.h -text
-Tunnelour/Tunnelour/include/Mesh_Component.h -text
 Tunnelour/Tunnelour/include/Message_Wrapper.h -text
 Tunnelour/Tunnelour/include/Tunnelour_Controller.h -text
 Tunnelour/Tunnelour/include/Tunnelour_Launcher.h -text
