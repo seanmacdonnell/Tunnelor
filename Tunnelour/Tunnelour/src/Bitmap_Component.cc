@@ -53,11 +53,11 @@ Bitmap_Component::~Bitmap_Component() {
     m_frame->vertex_buffer = 0;
   }
 
-	// Release the texture resource.
-	if(m_texture->texture)	{
-		m_texture->texture->Release();
-		m_texture->texture = 0;
-	}
+  // Release the texture resource.
+  if (m_texture->texture)  {
+    m_texture->texture->Release();
+    m_texture->texture = 0;
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -118,11 +118,10 @@ void Bitmap_Component::SetSize(D3DXVECTOR2 * const size) {
 //------------------------------------------------------------------------------
 // private:
 //------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
 void Bitmap_Component::Init_Frame() {
   float left, right, top, bottom;
   Vertex_Type* vertices;
-  unsigned long* indices;
+  unsigned int* indices;
   D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
   D3D11_SUBRESOURCE_DATA vertexData, indexData;
 
@@ -139,7 +138,7 @@ void Bitmap_Component::Init_Frame() {
   }
 
   // Create the index array.
-  indices = new unsigned long[m_frame->index_count];
+  indices = new unsigned int[m_frame->index_count];
   if (!indices) {
     throw Tunnelour::Exceptions::init_error("Creating the index array Failed!");
   }
@@ -148,21 +147,21 @@ void Bitmap_Component::Init_Frame() {
   memset(vertices, 0, (sizeof(Vertex_Type) * m_frame->vertex_count));
 
   // Load the index array with data.
-  for(int i = 0; i < m_frame->index_count; i++)  {
-	  indices[i] = i;
+  for (int i = 0; i < m_frame->index_count; i++)  {
+    indices[i] = i;
   }
 
   // Calculate the screen coordinates of the left side of the bitmap.
-  left = m_position.x - (float)(m_size.x / 2);
+  left = m_position.x - static_cast<float>(m_size.x / 2);
 
   // Calculate the screen coordinates of the right side of the bitmap.
-  right = m_position.x + (float)(m_size.x / 2);
+  right = m_position.x + static_cast<float>(m_size.x / 2);
 
   // Calculate the screen coordinates of the top of the bitmap.
-  top = m_position.y + (float)(m_size.x / 2);
+  top = m_position.y + static_cast<float>(m_size.x / 2);
 
   // Calculate the screen coordinates of the bottom of the bitmap.
-  bottom = m_position.y - (float)(m_size.x / 2);
+  bottom = m_position.y - static_cast<float>(m_size.x / 2);
 
   // Load the vertex array with data.
   // First triangle.
@@ -199,26 +198,30 @@ void Bitmap_Component::Init_Frame() {
   vertexData.SysMemSlicePitch = 0;
 
   // Now create the vertex buffer.
-  if(FAILED(m_d3d11device->CreateBuffer(&vertexBufferDesc, &vertexData, &(m_frame->vertex_buffer)))) {
-	  throw Tunnelour::Exceptions::init_error("CreateBuffer (vertex_buffer) Failed!");
+  if (FAILED(m_d3d11device->CreateBuffer(&vertexBufferDesc,
+                                         &vertexData,
+                                         &(m_frame->vertex_buffer)))) {
+    throw Tunnelour::Exceptions::init_error("CreateBuffer (vertex_buffer) Failed!");
   }
 
   // Set up the description of the static index buffer.
   indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-  indexBufferDesc.ByteWidth = sizeof(unsigned long) * m_frame->index_count;
+  indexBufferDesc.ByteWidth = sizeof(unsigned int) * m_frame->index_count;
   indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
   indexBufferDesc.CPUAccessFlags = 0;
   indexBufferDesc.MiscFlags = 0;
   indexBufferDesc.StructureByteStride = 0;
 
   // Give the subresource structure a pointer to the index data.
-    indexData.pSysMem = indices;
+  indexData.pSysMem = indices;
   indexData.SysMemPitch = 0;
   indexData.SysMemSlicePitch = 0;
 
   // Create the index buffer.
-  if(FAILED(m_d3d11device->CreateBuffer(&indexBufferDesc, &indexData, &(m_frame->index_buffer)))) {
-	  throw Tunnelour::Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
+  if (FAILED(m_d3d11device->CreateBuffer(&indexBufferDesc,
+                                         &indexData,
+                                         &(m_frame->index_buffer)))) {
+    throw Tunnelour::Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
   }
 
   // Release the arrays now that the vertex and index buffers have been created and loaded.
@@ -233,17 +236,14 @@ void Bitmap_Component::Init_Frame() {
 void Bitmap_Component::Init_Texture() {
   m_texture->texture_name = L"resource/Seafloor_Texture_001.dds";
 
-	// Load the texture in.
-	if(FAILED(D3DX11CreateShaderResourceViewFromFile(m_d3d11device,
+  // Load the texture in.
+  if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_d3d11device,
                                                    m_texture->texture_name,
                                                    NULL,
                                                    NULL,
                                                    &m_texture->texture,
-                                                   NULL)))	{
-		throw Tunnelour::Exceptions::init_error("D3DX11CreateShaderResourceViewFromFile Failed!");
-	}
-
-
+                                                   NULL)))  {
+    throw Tunnelour::Exceptions::init_error("D3DX11CreateShaderResourceViewFromFile Failed!");
+  }
 }
-
 }  // namespace Tunnelour

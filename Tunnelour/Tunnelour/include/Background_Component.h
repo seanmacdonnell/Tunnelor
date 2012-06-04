@@ -17,10 +17,10 @@
 #define TUNNELOUR_BACKGROUND_COMPONENT_H_
 
 //-----------------------------------------------------------------------------
-// NOTE(sean): d3d11 is not required for this class, I am inclduing it as a
+// NOTE(Sean): d3d11 is not required for this class, I am inclduing it as a
 //             tempory fix for a compatibility error of including d3dx10math
 //             before d3d11.
-// TODO(sean): Either replace d3dx10math with a different maths library or fix
+// TODO(Sean): Either replace d3dx10math with a different maths library or fix
 //             the include order dependancy.
 //-----------------------------------------------------------------------------
 #include <d3d11.h>
@@ -31,7 +31,7 @@ namespace Tunnelour {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
 //  Description : Background_Component contains all the information
-//               for setting the backbuffer of the window.
+//                for setting the backbuffer of the window.
 //-----------------------------------------------------------------------------
 class Background_Component: public Tunnelour::Component {
  public:
@@ -64,6 +64,9 @@ class Background_Component: public Tunnelour::Component {
  protected:
 
  private:
+  //---------------------------------------------------------------------------
+  // Description : Class variables
+  //---------------------------------------------------------------------------
   D3DXCOLOR m_color;
 };
 }  // namespace Tunnelour

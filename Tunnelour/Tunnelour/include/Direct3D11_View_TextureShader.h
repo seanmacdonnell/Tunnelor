@@ -43,12 +43,12 @@ class Direct3D11_View_TextureShader {
   //---------------------------------------------------------------------------
   // Description : Constructor
   //---------------------------------------------------------------------------
-	Direct3D11_View_TextureShader();
+  Direct3D11_View_TextureShader();
 
   //---------------------------------------------------------------------------
   // Description : Deconstructor
-  //---------------------------------------------------------------------------	
-	~Direct3D11_View_TextureShader();
+  //---------------------------------------------------------------------------
+  ~Direct3D11_View_TextureShader();
 
   //---------------------------------------------------------------------------
   // Description : Initialises this class.
@@ -70,21 +70,26 @@ class Direct3D11_View_TextureShader {
   //---------------------------------------------------------------------------
   bool IsInitialised();
 
-private:
+ private:
+  //---------------------------------------------------------------------------
+  // Description : Has this component been initialised?
+  //---------------------------------------------------------------------------
+  bool m_is_initialised;
+
+  //---------------------------------------------------------------------------
+  // Description : Class Variables
+  //---------------------------------------------------------------------------
   HWND *m_hwnd;
   ID3D11Device *m_d3d11device;
   ID3D11VertexShader *m_vertexshader;
   ID3D11PixelShader *m_pixelshader;
   ID3D11InputLayout *m_layout;
   ID3D11Buffer *m_matrixbuffer;
-	ID3D11SamplerState* m_sampleState;
+  ID3D11SamplerState* m_sampleState;
 
   wchar_t *m_vertexshaderfile, *m_pixelshaderfile;
 
-  //---------------------------------------------------------------------------
-  // Description : Has this component been initialised?
-  //---------------------------------------------------------------------------
-  bool m_is_initialised;
+
 };  // class Direct3D11_View_TextureShader
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_DIRECT3D11_VIEW_COLORSHADER_H_

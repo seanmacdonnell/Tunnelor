@@ -12,31 +12,26 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
-//  Author(s)  : Sean MacDonnell
-//  Description: Bitmap_Component contains all the pertinant mesh information
-//               for a game entity.
-//
 
 #ifndef TUNNELOUR_BITMAP_COMPONENT_H_
 #define TUNNELOUR_BITMAP_COMPONENT_H_
 
 #include <d3d11.h>
 #include <d3dx10math.h>
-#include "Component.h"
 #include <d3dx11tex.h>
+#include "Component.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
-//  Description : Bitmap_Component is a renderable 2D Sprite
+//  Description : Bitmap_Component is a component for a renderable 2D Sprite
 //-----------------------------------------------------------------------------
 class Bitmap_Component: public Tunnelour::Component {
  public:
-  // Vertex format
-	struct Vertex_Type	{
+  struct Vertex_Type  {
     D3DXVECTOR3 position;
     D3DXVECTOR2 texture;
-	};
+  };
 
   struct Frame {
     ID3D11Buffer * vertex_buffer;
@@ -108,14 +103,24 @@ class Bitmap_Component: public Tunnelour::Component {
  protected:
 
  private:
+  //---------------------------------------------------------------------------
+  // Description : Inits this components frame stucture
+  //---------------------------------------------------------------------------
+  void Init_Frame();
+
+  //---------------------------------------------------------------------------
+  // Description : Inits this components texture stucture
+  //---------------------------------------------------------------------------
+  void Init_Texture();
+
+  //---------------------------------------------------------------------------
+  // Description : Class variables
+  //---------------------------------------------------------------------------
   ID3D11Device * m_d3d11device;
   D3DXVECTOR2 m_position;
   D3DXVECTOR2 m_size;
   Frame  * m_frame;
   Texture * m_texture;
-
-  void Init_Frame();
-  void Init_Texture();
 };  // class Bitmap_Component
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BITMAP_COMPONENT_H_

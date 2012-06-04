@@ -38,15 +38,15 @@
 #include "Bitmap_Component.h"
 
 namespace Tunnelour {
-class Direct3D11_View : public Tunnelour::View {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
 //  Description : Direct3D11_View contains all the information
-//                for using rendering a directx 11 environment.
+//                for using rendering a DirectX 11 environment.
 //                It also contains all the windows window management code.
 //                The code here was copied and pasted and modified from
-//                the tutorials at http://rastertek.com/dx11tut02.html
+//                the tutorials at http://rastertek.com/dx11tut011.html
 //-----------------------------------------------------------------------------
+class Direct3D11_View : public Tunnelour::View {
  public:
   //---------------------------------------------------------------------------
   // Description : Constructor
@@ -68,35 +68,32 @@ class Direct3D11_View : public Tunnelour::View {
   //---------------------------------------------------------------------------
   virtual void Run();
 
-  //---------------------------------------------------------------------------
-  // Description : View Runner
-  //---------------------------------------------------------------------------
-  void TurnZBufferOn();
-
-  //---------------------------------------------------------------------------
-  // Description : View Runner
-  //---------------------------------------------------------------------------
-  void TurnZBufferOff();
-
  protected:
 
  private:
+  //---------------------------------------------------------------------------
+  // Description : Initialise the window
+  //---------------------------------------------------------------------------
+  void Init_Window();
+
+  //---------------------------------------------------------------------------
+  // Description : Initialise Direct3D11
+  //---------------------------------------------------------------------------
+  void Init_D3D11();
+
+  //---------------------------------------------------------------------------
+  // Description : Class Variables
+  //---------------------------------------------------------------------------
   LPCWSTR m_application_name;
   HINSTANCE m_hinstance;
   HWND m_hwnd;
   int m_screen_width;
   int m_screen_height;
-
   bool m_is_window_init;
   bool m_is_d3d11_init;
   bool m_is_full_screen;
-
   float m_screen_depth;
   float m_screen_near;
-
-  void Init_Window();
-  void Init_D3D11();
-
   bool m_vsync_enabled;
   int m_videoCardMemory;
   char m_video_card_description[128];
@@ -111,7 +108,6 @@ class Direct3D11_View : public Tunnelour::View {
   ID3D11DepthStencilState * m_depthDisabledStencilState;
   D3DXMATRIX m_world;
   D3DXMATRIX m_ortho;
-
   Tunnelour::Camera_Component * m_camera;
   Tunnelour::Bitmap_Component * m_bitmap;
   Tunnelour::Background_Component * m_background;

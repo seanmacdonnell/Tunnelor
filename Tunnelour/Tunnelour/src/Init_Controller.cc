@@ -48,10 +48,6 @@ void Init_Controller::Run() {
   camera = m_model->Add(new Tunnelour::Camera_Component());
   camera->Init();
 
-  //Tunnelour::Component *mesh = 0;
-  //mesh = m_model->Add(new Tunnelour::Mesh_Component());
-  //mesh->Init();
-
   Tunnelour::Component *bitmap = 0;
   bitmap = m_model->Add(new Tunnelour::Bitmap_Component());
   bitmap->Init();

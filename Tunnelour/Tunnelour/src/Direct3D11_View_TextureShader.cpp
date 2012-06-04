@@ -12,10 +12,6 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
-//-----------------------------------------------------------------------------
-// The code here was copied pasted and modified from the tutorials at
-// http://rastertek.com/dx11tut05.html
-//-----------------------------------------------------------------------------
 
 #include "Direct3D11_View_TextureShader.h"
 #include "Exceptions.h"
@@ -31,7 +27,7 @@ Direct3D11_View_TextureShader::Direct3D11_View_TextureShader() {
   m_pixelshader = 0;
   m_layout = 0;
   m_matrixbuffer = 0;
-	m_sampleState = 0;
+  m_sampleState = 0;
   m_vertexshaderfile = L"resource/Direct3D11_View_TextureVertexShader.vs";
   m_pixelshaderfile  = L"resource/Direct3D11_View_TexturePixelShader.ps";
   m_is_initialised = false;
@@ -42,11 +38,11 @@ Direct3D11_View_TextureShader::~Direct3D11_View_TextureShader() {
   m_hwnd = 0;
   m_d3d11device = 0;
 
-	// Release the sampler state.
-	if(m_sampleState)	{
-		m_sampleState->Release();
-		m_sampleState = 0;
-	}
+  // Release the sampler state.
+  if (m_sampleState)  {
+    m_sampleState->Release();
+    m_sampleState = 0;
+  }
 
   // Release the matrix constant buffer.
   if (m_matrixbuffer) {
@@ -90,11 +86,10 @@ void Direct3D11_View_TextureShader::Init(ID3D11Device *d3d11device, HWND *hwnd) 
   LPCSTR pProfile;
   if (d3d11device->GetFeatureLevel() == D3D_FEATURE_LEVEL_11_0) {
     pProfile = "vs_5_0";
-  } 
-  else if (d3d11device->GetFeatureLevel() == D3D_FEATURE_LEVEL_10_0) {
+  } else if (d3d11device->GetFeatureLevel() == D3D_FEATURE_LEVEL_10_0) {
     pProfile = "vs_4_0";
   }
-  
+
   // Compile the vertex shader code.
   if (FAILED(D3DX11CompileFromFile(m_vertexshaderfile,
                                    NULL,
@@ -127,8 +122,7 @@ void Direct3D11_View_TextureShader::Init(ID3D11Device *d3d11device, HWND *hwnd) 
 
   if (d3d11device->GetFeatureLevel() == D3D_FEATURE_LEVEL_11_0) {
     pProfile = "ps_5_0";
-  } 
-  else if (d3d11device->GetFeatureLevel() == D3D_FEATURE_LEVEL_10_0) {
+  } else if (d3d11device->GetFeatureLevel() == D3D_FEATURE_LEVEL_10_0) {
     pProfile = "ps_4_0";
   }
 
@@ -166,21 +160,21 @@ void Direct3D11_View_TextureShader::Init(ID3D11Device *d3d11device, HWND *hwnd) 
   // Create the vertex input layout description.
   // This setup needs to match the Vertex_Type stucture in the
   // ModelClass and in the shader.
-	polygonlayout[0].SemanticName = "POSITION";
-	polygonlayout[0].SemanticIndex = 0;
-	polygonlayout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-	polygonlayout[0].InputSlot = 0;
-	polygonlayout[0].AlignedByteOffset = 0;
-	polygonlayout[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-	polygonlayout[0].InstanceDataStepRate = 0;
+  polygonlayout[0].SemanticName = "POSITION";
+  polygonlayout[0].SemanticIndex = 0;
+  polygonlayout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+  polygonlayout[0].InputSlot = 0;
+  polygonlayout[0].AlignedByteOffset = 0;
+  polygonlayout[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+  polygonlayout[0].InstanceDataStepRate = 0;
 
-	polygonlayout[1].SemanticName = "TEXCOORD";
-	polygonlayout[1].SemanticIndex = 0;
-	polygonlayout[1].Format = DXGI_FORMAT_R32G32_FLOAT;
-	polygonlayout[1].InputSlot = 0;
-	polygonlayout[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-	polygonlayout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-	polygonlayout[1].InstanceDataStepRate = 0;
+  polygonlayout[1].SemanticName = "TEXCOORD";
+  polygonlayout[1].SemanticIndex = 0;
+  polygonlayout[1].Format = DXGI_FORMAT_R32G32_FLOAT;
+  polygonlayout[1].InputSlot = 0;
+  polygonlayout[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+  polygonlayout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+  polygonlayout[1].InstanceDataStepRate = 0;
 
   // Get a count of the elements in the layout.
   numberofelements = sizeof(polygonlayout) / sizeof(polygonlayout[0]);
@@ -219,7 +213,7 @@ void Direct3D11_View_TextureShader::Init(ID3D11Device *d3d11device, HWND *hwnd) 
     throw Tunnelour::Exceptions::init_error("CreateBuffer Failed!");
   }
 
-	// Create a texture sampler state description.
+  // Create a texture sampler state description.
   samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
   samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
   samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -228,9 +222,9 @@ void Direct3D11_View_TextureShader::Init(ID3D11Device *d3d11device, HWND *hwnd) 
   samplerDesc.MaxAnisotropy = 1;
   samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
   samplerDesc.BorderColor[0] = 0;
-	samplerDesc.BorderColor[1] = 0;
-	samplerDesc.BorderColor[2] = 0;
-	samplerDesc.BorderColor[3] = 0;
+  samplerDesc.BorderColor[1] = 0;
+  samplerDesc.BorderColor[2] = 0;
+  samplerDesc.BorderColor[3] = 0;
   samplerDesc.MinLOD = 0;
   samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
@@ -258,7 +252,7 @@ void Direct3D11_View_TextureShader::Render(ID3D11DeviceContext* devicecontext,
   D3DXMatrixTranspose(&view, &view);
   D3DXMatrixTranspose(&projection, &projection);
 
-	// Lock the constant buffer so it can be written to.
+  // Lock the constant buffer so it can be written to.
   if (FAILED(devicecontext->Map(m_matrixbuffer,
                                 0,
                                 D3D11_MAP_WRITE_DISCARD,
@@ -285,22 +279,22 @@ void Direct3D11_View_TextureShader::Render(ID3D11DeviceContext* devicecontext,
   // updated values.
   devicecontext->VSSetConstantBuffers(buffernumber, 1, &m_matrixbuffer);
 
-	// Set shader texture resource in the pixel shader.
-	devicecontext->PSSetShaderResources(0, 1, &texture);
+  // Set shader texture resource in the pixel shader.
+  devicecontext->PSSetShaderResources(0, 1, &texture);
 
-	// Now render the prepared buffers with the shader.
-	// Set the vertex input layout.
-	devicecontext->IASetInputLayout(m_layout);
+  // Now render the prepared buffers with the shader.
+  // Set the vertex input layout.
+  devicecontext->IASetInputLayout(m_layout);
 
   // Set the vertex and pixel shaders that will be used to render this triangle.
   devicecontext->VSSetShader(m_vertexshader, NULL, 0);
   devicecontext->PSSetShader(m_pixelshader, NULL, 0);
 
-	// Set the sampler state in the pixel shader.
-	devicecontext->PSSetSamplers(0, 1, &m_sampleState);
+  // Set the sampler state in the pixel shader.
+  devicecontext->PSSetSamplers(0, 1, &m_sampleState);
 
-	// Render the triangle.
-	devicecontext->DrawIndexed(index, 0, 0);
+  // Render the triangle.
+  devicecontext->DrawIndexed(index, 0, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -315,5 +309,4 @@ bool Direct3D11_View_TextureShader::IsInitialised() {
 //------------------------------------------------------------------------------
 // private:
 //------------------------------------------------------------------------------
-
 }  // namespace Tunnelour

@@ -266,16 +266,6 @@ void Direct3D11_View::Run() {
 }
 
 //------------------------------------------------------------------------------
-void Direct3D11_View::TurnZBufferOn() {
-  m_device_context->OMSetDepthStencilState(m_depth_stencil_state, 1);
-}
-
-//------------------------------------------------------------------------------
-void Direct3D11_View::TurnZBufferOff() {
-  m_device_context->OMSetDepthStencilState(m_depthDisabledStencilState, 1);
-}
-
-//------------------------------------------------------------------------------
 // protected:
 //------------------------------------------------------------------------------
 
@@ -525,9 +515,17 @@ void Direct3D11_View::Init_D3D11() {
   // Don't set the advanced flags.
   swap_chain_desc.Flags = 0;
 
-  // find the feature level.
-  if(FAILED(D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, NULL, 0,
-                         D3D11_SDK_VERSION, NULL, &feature_level, NULL ))) {
+  // find the feature level of the graphics card.
+  if (FAILED(D3D11CreateDevice(NULL,
+                               D3D_DRIVER_TYPE_HARDWARE,
+                               NULL,
+                               0,
+                               NULL,
+                               0,
+                               D3D11_SDK_VERSION,
+                               NULL,
+                               &feature_level,
+                               NULL))) {
       throw Tunnelour::Exceptions::init_error("Finding Feature Level Failed!");
   }
 
@@ -690,30 +688,33 @@ void Direct3D11_View::Init_D3D11() {
                     m_screen_near,
                     m_screen_depth);
 
-	// Clear the second depth stencil state before setting the parameters.
-	ZeroMemory(&depthDisabledStencilDesc, sizeof(depthDisabledStencilDesc));
+  // Clear the second depth stencil state before setting the parameters.
+  ZeroMemory(&depthDisabledStencilDesc, sizeof(depthDisabledStencilDesc));
 
-	// Now create a second depth stencil state which turns off the Z buffer for 2D rendering.  The only difference is 
-	// that DepthEnable is set to false, all other parameters are the same as the other depth stencil state.
-	depthDisabledStencilDesc.DepthEnable = false;
-	depthDisabledStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	depthDisabledStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
-	depthDisabledStencilDesc.StencilEnable = true;
-	depthDisabledStencilDesc.StencilReadMask = 0xFF;
-	depthDisabledStencilDesc.StencilWriteMask = 0xFF;
-	depthDisabledStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	depthDisabledStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-	depthDisabledStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	depthDisabledStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-	depthDisabledStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	depthDisabledStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-	depthDisabledStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	depthDisabledStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+  // Now create a second depth stencil state which turns off the Z buffer for
+  // 2D rendering.  The only difference is
+  // that DepthEnable is set to false, all other parameters are the same as
+  // the other depth stencil state.
+  depthDisabledStencilDesc.DepthEnable = false;
+  depthDisabledStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+  depthDisabledStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+  depthDisabledStencilDesc.StencilEnable = true;
+  depthDisabledStencilDesc.StencilReadMask = 0xFF;
+  depthDisabledStencilDesc.StencilWriteMask = 0xFF;
+  depthDisabledStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+  depthDisabledStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+  depthDisabledStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+  depthDisabledStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+  depthDisabledStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+  depthDisabledStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+  depthDisabledStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+  depthDisabledStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-	// Create the state using the device.
-	if(FAILED(m_device->CreateDepthStencilState(&depthDisabledStencilDesc, &m_depthDisabledStencilState)))	{
-		throw Tunnelour::Exceptions::init_error("CreateDepthStencilState Failed!");
-	}
+  // Create the state using the device.
+  if (FAILED(m_device->CreateDepthStencilState(&depthDisabledStencilDesc,
+                                               &m_depthDisabledStencilState)))  {
+    throw Tunnelour::Exceptions::init_error("CreateDepthStencilState Failed!");
+  }
 
   m_is_d3d11_init = true;
 }
