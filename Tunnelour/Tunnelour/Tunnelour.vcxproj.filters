@@ -72,6 +72,12 @@
     <ClCompile Include="src\Bitmap_Component.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Frame_Component.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SeaFloorSquare.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine.h">
@@ -132,6 +138,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Bitmap_Component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Frame_Component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SeaFloorSquare.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

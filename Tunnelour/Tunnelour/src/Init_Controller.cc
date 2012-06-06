@@ -16,7 +16,7 @@
 #include "Init_Controller.h"
 #include "Background_Component.h"
 #include "Camera_Component.h"
-#include "Bitmap_Component.h"
+#include "SeaFloorSquare.h"
 
 namespace Tunnelour {
 
@@ -49,7 +49,7 @@ void Init_Controller::Run() {
   camera->Init();
 
   Tunnelour::Component *bitmap = 0;
-  bitmap = m_model->Add(new Tunnelour::Bitmap_Component());
+  bitmap = m_model->Add(new Tunnelour::SeaFloorSquare());
   bitmap->Init();
 
   m_is_finished = true;
