@@ -97,6 +97,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Message_Wrapper.cc" />
     <ClCompile Include="src\Bitmap_Component.cc" />
     <ClCompile Include="src\SeaFloorSquare.cc" />
+    <ClCompile Include="src\Text_Component.cc" />
     <ClCompile Include="src\Tunnelour_Controller.cc" />
     <ClCompile Include="src\Tunnelour_Launcher.cc" />
     <ClCompile Include="src\Tunnelour_View.cc" />
@@ -121,6 +122,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Message_Wrapper.h" />
     <ClInclude Include="include\Bitmap_Component.h" />
     <ClInclude Include="include\SeaFloorSquare.h" />
+    <ClInclude Include="include\Text_Component.h" />
     <ClInclude Include="include\Tunnelour_Controller.h" />
     <ClInclude Include="include\Tunnelour_Launcher.h" />
     <ClInclude Include="include\Tunnelour_View.h" />

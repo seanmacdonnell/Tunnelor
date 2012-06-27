@@ -78,6 +78,9 @@
     <ClCompile Include="src\SeaFloorSquare.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Text_Component.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine.h">
@@ -144,6 +147,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\SeaFloorSquare.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Text_Component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
