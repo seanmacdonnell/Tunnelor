@@ -30,7 +30,7 @@ class Bitmap_Component: public Tunnelour::Frame_Component {
  public:
   struct Texture {
     ID3D11ShaderResourceView * texture;
-    WCHAR * texture_name;
+    std::wstring texture_path;
   };
 
   //---------------------------------------------------------------------------

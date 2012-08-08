@@ -29,11 +29,15 @@ Tunnelour/Tunnelour/include/Tunnelour_Launcher.h -text
 Tunnelour/Tunnelour/include/Tunnelour_View.h -text
 Tunnelour/Tunnelour/include/View.h -text
 Tunnelour/Tunnelour/include/View_Composite.h -text
+Tunnelour/Tunnelour/resource/Arial.fnt -text
+Tunnelour/Tunnelour/resource/Arial_0.dds -text
 Tunnelour/Tunnelour/resource/Direct3D11_View_TexturePixelShader.ps -text
 Tunnelour/Tunnelour/resource/Direct3D11_View_TextureVertexShader.vs -text
 Tunnelour/Tunnelour/resource/Khmer_UI.bff -text
 Tunnelour/Tunnelour/resource/Khmer_UI.bmp -text
 Tunnelour/Tunnelour/resource/Khmer_UI.csv -text
+Tunnelour/Tunnelour/resource/Khmer_UI.dds -text
+Tunnelour/Tunnelour/resource/Khmer_UI.fnt -text
 Tunnelour/Tunnelour/resource/Seafloor_Texture_001.dds -text
 Tunnelour/Tunnelour/src/Background_Component.cc -text
 Tunnelour/Tunnelour/src/Bitmap_Component.cc -text

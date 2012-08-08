@@ -32,19 +32,29 @@ class Text_Component: public Tunnelour::Bitmap_Component {
  public:
   struct Text {
     std::string * text;
-    char * font_file;
+    char * font_csv_file;
+  };
+
+  struct Character_Frame {
+    int id;
+    int x;
+    int y;
+    int width;
+    int height;
+    int xoffset;
+    int yoffset;
+    int xadvance;
   };
 
   struct Font {
     int image_width;
     int image_height;
-    int cell_width;
-    int cell_height;
-    int base_character_offset;
+    // This is the distance in pixels between each line of text.
+    int line_height;
     char * font_name;
-    int font_height;
-    int font_width;
-    int * character_widths;
+    std::wstring font_texture_name;
+    int character_widths[256];
+    Character_Frame character_frames[256];
   };
 
   //---------------------------------------------------------------------------
@@ -69,6 +79,8 @@ class Text_Component: public Tunnelour::Bitmap_Component {
   Text * m_text;
   Font * m_font;
  private:
+   wchar_t* CharToWChar(const char* pstrSrc);
+
 };  // class Text_Component
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_TEXT_COMPONENT_H_

@@ -24,7 +24,7 @@ namespace Tunnelour {
 Bitmap_Component::Bitmap_Component(): Frame_Component() {
   m_texture = new Tunnelour::Bitmap_Component::Texture();
   m_texture->texture = 0;
-  m_texture->texture_name = 0;
+  m_texture->texture_path = L"";
   m_type = "Bitmap_Component";
 }
 
@@ -40,20 +40,6 @@ Bitmap_Component::~Bitmap_Component()  {
 //------------------------------------------------------------------------------
 void Bitmap_Component::Init(ID3D11Device * const d3d11device) {
   Frame_Component::Init(d3d11device);
-  
-  m_size = D3DXVECTOR2(256, 256);
-  m_texture->texture_name = L"resource/Seafloor_Texture_001.dds";
-
-  // Load the texture in.
-  if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_d3d11device,
-                                                    m_texture->texture_name,
-                                                    NULL,
-                                                    NULL,
-                                                    &m_texture->texture,
-                                                    NULL)))  {
-    throw Tunnelour::Exceptions::init_error("D3DX11CreateShaderResourceViewFromFile Failed!");
-  }
-
   m_is_initialised = true;
 }
 

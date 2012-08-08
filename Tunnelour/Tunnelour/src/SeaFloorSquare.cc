@@ -24,7 +24,7 @@ namespace Tunnelour {
 SeaFloorSquare::SeaFloorSquare(): Bitmap_Component() {
   m_position = D3DXVECTOR2(0, 0);
   m_size = D3DXVECTOR2(256, 256);
-  m_texture->texture_name = L"resource/Seafloor_Texture_001.dds";
+  m_texture->texture_path = L"resource/Seafloor_Texture_001.dds";
 }
 
 //------------------------------------------------------------------------------
@@ -168,7 +168,7 @@ void SeaFloorSquare::Init_Texture() {
 
   // Load the texture in.
   if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_d3d11device,
-                                                   m_texture->texture_name,
+                                                   m_texture->texture_path.c_str(),
                                                    NULL,
                                                    NULL,
                                                    &m_texture->texture,
