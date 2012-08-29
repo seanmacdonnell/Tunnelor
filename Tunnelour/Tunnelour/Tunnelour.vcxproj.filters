@@ -81,6 +81,9 @@
     <ClCompile Include="src\Text_Component.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Direct3D11_View_FontShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine.h">
@@ -152,12 +155,21 @@
     <ClInclude Include="include\Text_Component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Direct3D11_View_FontShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resource\Direct3D11_View_TexturePixelShader.ps">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="resource\Direct3D11_View_TextureVertexShader.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resource\Direct3D11_View_FontPixelShader.ps">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resource\Direct3D11_View_FontVertexShader.vs">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

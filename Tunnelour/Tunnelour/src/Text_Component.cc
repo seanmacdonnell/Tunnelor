@@ -34,6 +34,10 @@ Text_Component::Text_Component(): Bitmap_Component() {
   m_texture->texture_path = L"resource\\";
 
   m_type = "Bitmap_Component";
+
+  m_position = D3DXVECTOR2(0, 0);
+  m_text->font_csv_file = "resource\\Arial.fnt";
+  m_text->text = new std::string("A");
 }
 
 //------------------------------------------------------------------------------
@@ -54,8 +58,35 @@ Text_Component::~Text_Component()  {
 //------------------------------------------------------------------------------
 void Text_Component::Init(ID3D11Device * const d3d11device) {
   Bitmap_Component::Init(d3d11device);
-  // Turning String + font into bitmap texture here
-  m_text->font_csv_file = "resource\\Arial.fnt";
+
+  Load_Font_Struct();
+
+  Load_Character_Frames();
+
+  Create_String_Frame();
+
+  Load_Font_Texture();
+
+  m_is_initialised = true;
+}
+
+//------------------------------------------------------------------------------
+// protected:
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+// private:
+//------------------------------------------------------------------------------
+std::wstring Text_Component::CharToWChar(const char* pstrSrc) {
+    size_t origsize = strlen(pstrSrc) + 1;
+    const size_t newsize = 100;
+    size_t convertedChars = 0;
+    wchar_t wcstring[newsize];
+    mbstowcs_s(&convertedChars, wcstring, origsize, pstrSrc, _TRUNCATE);
+    return std::wstring(wcstring);
+}
+//------------------------------------------------------------------------------
+void Text_Component::Load_Font_Struct() {
   FILE * pFile;
   long lSize;
   char * buffer;
@@ -117,7 +148,6 @@ void Text_Component::Init(ID3D11Device * const d3d11device) {
     throw Tunnelour::Exceptions::init_error("Unexpected end of file!");
   }
 
-
   // Get the Third Line
   // Example line: "page id=0 file="Arial_0.dds""
   fgets(line, 225, pFile);
@@ -135,16 +165,6 @@ void Text_Component::Init(ID3D11Device * const d3d11device) {
     }
   } else {
     throw Tunnelour::Exceptions::init_error("Unexpected end of file!");
-  }
-
-  // Load font texture
-  if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_d3d11device,
-                                                    m_texture->texture_path.c_str(),
-                                                    NULL,
-                                                    NULL,
-                                                    &m_texture->texture,
-                                                    NULL)))  {
-    throw Tunnelour::Exceptions::init_error("D3DX11CreateShaderResourceViewFromFile Failed!");
   }
 
   // Get the fourth line
@@ -179,35 +199,35 @@ void Text_Component::Init(ID3D11Device * const d3d11device) {
           if (strcmp(token,"id") == 0) {
               token = strtok(NULL, " =\"");
               id = atoi(token);
-              m_font->character_frames[id].id = id;
+              m_font->raw_character_frames[id].id = id;
           }
           if (strcmp(token,"x") == 0) {
               token = strtok(NULL, " =\"");
-              m_font->character_frames[id].x = atoi(token);
+              m_font->raw_character_frames[id].x = atoi(token);
           }
           if (strcmp(token,"y") == 0) {
               token = strtok(NULL, " =\"");
-              m_font->character_frames[id].y = atoi(token);
+              m_font->raw_character_frames[id].y = atoi(token);
           }
           if (strcmp(token,"width") == 0) {
               token = strtok(NULL, " =\"");
-              m_font->character_frames[id].width = atoi(token);
+              m_font->raw_character_frames[id].width = atoi(token);
           }
           if (strcmp(token,"height") == 0) {
               token = strtok(NULL, " =\"");
-              m_font->character_frames[id].height = atoi(token);
+              m_font->raw_character_frames[id].height = atoi(token);
           }
           if (strcmp(token,"xoffset") == 0) {
               token = strtok(NULL, " =\"");
-              m_font->character_frames[id].xoffset = atoi(token);
+              m_font->raw_character_frames[id].xoffset = atoi(token);
           }
           if (strcmp(token,"yoffset") == 0) {
               token = strtok(NULL, " =\"");
-              m_font->character_frames[id].yoffset = atoi(token);
+              m_font->raw_character_frames[id].yoffset = atoi(token);
           }
           if (strcmp(token,"xadvance") == 0) {
               token = strtok(NULL, " =\"");
-              m_font->character_frames[id].xadvance = atoi(token);
+              m_font->raw_character_frames[id].xadvance = atoi(token);
           }
           token = strtok(NULL, " =\"");
 	       }
@@ -218,66 +238,162 @@ void Text_Component::Init(ID3D11Device * const d3d11device) {
     }
   }
 
-
-
-  // Load Font Map
-  //for (int index = 0; index <= 256; index++) {
-    /*
-			// First triangle in quad.
-			m_font->character_frames[0].position = D3DXVECTOR3(m_font->character_widths[index]/2, m_font->character_widths[index]/2, 0.0f);  // Top left.
-			m_font->character_frames[0].texture =  D3DXVECTOR2(m_Font[letter].left, 0.0f);
-			index++;
-
-			vertexPtr[index].position = D3DXVECTOR3((drawX + m_Font[letter].size), (drawY - 16), 0.0f);  // Bottom right.
-			vertexPtr[index].texture = D3DXVECTOR2(m_Font[letter].right, 1.0f);
-			index++;
-
-			vertexPtr[index].position = D3DXVECTOR3(drawX, (drawY - 16), 0.0f);  // Bottom left.
-			vertexPtr[index].texture = D3DXVECTOR2(m_Font[letter].left, 1.0f);
-			index++;
-
-			// Second triangle in quad.
-			vertexPtr[index].position = D3DXVECTOR3(drawX, drawY, 0.0f);  // Top left.
-			vertexPtr[index].texture = D3DXVECTOR2(m_Font[letter].left, 0.0f);
-			index++;
-
-			vertexPtr[index].position = D3DXVECTOR3(drawX + m_Font[letter].size, drawY, 0.0f);  // Top right.
-			vertexPtr[index].texture = D3DXVECTOR2(m_Font[letter].right, 0.0f);
-			index++;
-
-			vertexPtr[index].position = D3DXVECTOR3((drawX + m_Font[letter].size), (drawY - 16), 0.0f);  // Bottom right.
-			vertexPtr[index].texture = D3DXVECTOR2(m_Font[letter].right, 1.0f);
-			index++;
-
-			// Update the x location for drawing by the size of the letter and one pixel.
-			drawX = drawX + m_Font[letter].size + 1.0f;
-      */
-  //}
-
-  // Read String
-
-  // Create a Frame for each character
-
-  // Load Texture for each frame
-
   fclose(pFile);
-  m_is_initialised = true;
 }
 
 //------------------------------------------------------------------------------
-// protected:
-//------------------------------------------------------------------------------
+void Text_Component::Load_Character_Frames() {
+    // Load the Character Frame Struct Array from the Raw Character Frame Struct Array
+  for (int index = 0; index < 256; index++) {
+			// First triangle in quad.
+   // Top left.
+			m_font->character_frames[index][0].position = D3DXVECTOR3(m_font->raw_character_frames[index].x, m_font->raw_character_frames[index].y, 0.0f);
+			m_font->character_frames[index][0].texture =  D3DXVECTOR2(m_font->raw_character_frames[index].x, m_font->raw_character_frames[index].y);
+   // Bottom right.
+			m_font->character_frames[index][1].position = D3DXVECTOR3(m_font->raw_character_frames[index].x + m_font->raw_character_frames[index].width, m_font->raw_character_frames[index].y - m_font->raw_character_frames[index].height, 0.0f);
+			m_font->character_frames[index][1].texture = D3DXVECTOR2(m_font->raw_character_frames[index].x + m_font->raw_character_frames[index].width, m_font->raw_character_frames[index].y - m_font->raw_character_frames[index].height);
+   // Bottom left.
+			m_font->character_frames[index][2].position = D3DXVECTOR3(m_font->raw_character_frames[index].x, m_font->raw_character_frames[index].y - m_font->raw_character_frames[index].height, 0.0f);
+			m_font->character_frames[index][2].texture = D3DXVECTOR2(m_font->raw_character_frames[index].x, m_font->raw_character_frames[index].y - m_font->raw_character_frames[index].height);
+
+			// Second triangle in quad.
+   // Top left.
+			m_font->character_frames[index][3].position = m_font->character_frames[index][0].position;
+			m_font->character_frames[index][3].texture = m_font->character_frames[index][0].texture;
+   // Top right.
+			m_font->character_frames[index][4].position = D3DXVECTOR3(m_font->raw_character_frames[index].x + m_font->raw_character_frames[index].width, m_font->raw_character_frames[index].y, 0.0f);
+			m_font->character_frames[index][4].texture = D3DXVECTOR2(m_font->raw_character_frames[index].x + m_font->raw_character_frames[index].width, m_font->raw_character_frames[index].y);
+   // Bottom right.
+			m_font->character_frames[index][5].position = m_font->character_frames[index][1].position;
+			m_font->character_frames[index][5].texture = m_font->character_frames[index][1].texture;
+  }
+}
+
 
 //------------------------------------------------------------------------------
-// private:
+void Text_Component::Create_String_Frame() {
+  float left, right, top, bottom;
+  Vertex_Type* vertices;
+  unsigned int* indices;
+  D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
+  D3D11_SUBRESOURCE_DATA vertexData, indexData;
+  
+  // Set Frame Size
+  m_size = D3DXVECTOR2(0, 0);
+  for (int i = 0; i < m_text->text->size(); i++) {
+    char character_index = m_text->text->c_str()[i];
+    m_size.x = m_size.x + m_font->raw_character_frames[character_index].width;
+    if (m_size.y < m_font->raw_character_frames[character_index].height) {
+      m_size.y = m_font->raw_character_frames[character_index].height;
+    }
+  }
+  
+  // Set the number of vertices in the vertex array.
+  m_frame->vertex_count = 6*m_text->text->size();
+
+  // Set the number of indices in the index array.
+  m_frame->index_count = m_frame->vertex_count;
+
+  // Create the vertex array.
+  vertices = new Vertex_Type[m_frame->vertex_count];
+  if (!vertices) {
+    throw Tunnelour::Exceptions::init_error("Creating the vertex array Failed!");
+  }
+
+  // Create the index array.
+  indices = new unsigned int[m_frame->index_count];
+  if (!indices) {
+    throw Tunnelour::Exceptions::init_error("Creating the index array Failed!");
+  }
+
+  // Initialize vertex array to zeros at first.
+  memset(vertices, 0, (sizeof(Vertex_Type) * m_frame->vertex_count));
+
+  // Load the index array with data.
+  for (int i = 0; i < m_frame->index_count; i++)  {
+    indices[i] = i;
+  }
+  /*
+  // Calculate the screen coordinates of the left side of the bitmap.
+  left = m_position.x - static_cast<float>(m_size.x / 2);
+
+  // Calculate the screen coordinates of the right side of the bitmap.
+  right = m_position.x + static_cast<float>(m_size.x / 2);
+
+  // Calculate the screen coordinates of the top of the bitmap.
+  top = m_position.y + static_cast<float>(m_size.y / 2);
+
+  // Calculate the screen coordinates of the bottom of the bitmap.
+  bottom = m_position.y - static_cast<float>(m_size.y / 2);
+  */
+  // Load the vertex array with data.
+  int vertex_index = 0;
+  for (int i = 0; i < m_text->text->size(); i++) {
+    char character_index = m_text->text->c_str()[i];
+    for (int frame_index = 0; frame_index < 6; frame_index++) {
+      vertices[vertex_index] = m_font->character_frames[character_index][frame_index];
+      vertex_index++;
+    }
+  }
+
+  // Set up the description of the static vertex buffer.
+  vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+  vertexBufferDesc.ByteWidth = sizeof(Vertex_Type) * m_frame->vertex_count;
+  vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+  vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+  vertexBufferDesc.MiscFlags = 0;
+  vertexBufferDesc.StructureByteStride = 0;
+
+  // Give the subresource structure a pointer to the vertex data.
+  vertexData.pSysMem = vertices;
+  vertexData.SysMemPitch = 0;
+  vertexData.SysMemSlicePitch = 0;
+
+  // Now create the vertex buffer.
+  if (FAILED(m_d3d11device->CreateBuffer(&vertexBufferDesc,
+                                         &vertexData,
+                                         &(m_frame->vertex_buffer)))) {
+    throw Tunnelour::Exceptions::init_error("CreateBuffer (vertex_buffer) Failed!");
+  }
+
+  // Set up the description of the static index buffer.
+  indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+  indexBufferDesc.ByteWidth = sizeof(unsigned int) * m_frame->index_count;
+  indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+  indexBufferDesc.CPUAccessFlags = 0;
+  indexBufferDesc.MiscFlags = 0;
+  indexBufferDesc.StructureByteStride = 0;
+
+  // Give the subresource structure a pointer to the index data.
+  indexData.pSysMem = indices;
+  indexData.SysMemPitch = 0;
+  indexData.SysMemSlicePitch = 0;
+
+  // Create the index buffer.
+  if (FAILED(m_d3d11device->CreateBuffer(&indexBufferDesc,
+                                         &indexData,
+                                         &(m_frame->index_buffer)))) {
+    throw Tunnelour::Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
+  }
+
+  // Release the arrays now that the vertex and index buffers have been created and loaded.
+  delete [] vertices;
+  vertices = 0;
+
+  delete [] indices;
+  indices = 0;
+}
+
 //------------------------------------------------------------------------------
-wchar_t* Text_Component::CharToWChar(const char* pstrSrc) {
-    size_t convertedChars = 0;
-    int nLen = strlen(pstrSrc)+1;
-    wchar_t* pwstr = (LPWSTR) malloc(sizeof(wchar_t )* nLen);
-    
-    mbstowcs(pwstr, pstrSrc, nLen);
-    return pwstr;
+void Text_Component::Load_Font_Texture() {
+  if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_d3d11device,
+                                                    m_texture->texture_path.c_str(),
+                                                    NULL,
+                                                    NULL,
+                                                    &m_texture->texture,
+                                                    NULL)))  {
+    throw Tunnelour::Exceptions::init_error("D3DX11CreateShaderResourceViewFromFile Failed!");
+  }
 }
 
 }  // namespace Tunnelour

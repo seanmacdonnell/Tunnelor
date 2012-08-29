@@ -197,62 +197,10 @@ void Direct3D11_View::Run() {
                                           D3D11_CLEAR_DEPTH,
                                           1.0f,
                                           0);
-  // </BeginScene>
-  // <Camera Render>
-  D3DXMATRIX rotationMatrix;
-  D3DXVECTOR3 rotationVector = m_camera->GetRotationInRadians();
-  D3DXVECTOR3 LookingAtVector = m_camera->GetLookingAtPosition();
-  D3DXVECTOR3 UpVector = m_camera->GetUpDirection();
-  D3DXVECTOR3 PosVector = m_camera->GetPosition();
 
-  // Create the rotation matrix from the yaw, pitch, and roll values.
-  D3DXMatrixRotationYawPitchRoll(&rotationMatrix,
-                                 rotationVector.x,
-                                 rotationVector.y,
-                                 rotationVector.z);
-
-  // Transform the lookAt and up vector by the rotation matrix so
-  // the view is correctly rotated at the origin.
-  D3DXVec3TransformCoord(&LookingAtVector, &LookingAtVector, &rotationMatrix);
-  D3DXVec3TransformCoord(&UpVector, &UpVector, &rotationMatrix);
-
-  // Translate the rotated camera position to the location of the viewer.
-  LookingAtVector = PosVector + LookingAtVector;
-
-  // Finally create the view matrix from the three updated vectors.
-  D3DXMatrixLookAtLH(&viewmatrix, &PosVector, &LookingAtVector, &UpVector);
-
-  // </Camera Render>
-
-  // Put the model vertex and index buffers on the graphics pipeline to
-  // prepare them for drawing.
-  // Set vertex buffer stride and offset.
-  unsigned int stride = sizeof(Tunnelour::Bitmap_Component::Vertex_Type);
-  unsigned int offset = 0;
-  ID3D11Buffer *vertexbuffer, *indexbuffer;
-
-  vertexbuffer = m_bitmap->GetFrame()->vertex_buffer;
-  indexbuffer = m_bitmap->GetFrame()->index_buffer;
-
-  // Set the vertex buffer to active in the input assembler
-  // so it can be rendered.
-  m_device_context->IASetVertexBuffers(0, 1, &vertexbuffer, &stride, &offset);
-
-  // Set the index buffer to active in the input assembler
-  // so it can be rendered.
-  m_device_context->IASetIndexBuffer(indexbuffer, DXGI_FORMAT_R32_UINT, 0);
-
-  // Set the type of primitive that should be rendered from
-  // this vertex buffer, in this case triangles.
-  m_device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-  // Render the model using the color shader.
-  m_texture_shader->Render(m_device_context,
-                           m_bitmap->GetFrame()->index_count,
-                           m_world,
-                           viewmatrix,
-                           m_ortho,
-                           m_bitmap->GetTexture()->texture);
+  Render_Camera(viewmatrix);
+  
+  Render_Bitmap(viewmatrix);
 
   // Present the rendered scene to the screen.
   // Present the back buffer to the screen since rendering is complete.
@@ -717,6 +665,66 @@ void Direct3D11_View::Init_D3D11() {
   }
 
   m_is_d3d11_init = true;
+}
+
+
+//------------------------------------------------------------------------------
+void Direct3D11_View::Render_Camera(D3DXMATRIX &viewmatrix) {
+  D3DXMATRIX rotationMatrix;
+  D3DXVECTOR3 rotationVector = m_camera->GetRotationInRadians();
+  D3DXVECTOR3 LookingAtVector = m_camera->GetLookingAtPosition();
+  D3DXVECTOR3 UpVector = m_camera->GetUpDirection();
+  D3DXVECTOR3 PosVector = m_camera->GetPosition();
+
+  // Create the rotation matrix from the yaw, pitch, and roll values.
+  D3DXMatrixRotationYawPitchRoll(&rotationMatrix,
+                                 rotationVector.x,
+                                 rotationVector.y,
+                                 rotationVector.z);
+
+  // Transform the lookAt and up vector by the rotation matrix so
+  // the view is correctly rotated at the origin.
+  D3DXVec3TransformCoord(&LookingAtVector, &LookingAtVector, &rotationMatrix);
+  D3DXVec3TransformCoord(&UpVector, &UpVector, &rotationMatrix);
+
+  // Translate the rotated camera position to the location of the viewer.
+  LookingAtVector = PosVector + LookingAtVector;
+
+  // Finally create the view matrix from the three updated vectors.
+  D3DXMatrixLookAtLH(&viewmatrix, &PosVector, &LookingAtVector, &UpVector);
+}
+
+//------------------------------------------------------------------------------
+void Direct3D11_View::Render_Bitmap(D3DXMATRIX &viewmatrix) {
+  // Put the model vertex and index buffers on the graphics pipeline to
+  // prepare them for drawing.
+  // Set vertex buffer stride and offset.
+  unsigned int stride = sizeof(Tunnelour::Bitmap_Component::Vertex_Type);
+  unsigned int offset = 0;
+  ID3D11Buffer *vertexbuffer, *indexbuffer;
+
+  vertexbuffer = m_bitmap->GetFrame()->vertex_buffer;
+  indexbuffer = m_bitmap->GetFrame()->index_buffer;
+
+  // Set the vertex buffer to active in the input assembler
+  // so it can be rendered.
+  m_device_context->IASetVertexBuffers(0, 1, &vertexbuffer, &stride, &offset);
+
+  // Set the index buffer to active in the input assembler
+  // so it can be rendered.
+  m_device_context->IASetIndexBuffer(indexbuffer, DXGI_FORMAT_R32_UINT, 0);
+
+  // Set the type of primitive that should be rendered from
+  // this vertex buffer, in this case triangles.
+  m_device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+  // Render the model using the color shader.
+  m_texture_shader->Render(m_device_context,
+                           m_bitmap->GetFrame()->index_count,
+                           m_world,
+                           viewmatrix,
+                           m_ortho,
+                           m_bitmap->GetTexture()->texture);
 }
 
 }  // namespace Tunnelour

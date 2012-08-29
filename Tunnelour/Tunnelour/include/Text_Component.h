@@ -35,7 +35,7 @@ class Text_Component: public Tunnelour::Bitmap_Component {
     char * font_csv_file;
   };
 
-  struct Character_Frame {
+  struct Raw_Character_Frame {
     int id;
     int x;
     int y;
@@ -54,7 +54,8 @@ class Text_Component: public Tunnelour::Bitmap_Component {
     char * font_name;
     std::wstring font_texture_name;
     int character_widths[256];
-    Character_Frame character_frames[256];
+    Raw_Character_Frame raw_character_frames[256];
+    Vertex_Type character_frames[256][6];
   };
 
   //---------------------------------------------------------------------------
@@ -79,7 +80,15 @@ class Text_Component: public Tunnelour::Bitmap_Component {
   Text * m_text;
   Font * m_font;
  private:
-   wchar_t* CharToWChar(const char* pstrSrc);
+  std::wstring CharToWChar(const char* pstrSrc);
+
+  void Load_Font_Struct();
+  void Load_Character_Frames();
+  //---------------------------------------------------------------------------
+  // Description : Inits this components frame stucture
+  //---------------------------------------------------------------------------
+  void Create_String_Frame();
+  void Load_Font_Texture();
 
 };  // class Text_Component
 }  // namespace Tunnelour
