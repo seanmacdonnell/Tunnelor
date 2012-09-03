@@ -20,6 +20,7 @@
 #include "Camera_Component.h"
 #include "Background_Component.h"
 #include "Bitmap_Component.h"
+#include "Text_Component.h"
 
 namespace Tunnelour {
 class Direct3D11_View_Mutator: public Tunnelour::Component::Component_Mutator  {
@@ -74,11 +75,22 @@ class Direct3D11_View_Mutator: public Tunnelour::Component::Component_Mutator  {
   //-------------------------------------------------------------------------
   Tunnelour::Bitmap_Component * const GetBitmap();
 
+  //-------------------------------------------------------------------------
+  // Description : Has this component been found in the model?
+  //-------------------------------------------------------------------------
+  bool FoundText();
+
+  //-------------------------------------------------------------------------
+  // Description : Accessors for Bitmap Component
+  //-------------------------------------------------------------------------
+  Tunnelour::Text_Component * const GetText();
+
  private:
-  bool m_found_background, m_found_camera, m_found_mesh, m_found_bitmap;
+  bool m_found_background, m_found_camera, m_found_mesh, m_found_bitmap, m_found_text;
   Tunnelour::Camera_Component * m_camera;
   Tunnelour::Background_Component * m_background;
   Tunnelour::Bitmap_Component * m_bitmap;
+  Tunnelour::Text_Component * m_text;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_DIRECT3D11_VIEW_MUTATOR_H_

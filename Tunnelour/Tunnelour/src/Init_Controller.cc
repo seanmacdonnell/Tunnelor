@@ -49,13 +49,13 @@ void Init_Controller::Run() {
   camera = m_model->Add(new Tunnelour::Camera_Component());
   camera->Init();
 
-  Tunnelour::Component *bitmap = 0;
-  bitmap = m_model->Add(new Tunnelour::SeaFloorSquare());
-  bitmap->Init();
+  //Tunnelour::Component *bitmap = 0;
+  //bitmap = m_model->Add(new Tunnelour::SeaFloorSquare());
+  //bitmap->Init();
 
-  //Tunnelour::Component *text = 0;
-  //text = m_model->Add(new Tunnelour::Text_Component());
-  //text->Init();
+  Tunnelour::Component *text = 0;
+  text = m_model->Add(new Tunnelour::Text_Component());
+  text->Init();
 
   m_is_finished = true;
 }

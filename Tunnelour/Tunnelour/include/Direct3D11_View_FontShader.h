@@ -69,7 +69,7 @@ class Direct3D11_View_FontShader {
               D3DXMATRIX view,
               D3DXMATRIX projection,
               ID3D11ShaderResourceView* texture,
-              D3DXVECTOR4 pixelcolor);
+              D3DXCOLOR pixelcolor);
 
   //---------------------------------------------------------------------------
   // Description : Returns whether this class has been initalised

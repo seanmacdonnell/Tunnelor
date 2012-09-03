@@ -28,6 +28,8 @@ Direct3D11_View_Mutator::Direct3D11_View_Mutator() {
   m_found_mesh = false;
   m_bitmap = 0;
   m_found_bitmap = false;
+  m_text = 0;
+  m_found_text = false;
 }
 
 //------------------------------------------------------------------------------
@@ -39,6 +41,8 @@ Direct3D11_View_Mutator::~Direct3D11_View_Mutator() {
   m_found_mesh = false;
   m_bitmap = 0;
   m_found_bitmap = false;
+  m_text = 0;
+  m_found_text = false;
 }
 
 //------------------------------------------------------------------------------
@@ -60,11 +64,19 @@ void Direct3D11_View_Mutator::Mutate(Tunnelour::Component * const component) {
   }
 
   if (component->GetType().compare("Bitmap_Component") == 0) {
-    // Found Mesh_Component
+    // Found Bitmap_Component
     Tunnelour::Bitmap_Component *bitmap = 0;
     bitmap = static_cast<Tunnelour::Bitmap_Component*>(component);
     m_bitmap = bitmap;
     m_found_bitmap = true;
+  }
+
+  if (component->GetType().compare("Text_Component") == 0) {
+    // Found Text_Component
+    Tunnelour::Text_Component *text = 0;
+    text = static_cast<Tunnelour::Text_Component*>(component);
+    m_text = text;
+    m_found_text = true;
   }
 }
 
@@ -96,6 +108,16 @@ bool Direct3D11_View_Mutator::FoundBitmap() {
 //------------------------------------------------------------------------------
 Tunnelour::Bitmap_Component * const Direct3D11_View_Mutator::GetBitmap() {
   return m_bitmap;
+}
+
+//------------------------------------------------------------------------------
+bool Direct3D11_View_Mutator::FoundText() {
+  return m_found_text;
+}
+
+//------------------------------------------------------------------------------
+Tunnelour::Text_Component * const Direct3D11_View_Mutator::GetText() {
+  return m_text;
 }
 
 

@@ -29,7 +29,10 @@ namespace Tunnelour {
 //-----------------------------------------------------------------------------
 class Frame_Component: public Tunnelour::Component {
  public:
-  struct Vertex_Type  {
+  struct Vertex_Type {
+    Vertex_Type() : position(-1, -1, -1),
+                    texture(-1, -1) {
+    }
     D3DXVECTOR3 position;
     D3DXVECTOR2 texture;
   };

@@ -17,6 +17,7 @@
 #include "Message_Wrapper.h"
 #include "Exceptions.h"
 #include "Direct3D11_View_Mutator.h"
+#include "Direct3D11_View_FontShader.h"
 
 namespace Tunnelour {
 
@@ -50,6 +51,7 @@ Direct3D11_View::Direct3D11_View() {
 
   m_camera = NULL;
   m_texture_shader = NULL;
+  m_font_shader = NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -124,6 +126,11 @@ Direct3D11_View::~Direct3D11_View() {
       m_texture_shader = NULL;
     }
 
+    if (m_font_shader) {
+      delete m_font_shader;
+      m_font_shader = NULL;
+    }
+
     if (m_depthDisabledStencilState) {
       delete m_depthDisabledStencilState;
       m_depthDisabledStencilState = NULL;
@@ -154,6 +161,10 @@ void Direct3D11_View::Init(Tunnelour::Component_Composite * const model) {
       m_texture_shader = new Tunnelour::Direct3D11_View_TextureShader();
       m_texture_shader->Init(m_device, &m_hwnd);
     }
+    if (!m_font_shader) {
+      m_font_shader = new Tunnelour::Direct3D11_View_FontShader();
+      m_font_shader->Init(m_device, &m_hwnd);
+    }
     m_is_initialised = true;
   }
 }
@@ -182,7 +193,14 @@ void Direct3D11_View::Run() {
     m_bitmap = mutator.GetBitmap();
     if (!m_bitmap->IsInitialised()) { m_bitmap->Init(m_device); }
   } else {
-    throw Tunnelour::Exceptions::run_error("Can't find Bitmap component!");
+   //throw Tunnelour::Exceptions::run_error("Can't find Bitmap component!");
+  }
+
+  if (mutator.FoundText()) {
+    m_text = mutator.GetText();
+    if (!m_text->IsInitialised()) { m_text->Init(m_device); }
+  } else {
+   //throw Tunnelour::Exceptions::run_error("Can't find Text component!");
   }
 
   // <BeginScene>
@@ -200,7 +218,8 @@ void Direct3D11_View::Run() {
 
   Render_Camera(viewmatrix);
   
-  Render_Bitmap(viewmatrix);
+  if (mutator.FoundBitmap()) { Render_Bitmap(viewmatrix); }
+  if (mutator.FoundText()) { Render_Text(viewmatrix); }
 
   // Present the rendered scene to the screen.
   // Present the back buffer to the screen since rendering is complete.
@@ -667,7 +686,6 @@ void Direct3D11_View::Init_D3D11() {
   m_is_d3d11_init = true;
 }
 
-
 //------------------------------------------------------------------------------
 void Direct3D11_View::Render_Camera(D3DXMATRIX &viewmatrix) {
   D3DXMATRIX rotationMatrix;
@@ -725,6 +743,42 @@ void Direct3D11_View::Render_Bitmap(D3DXMATRIX &viewmatrix) {
                            viewmatrix,
                            m_ortho,
                            m_bitmap->GetTexture()->texture);
+}
+
+//------------------------------------------------------------------------------
+void Direct3D11_View::Render_Text(D3DXMATRIX &viewmatrix) {
+	 unsigned int stride, offset;
+	 D3DXCOLOR pixelColor;
+	 bool result;
+  ID3D11Buffer *vertexbuffer, *indexbuffer;
+
+  vertexbuffer = m_text->GetFrame()->vertex_buffer;
+  indexbuffer = m_text->GetFrame()->index_buffer;
+
+	 // Set vertex buffer stride and offset.
+  stride = sizeof(Tunnelour::Text_Component::Vertex_Type); 
+	 offset = 0;
+
+	 // Set the vertex buffer to active in the input assembler so it can be rendered.
+	 m_device_context->IASetVertexBuffers(0, 1, &vertexbuffer, &stride, &offset);
+
+  // Set the index buffer to active in the input assembler so it can be rendered.
+	 m_device_context->IASetIndexBuffer(indexbuffer, DXGI_FORMAT_R32_UINT, 0);
+
+  // Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
+	 m_device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	 // Create a pixel color vector with the input sentence color.
+	 pixelColor = m_text->GetFont()->font_color;
+
+	 // Render the text using the font shader.
+	 m_font_shader->Render(m_device_context,
+                        m_text->GetFrame()->index_count,
+                        m_world,
+                        viewmatrix,
+                        m_ortho,
+                        m_text->GetTexture()->texture, 
+						 		               pixelColor);
 }
 
 }  // namespace Tunnelour

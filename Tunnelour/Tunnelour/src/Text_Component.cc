@@ -30,14 +30,15 @@ Text_Component::Text_Component(): Bitmap_Component() {
   m_font = new Tunnelour::Text_Component::Font();
   m_font->image_width = 0;
   m_font->image_height = 0;
+  m_font->font_color = D3DXCOLOR(1, 1, 1 ,0);
 
   m_texture->texture_path = L"resource\\";
 
-  m_type = "Bitmap_Component";
+  m_type = "Text_Component";
 
   m_position = D3DXVECTOR2(0, 0);
   m_text->font_csv_file = "resource\\Arial.fnt";
-  m_text->text = new std::string("A");
+  m_text->text = new std::string("W_T(8|");
 }
 
 //------------------------------------------------------------------------------
@@ -47,11 +48,6 @@ Text_Component::~Text_Component()  {
     delete m_text->text;
     delete m_text->font_csv_file;
     delete m_text;
-  }
-
-  if (m_font)  {
-    delete m_font->font_name;
-    delete m_font;
   }
 }
 
@@ -68,6 +64,11 @@ void Text_Component::Init(ID3D11Device * const d3d11device) {
   Load_Font_Texture();
 
   m_is_initialised = true;
+}
+
+//------------------------------------------------------------------------------
+Text_Component::Font* Text_Component::GetFont() {
+  return m_font;
 }
 
 //------------------------------------------------------------------------------
@@ -243,29 +244,31 @@ void Text_Component::Load_Font_Struct() {
 
 //------------------------------------------------------------------------------
 void Text_Component::Load_Character_Frames() {
-    // Load the Character Frame Struct Array from the Raw Character Frame Struct Array
+  // Load the Character Frame Struct Array from the Raw Character Frame Struct Array
   for (int index = 0; index < 256; index++) {
-			// First triangle in quad.
-   // Top left.
-			m_font->character_frames[index][0].position = D3DXVECTOR3(m_font->raw_character_frames[index].x, m_font->raw_character_frames[index].y, 0.0f);
-			m_font->character_frames[index][0].texture =  D3DXVECTOR2(m_font->raw_character_frames[index].x, m_font->raw_character_frames[index].y);
-   // Bottom right.
-			m_font->character_frames[index][1].position = D3DXVECTOR3(m_font->raw_character_frames[index].x + m_font->raw_character_frames[index].width, m_font->raw_character_frames[index].y - m_font->raw_character_frames[index].height, 0.0f);
-			m_font->character_frames[index][1].texture = D3DXVECTOR2(m_font->raw_character_frames[index].x + m_font->raw_character_frames[index].width, m_font->raw_character_frames[index].y - m_font->raw_character_frames[index].height);
-   // Bottom left.
-			m_font->character_frames[index][2].position = D3DXVECTOR3(m_font->raw_character_frames[index].x, m_font->raw_character_frames[index].y - m_font->raw_character_frames[index].height, 0.0f);
-			m_font->character_frames[index][2].texture = D3DXVECTOR2(m_font->raw_character_frames[index].x, m_font->raw_character_frames[index].y - m_font->raw_character_frames[index].height);
+    if (m_font->raw_character_frames[index].id != -1) {
+		    // First triangle in quad.
+      // Top left.
+		    m_font->character_frames[index][0].position = D3DXVECTOR3(m_font->raw_character_frames[index].x, m_font->raw_character_frames[index].y, 0.0f);
+		    m_font->character_frames[index][0].texture =  D3DXVECTOR2(m_font->raw_character_frames[index].x, m_font->raw_character_frames[index].y);
+      // Bottom right.
+		    m_font->character_frames[index][1].position = D3DXVECTOR3(m_font->raw_character_frames[index].x + m_font->raw_character_frames[index].width, m_font->raw_character_frames[index].y - m_font->raw_character_frames[index].height, 0.0f);
+		    m_font->character_frames[index][1].texture = D3DXVECTOR2(m_font->raw_character_frames[index].x + m_font->raw_character_frames[index].width, m_font->raw_character_frames[index].y - m_font->raw_character_frames[index].height);
+      // Bottom left.
+		    m_font->character_frames[index][2].position = D3DXVECTOR3(m_font->raw_character_frames[index].x, m_font->raw_character_frames[index].y - m_font->raw_character_frames[index].height, 0.0f);
+		    m_font->character_frames[index][2].texture = D3DXVECTOR2(m_font->raw_character_frames[index].x, m_font->raw_character_frames[index].y - m_font->raw_character_frames[index].height);
 
-			// Second triangle in quad.
-   // Top left.
-			m_font->character_frames[index][3].position = m_font->character_frames[index][0].position;
-			m_font->character_frames[index][3].texture = m_font->character_frames[index][0].texture;
-   // Top right.
-			m_font->character_frames[index][4].position = D3DXVECTOR3(m_font->raw_character_frames[index].x + m_font->raw_character_frames[index].width, m_font->raw_character_frames[index].y, 0.0f);
-			m_font->character_frames[index][4].texture = D3DXVECTOR2(m_font->raw_character_frames[index].x + m_font->raw_character_frames[index].width, m_font->raw_character_frames[index].y);
-   // Bottom right.
-			m_font->character_frames[index][5].position = m_font->character_frames[index][1].position;
-			m_font->character_frames[index][5].texture = m_font->character_frames[index][1].texture;
+		    // Second triangle in quad.
+      // Top left.
+		    m_font->character_frames[index][3].position = m_font->character_frames[index][0].position;
+		    m_font->character_frames[index][3].texture = m_font->character_frames[index][0].texture;
+      // Top right.
+		    m_font->character_frames[index][4].position = D3DXVECTOR3(m_font->raw_character_frames[index].x + m_font->raw_character_frames[index].width, m_font->raw_character_frames[index].y, 0.0f);
+		    m_font->character_frames[index][4].texture = D3DXVECTOR2(m_font->raw_character_frames[index].x + m_font->raw_character_frames[index].width, m_font->raw_character_frames[index].y);
+      // Bottom right.
+		    m_font->character_frames[index][5].position = m_font->character_frames[index][1].position;
+		    m_font->character_frames[index][5].texture = m_font->character_frames[index][1].texture;
+    }
   }
 }
 

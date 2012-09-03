@@ -36,6 +36,15 @@ class Text_Component: public Tunnelour::Bitmap_Component {
   };
 
   struct Raw_Character_Frame {
+    Raw_Character_Frame() : id(-1),
+                            x(-1),
+                            y(-1),
+                            width(-1),
+                            height(-1),
+                            xoffset(-1),
+                            yoffset(-1),
+                            xadvance(-1) {
+    }
     int id;
     int x;
     int y;
@@ -51,11 +60,12 @@ class Text_Component: public Tunnelour::Bitmap_Component {
     int image_height;
     // This is the distance in pixels between each line of text.
     int line_height;
-    char * font_name;
+    std::string font_name;
     std::wstring font_texture_name;
     int character_widths[256];
     Raw_Character_Frame raw_character_frames[256];
     Vertex_Type character_frames[256][6];
+    D3DXCOLOR font_color;
   };
 
   //---------------------------------------------------------------------------
@@ -72,6 +82,11 @@ class Text_Component: public Tunnelour::Bitmap_Component {
   // Description : Initialise this Component
   //---------------------------------------------------------------------------
   virtual void Init(ID3D11Device * const d3d11device);
+
+  //---------------------------------------------------------------------------
+  // Description : Retrives a pointer to the font struct for this compoent
+  //---------------------------------------------------------------------------
+  Font* GetFont();
 
  protected:
   //---------------------------------------------------------------------------

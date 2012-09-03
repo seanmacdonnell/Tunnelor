@@ -34,8 +34,10 @@
 #include "Background_Component.h"
 #include "Component.h"
 #include "Direct3D11_View_TextureShader.h"
+#include "Direct3D11_View_FontShader.h"
 #include "Camera_Component.h"
 #include "Bitmap_Component.h"
+#include "Text_Component.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -92,6 +94,11 @@ class Direct3D11_View : public Tunnelour::View {
   void Render_Bitmap(D3DXMATRIX &viewmatrix);
 
   //---------------------------------------------------------------------------
+  // Description : Render text
+  //---------------------------------------------------------------------------
+  void Render_Text(D3DXMATRIX &viewmatrix);
+
+  //---------------------------------------------------------------------------
   // Description : Class Variables
   //---------------------------------------------------------------------------
   LPCWSTR m_application_name;
@@ -120,8 +127,10 @@ class Direct3D11_View : public Tunnelour::View {
   D3DXMATRIX m_ortho;
   Tunnelour::Camera_Component * m_camera;
   Tunnelour::Bitmap_Component * m_bitmap;
+  Tunnelour::Text_Component * m_text;
   Tunnelour::Background_Component * m_background;
   Tunnelour::Direct3D11_View_TextureShader * m_texture_shader;
+  Tunnelour::Direct3D11_View_FontShader * m_font_shader;
 };
 }  // namespace Tunnelour
 
