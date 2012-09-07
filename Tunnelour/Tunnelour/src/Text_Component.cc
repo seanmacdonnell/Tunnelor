@@ -37,8 +37,9 @@ Text_Component::Text_Component(): Bitmap_Component() {
   m_type = "Text_Component";
 
   m_position = D3DXVECTOR2(0, 0);
-  m_text->font_csv_file = "resource\\Arial.fnt";
-  m_text->text = new std::string("W_T(8|");
+  m_text->font_csv_file = "resource\\Arial2.fnt";
+  //m_text->text = new std::string("W@%wmMAOGVQ&CYXRDNZHUKPBE_TS#~+ac$eovxy247<=>?F6p0qLbgkd53z9(8snu^Jh*f{}");
+  m_text->text = new std::string("FUCK");
 }
 
 //------------------------------------------------------------------------------
@@ -243,28 +244,97 @@ void Text_Component::Load_Font_Struct() {
 }
 
 //------------------------------------------------------------------------------
-void Text_Component::Load_Character_Frames() {
+/*void Text_Component::Load_Character_Frames() {
   // Load the Character Frame Struct Array from the Raw Character Frame Struct Array
   for (int index = 0; index < 256; index++) {
     if (m_font->raw_character_frames[index].id != -1) {
+      if (m_font->raw_character_frames[index].id == 55) {
+        m_font->raw_character_frames[index].id = 55;
+      }
 		    // First triangle in quad.
       // Top left.
-		    m_font->character_frames[index][0].position = D3DXVECTOR3(m_font->raw_character_frames[index].x, m_font->raw_character_frames[index].y, 0.0f);
-		    m_font->character_frames[index][0].texture =  D3DXVECTOR2(m_font->raw_character_frames[index].x, m_font->raw_character_frames[index].y);
+		    m_font->character_frames[index][0].position = D3DXVECTOR3(0, 0, 0.0f);
+      m_font->character_frames[index][0].texture = D3DXVECTOR2(m_font->raw_character_frames[index].x / m_font->image_height,
+                                                               m_font->raw_character_frames[index].y / m_font->image_width);
+
       // Bottom right.
-		    m_font->character_frames[index][1].position = D3DXVECTOR3(m_font->raw_character_frames[index].x + m_font->raw_character_frames[index].width, m_font->raw_character_frames[index].y - m_font->raw_character_frames[index].height, 0.0f);
-		    m_font->character_frames[index][1].texture = D3DXVECTOR2(m_font->raw_character_frames[index].x + m_font->raw_character_frames[index].width, m_font->raw_character_frames[index].y - m_font->raw_character_frames[index].height);
+		    m_font->character_frames[index][1].position = D3DXVECTOR3(0 + m_font->raw_character_frames[index].width,
+                                                                0 - m_font->raw_character_frames[index].height,
+                                                                0.0f);
+		    m_font->character_frames[index][1].texture = D3DXVECTOR2((m_font->raw_character_frames[index].x + m_font->raw_character_frames[index].width) / m_font->image_height,
+                                                               (m_font->raw_character_frames[index].y - m_font->raw_character_frames[index].height) / m_font->image_width);
       // Bottom left.
-		    m_font->character_frames[index][2].position = D3DXVECTOR3(m_font->raw_character_frames[index].x, m_font->raw_character_frames[index].y - m_font->raw_character_frames[index].height, 0.0f);
-		    m_font->character_frames[index][2].texture = D3DXVECTOR2(m_font->raw_character_frames[index].x, m_font->raw_character_frames[index].y - m_font->raw_character_frames[index].height);
+		    m_font->character_frames[index][2].position = D3DXVECTOR3(0,
+                                                                0 - m_font->raw_character_frames[index].height,
+                                                                0.0f);
+		    m_font->character_frames[index][2].texture = D3DXVECTOR2((m_font->raw_character_frames[index].x) / m_font->image_height,
+                                                               (m_font->raw_character_frames[index].y - m_font->raw_character_frames[index].height) / m_font->image_width);
+		    // Second triangle in quad.
+      // Top left.
+		    m_font->character_frames[index][3].position = m_font->character_frames[index][0].position;
+		    m_font->character_frames[index][3].texture = m_font->character_frames[index][0].texture;
+      // Top right.
+		    m_font->character_frames[index][4].position = D3DXVECTOR3(0 + m_font->raw_character_frames[index].width,
+                                                                m_font->raw_character_frames[index].y,
+                                                                0.0f);
+		    m_font->character_frames[index][4].texture = D3DXVECTOR2((m_font->raw_character_frames[index].x + m_font->raw_character_frames[index].width) / m_font->image_height,
+                                                               (m_font->raw_character_frames[index].y) / m_font->image_width);
+      // Bottom right.
+		    m_font->character_frames[index][5].position = m_font->character_frames[index][1].position;
+		    m_font->character_frames[index][5].texture = m_font->character_frames[index][1].texture;
+    }
+  }
+}*/
+//------------------------------------------------------------------------------
+// This is for debugging
+//------------------------------------------------------------------------------
+void Text_Component::Load_Character_Frames() {
+  float position_left, position_right, position_top, position_bottom;
+  float texture_left, texture_right, texture_top, texture_bottom;
+
+  // Load the Character Frame Struct Array from the Raw Character Frame Struct Array
+  for (int index = 0; index < 256; index++) {
+    if (m_font->raw_character_frames[index].id != -1) {
+      if (m_font->raw_character_frames[index].id == 55) {
+        m_font->raw_character_frames[index].id = 55;
+      }
+
+      D3DXVECTOR2 size = D3DXVECTOR2(m_font->raw_character_frames[index].width, m_font->raw_character_frames[index].height);
+      
+      // Calculate the screen coordinates of the left side of the bitmap.
+      position_left = m_position.x - (size.x / 2.0f);
+      texture_left = m_font->raw_character_frames[index].x / m_font->image_width;
+
+      // Calculate the screen coordinates of the right side of the bitmap.
+      position_right = m_position.x + (size.x / 2.0f);
+      texture_right = (m_font->raw_character_frames[index].x + size.x) / m_font->image_width;
+
+      // Calculate the screen coordinates of the top of the bitmap.
+      position_top = m_position.y + (size.y / 2.0f);
+      texture_top = m_font->raw_character_frames[index].y / m_font->image_height;
+
+      // Calculate the screen coordinates of the bottom of the bitmap.
+      position_bottom = m_position.y - (size.y / 2.0f);
+      texture_bottom = (m_font->raw_character_frames[index].y + size.y) / m_font->image_height;
+
+		    // First triangle in quad.
+      // Top left.
+		    m_font->character_frames[index][0].position = D3DXVECTOR3(position_left, position_top, 0.0f);
+      m_font->character_frames[index][0].texture = D3DXVECTOR2(texture_left, texture_top);
+      // Bottom right.
+		    m_font->character_frames[index][1].position = D3DXVECTOR3(position_right, position_bottom, 0.0f);
+		    m_font->character_frames[index][1].texture = D3DXVECTOR2(texture_right, texture_bottom);
+      // Bottom left.
+		    m_font->character_frames[index][2].position = D3DXVECTOR3(position_left, position_bottom, 0.0f);
+		    m_font->character_frames[index][2].texture = D3DXVECTOR2(texture_left, texture_bottom);
 
 		    // Second triangle in quad.
       // Top left.
 		    m_font->character_frames[index][3].position = m_font->character_frames[index][0].position;
 		    m_font->character_frames[index][3].texture = m_font->character_frames[index][0].texture;
       // Top right.
-		    m_font->character_frames[index][4].position = D3DXVECTOR3(m_font->raw_character_frames[index].x + m_font->raw_character_frames[index].width, m_font->raw_character_frames[index].y, 0.0f);
-		    m_font->character_frames[index][4].texture = D3DXVECTOR2(m_font->raw_character_frames[index].x + m_font->raw_character_frames[index].width, m_font->raw_character_frames[index].y);
+		    m_font->character_frames[index][4].position = D3DXVECTOR3(position_right, position_top, 0.0f);
+		    m_font->character_frames[index][4].texture = D3DXVECTOR2(texture_right, texture_top);
       // Bottom right.
 		    m_font->character_frames[index][5].position = m_font->character_frames[index][1].position;
 		    m_font->character_frames[index][5].texture = m_font->character_frames[index][1].texture;
@@ -275,13 +345,12 @@ void Text_Component::Load_Character_Frames() {
 
 //------------------------------------------------------------------------------
 void Text_Component::Create_String_Frame() {
-  float left, right, top, bottom;
   Vertex_Type* vertices;
   unsigned int* indices;
   D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
   D3D11_SUBRESOURCE_DATA vertexData, indexData;
   
-  // Set Frame Size
+    // Set Frame Size
   m_size = D3DXVECTOR2(0, 0);
   for (int i = 0; i < m_text->text->size(); i++) {
     char character_index = m_text->text->c_str()[i];
@@ -290,9 +359,9 @@ void Text_Component::Create_String_Frame() {
       m_size.y = m_font->raw_character_frames[character_index].height;
     }
   }
-  
+
   // Set the number of vertices in the vertex array.
-  m_frame->vertex_count = 6*m_text->text->size();
+  m_frame->vertex_count = 6 * m_text->text->size();
 
   // Set the number of indices in the index array.
   m_frame->index_count = m_frame->vertex_count;
@@ -316,27 +385,18 @@ void Text_Component::Create_String_Frame() {
   for (int i = 0; i < m_frame->index_count; i++)  {
     indices[i] = i;
   }
-  /*
-  // Calculate the screen coordinates of the left side of the bitmap.
-  left = m_position.x - static_cast<float>(m_size.x / 2);
-
-  // Calculate the screen coordinates of the right side of the bitmap.
-  right = m_position.x + static_cast<float>(m_size.x / 2);
-
-  // Calculate the screen coordinates of the top of the bitmap.
-  top = m_position.y + static_cast<float>(m_size.y / 2);
-
-  // Calculate the screen coordinates of the bottom of the bitmap.
-  bottom = m_position.y - static_cast<float>(m_size.y / 2);
-  */
+  
   // Load the vertex array with data.
   int vertex_index = 0;
+  float offset = 0;
   for (int i = 0; i < m_text->text->size(); i++) {
     char character_index = m_text->text->c_str()[i];
     for (int frame_index = 0; frame_index < 6; frame_index++) {
       vertices[vertex_index] = m_font->character_frames[character_index][frame_index];
+      vertices[vertex_index].position.x += offset;
       vertex_index++;
     }
+    offset += m_font->raw_character_frames[character_index].width;
   }
 
   // Set up the description of the static vertex buffer.
@@ -398,5 +458,18 @@ void Text_Component::Load_Font_Texture() {
     throw Tunnelour::Exceptions::init_error("D3DX11CreateShaderResourceViewFromFile Failed!");
   }
 }
+//------------------------------------------------------------------------------
+// For Debugging
+//------------------------------------------------------------------------------
+/*void Text_Component::Load_Font_Texture() {
+  if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_d3d11device,
+                                                    L"resource/Debug_Texture_001.dds",
+                                                    NULL,
+                                                    NULL,
+                                                    &m_texture->texture,
+                                                    NULL)))  {
+    throw Tunnelour::Exceptions::init_error("D3DX11CreateShaderResourceViewFromFile Failed!");
+  }
+}*/
 
 }  // namespace Tunnelour

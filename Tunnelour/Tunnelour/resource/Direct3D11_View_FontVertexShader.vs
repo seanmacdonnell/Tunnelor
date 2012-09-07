@@ -35,7 +35,7 @@ struct PixelInputType
 ////////////////////////////////////////////////////////////////////////////////
 PixelInputType FontVertexShader(VertexInputType input)
 {
-    PixelInputType output;
+  PixelInputType output;
     
 
 	// Change the position vector to be 4 units for proper matrix calculations.

@@ -45,24 +45,24 @@ class Text_Component: public Tunnelour::Bitmap_Component {
                             yoffset(-1),
                             xadvance(-1) {
     }
-    int id;
-    int x;
-    int y;
-    int width;
-    int height;
-    int xoffset;
-    int yoffset;
-    int xadvance;
+    float id;
+    float x;
+    float y;
+    float width;
+    float height;
+    float xoffset;
+    float yoffset;
+    float xadvance;
   };
 
   struct Font {
-    int image_width;
-    int image_height;
+    float image_width;
+    float image_height;
     // This is the distance in pixels between each line of text.
-    int line_height;
+    float line_height;
     std::string font_name;
     std::wstring font_texture_name;
-    int character_widths[256];
+    float character_widths[256];
     Raw_Character_Frame raw_character_frames[256];
     Vertex_Type character_frames[256][6];
     D3DXCOLOR font_color;

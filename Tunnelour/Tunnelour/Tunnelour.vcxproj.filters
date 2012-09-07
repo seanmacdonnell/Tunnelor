@@ -84,6 +84,9 @@
     <ClCompile Include="src\Direct3D11_View_FontShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Debug_Bitmap.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine.h">
@@ -156,6 +159,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Direct3D11_View_FontShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Debug_Bitmap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
