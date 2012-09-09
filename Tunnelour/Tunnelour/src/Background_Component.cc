@@ -23,8 +23,8 @@ namespace Tunnelour {
 Background_Component::Background_Component(): Component() {
   // red, green, blue, alpha
   // Set to Black as Default
-  //m_color = D3DXCOLOR(1.0, 0.0, 0.0, 1.0);
-  m_color = D3DXCOLOR(0.0, 0.0, 0.0, 1.0);
+  m_color = D3DXCOLOR(1.0, 0.0, 0.0, 1.0);
+  //m_color = D3DXCOLOR(0.0, 0.0, 0.0, 1.0);
   m_type = "Background_Component";
 }
 
