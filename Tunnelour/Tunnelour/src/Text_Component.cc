@@ -30,7 +30,7 @@ Text_Component::Text_Component(): Bitmap_Component() {
   m_font = new Tunnelour::Text_Component::Font();
   m_font->image_width = 0;
   m_font->image_height = 0;
-  m_font->font_color = D3DXCOLOR(1, 1, 1 ,0);
+  m_font->font_color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
   m_texture->texture_path = L"resource\\";
 
@@ -38,8 +38,8 @@ Text_Component::Text_Component(): Bitmap_Component() {
 
   m_position = D3DXVECTOR2(0, 0);
   m_text->font_csv_file = "resource\\Arial_3.fnt";
-  //m_text->text = new std::string("W@%wmMAOGVQ&CYXRDNZHUKPBE_TS#~+ac$eovxy247<=>?F6p0qLbgkd53z9(8snu^Jh*f{}");
-  m_text->text = new std::string("Hello World!");
+  m_text->text = new std::string("W@%wmMAOGVQ&CYXRDNZHUKPBE_TS#~+ac$eovxy247<=>?F6p0qLbgkd53z9(8snu^Jh*f{}");
+  //m_text->text = new std::string("Hello World!");
 }
 
 //------------------------------------------------------------------------------

@@ -48,6 +48,8 @@ Direct3D11_View::Direct3D11_View() {
   m_raster_state = NULL;
   m_texture_shader = NULL;
   m_depthDisabledStencilState = NULL;
+	 m_alphaEnableBlendingState = NULL;
+	 m_alphaDisableBlendingState = NULL;
 
   m_camera = NULL;
   m_texture_shader = NULL;
@@ -134,6 +136,11 @@ Direct3D11_View::~Direct3D11_View() {
     if (m_depthDisabledStencilState) {
       delete m_depthDisabledStencilState;
       m_depthDisabledStencilState = NULL;
+    }
+
+    if(m_alphaEnableBlendingState) {
+      m_alphaEnableBlendingState->Release();
+      m_alphaEnableBlendingState = NULL;
     }
   }
 }
@@ -343,6 +350,7 @@ void Direct3D11_View::Init_D3D11() {
   D3D11_VIEWPORT viewport;
   float fieldOfView, screen_aspect;
   D3D11_DEPTH_STENCIL_DESC depthDisabledStencilDesc;
+  D3D11_BLEND_DESC blendStateDescription;
 
   // Create a DirectX graphics interface factory.
   if (FAILED(CreateDXGIFactory(__uuidof(IDXGIFactory),
@@ -683,6 +691,34 @@ void Direct3D11_View::Init_D3D11() {
     throw Tunnelour::Exceptions::init_error("CreateDepthStencilState Failed!");
   }
 
+  // Clear the blend state description.
+  ZeroMemory(&blendStateDescription, sizeof(D3D11_BLEND_DESC));
+
+  // Create an alpha enabled blend state description.
+  blendStateDescription.RenderTarget[0].BlendEnable = TRUE;
+  blendStateDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+  blendStateDescription.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+  blendStateDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+  blendStateDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+  blendStateDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+  blendStateDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+  blendStateDescription.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+
+  // Create the blend state using the description.
+  if(FAILED(m_device->CreateBlendState(&blendStateDescription, &m_alphaEnableBlendingState)))
+  {
+    throw Tunnelour::Exceptions::init_error("CreateBlendState Failed!");
+  }
+
+  // Modify the description to create an alpha disabled blend state description.
+  blendStateDescription.RenderTarget[0].BlendEnable = FALSE;
+
+  // Create the blend state using the description.
+  if(FAILED(m_device->CreateBlendState(&blendStateDescription, &m_alphaDisableBlendingState)))
+  {
+    throw Tunnelour::Exceptions::init_error("CreateBlendState Failed!");
+  }
+
   m_is_d3d11_init = true;
 }
 
@@ -749,8 +785,9 @@ void Direct3D11_View::Render_Bitmap(D3DXMATRIX &viewmatrix) {
 void Direct3D11_View::Render_Text(D3DXMATRIX &viewmatrix) {
 	 unsigned int stride, offset;
 	 D3DXCOLOR pixelColor;
-	 bool result;
   ID3D11Buffer *vertexbuffer, *indexbuffer;
+
+  TurnOnAlphaBlending();
 
   vertexbuffer = m_text->GetFrame()->vertex_buffer;
   indexbuffer = m_text->GetFrame()->index_buffer;
@@ -779,6 +816,42 @@ void Direct3D11_View::Render_Text(D3DXMATRIX &viewmatrix) {
                         m_ortho,
                         m_text->GetTexture()->texture, 
 						 		               pixelColor);
+
+ TurnOffAlphaBlending();
+}
+
+void Direct3D11_View::TurnOnAlphaBlending()
+{
+	float blendFactor[4];
+	
+
+	// Setup the blend factor.
+	blendFactor[0] = 0.0f;
+	blendFactor[1] = 0.0f;
+	blendFactor[2] = 0.0f;
+	blendFactor[3] = 0.0f;
+	
+	// Turn on the alpha blending.
+	m_device_context->OMSetBlendState(m_alphaEnableBlendingState, blendFactor, 0xffffffff);
+
+	return;
+}
+
+void Direct3D11_View::TurnOffAlphaBlending()
+{
+	float blendFactor[4];
+	
+
+	// Setup the blend factor.
+	blendFactor[0] = 0.0f;
+	blendFactor[1] = 0.0f;
+	blendFactor[2] = 0.0f;
+	blendFactor[3] = 0.0f;
+	
+	// Turn off the alpha blending.
+	m_device_context->OMSetBlendState(m_alphaDisableBlendingState, blendFactor, 0xffffffff);
+
+	return;
 }
 
 }  // namespace Tunnelour

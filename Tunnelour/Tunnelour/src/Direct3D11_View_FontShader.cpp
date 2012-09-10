@@ -315,10 +315,7 @@ void Direct3D11_View_FontShader::Render(ID3D11DeviceContext* devicecontext,
 	 dataPtr2 = (PixelBufferType*)mappedresource.pData;
 
 	 // Copy the pixel color into the pixel constant buffer.
-	 dataPtr2->pixelColor = D3DXVECTOR4(pixelcolor.r,
-                                     pixelcolor.g,
-                                     pixelcolor.b,
-                                     pixelcolor.a);
+	 dataPtr2->pixelColor = pixelcolor;
 
 	 // Unlock the pixel constant buffer.
   devicecontext->Unmap(m_pixelbuffer, 0);

@@ -42,7 +42,7 @@ class Direct3D11_View_FontShader {
 
   struct PixelBufferType
 	 {
-		  D3DXVECTOR4 pixelColor;
+		  D3DXCOLOR pixelColor;
 	 };
 
   //---------------------------------------------------------------------------
