@@ -22,7 +22,7 @@ namespace Tunnelour {
 // public:
 //------------------------------------------------------------------------------
 Debug_Bitmap::Debug_Bitmap(): Bitmap_Component() {
-  m_position = D3DXVECTOR2(0, 0);
+  m_position = D3DXVECTOR3(0, 0, 0);
   m_size = D3DXVECTOR2(256, 256);
   m_texture->texture_path = L"resource/Debug_Texture_001.dds";
 }

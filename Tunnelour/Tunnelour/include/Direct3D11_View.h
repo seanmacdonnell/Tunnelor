@@ -96,7 +96,7 @@ class Direct3D11_View : public Tunnelour::View {
   //---------------------------------------------------------------------------
   // Description : Render text
   //---------------------------------------------------------------------------
-  void Render_Text(D3DXMATRIX &viewmatrix);
+  void Render_Text(Tunnelour::Text_Component *text, D3DXMATRIX &viewmatrix);
 
   //---------------------------------------------------------------------------
   // Description : Turn on Alpha Blending

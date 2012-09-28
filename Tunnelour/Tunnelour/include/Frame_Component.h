@@ -38,8 +38,10 @@ class Frame_Component: public Tunnelour::Component {
   };
 
   struct Frame {
+    Vertex_Type* vertices;
     ID3D11Buffer * vertex_buffer;
     int vertex_count;
+    unsigned int* indices;
     ID3D11Buffer * index_buffer;
     int index_count;
   };
@@ -72,12 +74,23 @@ class Frame_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   // Description : Accessor for the Position
   //---------------------------------------------------------------------------
-  D3DXVECTOR2 * const GetPosition();
+  D3DXVECTOR3 * const GetPosition();
 
   //---------------------------------------------------------------------------
   // Description : Mutator for the Position
   //---------------------------------------------------------------------------
-  void SetPosition(D3DXVECTOR2 * const position);
+  void SetPosition(D3DXVECTOR3 * const position);
+
+  //---------------------------------------------------------------------------
+  // Description : Accessor for the Scale
+  //---------------------------------------------------------------------------
+  D3DXVECTOR3 * const GetScale();
+
+  //---------------------------------------------------------------------------
+  // Description : Mutator for the Scale
+  //---------------------------------------------------------------------------
+  void SetScale(D3DXVECTOR3 * const scale);
+
 
   //---------------------------------------------------------------------------
   // Description : Mutator for the Size
@@ -89,12 +102,18 @@ class Frame_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   void SetSize(D3DXVECTOR2 * const size);
 
+  //---------------------------------------------------------------------------
+  // Description : Returns the calculated centre point of the frame
+  //---------------------------------------------------------------------------
+  D3DXVECTOR3 const GetCentre();
+
  protected:
   //---------------------------------------------------------------------------
   // Description : Class variables
   //---------------------------------------------------------------------------
   ID3D11Device * m_d3d11device;
-  D3DXVECTOR2 m_position;
+  D3DXVECTOR3 m_position;
+  D3DXVECTOR3 m_scale;
   D3DXVECTOR2 m_size;
   Frame  * m_frame;
 

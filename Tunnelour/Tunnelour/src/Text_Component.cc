@@ -36,9 +36,9 @@ Text_Component::Text_Component(): Bitmap_Component() {
 
   m_type = "Text_Component";
 
-  m_position = D3DXVECTOR2(0, 0);
+  m_position = D3DXVECTOR3(0, 0, 0);
   m_text->font_csv_file = "resource\\Arial_3.fnt";
-  m_text->text = new std::string("W@%wmMAOGVQ&CYXRDNZHUKPBE_TS#~+ac$eovxy247<=>?F6p0qLbgkd53z9(8snu^Jh*f{}");
+  m_text->text = new std::string("ABCDEF");
   //m_text->text = new std::string("Hello World!");
 }
 
@@ -320,8 +320,6 @@ void Text_Component::Load_Character_Frames() {
 
 //------------------------------------------------------------------------------
 void Text_Component::Create_String_Frame() {
-  Vertex_Type* vertices;
-  unsigned int* indices;
   D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
   D3D11_SUBRESOURCE_DATA vertexData, indexData;
   
@@ -342,23 +340,23 @@ void Text_Component::Create_String_Frame() {
   m_frame->index_count = m_frame->vertex_count;
 
   // Create the vertex array.
-  vertices = new Vertex_Type[m_frame->vertex_count];
-  if (!vertices) {
+  m_frame->vertices = new Vertex_Type[m_frame->vertex_count];
+  if (!m_frame->vertices) {
     throw Tunnelour::Exceptions::init_error("Creating the vertex array Failed!");
   }
 
   // Create the index array.
-  indices = new unsigned int[m_frame->index_count];
-  if (!indices) {
+  m_frame->indices = new unsigned int[m_frame->index_count];
+  if (!m_frame->indices) {
     throw Tunnelour::Exceptions::init_error("Creating the index array Failed!");
   }
 
   // Initialize vertex array to zeros at first.
-  memset(vertices, 0, (sizeof(Vertex_Type) * m_frame->vertex_count));
+  memset(m_frame->vertices, 0, (sizeof(Vertex_Type) * m_frame->vertex_count));
 
   // Load the index array with data.
   for (int i = 0; i < m_frame->index_count; i++)  {
-    indices[i] = i;
+    m_frame->indices[i] = i;
   }
   
   // Load the vertex array with data.
@@ -367,8 +365,8 @@ void Text_Component::Create_String_Frame() {
   for (int i = 0; i < m_text->text->size(); i++) {
     char character_index = m_text->text->c_str()[i];
     for (int frame_index = 0; frame_index < 6; frame_index++) {
-      vertices[vertex_index] = m_font->character_frames[character_index][frame_index];
-      vertices[vertex_index].position.x += offset;
+      m_frame->vertices[vertex_index] = m_font->character_frames[character_index][frame_index];
+      m_frame->vertices[vertex_index].position.x += offset;
       vertex_index++;
     }
     offset += m_font->raw_character_frames[character_index].xadvance;
@@ -383,7 +381,7 @@ void Text_Component::Create_String_Frame() {
   vertexBufferDesc.StructureByteStride = 0;
 
   // Give the subresource structure a pointer to the vertex data.
-  vertexData.pSysMem = vertices;
+  vertexData.pSysMem = m_frame->vertices;
   vertexData.SysMemPitch = 0;
   vertexData.SysMemSlicePitch = 0;
 
@@ -403,7 +401,7 @@ void Text_Component::Create_String_Frame() {
   indexBufferDesc.StructureByteStride = 0;
 
   // Give the subresource structure a pointer to the index data.
-  indexData.pSysMem = indices;
+  indexData.pSysMem = m_frame->indices;
   indexData.SysMemPitch = 0;
   indexData.SysMemSlicePitch = 0;
 
@@ -413,13 +411,6 @@ void Text_Component::Create_String_Frame() {
                                          &(m_frame->index_buffer)))) {
     throw Tunnelour::Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
   }
-
-  // Release the arrays now that the vertex and index buffers have been created and loaded.
-  delete [] vertices;
-  vertices = 0;
-
-  delete [] indices;
-  indices = 0;
 }
 
 //------------------------------------------------------------------------------

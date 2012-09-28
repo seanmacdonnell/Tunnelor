@@ -225,8 +225,10 @@ void Direct3D11_View::Run() {
 
   Render_Camera(viewmatrix);
   
-  if (mutator.FoundBitmap()) { Render_Bitmap(viewmatrix); }
-  if (mutator.FoundText()) { Render_Text(viewmatrix); }
+  TurnOnAlphaBlending();
+  if (mutator.FoundText()) { Render_Text(m_text, viewmatrix); }
+  //if (mutator.FoundBitmap()) { Render_Bitmap(viewmatrix); }
+  TurnOffAlphaBlending();
 
   // Present the rendered scene to the screen.
   // Present the back buffer to the screen since rendering is complete.
@@ -782,13 +784,41 @@ void Direct3D11_View::Render_Bitmap(D3DXMATRIX &viewmatrix) {
 }
 
 //------------------------------------------------------------------------------
-void Direct3D11_View::Render_Text(D3DXMATRIX &viewmatrix) {
+void Direct3D11_View::Render_Text(Tunnelour::Text_Component *text,
+                                  D3DXMATRIX &viewmatrix) {
 	 unsigned int stride, offset;
 	 D3DXCOLOR pixelColor;
   ID3D11Buffer *vertexbuffer, *indexbuffer;
+  
+  D3DXMATRIX RotateMatrix_x, RotateMatrix_y, RotateMatrix_z;
+  D3DXMATRIX TranslateMatrix;
+  D3DXMATRIX OffsetMatrix;
+  D3DXMATRIX ScaleMatrix;
+  D3DXMatrixIdentity(&ScaleMatrix);
+  
+  D3DXVECTOR3 SubsetOffsetMatrix = text->GetCentre();
+  D3DXMatrixTranslation(&OffsetMatrix,
+                        -1 * SubsetOffsetMatrix.x,
+                        -1 * SubsetOffsetMatrix.y,
+                        -1 * SubsetOffsetMatrix.z);
 
-  TurnOnAlphaBlending();
+  D3DXMATRIX MeshMatrix;
+  D3DXMatrixIdentity(&MeshMatrix);
 
+  // Translate
+  D3DXMatrixTranslation(&TranslateMatrix,
+                        text->GetPosition()->x,
+                        text->GetPosition()->y,
+                        text->GetPosition()->z);
+
+  // Scale
+  D3DXMatrixScaling(&ScaleMatrix,
+                    text->GetScale()->x,
+                    text->GetScale()->y,
+                    text->GetScale()->z);
+
+  m_world = ((OffsetMatrix) * TranslateMatrix) * ScaleMatrix;
+  
   vertexbuffer = m_text->GetFrame()->vertex_buffer;
   indexbuffer = m_text->GetFrame()->index_buffer;
 
@@ -816,8 +846,6 @@ void Direct3D11_View::Render_Text(D3DXMATRIX &viewmatrix) {
                         m_ortho,
                         m_text->GetTexture()->texture, 
 						 		               pixelColor);
-
- TurnOffAlphaBlending();
 }
 
 void Direct3D11_View::TurnOnAlphaBlending()

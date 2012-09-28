@@ -30,7 +30,8 @@ Frame_Component::Frame_Component(): Component() {
   m_frame->index_buffer = 0;
   m_frame->index_count = 0;
 
-  m_position = D3DXVECTOR2(0, 0);
+  m_position = D3DXVECTOR3(0, 0, 0);
+  m_scale = D3DXVECTOR3(1, 1, 1);
   m_size = D3DXVECTOR2(0, 0);
 
   m_type = "Frame_Component";
@@ -56,8 +57,6 @@ void Frame_Component::Init(ID3D11Device * const d3d11device) {
   m_d3d11device = d3d11device;
 
   float left, right, top, bottom;
-  Vertex_Type* vertices;
-  unsigned int* indices;
   D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
   D3D11_SUBRESOURCE_DATA vertexData, indexData;
 
@@ -68,23 +67,23 @@ void Frame_Component::Init(ID3D11Device * const d3d11device) {
   m_frame->index_count = 6;
 
   // Create the vertex array.
-  vertices = new Vertex_Type[m_frame->vertex_count];
-  if (!vertices) {
+  m_frame->vertices = new Vertex_Type[m_frame->vertex_count];
+  if (!m_frame->vertices) {
     throw Tunnelour::Exceptions::init_error("Creating the vertex array Failed!");
   }
 
   // Create the index array.
-  indices = new unsigned int[m_frame->index_count];
-  if (!indices) {
+  m_frame->indices = new unsigned int[m_frame->index_count];
+  if (!m_frame->indices) {
     throw Tunnelour::Exceptions::init_error("Creating the index array Failed!");
   }
 
   // Initialize vertex array to zeros at first.
-  memset(vertices, 0, (sizeof(Vertex_Type) * m_frame->vertex_count));
+  memset(m_frame->vertices, 0, (sizeof(Vertex_Type) * m_frame->vertex_count));
 
   // Load the index array with data.
   for (int i = 0; i < m_frame->index_count; i++)  {
-    indices[i] = i;
+    m_frame->indices[i] = i;
   }
 
   // Calculate the screen coordinates of the left side of the bitmap.
@@ -101,24 +100,24 @@ void Frame_Component::Init(ID3D11Device * const d3d11device) {
 
   // Load the vertex array with data.
   // First triangle.
-  vertices[0].position = D3DXVECTOR3(left, top, 0.0f);  // Top left.
-  vertices[0].texture = D3DXVECTOR2(0.0f, 0.0f);
+  m_frame->vertices[0].position = D3DXVECTOR3(left, top, 0.0f);  // Top left.
+  m_frame->vertices[0].texture = D3DXVECTOR2(0.0f, 0.0f);
 
-  vertices[1].position = D3DXVECTOR3(right, bottom, 0.0f);  // Bottom right.
-  vertices[1].texture = D3DXVECTOR2(1.0f, 1.0f);
+  m_frame->vertices[1].position = D3DXVECTOR3(right, bottom, 0.0f);  // Bottom right.
+  m_frame->vertices[1].texture = D3DXVECTOR2(1.0f, 1.0f);
 
-  vertices[2].position = D3DXVECTOR3(left, bottom, 0.0f);  // Bottom left.
-  vertices[2].texture = D3DXVECTOR2(0.0f, 1.0f);
+  m_frame->vertices[2].position = D3DXVECTOR3(left, bottom, 0.0f);  // Bottom left.
+  m_frame->vertices[2].texture = D3DXVECTOR2(0.0f, 1.0f);
 
   // Second triangle.
-  vertices[3].position = D3DXVECTOR3(left, top, 0.0f);  // Top left.
-  vertices[3].texture = D3DXVECTOR2(0.0f, 0.0f);
+  m_frame->vertices[3].position = D3DXVECTOR3(left, top, 0.0f);  // Top left.
+  m_frame->vertices[3].texture = D3DXVECTOR2(0.0f, 0.0f);
 
-  vertices[4].position = D3DXVECTOR3(right, top, 0.0f);  // Top right.
-  vertices[4].texture = D3DXVECTOR2(1.0f, 0.0f);
+  m_frame->vertices[4].position = D3DXVECTOR3(right, top, 0.0f);  // Top right.
+  m_frame->vertices[4].texture = D3DXVECTOR2(1.0f, 0.0f);
 
-  vertices[5].position = D3DXVECTOR3(right, bottom, 0.0f);  // Bottom right.
-  vertices[5].texture = D3DXVECTOR2(1.0f, 1.0f);
+  m_frame->vertices[5].position = D3DXVECTOR3(right, bottom, 0.0f);  // Bottom right.
+  m_frame->vertices[5].texture = D3DXVECTOR2(1.0f, 1.0f);
 
   // Set up the description of the static vertex buffer.
   vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -129,7 +128,7 @@ void Frame_Component::Init(ID3D11Device * const d3d11device) {
   vertexBufferDesc.StructureByteStride = 0;
 
   // Give the subresource structure a pointer to the vertex data.
-  vertexData.pSysMem = vertices;
+  vertexData.pSysMem = m_frame->vertices;
   vertexData.SysMemPitch = 0;
   vertexData.SysMemSlicePitch = 0;
 
@@ -149,7 +148,7 @@ void Frame_Component::Init(ID3D11Device * const d3d11device) {
   indexBufferDesc.StructureByteStride = 0;
 
   // Give the subresource structure a pointer to the index data.
-  indexData.pSysMem = indices;
+  indexData.pSysMem = m_frame->indices;
   indexData.SysMemPitch = 0;
   indexData.SysMemSlicePitch = 0;
 
@@ -159,13 +158,6 @@ void Frame_Component::Init(ID3D11Device * const d3d11device) {
                                          &(m_frame->index_buffer)))) {
     throw Tunnelour::Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
   }
-
-  // Release the arrays now that the vertex and index buffers have been created and loaded.
-  delete [] vertices;
-  vertices = 0;
-
-  delete [] indices;
-  indices = 0;
 
   m_is_initialised = true;
 }
@@ -181,13 +173,23 @@ void Frame_Component::SetFrame(Tunnelour::Frame_Component::Frame * frame) {
 }
 
 //---------------------------------------------------------------------------
-D3DXVECTOR2 * const Frame_Component::GetPosition() {
+D3DXVECTOR3 * const Frame_Component::GetPosition() {
   return &m_position;
 }
 
 //---------------------------------------------------------------------------
-void Frame_Component::SetPosition(D3DXVECTOR2 * const position) {
+void Frame_Component::SetPosition(D3DXVECTOR3 * const position) {
   m_position = *position;
+}
+
+//---------------------------------------------------------------------------
+D3DXVECTOR3 * const Frame_Component::GetScale() {
+  return &m_scale;
+}
+
+//---------------------------------------------------------------------------
+void Frame_Component::SetScale(D3DXVECTOR3 * const scale) {
+  m_scale = *scale;
 }
 
 //---------------------------------------------------------------------------
@@ -199,6 +201,24 @@ D3DXVECTOR2 * const Frame_Component::GetSize() {
 void Frame_Component::SetSize(D3DXVECTOR2 * const size) {
   m_size = *size;
 }
+
+//---------------------------------------------------------------------------
+D3DXVECTOR3 const Frame_Component::GetCentre() {
+  D3DXVECTOR3 centre = D3DXVECTOR3(0, 0, 0);
+
+  for (int i = 0; i < m_frame->vertex_count; i++) {
+    centre.x += m_frame->vertices[i].position.x;
+    centre.y += m_frame->vertices[i].position.y;
+    centre.z += m_frame->vertices[i].position.z;
+  }
+
+  centre.x = centre.x / m_frame->vertex_count;
+  centre.y = centre.y / m_frame->vertex_count;
+  centre.z = centre.z / m_frame->vertex_count;
+
+  return centre;
+}
+
 
 //------------------------------------------------------------------------------
 // protected:
