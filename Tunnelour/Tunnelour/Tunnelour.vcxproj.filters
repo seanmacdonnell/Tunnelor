@@ -13,6 +13,24 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Components">
+      <UniqueIdentifier>{359cadd9-3a1a-4184-a1bd-035794a4d0b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Controllers">
+      <UniqueIdentifier>{17fb5bc3-2396-4232-a349-e3fc0c5951ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\View">
+      <UniqueIdentifier>{29166d8a-f90c-49ba-8c59-696090c8d57e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Components">
+      <UniqueIdentifier>{8ceb3084-34eb-4d48-a505-cd767097a0c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Controllers">
+      <UniqueIdentifier>{5ce0711a-7eef-4db8-ae20-9ec55a5f070b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\View">
+      <UniqueIdentifier>{3f36680a-8dc6-4b97-aff8-03c4481921ff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine.cc">
@@ -45,16 +63,10 @@
     <ClCompile Include="src\View_Composite.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Direct3D11_View.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Tunnelour_View.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Background_Component.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Init_Controller.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Tunnelour_Controller.cc">
@@ -75,17 +87,26 @@
     <ClCompile Include="src\Frame_Component.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SeaFloorSquare.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Text_Component.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Direct3D11_View_FontShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Direct3D11_View.cc">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Init_Controller.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
     <ClCompile Include="src\Debug_Bitmap.cc">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Debug_Text.cc">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SeaFloorSquare.cc">
+      <Filter>Source Files\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -122,16 +143,10 @@
     <ClInclude Include="include\View_Composite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Direct3D11_View.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Tunnelour_View.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Background_Component.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Init_Controller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Tunnelour_Controller.h">
@@ -146,13 +161,7 @@
     <ClInclude Include="include\Direct3D11_View_TextureShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Bitmap_Component.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Frame_Component.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SeaFloorSquare.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Text_Component.h">
@@ -162,7 +171,22 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Debug_Bitmap.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Debug_Text.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Bitmap_Component.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SeaFloorSquare.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Init_Controller.h">
+      <Filter>Header Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Direct3D11_View.h">
+      <Filter>Header Files\View</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
