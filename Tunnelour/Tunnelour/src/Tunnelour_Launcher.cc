@@ -15,28 +15,54 @@
 
 #include "Tunnelour_Launcher.h"
 #include "Engine.h"
+#include "windows.h"
 
 //------------------------------------------------------------------------------
 // private:
 //------------------------------------------------------------------------------
+std::wstring CharToWChar(const char* pstrSrc) {
+    size_t origsize = strlen(pstrSrc) + 1;
+    const size_t newsize = 100;
+    size_t convertedChars = 0;
+    wchar_t wcstring[newsize];
+    mbstowcs_s(&convertedChars, wcstring, origsize, pstrSrc, _TRUNCATE);
+    return std::wstring(wcstring);
+}
+
+//------------------------------------------------------------------------------
 int WINAPI WinMain(HINSTANCE hInstance,
                    HINSTANCE hPrevInstance,
                    LPSTR lpCmdLine,
-                   int nCmdShow) {
-  Tunnelour::Engine* engine;
+                   int nCmdShow) {    
   bool result = 0;
 
-  // Create Engine
-  engine = new Tunnelour::Engine;
+  try {
+    // Create Engine
+    Tunnelour::Engine* engine;
+    engine = new Tunnelour::Engine;
 
-  // Init Engine
-  engine->Init(true, true);
+    // Init Engine
+    engine->Init(true, true);
 
-  // Run Engine
-  engine->Start();
+    // Run Engine
+    engine->Start();
 
-  // Kill Engine
-  delete engine;
+    // Kill Engine
+    delete engine;
+  }
+  catch (const std::exception& e) {
+    const char* raw_message = e.what();
+    std::wstring converted_message = CharToWChar(raw_message);
+    LPCTSTR message = converted_message.c_str();
+    MessageBox( NULL, message, TEXT("Unhandled exception"), MB_OK );
+    return EXIT_FAILURE;
+  }
+  catch (...)  {
+    MessageBox( NULL, TEXT("Unknown error"), NULL, MB_OK );
+    return EXIT_FAILURE;
+  }
 
   return result;
 }
+
+

@@ -29,8 +29,8 @@ Direct3D11_View_FontShader::Direct3D11_View_FontShader() {
   m_matrixbuffer = 0;
   m_sampleState = 0;
 	 m_pixelbuffer = 0;
-  m_vertexshaderfile = L"resource/Direct3D11_View_FontVertexShader.vs";
-  m_pixelshaderfile  = L"resource/Direct3D11_View_FontPixelShader.ps";
+  m_vertexshaderfile = L"resource/Direct3D11_View_VertexShader.vs";
+  m_pixelshaderfile  = L"resource/Direct3D11_View_PixelShader.ps";
   m_is_initialised = false;
 }
 

@@ -83,14 +83,14 @@ class Direct3D11_View_Mutator: public Tunnelour::Component::Component_Mutator  {
   //-------------------------------------------------------------------------
   // Description : Accessors for Bitmap Component
   //-------------------------------------------------------------------------
-  Tunnelour::Text_Component * const GetText();
+  std::list<Tunnelour::Text_Component*>& const GetText();
 
  private:
   bool m_found_background, m_found_camera, m_found_mesh, m_found_bitmap, m_found_text;
   Tunnelour::Camera_Component * m_camera;
   Tunnelour::Background_Component * m_background;
   Tunnelour::Bitmap_Component * m_bitmap;
-  Tunnelour::Text_Component * m_text;
+  std::list<Tunnelour::Text_Component*> m_text;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_DIRECT3D11_VIEW_MUTATOR_H_

@@ -54,6 +54,7 @@ Direct3D11_View::Direct3D11_View() {
   m_camera = NULL;
   m_texture_shader = NULL;
   m_font_shader = NULL;
+  m_transparent_shader = NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -133,6 +134,11 @@ Direct3D11_View::~Direct3D11_View() {
       m_font_shader = NULL;
     }
 
+    if (m_transparent_shader) {
+      delete m_transparent_shader;
+      m_transparent_shader = NULL;
+    }
+
     if (m_depthDisabledStencilState) {
       delete m_depthDisabledStencilState;
       m_depthDisabledStencilState = NULL;
@@ -172,6 +178,11 @@ void Direct3D11_View::Init(Tunnelour::Component_Composite * const model) {
       m_font_shader = new Tunnelour::Direct3D11_View_FontShader();
       m_font_shader->Init(m_device, &m_hwnd);
     }
+    if (!m_transparent_shader) {
+      m_transparent_shader = new Tunnelour::Direct3D11_View_TransparentShader();
+      m_transparent_shader->Init(m_device, &m_hwnd);
+    }
+
     m_is_initialised = true;
   }
 }
@@ -200,15 +211,9 @@ void Direct3D11_View::Run() {
     m_bitmap = mutator.GetBitmap();
     if (!m_bitmap->IsInitialised()) { m_bitmap->Init(m_device); }
   } else {
-   //throw Tunnelour::Exceptions::run_error("Can't find Bitmap component!");
+    //throw Tunnelour::Exceptions::run_error("Can't find Bitmap component!");
   }
 
-  if (mutator.FoundText()) {
-    m_text = mutator.GetText();
-    if (!m_text->IsInitialised()) { m_text->Init(m_device); }
-  } else {
-   //throw Tunnelour::Exceptions::run_error("Can't find Text component!");
-  }
 
   // <BeginScene>
   D3DXMATRIX viewmatrix;
@@ -226,7 +231,23 @@ void Direct3D11_View::Run() {
   Render_Camera(viewmatrix);
   
   TurnOnAlphaBlending();
-  if (mutator.FoundText()) { Render_Text(m_text, viewmatrix); }
+
+  if (mutator.FoundText()) {
+    std::list<Tunnelour::Text_Component*> text_components = mutator.GetText();
+    if (!text_components.empty()) {
+      std::list<Tunnelour::Text_Component*>::iterator it;
+      for (it = text_components.begin(); it != text_components.end(); ) {
+        if (!(*it)->IsInitialised()) {
+          (*it)->Init(m_device); 
+        }
+        Render_Text((*it), viewmatrix);
+        *it++;
+      }
+    }
+  } else {
+   throw Tunnelour::Exceptions::run_error("Can't find Any Text Components!");
+  }
+
   //if (mutator.FoundBitmap()) { Render_Bitmap(viewmatrix); }
   TurnOffAlphaBlending();
 
@@ -698,7 +719,7 @@ void Direct3D11_View::Init_D3D11() {
 
   // Create an alpha enabled blend state description.
   blendStateDescription.RenderTarget[0].BlendEnable = TRUE;
-  blendStateDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+  blendStateDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
   blendStateDescription.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
   blendStateDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
   blendStateDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
@@ -819,8 +840,8 @@ void Direct3D11_View::Render_Text(Tunnelour::Text_Component *text,
 
   m_world = ((OffsetMatrix) * TranslateMatrix) * ScaleMatrix;
   
-  vertexbuffer = m_text->GetFrame()->vertex_buffer;
-  indexbuffer = m_text->GetFrame()->index_buffer;
+  vertexbuffer = text->GetFrame()->vertex_buffer;
+  indexbuffer = text->GetFrame()->index_buffer;
 
 	 // Set vertex buffer stride and offset.
   stride = sizeof(Tunnelour::Text_Component::Vertex_Type); 
@@ -836,15 +857,15 @@ void Direct3D11_View::Render_Text(Tunnelour::Text_Component *text,
 	 m_device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	 // Create a pixel color vector with the input sentence color.
-	 pixelColor = m_text->GetFont()->font_color;
+	 pixelColor = text->GetFont()->font_color;
 
 	 // Render the text using the font shader.
 	 m_font_shader->Render(m_device_context,
-                        m_text->GetFrame()->index_count,
+                        text->GetFrame()->index_count,
                         m_world,
                         viewmatrix,
                         m_ortho,
-                        m_text->GetTexture()->texture, 
+                        text->GetTexture()->texture, 
 						 		               pixelColor);
 }
 

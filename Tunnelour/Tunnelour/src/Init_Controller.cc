@@ -58,6 +58,13 @@ void Init_Controller::Run() {
   text = m_model->Add(new Tunnelour::Debug_Text());
   text->Init();
 
+  text = 0;
+  text = m_model->Add(new Tunnelour::Debug_Text());
+  Tunnelour::Text_Component *debug_text = static_cast<Tunnelour::Text_Component*>(text);
+  debug_text->SetPosition(new D3DXVECTOR3(10, 10, 10));
+  debug_text->GetText()->text = new std::string("TWO");
+  text->Init();
+
   //Tunnelour::Component *bitmap = 0;
   //bitmap = m_model->Add(new Tunnelour());
   //bitmap->Init();

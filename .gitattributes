@@ -20,6 +20,7 @@ Tunnelour/Tunnelour/include/Direct3D11_View.h -text
 Tunnelour/Tunnelour/include/Direct3D11_View_FontShader.h -text
 Tunnelour/Tunnelour/include/Direct3D11_View_Mutator.h -text
 Tunnelour/Tunnelour/include/Direct3D11_View_TextureShader.h -text
+Tunnelour/Tunnelour/include/Direct3D11_View_TransparentShader.h -text
 Tunnelour/Tunnelour/include/Engine.h -text
 Tunnelour/Tunnelour/include/Exceptions.h -text
 Tunnelour/Tunnelour/include/Frame_Component.h -text
@@ -43,6 +44,8 @@ Tunnelour/Tunnelour/resource/Direct3D11_View_FontPixelShader.ps -text
 Tunnelour/Tunnelour/resource/Direct3D11_View_FontVertexShader.vs -text
 Tunnelour/Tunnelour/resource/Direct3D11_View_TexturePixelShader.ps -text
 Tunnelour/Tunnelour/resource/Direct3D11_View_TextureVertexShader.vs -text
+Tunnelour/Tunnelour/resource/Direct3D11_View_TransparentPixelShader.ps -text
+Tunnelour/Tunnelour/resource/Direct3D11_View_TransparentVertexShader.vs -text
 Tunnelour/Tunnelour/resource/Khmer_UI.bff -text
 Tunnelour/Tunnelour/resource/Khmer_UI.bmp -text
 Tunnelour/Tunnelour/resource/Khmer_UI.csv -text
@@ -63,6 +66,7 @@ Tunnelour/Tunnelour/src/Direct3D11_View.cc -text
 Tunnelour/Tunnelour/src/Direct3D11_View_FontShader.cpp -text
 Tunnelour/Tunnelour/src/Direct3D11_View_Mutator.cc -text
 Tunnelour/Tunnelour/src/Direct3D11_View_TextureShader.cpp -text
+Tunnelour/Tunnelour/src/Direct3D11_View_TransparentShader.cpp -text
 Tunnelour/Tunnelour/src/Engine.cc -text
 Tunnelour/Tunnelour/src/Frame_Component.cc -text
 Tunnelour/Tunnelour/src/Init_Controller.cc -text

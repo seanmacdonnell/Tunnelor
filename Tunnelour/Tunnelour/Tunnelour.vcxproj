@@ -94,6 +94,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Direct3D11_View_FontShader.cpp" />
     <ClCompile Include="src\Direct3D11_View_Mutator.cc" />
     <ClCompile Include="src\Direct3D11_View_TextureShader.cpp" />
+    <ClCompile Include="src\Direct3D11_View_TransparentShader.cpp" />
     <ClCompile Include="src\Engine.cc" />
     <ClCompile Include="src\Frame_Component.cc" />
     <ClCompile Include="src\Init_Controller.cc" />
@@ -121,6 +122,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Direct3D11_View_FontShader.h" />
     <ClInclude Include="include\Direct3D11_View_Mutator.h" />
     <ClInclude Include="include\Direct3D11_View_TextureShader.h" />
+    <ClInclude Include="include\Direct3D11_View_TransparentShader.h" />
     <ClInclude Include="include\Engine.h" />
     <ClInclude Include="include\Exceptions.h" />
     <ClInclude Include="include\Frame_Component.h" />
@@ -138,8 +140,10 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
   <ItemGroup>
     <None Include="resource\Direct3D11_View_FontPixelShader.ps" />
     <None Include="resource\Direct3D11_View_FontVertexShader.vs" />
+    <None Include="resource\Direct3D11_View_TransparentPixelShader.ps" />
     <None Include="resource\Direct3D11_View_TexturePixelShader.ps" />
     <None Include="resource\Direct3D11_View_TextureVertexShader.vs" />
+    <None Include="resource\Direct3D11_View_TransparentVertexShader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -34,7 +34,7 @@ Debug_Text::Debug_Text(): Text_Component() {
 
   m_position = D3DXVECTOR3(0, 0, 0);
   m_text->font_csv_file = "resource\\Arial_3.fnt";
-  m_text->text = new std::string("ABCDEF");
+  m_text->text = new std::string("ONE");
 }
 
 //------------------------------------------------------------------------------

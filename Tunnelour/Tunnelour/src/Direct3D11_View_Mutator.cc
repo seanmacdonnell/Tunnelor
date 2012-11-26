@@ -28,8 +28,6 @@ Direct3D11_View_Mutator::Direct3D11_View_Mutator() {
   m_found_mesh = false;
   m_bitmap = 0;
   m_found_bitmap = false;
-  m_text = 0;
-  m_found_text = false;
 }
 
 //------------------------------------------------------------------------------
@@ -41,8 +39,6 @@ Direct3D11_View_Mutator::~Direct3D11_View_Mutator() {
   m_found_mesh = false;
   m_bitmap = 0;
   m_found_bitmap = false;
-  m_text = 0;
-  m_found_text = false;
 }
 
 //------------------------------------------------------------------------------
@@ -75,7 +71,7 @@ void Direct3D11_View_Mutator::Mutate(Tunnelour::Component * const component) {
     // Found Text_Component
     Tunnelour::Text_Component *text = 0;
     text = static_cast<Tunnelour::Text_Component*>(component);
-    m_text = text;
+    m_text.push_back(text);
     m_found_text = true;
   }
 }
@@ -116,7 +112,7 @@ bool Direct3D11_View_Mutator::FoundText() {
 }
 
 //------------------------------------------------------------------------------
-Tunnelour::Text_Component * const Direct3D11_View_Mutator::GetText() {
+std::list<Tunnelour::Text_Component*>& const Direct3D11_View_Mutator::GetText() {
   return m_text;
 }
 
