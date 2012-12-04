@@ -92,7 +92,8 @@ class Direct3D11_View : public Tunnelour::View {
   //---------------------------------------------------------------------------
   // Description : Render a Bitmap
   //---------------------------------------------------------------------------
-  void Render_Bitmap(D3DXMATRIX &viewmatrix);
+  void Render_Bitmap(Tunnelour::Bitmap_Component *bitmap,
+                     D3DXMATRIX &viewmatrix);
 
   //---------------------------------------------------------------------------
   // Description : Render text
@@ -139,7 +140,6 @@ class Direct3D11_View : public Tunnelour::View {
   D3DXMATRIX m_world;
   D3DXMATRIX m_ortho;
   Tunnelour::Camera_Component * m_camera;
-  Tunnelour::Bitmap_Component * m_bitmap;
   Tunnelour::Background_Component * m_background;
   //---------------------------------------------------------------------------
   // Description : Shaders

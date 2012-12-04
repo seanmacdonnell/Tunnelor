@@ -19,6 +19,8 @@
 #include "Debug_Bitmap.h"
 #include "Text_Component.h"
 #include "Debug_Text.h"
+#include "Bitmap_Component.h"
+#include "SeaFloorSquare.h"
 
 namespace Tunnelour {
 
@@ -49,26 +51,22 @@ void Init_Controller::Run() {
   Tunnelour::Component *camera = 0;
   camera = m_model->Add(new Tunnelour::Camera_Component());
   camera->Init();
-
-  //Tunnelour::Component *bitmap = 0;
+  
+  Tunnelour::Component *bitmap = 0;
+  bitmap = m_model->Add(new Tunnelour::Debug_Bitmap());
+  //bitmap->Init();
+  //bitmap = 0;
   //bitmap = m_model->Add(new Tunnelour::Debug_Bitmap());
-  //bitmap->Init();
-
-  Tunnelour::Component *text = 0;
-  text = m_model->Add(new Tunnelour::Debug_Text());
-  text->Init();
-
-  text = 0;
-  text = m_model->Add(new Tunnelour::Debug_Text());
-  Tunnelour::Text_Component *debug_text = static_cast<Tunnelour::Text_Component*>(text);
-  debug_text->SetPosition(new D3DXVECTOR3(10, 10, 10));
-  debug_text->GetText()->text = new std::string("TWO");
-  text->Init();
-
-  //Tunnelour::Component *bitmap = 0;
-  //bitmap = m_model->Add(new Tunnelour());
-  //bitmap->Init();
-
+  //static_cast<Tunnelour::Debug_Bitmap*>(bitmap)->SetPosition(new D3DXVECTOR3(10, 10, 10));
+  
+  //Tunnelour::Component *text = 0;
+  //text = m_model->Add(new Tunnelour::Debug_Text());
+  //text = 0;
+  //text = m_model->Add(new Tunnelour::Debug_Text());
+  //Tunnelour::Text_Component *debug_text = static_cast<Tunnelour::Text_Component*>(text);
+  //debug_text->SetPosition(new D3DXVECTOR3(10, 10, 10));
+  //debug_text->GetText()->text = new std::string("TWO");
+  
   m_is_finished = true;
 }
 

@@ -44,6 +44,7 @@ Debug_Text::~Debug_Text()  {
 //------------------------------------------------------------------------------
 void Debug_Text::Init(ID3D11Device * const d3d11device) {
   Text_Component::Init(d3d11device);
+  m_is_initialised = true;
 }
 
 }  // namespace Tunnelour

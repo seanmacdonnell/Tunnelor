@@ -259,23 +259,7 @@ void Text_Component::Load_Character_Frames() {
 
       D3DXVECTOR2 size = D3DXVECTOR2(m_font->raw_character_frames[index].width, m_font->raw_character_frames[index].height);
       D3DXVECTOR2 position = D3DXVECTOR2(0, 0);
-/*
-      // Calculate the screen coordinates of the left side of the bitmap.
-      position_left = position.x - (size.x / 2.0f);
-      texture_left = m_font->raw_character_frames[index].x / m_font->image_width;
 
-      // Calculate the screen coordinates of the right side of the bitmap.
-      position_right = position.x + (size.x / 2.0f);
-      texture_right = (m_font->raw_character_frames[index].x + size.x) / m_font->image_width;
-
-      // Calculate the screen coordinates of the top of the bitmap.
-      position_top = position.y + (size.y / 2.0f);
-      texture_top = m_font->raw_character_frames[index].y / m_font->image_height;
-
-      // Calculate the screen coordinates of the bottom of the bitmap.
-      position_bottom = position.y - (size.y / 2.0f);
-      texture_bottom = (m_font->raw_character_frames[index].y + size.y) / m_font->image_height;
-*/
       // Calculate the screen coordinates of the left side of the bitmap.
       position_left = position.x;
       texture_left = m_font->raw_character_frames[index].x / m_font->image_width;
@@ -323,7 +307,7 @@ void Text_Component::Create_String_Frame() {
   D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
   D3D11_SUBRESOURCE_DATA vertexData, indexData;
   
-    // Set Frame Size
+  // Set Frame Size
   m_size = D3DXVECTOR2(0, 0);
   for (int i = 0; i < m_text->text->size(); i++) {
     char character_index = m_text->text->c_str()[i];
@@ -424,18 +408,5 @@ void Text_Component::Load_Font_Texture() {
     throw Tunnelour::Exceptions::init_error("D3DX11CreateShaderResourceViewFromFile Failed!");
   }
 }
-//------------------------------------------------------------------------------
-// For Debugging
-//------------------------------------------------------------------------------
-/*void Text_Component::Load_Font_Texture() {
-  if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_d3d11device,
-                                                    L"resource/Debug_Texture_001.dds",
-                                                    NULL,
-                                                    NULL,
-                                                    &m_texture->texture,
-                                                    NULL)))  {
-    throw Tunnelour::Exceptions::init_error("D3DX11CreateShaderResourceViewFromFile Failed!");
-  }
-}*/
 
 }  // namespace Tunnelour

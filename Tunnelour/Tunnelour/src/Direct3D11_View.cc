@@ -207,14 +207,6 @@ void Direct3D11_View::Run() {
     throw Tunnelour::Exceptions::run_error("Can't find Camera component!");
   }
 
-  if (mutator.FoundBitmap()) {
-    m_bitmap = mutator.GetBitmap();
-    if (!m_bitmap->IsInitialised()) { m_bitmap->Init(m_device); }
-  } else {
-    //throw Tunnelour::Exceptions::run_error("Can't find Bitmap component!");
-  }
-
-
   // <BeginScene>
   D3DXMATRIX viewmatrix;
 
@@ -240,15 +232,26 @@ void Direct3D11_View::Run() {
         if (!(*it)->IsInitialised()) {
           (*it)->Init(m_device); 
         }
+
         Render_Text((*it), viewmatrix);
         *it++;
       }
     }
   } else {
-   throw Tunnelour::Exceptions::run_error("Can't find Any Text Components!");
+   throw Tunnelour::Exceptions::run_error("Direct3D11_View: Can't find Any Text Components!");
   }
 
-  //if (mutator.FoundBitmap()) { Render_Bitmap(viewmatrix); }
+  if (mutator.FoundBitmap()) {
+    for (std::list<Tunnelour::Bitmap_Component*>::const_iterator iterator = mutator.GetBitmap().begin(), end = mutator.GetBitmap().end(); iterator != end; ++iterator) {
+      if (!(*iterator)->IsInitialised()) {
+        (*iterator)->Init(m_device);
+      }
+      Render_Bitmap((*iterator), viewmatrix);
+    }
+  } else {
+    throw Tunnelour::Exceptions::run_error("Direct3D11_View: Can't find Any Bitmap Components!");
+  }
+
   TurnOffAlphaBlending();
 
   // Present the rendered scene to the screen.
@@ -772,16 +775,47 @@ void Direct3D11_View::Render_Camera(D3DXMATRIX &viewmatrix) {
 }
 
 //------------------------------------------------------------------------------
-void Direct3D11_View::Render_Bitmap(D3DXMATRIX &viewmatrix) {
+void Direct3D11_View::Render_Bitmap(Tunnelour::Bitmap_Component* bitmap, D3DXMATRIX &viewmatrix) {
   // Put the model vertex and index buffers on the graphics pipeline to
   // prepare them for drawing.
-  // Set vertex buffer stride and offset.
-  unsigned int stride = sizeof(Tunnelour::Bitmap_Component::Vertex_Type);
-  unsigned int offset = 0;
-  ID3D11Buffer *vertexbuffer, *indexbuffer;
+	 unsigned int stride, offset;
 
-  vertexbuffer = m_bitmap->GetFrame()->vertex_buffer;
-  indexbuffer = m_bitmap->GetFrame()->index_buffer;
+  D3DXMATRIX RotateMatrix_x, RotateMatrix_y, RotateMatrix_z;
+  D3DXMATRIX TranslateMatrix;
+  D3DXMATRIX OffsetMatrix;
+  D3DXMATRIX ScaleMatrix;
+  D3DXMatrixIdentity(&ScaleMatrix);
+
+
+  D3DXVECTOR3 SubsetOffsetMatrix = bitmap->GetCentre();
+  D3DXMatrixTranslation(&OffsetMatrix,
+                        -1 * SubsetOffsetMatrix.x,
+                        -1 * SubsetOffsetMatrix.y,
+                        -1 * SubsetOffsetMatrix.z);
+
+  D3DXMATRIX MeshMatrix;
+  D3DXMatrixIdentity(&MeshMatrix);
+
+  // Translate
+  D3DXMatrixTranslation(&TranslateMatrix,
+                        bitmap->GetPosition()->x,
+                        bitmap->GetPosition()->y,
+                        bitmap->GetPosition()->z);
+
+  // Scale
+  D3DXMatrixScaling(&ScaleMatrix,
+                    bitmap->GetScale()->x,
+                    bitmap->GetScale()->y,
+                    bitmap->GetScale()->z);
+
+  m_world = ((OffsetMatrix) * TranslateMatrix) * ScaleMatrix;
+
+  ID3D11Buffer *vertexbuffer = bitmap->GetFrame()->vertex_buffer;
+  ID3D11Buffer *indexbuffer = bitmap->GetFrame()->index_buffer;
+
+	 // Set vertex buffer stride and offset.
+  stride = sizeof(Tunnelour::Text_Component::Vertex_Type); 
+	 offset = 0;
 
   // Set the vertex buffer to active in the input assembler
   // so it can be rendered.
@@ -797,11 +831,11 @@ void Direct3D11_View::Render_Bitmap(D3DXMATRIX &viewmatrix) {
 
   // Render the model using the color shader.
   m_texture_shader->Render(m_device_context,
-                           m_bitmap->GetFrame()->index_count,
+                           bitmap->GetFrame()->index_count,
                            m_world,
                            viewmatrix,
                            m_ortho,
-                           m_bitmap->GetTexture()->texture);
+                           bitmap->GetTexture()->texture);
 }
 
 //------------------------------------------------------------------------------
@@ -873,7 +907,6 @@ void Direct3D11_View::TurnOnAlphaBlending()
 {
 	float blendFactor[4];
 	
-
 	// Setup the blend factor.
 	blendFactor[0] = 0.0f;
 	blendFactor[1] = 0.0f;
@@ -890,7 +923,6 @@ void Direct3D11_View::TurnOffAlphaBlending()
 {
 	float blendFactor[4];
 	
-
 	// Setup the blend factor.
 	blendFactor[0] = 0.0f;
 	blendFactor[1] = 0.0f;

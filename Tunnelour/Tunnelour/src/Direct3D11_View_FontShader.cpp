@@ -29,8 +29,8 @@ Direct3D11_View_FontShader::Direct3D11_View_FontShader() {
   m_matrixbuffer = 0;
   m_sampleState = 0;
 	 m_pixelbuffer = 0;
-  m_vertexshaderfile = L"resource/Direct3D11_View_VertexShader.vs";
-  m_pixelshaderfile  = L"resource/Direct3D11_View_PixelShader.ps";
+  m_vertexshaderfile = L"resource/Direct3D11_View_FontVertexShader.vs";
+  m_pixelshaderfile  = L"resource/Direct3D11_View_FontPixelShader.ps";
   m_is_initialised = false;
 }
 
@@ -116,7 +116,7 @@ void Direct3D11_View_FontShader::Init(ID3D11Device *d3d11device, HWND *hwnd) {
     } else {
       // If there was  nothing in the error message then
       // it simply could not find the shader file itself.
-      throw Tunnelour::Exceptions::init_error("Missing Vertex Shader File");
+      throw Tunnelour::Exceptions::init_error("Direct3D11_View_FontShader: Missing Vertex Shader File");
     }
   }
 
@@ -305,7 +305,6 @@ void Direct3D11_View_FontShader::Render(ID3D11DeviceContext* devicecontext,
   // Set shader texture resource in the pixel shader.
   devicecontext->PSSetShaderResources(0, 1, &texture);
 
-  // You are around here.
   // Lock the pixel constant buffer so it can be written to.
   if(FAILED(devicecontext->Map(m_pixelbuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedresource)))	{
     throw Tunnelour::Exceptions::init_error("Locking Failed!");

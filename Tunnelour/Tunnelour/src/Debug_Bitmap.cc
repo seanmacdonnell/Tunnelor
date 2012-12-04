@@ -33,7 +33,7 @@ Debug_Bitmap::~Debug_Bitmap() {
 
 //------------------------------------------------------------------------------
 void Debug_Bitmap::Init(ID3D11Device * const d3d11device) {
-  m_d3d11device = d3d11device;
+  Bitmap_Component::Init(d3d11device);
 
   Init_Frame();
   Init_Texture();
@@ -50,8 +50,6 @@ void Debug_Bitmap::Init(ID3D11Device * const d3d11device) {
 //------------------------------------------------------------------------------
 void Debug_Bitmap::Init_Frame() {
   float left, right, top, bottom;
-  Vertex_Type* vertices;
-  unsigned int* indices;
   D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
   D3D11_SUBRESOURCE_DATA vertexData, indexData;
 
@@ -62,23 +60,23 @@ void Debug_Bitmap::Init_Frame() {
   m_frame->index_count = 6;
 
   // Create the vertex array.
-  vertices = new Vertex_Type[m_frame->vertex_count];
-  if (!vertices) {
+  m_frame->vertices = new Vertex_Type[m_frame->vertex_count];
+  if (!m_frame->vertices) {
     throw Tunnelour::Exceptions::init_error("Creating the vertex array Failed!");
   }
 
   // Create the index array.
-  indices = new unsigned int[m_frame->index_count];
-  if (!indices) {
+  m_frame->indices = new unsigned int[m_frame->index_count];
+  if (!m_frame->indices) {
     throw Tunnelour::Exceptions::init_error("Creating the index array Failed!");
   }
 
   // Initialize vertex array to zeros at first.
-  memset(vertices, 0, (sizeof(Vertex_Type) * m_frame->vertex_count));
+  memset(m_frame->vertices, 0, (sizeof(Vertex_Type) * m_frame->vertex_count));
 
   // Load the index array with data.
   for (int i = 0; i < m_frame->index_count; i++)  {
-    indices[i] = i;
+    m_frame->indices[i] = i;
   }
 
   // Calculate the screen coordinates of the left side of the bitmap.
@@ -95,24 +93,24 @@ void Debug_Bitmap::Init_Frame() {
 
   // Load the vertex array with data.
   // First triangle.
-  vertices[0].position = D3DXVECTOR3(left, top, 0.0f);  // Top left.
-  vertices[0].texture = D3DXVECTOR2(0.0f, 0.0f);
+  m_frame->vertices[0].position = D3DXVECTOR3(left, top, 0.0f);  // Top left.
+  m_frame->vertices[0].texture = D3DXVECTOR2(0.0f, 0.0f);
 
-  vertices[1].position = D3DXVECTOR3(right, bottom, 0.0f);  // Bottom right.
-  vertices[1].texture = D3DXVECTOR2(1.0f, 1.0f);
+  m_frame->vertices[1].position = D3DXVECTOR3(right, bottom, 0.0f);  // Bottom right.
+  m_frame->vertices[1].texture = D3DXVECTOR2(1.0f, 1.0f);
 
-  vertices[2].position = D3DXVECTOR3(left, bottom, 0.0f);  // Bottom left.
-  vertices[2].texture = D3DXVECTOR2(0.0f, 1.0f);
+  m_frame->vertices[2].position = D3DXVECTOR3(left, bottom, 0.0f);  // Bottom left.
+  m_frame->vertices[2].texture = D3DXVECTOR2(0.0f, 1.0f);
 
   // Second triangle.
-  vertices[3].position = D3DXVECTOR3(left, top, 0.0f);  // Top left.
-  vertices[3].texture = D3DXVECTOR2(0.0f, 0.0f);
+  m_frame->vertices[3].position = D3DXVECTOR3(left, top, 0.0f);  // Top left.
+  m_frame->vertices[3].texture = D3DXVECTOR2(0.0f, 0.0f);
 
-  vertices[4].position = D3DXVECTOR3(right, top, 0.0f);  // Top right.
-  vertices[4].texture = D3DXVECTOR2(1.0f, 0.0f);
+  m_frame->vertices[4].position = D3DXVECTOR3(right, top, 0.0f);  // Top right.
+  m_frame->vertices[4].texture = D3DXVECTOR2(1.0f, 0.0f);
 
-  vertices[5].position = D3DXVECTOR3(right, bottom, 0.0f);  // Bottom right.
-  vertices[5].texture = D3DXVECTOR2(1.0f, 1.0f);
+  m_frame->vertices[5].position = D3DXVECTOR3(right, bottom, 0.0f);  // Bottom right.
+  m_frame->vertices[5].texture = D3DXVECTOR2(1.0f, 1.0f);
 
   // Set up the description of the static vertex buffer.
   vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -123,7 +121,7 @@ void Debug_Bitmap::Init_Frame() {
   vertexBufferDesc.StructureByteStride = 0;
 
   // Give the subresource structure a pointer to the vertex data.
-    vertexData.pSysMem = vertices;
+  vertexData.pSysMem = m_frame->vertices;
   vertexData.SysMemPitch = 0;
   vertexData.SysMemSlicePitch = 0;
 
@@ -143,7 +141,7 @@ void Debug_Bitmap::Init_Frame() {
   indexBufferDesc.StructureByteStride = 0;
 
   // Give the subresource structure a pointer to the index data.
-  indexData.pSysMem = indices;
+  indexData.pSysMem = m_frame->indices;
   indexData.SysMemPitch = 0;
   indexData.SysMemSlicePitch = 0;
 
@@ -153,13 +151,6 @@ void Debug_Bitmap::Init_Frame() {
                                          &(m_frame->index_buffer)))) {
     throw Tunnelour::Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
   }
-
-  // Release the arrays now that the vertex and index buffers have been created and loaded.
-  delete [] vertices;
-  vertices = 0;
-
-  delete [] indices;
-  indices = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -168,11 +159,11 @@ void Debug_Bitmap::Init_Texture() {
 
   // Load the texture in.
   if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_d3d11device,
-                                                   m_texture->texture_path.c_str(),
-                                                   NULL,
-                                                   NULL,
-                                                   &m_texture->texture,
-                                                   NULL)))  {
+                                                    m_texture->texture_path.c_str(),
+                                                    NULL,
+                                                    NULL,
+                                                    &m_texture->texture,
+                                                    NULL)))  {
     throw Tunnelour::Exceptions::init_error("D3DX11CreateShaderResourceViewFromFile Failed!");
   }
 }

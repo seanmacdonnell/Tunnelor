@@ -73,7 +73,7 @@ class Direct3D11_View_Mutator: public Tunnelour::Component::Component_Mutator  {
   //-------------------------------------------------------------------------
   // Description : Accessors for Bitmap Component
   //-------------------------------------------------------------------------
-  Tunnelour::Bitmap_Component * const GetBitmap();
+  std::list<Tunnelour::Bitmap_Component*>& const GetBitmap();
 
   //-------------------------------------------------------------------------
   // Description : Has this component been found in the model?
@@ -89,7 +89,7 @@ class Direct3D11_View_Mutator: public Tunnelour::Component::Component_Mutator  {
   bool m_found_background, m_found_camera, m_found_mesh, m_found_bitmap, m_found_text;
   Tunnelour::Camera_Component * m_camera;
   Tunnelour::Background_Component * m_background;
-  Tunnelour::Bitmap_Component * m_bitmap;
+  std::list<Tunnelour::Bitmap_Component*> m_bitmap;
   std::list<Tunnelour::Text_Component*> m_text;
 };
 }  // namespace Tunnelour

@@ -108,7 +108,7 @@ void Direct3D11_View_TextureShader::Init(ID3D11Device *d3d11device, HWND *hwnd) 
     } else {
       // If there was  nothing in the error message then
       // it simply could not find the shader file itself.
-      throw Tunnelour::Exceptions::init_error("Missing Vertex Shader File");
+      throw Tunnelour::Exceptions::init_error("Direct3D11_View_TextureShader: Missing Vertex Shader File");
     }
   }
 
@@ -247,11 +247,6 @@ void Direct3D11_View_TextureShader::Render(ID3D11DeviceContext* devicecontext,
   MatrixBufferType* dataptr;
   unsigned int buffernumber;
 
-  // Transpose the matrices to prepare them for the shader.
-  D3DXMatrixTranspose(&world, &world);
-  D3DXMatrixTranspose(&view, &view);
-  D3DXMatrixTranspose(&projection, &projection);
-
   // Lock the constant buffer so it can be written to.
   if (FAILED(devicecontext->Map(m_matrixbuffer,
                                 0,
@@ -263,6 +258,11 @@ void Direct3D11_View_TextureShader::Render(ID3D11DeviceContext* devicecontext,
 
   // Get a pointer to the data in the constant buffer.
   dataptr = reinterpret_cast<MatrixBufferType*>(mappedresource.pData);
+
+  // Transpose the matrices to prepare them for the shader.
+  D3DXMatrixTranspose(&world, &world);
+  D3DXMatrixTranspose(&view, &view);
+  D3DXMatrixTranspose(&projection, &projection);
 
   // Copy the matrices into the constant buffer.
   dataptr->world = world;

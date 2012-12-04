@@ -31,7 +31,7 @@ Direct3D11_View_TransparentShader::Direct3D11_View_TransparentShader() {
   m_sampleState = 0;
   m_transparentBuffer = 0;
 
-  m_vertexshaderfile = L"resource/Direct3D11_View_TextureVertexShader.vs";
+  m_vertexshaderfile = L"resource/Direct3D11_View_TransparentVertexShader.vs";
   m_pixelshaderfile  = L"resource/Direct3D11_View_TransparentPixelShader.ps";
 
   m_is_initialised = false;
@@ -119,7 +119,7 @@ void Direct3D11_View_TransparentShader::Init(ID3D11Device *d3d11device, HWND *hw
     } else {
       // If there was  nothing in the error message then
       // it simply could not find the shader file itself.
-      throw Tunnelour::Exceptions::init_error("Missing Vertex Shader File");
+      throw Tunnelour::Exceptions::init_error("Direct3D11_View_TransparentShader: Missing Vertex Shader File");
     }
   }
 
