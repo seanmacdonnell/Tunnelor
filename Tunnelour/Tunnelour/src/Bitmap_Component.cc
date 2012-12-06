@@ -25,6 +25,7 @@ Bitmap_Component::Bitmap_Component(): Frame_Component() {
   m_texture = new Tunnelour::Bitmap_Component::Texture();
   m_texture->texture = 0;
   m_texture->texture_path = L"";
+  m_texture->transparency = 1.0f;
   m_type = "Bitmap_Component";
 }
 

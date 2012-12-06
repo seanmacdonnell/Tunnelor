@@ -224,23 +224,6 @@ void Direct3D11_View::Run() {
   
   TurnOnAlphaBlending();
 
-  if (mutator.FoundText()) {
-    std::list<Tunnelour::Text_Component*> text_components = mutator.GetText();
-    if (!text_components.empty()) {
-      std::list<Tunnelour::Text_Component*>::iterator it;
-      for (it = text_components.begin(); it != text_components.end(); ) {
-        if (!(*it)->IsInitialised()) {
-          (*it)->Init(m_device); 
-        }
-
-        Render_Text((*it), viewmatrix);
-        *it++;
-      }
-    }
-  } else {
-   throw Tunnelour::Exceptions::run_error("Direct3D11_View: Can't find Any Text Components!");
-  }
-
   if (mutator.FoundBitmap()) {
     for (std::list<Tunnelour::Bitmap_Component*>::const_iterator iterator = mutator.GetBitmap().begin(), end = mutator.GetBitmap().end(); iterator != end; ++iterator) {
       if (!(*iterator)->IsInitialised()) {
@@ -251,6 +234,20 @@ void Direct3D11_View::Run() {
   } else {
     throw Tunnelour::Exceptions::run_error("Direct3D11_View: Can't find Any Bitmap Components!");
   }
+
+  if (mutator.FoundText()) {
+    for (std::list<Tunnelour::Text_Component*>::const_iterator iterator = mutator.GetText().begin(), end = mutator.GetText().end(); iterator != end; ++iterator) {
+      if (!(*iterator)->IsInitialised()) {
+        (*iterator)->Init(m_device);
+      }
+      Render_Text((*iterator), viewmatrix);
+    }
+  } else {
+    throw Tunnelour::Exceptions::run_error("Direct3D11_View: Can't find Any Text Components!");
+  }
+
+
+
 
   TurnOffAlphaBlending();
 
@@ -775,7 +772,8 @@ void Direct3D11_View::Render_Camera(D3DXMATRIX &viewmatrix) {
 }
 
 //------------------------------------------------------------------------------
-void Direct3D11_View::Render_Bitmap(Tunnelour::Bitmap_Component* bitmap, D3DXMATRIX &viewmatrix) {
+void Direct3D11_View::Render_Bitmap(Tunnelour::Bitmap_Component* bitmap,
+                                    D3DXMATRIX &viewmatrix) {
   // Put the model vertex and index buffers on the graphics pipeline to
   // prepare them for drawing.
 	 unsigned int stride, offset;
@@ -786,7 +784,7 @@ void Direct3D11_View::Render_Bitmap(Tunnelour::Bitmap_Component* bitmap, D3DXMAT
   D3DXMATRIX ScaleMatrix;
   D3DXMatrixIdentity(&ScaleMatrix);
 
-
+  //Offset from centre
   D3DXVECTOR3 SubsetOffsetMatrix = bitmap->GetCentre();
   D3DXMatrixTranslation(&OffsetMatrix,
                         -1 * SubsetOffsetMatrix.x,
@@ -814,7 +812,7 @@ void Direct3D11_View::Render_Bitmap(Tunnelour::Bitmap_Component* bitmap, D3DXMAT
   ID3D11Buffer *indexbuffer = bitmap->GetFrame()->index_buffer;
 
 	 // Set vertex buffer stride and offset.
-  stride = sizeof(Tunnelour::Text_Component::Vertex_Type); 
+  stride = sizeof(Tunnelour::Bitmap_Component::Vertex_Type); 
 	 offset = 0;
 
   // Set the vertex buffer to active in the input assembler
@@ -830,12 +828,13 @@ void Direct3D11_View::Render_Bitmap(Tunnelour::Bitmap_Component* bitmap, D3DXMAT
   m_device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
   // Render the model using the color shader.
-  m_texture_shader->Render(m_device_context,
+  m_transparent_shader->Render(m_device_context,
                            bitmap->GetFrame()->index_count,
                            m_world,
                            viewmatrix,
                            m_ortho,
-                           bitmap->GetTexture()->texture);
+                           bitmap->GetTexture()->texture,
+                           bitmap->GetTexture()->transparency);
 }
 
 //------------------------------------------------------------------------------
@@ -901,6 +900,7 @@ void Direct3D11_View::Render_Text(Tunnelour::Text_Component *text,
                         m_ortho,
                         text->GetTexture()->texture, 
 						 		               pixelColor);
+
 }
 
 void Direct3D11_View::TurnOnAlphaBlending()

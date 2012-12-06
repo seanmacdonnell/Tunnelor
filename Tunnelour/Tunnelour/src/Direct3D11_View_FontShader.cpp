@@ -23,14 +23,17 @@ namespace Tunnelour {
 Direct3D11_View_FontShader::Direct3D11_View_FontShader() {
   m_hwnd = 0;
   m_d3d11device = 0;
+
   m_vertexshader = 0;
   m_pixelshader = 0;
   m_layout = 0;
   m_matrixbuffer = 0;
   m_sampleState = 0;
 	 m_pixelbuffer = 0;
+
   m_vertexshaderfile = L"resource/Direct3D11_View_FontVertexShader.vs";
   m_pixelshaderfile  = L"resource/Direct3D11_View_FontPixelShader.ps";
+
   m_is_initialised = false;
 }
 
