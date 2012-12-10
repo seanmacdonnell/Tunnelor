@@ -85,9 +85,16 @@ class Direct3D11_View : public Tunnelour::View {
   void Init_D3D11();
 
   //---------------------------------------------------------------------------
+  // Description : Render the components
+  //---------------------------------------------------------------------------
+  void Render(std::list<Tunnelour::Component*> layer,
+              D3DXMATRIX &viewmatrix);
+
+  //---------------------------------------------------------------------------
   // Description : Render the Camera
   //---------------------------------------------------------------------------
-  void Render_Camera(D3DXMATRIX &viewmatrix);
+  void Render_Camera(Tunnelour::Camera_Component *camera,
+                     D3DXMATRIX &viewmatrix);
 
   //---------------------------------------------------------------------------
   // Description : Render a Bitmap
@@ -96,9 +103,10 @@ class Direct3D11_View : public Tunnelour::View {
                      D3DXMATRIX &viewmatrix);
 
   //---------------------------------------------------------------------------
-  // Description : Render text
+  // Description : Render Text
   //---------------------------------------------------------------------------
-  void Render_Text(Tunnelour::Text_Component *text, D3DXMATRIX &viewmatrix);
+  void Render_Text(Tunnelour::Text_Component *text,
+                   D3DXMATRIX &viewmatrix);
 
   //---------------------------------------------------------------------------
   // Description : Turn on Alpha Blending
@@ -109,6 +117,10 @@ class Direct3D11_View : public Tunnelour::View {
   // Description : Turn off Alpha Blending
   //---------------------------------------------------------------------------
   void TurnOffAlphaBlending();
+
+  void TurnZBufferOn();
+
+  void TurnZBufferOff();
 
   //---------------------------------------------------------------------------
   // Description : Class Variables
@@ -139,8 +151,6 @@ class Direct3D11_View : public Tunnelour::View {
 	 ID3D11BlendState* m_alphaDisableBlendingState;
   D3DXMATRIX m_world;
   D3DXMATRIX m_ortho;
-  Tunnelour::Camera_Component * m_camera;
-  Tunnelour::Background_Component * m_background;
   //---------------------------------------------------------------------------
   // Description : Shaders
   //---------------------------------------------------------------------------

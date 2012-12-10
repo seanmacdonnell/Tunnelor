@@ -30,6 +30,12 @@ class Direct3D11_View_Mutator: public Tunnelour::Component::Component_Mutator  {
 //                which collects all the renderable components.
 //-----------------------------------------------------------------------------
  public:
+  struct Renderables {
+    std::list<Tunnelour::Component*> Layer_00;
+    std::list<Tunnelour::Component*> Layer_01;
+    std::list<Tunnelour::Component*> Layer_02;
+  };
+
   //-------------------------------------------------------------------------
   // Description : Constructor
   //-------------------------------------------------------------------------
@@ -68,29 +74,18 @@ class Direct3D11_View_Mutator: public Tunnelour::Component::Component_Mutator  {
   //-------------------------------------------------------------------------
   // Description : Has this component been found in the model?
   //-------------------------------------------------------------------------
-  bool FoundBitmap();
+  bool FoundRenderables();
 
   //-------------------------------------------------------------------------
   // Description : Accessors for Bitmap Component
   //-------------------------------------------------------------------------
-  std::list<Tunnelour::Bitmap_Component*>& const GetBitmap();
-
-  //-------------------------------------------------------------------------
-  // Description : Has this component been found in the model?
-  //-------------------------------------------------------------------------
-  bool FoundText();
-
-  //-------------------------------------------------------------------------
-  // Description : Accessors for Bitmap Component
-  //-------------------------------------------------------------------------
-  std::list<Tunnelour::Text_Component*>& const GetText();
+  Renderables& const GetRenderables();
 
  private:
-  bool m_found_background, m_found_camera, m_found_mesh, m_found_bitmap, m_found_text;
+  bool m_found_background, m_found_camera, m_found_renderables;
   Tunnelour::Camera_Component * m_camera;
   Tunnelour::Background_Component * m_background;
-  std::list<Tunnelour::Bitmap_Component*> m_bitmap;
-  std::list<Tunnelour::Text_Component*> m_text;
+  Renderables m_renderables;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_DIRECT3D11_VIEW_MUTATOR_H_

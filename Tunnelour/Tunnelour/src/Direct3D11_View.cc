@@ -51,7 +51,6 @@ Direct3D11_View::Direct3D11_View() {
 	 m_alphaEnableBlendingState = NULL;
 	 m_alphaDisableBlendingState = NULL;
 
-  m_camera = NULL;
   m_texture_shader = NULL;
   m_font_shader = NULL;
   m_transparent_shader = NULL;
@@ -194,17 +193,16 @@ void Direct3D11_View::Run() {
 
   m_model->Apply(&mutator);
 
-  if (mutator.FoundBackground())  {
-    m_background = mutator.GetBackground();
-  } else {
+  if (!mutator.FoundBackground())  {
     throw Tunnelour::Exceptions::run_error("Can't find Background component!");
   }
 
-  if (mutator.FoundCamera()) {
-    m_camera = mutator.GetCamera();
-    if (!m_camera->IsInitialised()) { m_camera->Init(); }
-  } else {
+  if (!mutator.FoundCamera()) {
     throw Tunnelour::Exceptions::run_error("Can't find Camera component!");
+  }
+
+  if (!mutator.FoundRenderables()) {
+    throw Tunnelour::Exceptions::run_error("Can't find Renderable components!");
   }
 
   // <BeginScene>
@@ -212,7 +210,7 @@ void Direct3D11_View::Run() {
 
   // Clear the back buffer.
   m_device_context->ClearRenderTargetView(m_render_target_view,
-                                          m_background->GetColor());
+                                          mutator.GetBackground()->GetColor());
 
   // Clear the depth buffer.
   m_device_context->ClearDepthStencilView(m_depth_stencil_view,
@@ -220,34 +218,14 @@ void Direct3D11_View::Run() {
                                           1.0f,
                                           0);
 
-  Render_Camera(viewmatrix);
+  Render_Camera(mutator.GetCamera(), viewmatrix);
   
   TurnOnAlphaBlending();
 
-  if (mutator.FoundBitmap()) {
-    for (std::list<Tunnelour::Bitmap_Component*>::const_iterator iterator = mutator.GetBitmap().begin(), end = mutator.GetBitmap().end(); iterator != end; ++iterator) {
-      if (!(*iterator)->IsInitialised()) {
-        (*iterator)->Init(m_device);
-      }
-      Render_Bitmap((*iterator), viewmatrix);
-    }
-  } else {
-    throw Tunnelour::Exceptions::run_error("Direct3D11_View: Can't find Any Bitmap Components!");
-  }
-
-  if (mutator.FoundText()) {
-    for (std::list<Tunnelour::Text_Component*>::const_iterator iterator = mutator.GetText().begin(), end = mutator.GetText().end(); iterator != end; ++iterator) {
-      if (!(*iterator)->IsInitialised()) {
-        (*iterator)->Init(m_device);
-      }
-      Render_Text((*iterator), viewmatrix);
-    }
-  } else {
-    throw Tunnelour::Exceptions::run_error("Direct3D11_View: Can't find Any Text Components!");
-  }
-
-
-
+  //Sort the Renderables by Z order.
+  Render(mutator.GetRenderables().Layer_00, viewmatrix);
+  Render(mutator.GetRenderables().Layer_01, viewmatrix);
+  Render(mutator.GetRenderables().Layer_02, viewmatrix);
 
   TurnOffAlphaBlending();
 
@@ -615,7 +593,8 @@ void Direct3D11_View::Init_D3D11() {
   }
 
   // Set the depth stencil state.
-  m_device_context->OMSetDepthStencilState(m_depth_stencil_state, 1);
+  TurnZBufferOff();
+  //m_device_context->OMSetDepthStencilState(m_depth_stencil_state, 1);
 
   // Initialize the depth stencil view.
   ZeroMemory(&depth_stencil_view_desc, sizeof(depth_stencil_view_desc));
@@ -746,12 +725,29 @@ void Direct3D11_View::Init_D3D11() {
 }
 
 //------------------------------------------------------------------------------
-void Direct3D11_View::Render_Camera(D3DXMATRIX &viewmatrix) {
+void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX &viewmatrix) {
+  if (layer.empty()) { return; }
+  for (std::list<Tunnelour::Component*>::const_iterator iterator = layer.begin(), end = layer.end(); iterator != end; ++iterator) {
+    if ((*iterator)->GetType().compare("Bitmap_Component") == 0) {
+      Tunnelour::Bitmap_Component *bitmap = static_cast<Tunnelour::Bitmap_Component*>(*iterator);
+      if (!bitmap->IsInitialised()) { bitmap->Init(m_device); }
+      Render_Bitmap(bitmap, viewmatrix);
+    }
+    if ((*iterator)->GetType().compare("Text_Component") == 0) {
+      Tunnelour::Text_Component *text = static_cast<Tunnelour::Text_Component*>(*iterator);
+      if (!text->IsInitialised()) { text->Init(m_device); }
+      Render_Text(text, viewmatrix);
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
+void Direct3D11_View::Render_Camera(Tunnelour::Camera_Component *camera, D3DXMATRIX &viewmatrix) {
   D3DXMATRIX rotationMatrix;
-  D3DXVECTOR3 rotationVector = m_camera->GetRotationInRadians();
-  D3DXVECTOR3 LookingAtVector = m_camera->GetLookingAtPosition();
-  D3DXVECTOR3 UpVector = m_camera->GetUpDirection();
-  D3DXVECTOR3 PosVector = m_camera->GetPosition();
+  D3DXVECTOR3 rotationVector = camera->GetRotationInRadians();
+  D3DXVECTOR3 LookingAtVector = camera->GetLookingAtPosition();
+  D3DXVECTOR3 UpVector = camera->GetUpDirection();
+  D3DXVECTOR3 PosVector = camera->GetPosition();
 
   // Create the rotation matrix from the yaw, pitch, and roll values.
   D3DXMatrixRotationYawPitchRoll(&rotationMatrix,
@@ -933,6 +929,16 @@ void Direct3D11_View::TurnOffAlphaBlending()
 	m_device_context->OMSetBlendState(m_alphaDisableBlendingState, blendFactor, 0xffffffff);
 
 	return;
+}
+
+void Direct3D11_View::TurnZBufferOn() {
+  m_device_context->OMSetDepthStencilState(m_depth_stencil_state, 1);
+  return;
+}
+
+void Direct3D11_View::TurnZBufferOff() {
+  m_device_context->OMSetDepthStencilState(m_depthDisabledStencilState, 1);
+  return;
 }
 
 }  // namespace Tunnelour

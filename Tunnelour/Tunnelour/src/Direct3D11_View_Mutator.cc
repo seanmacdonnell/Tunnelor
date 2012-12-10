@@ -25,8 +25,7 @@ Direct3D11_View_Mutator::Direct3D11_View_Mutator() {
   m_found_background = false;
   m_camera = 0;
   m_found_camera = false;
-  m_found_mesh = false;
-  m_found_bitmap = false;
+  m_found_renderables = false;
 }
 
 //------------------------------------------------------------------------------
@@ -35,8 +34,7 @@ Direct3D11_View_Mutator::~Direct3D11_View_Mutator() {
   m_found_background = false;
   m_camera = 0;
   m_found_camera = false;
-  m_found_mesh = false;
-  m_found_bitmap = false;
+  m_found_renderables = false;
 }
 
 //------------------------------------------------------------------------------
@@ -61,16 +59,32 @@ void Direct3D11_View_Mutator::Mutate(Tunnelour::Component * const component) {
     // Found Bitmap_Component
     Tunnelour::Bitmap_Component *bitmap = 0;
     bitmap = static_cast<Tunnelour::Bitmap_Component*>(component);
-    m_bitmap.push_back(bitmap);
-    m_found_bitmap = true;
+    if (bitmap->GetPosition()->z > -1) {
+      m_renderables.Layer_00.push_back(bitmap);
+    } 
+    if (bitmap->GetPosition()->z <= -1 && bitmap->GetPosition()->z > -2) {
+      m_renderables.Layer_01.push_back(bitmap);
+    }
+    if (bitmap->GetPosition()->z <= -2) {
+      m_renderables.Layer_02.push_back(bitmap);
+    }
+    m_found_renderables = true;
   }
 
   if (component->GetType().compare("Text_Component") == 0) {
     // Found Text_Component
     Tunnelour::Text_Component *text = 0;
     text = static_cast<Tunnelour::Text_Component*>(component);
-    m_text.push_back(text);
-    m_found_text = true;
+    if (text->GetPosition()->z > -1) {
+      m_renderables.Layer_00.push_back(text);
+    } 
+    if (text->GetPosition()->z <= -1 && text->GetPosition()->z > -2) {
+      m_renderables.Layer_01.push_back(text);
+    }
+    if (text->GetPosition()->z <= -2) {
+      m_renderables.Layer_02.push_back(text);
+    }
+    m_found_renderables = true;
   }
 }
 
@@ -95,23 +109,13 @@ Tunnelour::Camera_Component * const Direct3D11_View_Mutator::GetCamera() {
 }
 
 //------------------------------------------------------------------------------
-bool Direct3D11_View_Mutator::FoundBitmap() {
-  return m_found_bitmap;
+bool Direct3D11_View_Mutator::FoundRenderables() {
+  return m_found_renderables;
 }
 
 //------------------------------------------------------------------------------
-std::list<Tunnelour::Bitmap_Component*>& const Direct3D11_View_Mutator::GetBitmap() {
-  return m_bitmap;
-}
-
-//------------------------------------------------------------------------------
-bool Direct3D11_View_Mutator::FoundText() {
-  return m_found_text;
-}
-
-//------------------------------------------------------------------------------
-std::list<Tunnelour::Text_Component*>& const Direct3D11_View_Mutator::GetText() {
-  return m_text;
+Direct3D11_View_Mutator::Renderables& const Direct3D11_View_Mutator::GetRenderables() {
+  return m_renderables;
 }
 
 
