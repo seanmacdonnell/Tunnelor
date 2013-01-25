@@ -82,6 +82,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Background_Component.cc" />
+    <ClCompile Include="src\Background_Controller.cc" />
     <ClCompile Include="src\Camera_Component.cc" />
     <ClCompile Include="src\Component.cc" />
     <ClCompile Include="src\Component_Composite.cc" />
@@ -89,6 +90,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Controller_Composite.cc" />
     <ClCompile Include="src\Controller.cc" />
     <ClCompile Include="src\Debug_Bitmap.cc" />
+    <ClCompile Include="src\Debug_Init_Controller.cc" />
     <ClCompile Include="src\Debug_Text.cc" />
     <ClCompile Include="src\Direct3D11_View.cc" />
     <ClCompile Include="src\Direct3D11_View_FontShader.cpp" />
@@ -110,6 +112,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Background_Component.h" />
+    <ClInclude Include="include\Background_Controller.h" />
     <ClInclude Include="include\Camera_Component.h" />
     <ClInclude Include="include\Component.h" />
     <ClInclude Include="include\Component_Composite.h" />
@@ -117,6 +120,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Controller_Composite.h" />
     <ClInclude Include="include\Controller.h" />
     <ClInclude Include="include\Debug_Bitmap.h" />
+    <ClInclude Include="include\Debug_Init_Controller.h" />
     <ClInclude Include="include\Debug_Text.h" />
     <ClInclude Include="include\Direct3D11_View.h" />
     <ClInclude Include="include\Direct3D11_View_FontShader.h" />

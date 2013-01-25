@@ -337,7 +337,9 @@ void Direct3D11_View::Init_D3D11() {
   IDXGIFactory* factory;
   IDXGIAdapter* adapter;
   IDXGIOutput* adapter_output;
-  unsigned int num_modes, i, numerator, denominator, string_length;
+  unsigned int num_modes, i, string_length;
+  // This is initalised to 0 as it is not required in windowed mode.
+  unsigned int numerator = 0, denominator = 0;
   DXGI_MODE_DESC* display_mode_list;
   DXGI_ADAPTER_DESC adapter_desc;
   int error;
@@ -399,6 +401,7 @@ void Direct3D11_View::Init_D3D11() {
   // the screen width and height.
   // When a match is found store the numerator and denominator of the
   // refresh rate for that monitor.
+  // This doesen't work for windowed mode.
   for (i = 0; i < num_modes; i++) {
     if (display_mode_list[i].Width == (unsigned int)m_screen_width) {
       if (display_mode_list[i].Height == (unsigned int)m_screen_height) {
@@ -457,7 +460,7 @@ void Direct3D11_View::Init_D3D11() {
 
   // Set the refresh rate of the back buffer.
   if (m_vsync_enabled) {
-      swap_chain_desc.BufferDesc.RefreshRate.Numerator = numerator;
+    swap_chain_desc.BufferDesc.RefreshRate.Numerator = numerator;
     swap_chain_desc.BufferDesc.RefreshRate.Denominator = denominator;
   } else {
       swap_chain_desc.BufferDesc.RefreshRate.Numerator = 0;

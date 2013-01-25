@@ -7,6 +7,7 @@ Tunnelour/Tunnelour/Tunnelour.vcxproj -text
 Tunnelour/Tunnelour/Tunnelour.vcxproj.filters -text
 Tunnelour/Tunnelour/Tunnelour.vcxproj.user -text
 Tunnelour/Tunnelour/include/Background_Component.h -text
+Tunnelour/Tunnelour/include/Background_Controller.h -text
 Tunnelour/Tunnelour/include/Bitmap_Component.h -text
 Tunnelour/Tunnelour/include/Camera_Component.h -text
 Tunnelour/Tunnelour/include/Component.h -text
@@ -15,6 +16,7 @@ Tunnelour/Tunnelour/include/Component_ID.h -text
 Tunnelour/Tunnelour/include/Controller.h -text
 Tunnelour/Tunnelour/include/Controller_Composite.h -text
 Tunnelour/Tunnelour/include/Debug_Bitmap.h -text
+Tunnelour/Tunnelour/include/Debug_Init_Controller.h -text
 Tunnelour/Tunnelour/include/Debug_Text.h -text
 Tunnelour/Tunnelour/include/Direct3D11_View.h -text
 Tunnelour/Tunnelour/include/Direct3D11_View_FontShader.h -text
@@ -53,6 +55,7 @@ Tunnelour/Tunnelour/resource/Khmer_UI.dds -text
 Tunnelour/Tunnelour/resource/Khmer_UI.fnt -text
 Tunnelour/Tunnelour/resource/Seafloor_Texture_001.dds -text
 Tunnelour/Tunnelour/src/Background_Component.cc -text
+Tunnelour/Tunnelour/src/Background_Controller.cc -text
 Tunnelour/Tunnelour/src/Bitmap_Component.cc -text
 Tunnelour/Tunnelour/src/Camera_Component.cc -text
 Tunnelour/Tunnelour/src/Component.cc -text
@@ -61,6 +64,7 @@ Tunnelour/Tunnelour/src/Component_ID.cc -text
 Tunnelour/Tunnelour/src/Controller.cc -text
 Tunnelour/Tunnelour/src/Controller_Composite.cc -text
 Tunnelour/Tunnelour/src/Debug_Bitmap.cc -text
+Tunnelour/Tunnelour/src/Debug_Init_Controller.cc -text
 Tunnelour/Tunnelour/src/Debug_Text.cc -text
 Tunnelour/Tunnelour/src/Direct3D11_View.cc -text
 Tunnelour/Tunnelour/src/Direct3D11_View_FontShader.cpp -text
