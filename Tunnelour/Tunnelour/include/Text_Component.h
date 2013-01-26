@@ -31,8 +31,8 @@ namespace Tunnelour {
 class Text_Component: public Tunnelour::Bitmap_Component {
  public:
   struct Text {
-    std::string * text;
-    char * font_csv_file;
+    std::string text;
+    std::string font_csv_file;
   };
 
   struct Raw_Character_Frame {
@@ -97,8 +97,8 @@ class Text_Component: public Tunnelour::Bitmap_Component {
   //---------------------------------------------------------------------------
   // Description : Class variables
   //---------------------------------------------------------------------------
-  Text * m_text;
-  Font * m_font;
+  Text m_text;
+  Font m_font;
  private:
   std::wstring CharToWChar(const char* pstrSrc);
 

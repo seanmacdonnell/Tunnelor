@@ -139,7 +139,7 @@ Direct3D11_View::~Direct3D11_View() {
     }
 
     if (m_depthDisabledStencilState) {
-      delete m_depthDisabledStencilState;
+      m_depthDisabledStencilState->Release();
       m_depthDisabledStencilState = NULL;
     }
 
@@ -326,11 +326,6 @@ void Direct3D11_View::Init_Window() {
   ShowWindow(m_hwnd, SW_SHOW);
   SetForegroundWindow(m_hwnd);
   SetFocus(m_hwnd);
-
-  // Hide the mouse cursor.
-  //ShowCursor(false);
-
-  return;
 
   m_is_window_init = true;
 

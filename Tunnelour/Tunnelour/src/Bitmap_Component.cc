@@ -35,6 +35,7 @@ Bitmap_Component::~Bitmap_Component()  {
   if (m_texture->texture)  {
     m_texture->texture->Release();
     m_texture->texture = 0;
+    delete m_texture;
   }
 }
 

@@ -23,18 +23,16 @@ namespace Tunnelour {
 // public:
 //------------------------------------------------------------------------------
 Debug_Text::Debug_Text(): Text_Component() {
-  m_text = new Tunnelour::Debug_Text::Text();
-  m_text->text = 0;
-  m_text->font_csv_file = 0;
+  m_text.text = "";
+  m_text.font_csv_file = "";
 
-  m_font = new Tunnelour::Debug_Text::Font();
-  m_font->image_width = 0;
-  m_font->image_height = 0;
-  m_font->font_color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+  m_font.image_width = 0;
+  m_font.image_height = 0;
+  m_font.font_color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
   m_position = D3DXVECTOR3(0, 0, 0);
-  m_text->font_csv_file = "resource\\Arial_3.fnt";
-  m_text->text = new std::string("ONE");
+  m_text.font_csv_file = "resource\\Arial_3.fnt";
+  m_text.text = "ONE";
 }
 
 //------------------------------------------------------------------------------
