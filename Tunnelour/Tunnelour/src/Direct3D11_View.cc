@@ -259,65 +259,68 @@ void Direct3D11_View::Init_Window() {
   m_application_name = L"Tunnelour";
 
   // Setup the windows class with default settings.
-  wc.style         = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-  wc.lpfnWndProc   = Message_Wrapper::WindowProc;
+  wc.style         = CS_HREDRAW | CS_VREDRAW;
+  wc.lpfnWndProc   = Message_Wrapper::WindowProc;;
   wc.cbClsExtra    = 0;
   wc.cbWndExtra    = 0;
   wc.hInstance     = m_hinstance;
-  wc.hIcon         = LoadIcon(NULL, IDI_WINLOGO);
+  wc.hIcon		       = LoadIcon(NULL, IDI_WINLOGO);
   wc.hIconSm       = wc.hIcon;
   wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
   wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
   wc.lpszMenuName  = NULL;
   wc.lpszClassName = m_application_name;
   wc.cbSize        = sizeof(WNDCLASSEX);
-
+	
   // Register the window class.
   RegisterClassEx(&wc);
 
-  // Setup the screen settings depending on whether it is running in full
-  // screen or in windowed mode.
-  if (m_is_full_screen) {
-    // Determine the resolution of the clients desktop screen.
-    m_screen_width  = GetSystemMetrics(SM_CXSCREEN);
-    m_screen_height = GetSystemMetrics(SM_CYSCREEN);
+  // Determine the resolution of the clients desktop screen.
+  m_screen_width  = GetSystemMetrics(SM_CXSCREEN);
+  m_screen_height = GetSystemMetrics(SM_CYSCREEN);
 
-    // If full screen set the screen to maximum size of the users desktop
-    // and 32bit.
+  // Setup the screen settings depending on whether it is running in full screen or in windowed mode.
+  if(m_is_full_screen)	{
+    // If full screen set the screen to maximum size of the users desktop and 32bit.
     memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
-
     dmScreenSettings.dmSize       = sizeof(dmScreenSettings);
-    dmScreenSettings.dmPelsWidth  = (DWORD)m_screen_width;
-    dmScreenSettings.dmPelsHeight = (DWORD)m_screen_height;
-    dmScreenSettings.dmBitsPerPel = 32;
-    dmScreenSettings.dmFields     = DM_BITSPERPEL |
-                                    DM_PELSWIDTH |
-                                    DM_PELSHEIGHT;
+    dmScreenSettings.dmPelsWidth  = (unsigned long)m_screen_width;
+    dmScreenSettings.dmPelsHeight = (unsigned long)m_screen_height;
+    dmScreenSettings.dmBitsPerPel = 32;			
+    dmScreenSettings.dmFields     = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
     // Change the display settings to full screen.
     ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN);
 
     // Set the position of the window to the top left corner.
     posX = posY = 0;
-  } else {
+  }	else	{
+    // If windowed then set it to 1280x720 resolution.
+    m_screen_width  = 1280;
+    m_screen_height = 720;
+
     // Place the window in the middle of the screen.
     posX = (GetSystemMetrics(SM_CXSCREEN) - m_screen_width)  / 2;
     posY = (GetSystemMetrics(SM_CYSCREEN) - m_screen_height) / 2;
   }
 
+  RECT r = {0, 0, m_screen_width, m_screen_height};
+  int winFlags = WS_OVERLAPPEDWINDOW;
+  AdjustWindowRectEx(&r, winFlags, FALSE, WS_EX_APPWINDOW | WS_EX_DLGMODALFRAME);
+
+  m_hwnd = CreateWindowEx(WS_EX_APPWINDOW | WS_EX_DLGMODALFRAME,
+    m_application_name,
+    m_application_name,
+  WS_OVERLAPPEDWINDOW, posX, posY,
+  r.right - r.left, r.bottom - r.top,
+  NULL, NULL, m_hinstance, NULL);
+
   // Create the window with the screen settings and get the handle to it.
-  m_hwnd = CreateWindowEx(NULL,
-                          m_application_name,
-                          m_application_name,
-                          WS_TILEDWINDOW,
-                          posX,
-                          posY,
-                          m_screen_width,
-                          m_screen_height,
-                          NULL,
-                          NULL,
-                          m_hinstance,
-                          NULL);
+  m_hwnd = CreateWindowEx(WS_EX_APPWINDOW|WS_EX_DLGMODALFRAME,
+                m_application_name,
+                m_application_name, 
+						          winFlags,
+  posX, posY, r.right, r.bottom, NULL, NULL, m_hinstance, NULL);
 
   // Bring the window up on the screen and set it as main focus.
   ShowWindow(m_hwnd, SW_SHOW);
@@ -325,7 +328,9 @@ void Direct3D11_View::Init_Window() {
   SetFocus(m_hwnd);
 
   // Hide the mouse cursor.
-  ShowCursor(false);
+  //ShowCursor(false);
+
+  return;
 
   m_is_window_init = true;
 
