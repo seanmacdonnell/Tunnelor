@@ -81,7 +81,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Background_Component.cc" />
+    <ClCompile Include="src\Background_Color_Component.cc" />
     <ClCompile Include="src\Background_Controller.cc" />
     <ClCompile Include="src\Camera_Component.cc" />
     <ClCompile Include="src\Component.cc" />
@@ -104,6 +104,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Bitmap_Component.cc" />
     <ClCompile Include="src\SeaFloorSquare.cc" />
     <ClCompile Include="src\Text_Component.cc" />
+    <ClCompile Include="src\Tile_Bitmap.cc" />
     <ClCompile Include="src\Tunnelour_Controller.cc" />
     <ClCompile Include="src\Tunnelour_Launcher.cc" />
     <ClCompile Include="src\Tunnelour_View.cc" />
@@ -111,7 +112,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\View_Composite.cc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Background_Component.h" />
+    <ClInclude Include="include\Background_Color_Component.h" />
     <ClInclude Include="include\Background_Controller.h" />
     <ClInclude Include="include\Camera_Component.h" />
     <ClInclude Include="include\Component.h" />
@@ -135,6 +136,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Bitmap_Component.h" />
     <ClInclude Include="include\SeaFloorSquare.h" />
     <ClInclude Include="include\Text_Component.h" />
+    <ClInclude Include="include\Tile_Bitmap.h" />
     <ClInclude Include="include\Tunnelour_Controller.h" />
     <ClInclude Include="include\Tunnelour_Launcher.h" />
     <ClInclude Include="include\Tunnelour_View.h" />

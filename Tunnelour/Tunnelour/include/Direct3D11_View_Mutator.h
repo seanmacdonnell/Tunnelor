@@ -18,7 +18,7 @@
 
 #include "Component.h"
 #include "Camera_Component.h"
-#include "Background_Component.h"
+#include "Background_Color_Component.h"
 #include "Bitmap_Component.h"
 #include "Text_Component.h"
 
@@ -59,7 +59,7 @@ class Direct3D11_View_Mutator: public Tunnelour::Component::Component_Mutator  {
   //-------------------------------------------------------------------------
   // Description : Accessors for Background Component
   //-------------------------------------------------------------------------
-  Tunnelour::Background_Component * const GetBackground();
+  Tunnelour::Background_Color_Component * const GetBackground();
 
   //-------------------------------------------------------------------------
   // Description : Has this component been found in the model?
@@ -84,7 +84,7 @@ class Direct3D11_View_Mutator: public Tunnelour::Component::Component_Mutator  {
  private:
   bool m_found_background, m_found_camera, m_found_renderables;
   Tunnelour::Camera_Component * m_camera;
-  Tunnelour::Background_Component * m_background;
+  Tunnelour::Background_Color_Component * m_background;
   Renderables m_renderables;
 };
 }  // namespace Tunnelour

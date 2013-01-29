@@ -14,13 +14,7 @@
 //
 
 #include "Init_Controller.h"
-#include "Background_Component.h"
 #include "Camera_Component.h"
-#include "Debug_Bitmap.h"
-#include "Text_Component.h"
-#include "Debug_Text.h"
-#include "Bitmap_Component.h"
-#include "SeaFloorSquare.h"
 
 namespace Tunnelour {
 
@@ -41,7 +35,12 @@ void Init_Controller::Init(Tunnelour::Component_Composite * const model) {
 
 //------------------------------------------------------------------------------
 void Init_Controller::Run() {
+  // DO NOT DELETE THESE. I AM PASSING CONTROL TO THE MODEL FOR THESE.
+  // IT SHOULD DO ALL THE CLEANUP AND DELETION.
 
+  Tunnelour::Component *camera = 0;
+  camera = m_model->Add(new Tunnelour::Camera_Component());
+  camera->Init();
   
   m_is_finished = true;
 }

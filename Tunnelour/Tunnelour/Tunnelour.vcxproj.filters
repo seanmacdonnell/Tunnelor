@@ -111,9 +111,6 @@
     <ClCompile Include="src\SeaFloorSquare.cc">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
-    <ClCompile Include="src\Background_Component.cc">
-      <Filter>Source Files\Components</Filter>
-    </ClCompile>
     <ClCompile Include="src\Direct3D11_View_TransparentShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -122,6 +119,12 @@
     </ClCompile>
     <ClCompile Include="src\Background_Controller.cc">
       <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Background_Color_Component.cc">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tile_Bitmap.cc">
+      <Filter>Source Files\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -200,9 +203,6 @@
     <ClInclude Include="include\Direct3D11_View.h">
       <Filter>Include Files\View</Filter>
     </ClInclude>
-    <ClInclude Include="include\Background_Component.h">
-      <Filter>Include Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="include\Direct3D11_View_TransparentShader.h">
       <Filter>Include Files</Filter>
     </ClInclude>
@@ -211,6 +211,12 @@
     </ClInclude>
     <ClInclude Include="include\Background_Controller.h">
       <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Background_Color_Component.h">
+      <Filter>Include Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Tile_Bitmap.h">
+      <Filter>Include Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -6,6 +6,7 @@ Tunnelour/Tunnelour.suo -text
 Tunnelour/Tunnelour/Tunnelour.vcxproj -text
 Tunnelour/Tunnelour/Tunnelour.vcxproj.filters -text
 Tunnelour/Tunnelour/Tunnelour.vcxproj.user -text
+Tunnelour/Tunnelour/include/Background_Color_Component.h -text
 Tunnelour/Tunnelour/include/Background_Component.h -text
 Tunnelour/Tunnelour/include/Background_Controller.h -text
 Tunnelour/Tunnelour/include/Bitmap_Component.h -text
@@ -30,6 +31,7 @@ Tunnelour/Tunnelour/include/Init_Controller.h -text
 Tunnelour/Tunnelour/include/Message_Wrapper.h -text
 Tunnelour/Tunnelour/include/SeaFloorSquare.h -text
 Tunnelour/Tunnelour/include/Text_Component.h -text
+Tunnelour/Tunnelour/include/Tile_Bitmap.h -text
 Tunnelour/Tunnelour/include/Tunnelour_Controller.h -text
 Tunnelour/Tunnelour/include/Tunnelour_Launcher.h -text
 Tunnelour/Tunnelour/include/Tunnelour_View.h -text
@@ -54,6 +56,11 @@ Tunnelour/Tunnelour/resource/Khmer_UI.csv -text
 Tunnelour/Tunnelour/resource/Khmer_UI.dds -text
 Tunnelour/Tunnelour/resource/Khmer_UI.fnt -text
 Tunnelour/Tunnelour/resource/Seafloor_Texture_001.dds -text
+Tunnelour/Tunnelour/resource/Tunnelor[!!-~]2_0[!!-~]32x32.png -text
+Tunnelour/Tunnelour/resource/Tunnelor_Background_32x32.dds -text
+Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset.png -text
+Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset.txt -text
+Tunnelour/Tunnelour/src/Background_Color_Component.cc -text
 Tunnelour/Tunnelour/src/Background_Component.cc -text
 Tunnelour/Tunnelour/src/Background_Controller.cc -text
 Tunnelour/Tunnelour/src/Bitmap_Component.cc -text
@@ -77,6 +84,7 @@ Tunnelour/Tunnelour/src/Init_Controller.cc -text
 Tunnelour/Tunnelour/src/Message_Wrapper.cc -text
 Tunnelour/Tunnelour/src/SeaFloorSquare.cc -text
 Tunnelour/Tunnelour/src/Text_Component.cc -text
+Tunnelour/Tunnelour/src/Tile_Bitmap.cc -text
 Tunnelour/Tunnelour/src/Tunnelour_Controller.cc -text
 Tunnelour/Tunnelour/src/Tunnelour_Launcher.cc -text
 Tunnelour/Tunnelour/src/Tunnelour_View.cc -text

@@ -18,6 +18,7 @@
 
 #include "Component_Composite.h"
 #include "Controller.h"
+#include "Tile_Bitmap.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -50,6 +51,7 @@ class Background_Controller: public Tunnelour::Controller {
  protected:
 
  private:
+  Tunnelour::Tile_Bitmap *m_bitmap;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_CONTROLLER_H_

@@ -31,7 +31,7 @@
 
 #include "Component_Composite.h"
 #include "View.h"
-#include "Background_Component.h"
+#include "Background_Color_Component.h"
 #include "Component.h"
 #include "Direct3D11_View_TextureShader.h"
 #include "Direct3D11_View_FontShader.h"

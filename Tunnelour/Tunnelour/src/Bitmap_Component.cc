@@ -51,8 +51,9 @@ Tunnelour::Bitmap_Component::Texture * const Bitmap_Component::GetTexture() {
 }
 
 //---------------------------------------------------------------------------
-void Bitmap_Component::SetTexture(Tunnelour::Bitmap_Component::Texture * texture) {
-  m_texture = texture;
+void Bitmap_Component::SetTexture(Tunnelour::Bitmap_Component::Texture texture) {
+  delete m_texture;
+  *m_texture = texture;
 }
 
 //------------------------------------------------------------------------------

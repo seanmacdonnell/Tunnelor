@@ -39,10 +39,10 @@ Direct3D11_View_Mutator::~Direct3D11_View_Mutator() {
 
 //------------------------------------------------------------------------------
 void Direct3D11_View_Mutator::Mutate(Tunnelour::Component * const component) {
-  if (component->GetType().compare("Background_Component") == 0) {
-    // Found Background_Component
-    Tunnelour::Background_Component * background = 0;
-    background = static_cast<Tunnelour::Background_Component*>(component);
+  if (component->GetType().compare("Background_Color_Component") == 0) {
+    // Found Background_Color_Component
+    Tunnelour::Background_Color_Component * background = 0;
+    background = static_cast<Tunnelour::Background_Color_Component*>(component);
     m_background = background;
     m_found_background = true;
   }
@@ -94,7 +94,7 @@ bool Direct3D11_View_Mutator::FoundBackground() {
 }
 
 //------------------------------------------------------------------------------
-Tunnelour::Background_Component * const Direct3D11_View_Mutator::GetBackground() {
+Tunnelour::Background_Color_Component * const Direct3D11_View_Mutator::GetBackground() {
   return m_background;
 }
 

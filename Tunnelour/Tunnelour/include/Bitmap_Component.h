@@ -57,13 +57,14 @@ class Bitmap_Component: public Tunnelour::Frame_Component {
   //---------------------------------------------------------------------------
   // Description : Mutator for the Texture
   //---------------------------------------------------------------------------
-  void SetTexture(Texture * texture);
+  void SetTexture(Texture texture);
 
  protected:
   //---------------------------------------------------------------------------
   // Description : Class variables
   //---------------------------------------------------------------------------
   Texture * m_texture;
+
  private:
 };  // class Bitmap_Component
 }  // namespace Tunnelour

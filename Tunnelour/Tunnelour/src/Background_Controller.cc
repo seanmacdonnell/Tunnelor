@@ -14,13 +14,7 @@
 //
 
 #include "Background_Controller.h"
-#include "Background_Component.h"
-#include "Camera_Component.h"
-#include "Debug_Bitmap.h"
-#include "Text_Component.h"
-#include "Debug_Text.h"
-#include "Bitmap_Component.h"
-#include "SeaFloorSquare.h"
+#include "Background_Color_Component.h"
 
 namespace Tunnelour {
 
@@ -28,6 +22,7 @@ namespace Tunnelour {
 // public:
 //------------------------------------------------------------------------------
 Background_Controller::Background_Controller() : Controller() {
+  m_bitmap = NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -38,7 +33,24 @@ Background_Controller::~Background_Controller() {
 void Background_Controller::Init(Tunnelour::Component_Composite * const model) {
   Tunnelour::Controller::Init(model);
 
+  Tunnelour::Component* bitmap = m_model->Add(new Tunnelour::Tile_Bitmap());
+  m_bitmap = static_cast<Tunnelour::Tile_Bitmap*>(bitmap);  
+  m_bitmap->SetPosition(new D3DXVECTOR3(50, 50, -1));  
+  m_bitmap->GetTexture()->transparency = 1.0f;
 
+  /*
+  Tunnelour::Component* bitmap = m_model->Add(new Tunnelour::Bitmap_Component());
+   m_bitmap = static_cast<Tunnelour::Bitmap_Component*>(bitmap);  
+  
+  Tunnelour::Bitmap_Component::Texture texture;
+  texture.texture_path = L"resource/Tunnelor_Background_32x32.dds";
+  texture.transparency = 1.0f;
+  m_bitmap->SetTexture(texture);
+  */
+
+  Tunnelour::Component *background = 0;
+  background = m_model->Add(new Tunnelour::Background_Color_Component());
+  background->Init();
 }
 
 //------------------------------------------------------------------------------
