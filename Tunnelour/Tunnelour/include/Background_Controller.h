@@ -19,6 +19,8 @@
 #include "Component_Composite.h"
 #include "Controller.h"
 #include "Tile_Bitmap.h"
+#include <iostream>
+#include <list>
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -28,6 +30,29 @@ namespace Tunnelour {
 //-----------------------------------------------------------------------------
 class Background_Controller: public Tunnelour::Controller {
  public:
+  struct Line {
+    float size_x, size_y;
+    int number_of_tiles;
+  };
+
+  struct Tileset {
+    std::string type;
+    float top_left_x, top_left_y;
+    float size_x, size_y;
+    int number_of_lines;
+    std::list<Line> lines;
+  };
+
+  struct Tileset_Metadata {
+    std::string name;
+    std::string type;
+    std::string filename;
+    float top_left_x, top_left_y;
+    float size_x, size_y;
+    int number_of_subsets;
+    std::list<Tileset> tilesets;
+  };
+
   //---------------------------------------------------------------------------
   // Description : Constructor
   //---------------------------------------------------------------------------
@@ -51,7 +76,10 @@ class Background_Controller: public Tunnelour::Controller {
  protected:
 
  private:
+  void Load_Tilset_Metadata();
+
   Tunnelour::Tile_Bitmap *m_bitmap;
+  Tileset_Metadata m_metadata;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_CONTROLLER_H_

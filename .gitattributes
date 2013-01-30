@@ -7,7 +7,6 @@ Tunnelour/Tunnelour/Tunnelour.vcxproj -text
 Tunnelour/Tunnelour/Tunnelour.vcxproj.filters -text
 Tunnelour/Tunnelour/Tunnelour.vcxproj.user -text
 Tunnelour/Tunnelour/include/Background_Color_Component.h -text
-Tunnelour/Tunnelour/include/Background_Component.h -text
 Tunnelour/Tunnelour/include/Background_Controller.h -text
 Tunnelour/Tunnelour/include/Bitmap_Component.h -text
 Tunnelour/Tunnelour/include/Camera_Component.h -text
@@ -61,7 +60,6 @@ Tunnelour/Tunnelour/resource/Tunnelor_Background_32x32.dds -text
 Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset.png -text
 Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset.txt -text
 Tunnelour/Tunnelour/src/Background_Color_Component.cc -text
-Tunnelour/Tunnelour/src/Background_Component.cc -text
 Tunnelour/Tunnelour/src/Background_Controller.cc -text
 Tunnelour/Tunnelour/src/Bitmap_Component.cc -text
 Tunnelour/Tunnelour/src/Camera_Component.cc -text
