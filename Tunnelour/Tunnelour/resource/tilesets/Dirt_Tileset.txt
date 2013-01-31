@@ -1,70 +1,82 @@
 Name Dirt
 Type Tileset
-FileName Dirt_Tileset.png
+FileName Dirt_Tileset.dds
 TopLeftX 0
 TopLeftY 0
 SizeX 512
 SizeY 512
 NumOfSubSets 2
-SubSet 1
-Type Middleground
-TopLeftX 0
-TopLeftY 0
-SizeX 256
-SizeY 62
-NumOfLines 6
-Line 1
-SizeX 32
-SizeY 32
-NumOfTiles 8
-Line 2
-SizeX 16
-SizeY 16
-NumOfTiles 8
-Line 3
-SizeX 16
-SizeY 16
-NumOfTiles 8
-Line 4
-SizeX 8
-SizeY 8
-NumOfTiles 8
-Line 5
-SizeX 4
-SizeY 4
-NumOfTiles 8
-Line 6
-SizeX 2
-SizeY 2
-NumOfTiles 8
-SubSet 2
-Type Background
-TopLeftX 0
-TopLeftY 62
-SubSizeX 256
-SubSizeY 62
-NumOfLines 6
-Line 1
-SizeX 32
-SizeY 32
-NumOfTiles 8
-Line 2
-SizeX 16
-SizeY 16
-NumOfTiles 8
-Line 3
-SizeX 16
-SizeY 16
-NumOfTiles 8
-Line 4
-SizeX 8
-SizeY 8
-NumOfTiles 8
-Line 5
-SizeX 4
-SizeY 4
-NumOfTiles 8
-Line 6
-SizeX 2
-SizeY 2
-NumOfTiles 8
+  SubSet 1
+  Type Middleground
+  TopLeftX 0
+  TopLeftY 0
+  SizeX 256
+  SizeY 62
+  NumOfLines 5
+    Line 1
+    TopLeftX 0
+    TopLeftY 0
+    SizeX 32
+    SizeY 32
+    NumOfTiles 8
+    Line 2
+    TopLeftX 0
+    TopLeftY 32
+    SizeX 16
+    SizeY 16
+    NumOfTiles 8
+    Line 3
+    TopLeftX 0
+    TopLeftY 47
+    SizeX 8
+    SizeY 8
+    NumOfTiles 8
+    Line 4
+    TopLeftX 0
+    TopLeftY 56
+    SizeX 4
+    SizeY 4
+    NumOfTiles 8
+    Line 5
+    TopLeftX 0
+    TopLeftY 62
+    SizeX 2
+    SizeY 2
+    NumOfTiles 8
+  SubSet 2
+  Type Background
+  TopLeftX 0
+  TopLeftY 62
+  SubSizeX 256
+  SubSizeY 62
+  NumOfLines 5
+    Line 1
+    TopLeftX 0
+    TopLeftY 62
+    SizeX 32
+    SizeY 32
+    NumOfTiles 8
+    Line 2
+    TopLeftX 0
+    TopLeftY 94
+    SizeX 16
+    SizeY 16
+    NumOfTiles 8
+    Line 3
+    TopLeftX 0
+    TopLeftY 110
+    SizeX 8
+    SizeY 8
+    NumOfTiles 8
+    Line 4
+    TopLeftX 0
+    TopLeftY 118
+    SizeX 4
+    SizeY 4
+    NumOfTiles 8
+    Line 5
+    TopLeftX 0
+    TopLeftY 122
+    SizeX 2
+    SizeY 2
+    NumOfTiles 8

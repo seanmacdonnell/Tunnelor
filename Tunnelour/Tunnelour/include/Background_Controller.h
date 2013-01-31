@@ -31,6 +31,8 @@ namespace Tunnelour {
 class Background_Controller: public Tunnelour::Controller {
  public:
   struct Line {
+    int line_number;
+    float top_left_x, top_left_y;
     float size_x, size_y;
     int number_of_tiles;
   };
@@ -46,7 +48,7 @@ class Background_Controller: public Tunnelour::Controller {
   struct Tileset_Metadata {
     std::string name;
     std::string type;
-    std::string filename;
+    std::wstring filename;
     float top_left_x, top_left_y;
     float size_x, size_y;
     int number_of_subsets;
@@ -77,6 +79,8 @@ class Background_Controller: public Tunnelour::Controller {
 
  private:
   void Load_Tilset_Metadata();
+  Tunnelour::Tile_Bitmap* Create_Tile();
+  std::wstring CharToWChar(const char* pstrSrc);
 
   Tunnelour::Tile_Bitmap *m_bitmap;
   Tileset_Metadata m_metadata;

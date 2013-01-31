@@ -22,6 +22,9 @@
 #include <d3dx10math.h>
 #include <d3dx11tex.h>
 #include "Debug_Bitmap.h"
+#include <cstdlib>
+#include <iostream>
+#include <ctime>
 
 namespace Tunnelour {
 
@@ -40,35 +43,17 @@ Background_Controller::~Background_Controller() {
 void Background_Controller::Init(Tunnelour::Component_Composite * const model) {
   Tunnelour::Controller::Init(model);
 
-  //Tunnelour::Component* bitmap = m_model->Add(new Tunnelour::Debug_Bitmap());
-  //static_cast<Tunnelour::Debug_Bitmap*>(bitmap)->SetPosition(new D3DXVECTOR3(0, 0, 0));  
-  //static_cast<Tunnelour::Debug_Bitmap*>(bitmap)->GetTexture()->transparency = 1.0f;
-
-  Tunnelour::Component* bitmap = m_model->Add(new Tunnelour::Tile_Bitmap());
-  m_bitmap = static_cast<Tunnelour::Tile_Bitmap*>(bitmap);  
-  m_bitmap->SetPosition(new D3DXVECTOR3(0, 0, -0));
-  m_bitmap->GetTexture()->transparency = 1.0f;
-  m_bitmap->GetTexture()->texture_path = L"resource//tilesets//Dirt_Tileset.png";
-  m_bitmap->GetTexture()->texture_size = D3DXVECTOR2(512, 512);
-  m_bitmap->GetTexture()->tile_size = D3DXVECTOR2(32, 32);
-  m_bitmap->GetTexture()->top_left_position = D3DXVECTOR2(0, 0);
-  m_bitmap->SetSize(new D3DXVECTOR2(32, 32));
-
-  /*
-  Tunnelour::Component* bitmap = m_model->Add(new Tunnelour::Bitmap_Component());
-   m_bitmap = static_cast<Tunnelour::Bitmap_Component*>(bitmap);  
-  
-  Tunnelour::Bitmap_Component::Texture texture;
-  texture.texture_path = L"resource/Tunnelor_Background_32x32.dds";
-  texture.transparency = 1.0f;
-  m_bitmap->SetTexture(texture);
-  */
-
   Tunnelour::Component *background = 0;
   background = m_model->Add(new Tunnelour::Background_Color_Component());
   background->Init();
 
+  //Load the Tileset Data
   Load_Tilset_Metadata();
+
+  //Generate Random Tile
+  background = m_model->Add(Create_Tile());
+
+  //Position Tile
 }
 
 //------------------------------------------------------------------------------
@@ -127,7 +112,7 @@ void Background_Controller::Load_Tilset_Metadata() {
     char * token = strtok(line," ");
     if (strcmp(token,"FileName") == 0) 	{
       token = strtok(NULL, " =\"");
-      m_metadata.filename = token;
+      m_metadata.filename = CharToWChar(token);
     }
   }
 
@@ -240,6 +225,32 @@ void Background_Controller::Load_Tilset_Metadata() {
           Line temp_line;
 
           fgets(line, 225, pFile);
+          if (line != NULL) {
+            char * token = strtok(line," ");
+            if (strcmp(token,"Line") == 0) 	{
+              token = strtok(NULL, " =\"");
+              temp_line.line_number = atoi(token);
+            }
+          }
+
+          fgets(line, 225, pFile);
+          if (line != NULL) {
+            char * token = strtok(line," ");
+            if (strcmp(token,"TopLeftX") == 0) 	{
+              token = strtok(NULL, " =\"");
+              temp_line.top_left_x = atoi(token);
+            }
+          }
+
+          fgets(line, 225, pFile);
+          if (line != NULL) {
+            char * token = strtok(line," ");
+            if (strcmp(token,"TopLeftY") == 0) 	{
+              token = strtok(NULL, " =\"");
+              temp_line.top_left_y = atoi(token);
+            }
+          }
+
           fgets(line, 225, pFile);
           if (line != NULL) {
             char * token = strtok(line," ");
@@ -273,6 +284,54 @@ void Background_Controller::Load_Tilset_Metadata() {
       m_metadata.tilesets.push_back(temp_tileset);
     }
   }
+}
+
+//------------------------------------------------------------------------------
+Tunnelour::Tile_Bitmap* Background_Controller::Create_Tile() {
+
+  Tileset background_tileset;
+  std::list<Tileset>::iterator tileset;
+  for (tileset = m_metadata.tilesets.begin(); tileset != m_metadata.tilesets.end(); tileset++) {
+    if (tileset->type.compare("Background")) {
+      background_tileset = *tileset;
+    }
+  }
+
+  Line background_32x32_line;
+  std::list<Line>::iterator line;
+  for (line = background_tileset.lines.begin(); line != background_tileset.lines.end(); line++) {
+    if (line->size_x == 32 && line->size_y == 32) {
+      background_32x32_line = *line;
+    }
+  }
+
+  Tunnelour::Tile_Bitmap* tile = new Tunnelour::Tile_Bitmap();  
+  tile->SetPosition(new D3DXVECTOR3(0, 0, 0));
+  tile->GetTexture()->transparency = 1.0f;
+  tile->GetTexture()->texture_path = L"resource\\tilesets\\Dirt_Tileset.dds";
+  tile->GetTexture()->texture_size = D3DXVECTOR2(m_metadata.size_x, m_metadata.size_y);
+  tile->GetTexture()->tile_size = D3DXVECTOR2(background_32x32_line.size_x, background_32x32_line.size_y);
+
+  //return (rand() % (nHigh - nLow + 1)) + nLow;
+  std::srand(std::time(0));
+  int random_variable = (rand() % (background_32x32_line.number_of_tiles - 0 + 1)) + 0;
+
+  tile->GetTexture()->top_left_position = D3DXVECTOR2(random_variable*32, background_32x32_line.top_left_y);
+
+
+  tile->SetSize(new D3DXVECTOR2(128, 128));
+
+  return tile;
+}
+
+//------------------------------------------------------------------------------
+std::wstring Background_Controller::CharToWChar(const char* pstrSrc) {
+    size_t origsize = strlen(pstrSrc) + 1;
+    const size_t newsize = 100;
+    size_t convertedChars = 0;
+    wchar_t wcstring[newsize];
+    mbstowcs_s(&convertedChars, wcstring, origsize, pstrSrc, _TRUNCATE);
+    return std::wstring(wcstring);
 }
 
 }  // namespace Tunnelour
