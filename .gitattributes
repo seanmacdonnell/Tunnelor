@@ -57,6 +57,7 @@ Tunnelour/Tunnelour/resource/Khmer_UI.fnt -text
 Tunnelour/Tunnelour/resource/Seafloor_Texture_001.dds -text
 Tunnelour/Tunnelour/resource/Tunnelor[!!-~]2_0[!!-~]32x32.png -text
 Tunnelour/Tunnelour/resource/Tunnelor_Background_32x32.dds -text
+Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset.dds -text
 Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset.png -text
 Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset.txt -text
 Tunnelour/Tunnelour/src/Background_Color_Component.cc -text

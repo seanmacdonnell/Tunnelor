@@ -23,8 +23,8 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 Tile_Bitmap::Tile_Bitmap(): Bitmap_Component() {
   m_position = D3DXVECTOR3(0, 0, 0);
-  m_size = D3DXVECTOR2(256, 256);
-  m_texture->texture_path = L"resource/Debug_Texture_001.dds";
+  m_size = D3DXVECTOR2(0, 0);
+  m_texture->texture_path = L"";
 }
 
 //------------------------------------------------------------------------------
@@ -94,23 +94,28 @@ void Tile_Bitmap::Init_Frame() {
   // Load the vertex array with data.
   // First triangle.
   m_frame->vertices[0].position = D3DXVECTOR3(left, top, 0.0f);  // Top left.
-  m_frame->vertices[0].texture = D3DXVECTOR2(0.0f, 0.0f);
+  m_frame->vertices[0].texture = D3DXVECTOR2((m_texture->top_left_position.x)/m_texture->texture_size.x,
+                                             (m_texture->top_left_position.y)/m_texture->texture_size.y);
 
   m_frame->vertices[1].position = D3DXVECTOR3(right, bottom, 0.0f);  // Bottom right.
-  m_frame->vertices[1].texture = D3DXVECTOR2(1.0f, 1.0f);
+  //m_frame->vertices[1].texture = D3DXVECTOR2(1.0f, 1.0f);
+  m_frame->vertices[1].texture = D3DXVECTOR2((m_texture->tile_size.x + m_texture->top_left_position.x)/m_texture->texture_size.x,
+                                             (m_texture->tile_size.y + m_texture->top_left_position.y)/m_texture->texture_size.y);
 
   m_frame->vertices[2].position = D3DXVECTOR3(left, bottom, 0.0f);  // Bottom left.
-  m_frame->vertices[2].texture = D3DXVECTOR2(0.0f, 1.0f);
+  m_frame->vertices[2].texture = D3DXVECTOR2((m_texture->top_left_position.x)/m_texture->texture_size.x,
+                                             (m_texture->tile_size.y + m_texture->top_left_position.y)/m_texture->texture_size.y);
 
   // Second triangle.
   m_frame->vertices[3].position = D3DXVECTOR3(left, top, 0.0f);  // Top left.
-  m_frame->vertices[3].texture = D3DXVECTOR2(0.0f, 0.0f);
+  m_frame->vertices[3].texture = m_frame->vertices[0].texture;
 
   m_frame->vertices[4].position = D3DXVECTOR3(right, top, 0.0f);  // Top right.
-  m_frame->vertices[4].texture = D3DXVECTOR2(1.0f, 0.0f);
+  m_frame->vertices[4].texture = D3DXVECTOR2((m_texture->tile_size.x + m_texture->top_left_position.x)/m_texture->texture_size.x,
+                                             (m_texture->top_left_position.y)/m_texture->texture_size.y);
 
   m_frame->vertices[5].position = D3DXVECTOR3(right, bottom, 0.0f);  // Bottom right.
-  m_frame->vertices[5].texture = D3DXVECTOR2(1.0f, 1.0f);
+  m_frame->vertices[5].texture = m_frame->vertices[1].texture;
 
   // Set up the description of the static vertex buffer.
   vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -155,8 +160,6 @@ void Tile_Bitmap::Init_Frame() {
 
 //------------------------------------------------------------------------------
 void Tile_Bitmap::Init_Texture() {
-  
-
   // Load the texture in.
   if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_d3d11device,
                                                     m_texture->texture_path.c_str(),

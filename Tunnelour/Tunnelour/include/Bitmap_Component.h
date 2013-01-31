@@ -32,6 +32,9 @@ class Bitmap_Component: public Tunnelour::Frame_Component {
     ID3D11ShaderResourceView * texture;
     std::wstring texture_path;
     float transparency;
+    D3DXVECTOR2 top_left_position;
+    D3DXVECTOR2 tile_size;
+    D3DXVECTOR2 texture_size;
   };
 
   //---------------------------------------------------------------------------

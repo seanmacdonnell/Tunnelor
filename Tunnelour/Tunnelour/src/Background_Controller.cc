@@ -18,6 +18,10 @@
 #include "Exceptions.h"
 #include <iostream>
 #include <fstream>
+#include <d3d11.h>
+#include <d3dx10math.h>
+#include <d3dx11tex.h>
+#include "Debug_Bitmap.h"
 
 namespace Tunnelour {
 
@@ -36,10 +40,19 @@ Background_Controller::~Background_Controller() {
 void Background_Controller::Init(Tunnelour::Component_Composite * const model) {
   Tunnelour::Controller::Init(model);
 
+  //Tunnelour::Component* bitmap = m_model->Add(new Tunnelour::Debug_Bitmap());
+  //static_cast<Tunnelour::Debug_Bitmap*>(bitmap)->SetPosition(new D3DXVECTOR3(0, 0, 0));  
+  //static_cast<Tunnelour::Debug_Bitmap*>(bitmap)->GetTexture()->transparency = 1.0f;
+
   Tunnelour::Component* bitmap = m_model->Add(new Tunnelour::Tile_Bitmap());
   m_bitmap = static_cast<Tunnelour::Tile_Bitmap*>(bitmap);  
-  m_bitmap->SetPosition(new D3DXVECTOR3(50, 50, -1));  
+  m_bitmap->SetPosition(new D3DXVECTOR3(0, 0, -0));
   m_bitmap->GetTexture()->transparency = 1.0f;
+  m_bitmap->GetTexture()->texture_path = L"resource//tilesets//Dirt_Tileset.png";
+  m_bitmap->GetTexture()->texture_size = D3DXVECTOR2(512, 512);
+  m_bitmap->GetTexture()->tile_size = D3DXVECTOR2(32, 32);
+  m_bitmap->GetTexture()->top_left_position = D3DXVECTOR2(0, 0);
+  m_bitmap->SetSize(new D3DXVECTOR2(32, 32));
 
   /*
   Tunnelour::Component* bitmap = m_model->Add(new Tunnelour::Bitmap_Component());
