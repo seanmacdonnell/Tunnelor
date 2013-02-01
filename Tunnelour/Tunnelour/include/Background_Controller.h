@@ -84,6 +84,7 @@ class Background_Controller: public Tunnelour::Controller {
 
   Tunnelour::Tile_Bitmap *m_bitmap;
   Tileset_Metadata m_metadata;
+  //vector<vector<Tunnelour::Tile_Bitmap*>> m_background_tiles;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_CONTROLLER_H_

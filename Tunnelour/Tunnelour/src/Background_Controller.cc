@@ -25,6 +25,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <ctime>
+#include <vector>
 
 namespace Tunnelour {
 
@@ -51,9 +52,28 @@ void Background_Controller::Init(Tunnelour::Component_Composite * const model) {
   Load_Tilset_Metadata();
 
   //Generate Random Tile
-  background = m_model->Add(Create_Tile());
 
-  //Position Tile
+  //Position Tile 128x128
+  //Resoltion is 1280x720
+  //That is 10x128 x
+  //and 6x128 y
+  //56.5 Tiles Total
+  //Top Left is (640,-360)
+  int start_x = -512;
+  int current_x = start_x;
+  int current_y = 232;
+  Tunnelour::Tile_Bitmap* tile;
+  for (int y = 0; y < 6 ; y++) {
+    for (int x = 0; x < 10 ; x++) {
+       tile = Create_Tile();
+       tile->SetPosition(new D3DXVECTOR3(current_x - (tile->GetSize()->x/2),
+                                         current_y + (tile->GetSize()->y/2), 0));
+       current_x += tile->GetSize()->x;
+       m_model->Add(tile);
+    }
+    current_y -= tile->GetSize()->y;
+    current_x = start_x;
+  }
 }
 
 //------------------------------------------------------------------------------
