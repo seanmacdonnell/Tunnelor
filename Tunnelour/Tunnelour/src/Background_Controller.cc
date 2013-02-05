@@ -34,6 +34,7 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 Background_Controller::Background_Controller() : Controller() {
   m_bitmap = NULL;
+  std::srand(std::time(0));
 }
 
 //------------------------------------------------------------------------------
@@ -98,7 +99,7 @@ void Background_Controller::Load_Tilset_Metadata() {
   size_t result;
 
   // Open Font File as a text file
-  pFile = fopen("resource\\tilesets\\Dirt_Tileset.txt","r");
+  pFile = fopen("resource\\tilesets\\Dirt_Tileset_4_0.txt","r");
   if (pFile == NULL) {
     throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed!");
   }
@@ -328,16 +329,13 @@ Tunnelour::Tile_Bitmap* Background_Controller::Create_Tile() {
   Tunnelour::Tile_Bitmap* tile = new Tunnelour::Tile_Bitmap();  
   tile->SetPosition(new D3DXVECTOR3(0, 0, 0));
   tile->GetTexture()->transparency = 1.0f;
-  tile->GetTexture()->texture_path = L"resource\\tilesets\\Dirt_Tileset.dds";
+  tile->GetTexture()->texture_path = L"resource\\tilesets\\Dirt_Tileset_4_0.dds";
   tile->GetTexture()->texture_size = D3DXVECTOR2(m_metadata.size_x, m_metadata.size_y);
   tile->GetTexture()->tile_size = D3DXVECTOR2(background_32x32_line.size_x, background_32x32_line.size_y);
 
-  //return (rand() % (nHigh - nLow + 1)) + nLow;
-  std::srand(std::time(0));
-  int random_variable = (rand() % (background_32x32_line.number_of_tiles - 0 + 1)) + 0;
+  int random_variable = (rand() % ((background_32x32_line.number_of_tiles)));
 
   tile->GetTexture()->top_left_position = D3DXVECTOR2(random_variable*32, background_32x32_line.top_left_y);
-
 
   tile->SetSize(new D3DXVECTOR2(128, 128));
 

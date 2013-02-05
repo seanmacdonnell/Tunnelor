@@ -1,0 +1,82 @@
+Name Dirt
+Type Tileset
+FileName Dirt_Tileset_4_0.dds
+TopLeftX 0
+TopLeftY 0
+SizeX 512
+SizeY 512
+NumOfSubSets 2
+  SubSet 1
+  Type Middleground
+  TopLeftX 3
+  TopLeftY 3
+  SizeX 256
+  SizeY 62
+  NumOfLines 5
+    Line 1
+    TopLeftX 3
+    TopLeftY 3
+    SizeX 32
+    SizeY 32
+    NumOfTiles 8
+    Line 2
+    TopLeftX 3
+    TopLeftY 40
+    SizeX 16
+    SizeY 16
+    NumOfTiles 8
+    Line 3
+    TopLeftX 3
+    TopLeftY 61
+    SizeX 8
+    SizeY 8
+    NumOfTiles 8
+    Line 4
+    TopLeftX 3
+    TopLeftY 74
+    SizeX 4
+    SizeY 4
+    NumOfTiles 8
+    Line 5
+    TopLeftX 3
+    TopLeftY 83
+    SizeX 2
+    SizeY 2
+    NumOfTiles 8
+  SubSet 2
+  Type Background
+  TopLeftX 3
+  TopLeftY 90
+  SubSizeX 256
+  SubSizeY 62
+  NumOfLines 5
+    Line 1
+    TopLeftX 3
+    TopLeftY 90
+    SizeX 32
+    SizeY 32
+    NumOfTiles 8
+    Line 2
+    TopLeftX 3
+    TopLeftY 127
+    SizeX 16
+    SizeY 16
+    NumOfTiles 8
+    Line 3
+    TopLeftX 3
+    TopLeftY 148
+    SizeX 8
+    SizeY 8
+    NumOfTiles 8
+    Line 4
+    TopLeftX 3
+    TopLeftY 159
+    SizeX 4
+    SizeY 4
+    NumOfTiles 8
+    Line 5
+    TopLeftX 3
+    TopLeftY 167
+    SizeX 2
+    SizeY 2
+    NumOfTiles 8
