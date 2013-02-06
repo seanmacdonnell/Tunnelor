@@ -39,6 +39,7 @@
 #include "Camera_Component.h"
 #include "Bitmap_Component.h"
 #include "Text_Component.h"
+#include "Game_Settings_Component.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -128,14 +129,8 @@ class Direct3D11_View : public Tunnelour::View {
   LPCWSTR m_application_name;
   HINSTANCE m_hinstance;
   HWND m_hwnd;
-  int m_screen_width;
-  int m_screen_height;
   bool m_is_window_init;
   bool m_is_d3d11_init;
-  bool m_is_full_screen;
-  float m_screen_depth;
-  float m_screen_near;
-  bool m_vsync_enabled;
   int m_videoCardMemory;
   char m_video_card_description[128];
   IDXGISwapChain * m_swap_chain;
@@ -151,12 +146,18 @@ class Direct3D11_View : public Tunnelour::View {
 	 ID3D11BlendState* m_alphaDisableBlendingState;
   D3DXMATRIX m_world;
   D3DXMATRIX m_ortho;
+
   //---------------------------------------------------------------------------
   // Description : Shaders
   //---------------------------------------------------------------------------
   Tunnelour::Direct3D11_View_TextureShader * m_texture_shader;
   Tunnelour::Direct3D11_View_FontShader * m_font_shader;
   Tunnelour::Direct3D11_View_TransparentShader* m_transparent_shader;
+
+  //---------------------------------------------------------------------------
+  // Description : Model Components
+  //---------------------------------------------------------------------------
+  Tunnelour::Game_Settings_Component* m_game_settings;
 };
 }  // namespace Tunnelour
 

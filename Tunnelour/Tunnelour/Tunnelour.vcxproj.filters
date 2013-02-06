@@ -126,21 +126,15 @@
     <ClCompile Include="src\Tile_Bitmap.cc">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
+    <ClCompile Include="src\Game_Settings_Component.cc">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine.h">
       <Filter>Include Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Message_Wrapper.h">
-      <Filter>Include Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Component_Composite.h">
-      <Filter>Include Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Component.h">
-      <Filter>Include Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Component_ID.h">
       <Filter>Include Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Controller.h">
@@ -167,9 +161,6 @@
     <ClInclude Include="include\Tunnelour_Controller.h">
       <Filter>Include Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Camera_Component.h">
-      <Filter>Include Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Direct3D11_View_Mutator.h">
       <Filter>Include Files</Filter>
     </ClInclude>
@@ -190,9 +181,6 @@
     </ClInclude>
     <ClInclude Include="include\Debug_Text.h">
       <Filter>Include Files\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Bitmap_Component.h">
-      <Filter>Include Files</Filter>
     </ClInclude>
     <ClInclude Include="include\SeaFloorSquare.h">
       <Filter>Include Files\Components</Filter>
@@ -216,6 +204,24 @@
       <Filter>Include Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="include\Tile_Bitmap.h">
+      <Filter>Include Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Game_Settings_Component.h">
+      <Filter>Include Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Bitmap_Component.h">
+      <Filter>Include Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Camera_Component.h">
+      <Filter>Include Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Component.h">
+      <Filter>Include Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Component_Composite.h">
+      <Filter>Include Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Component_ID.h">
       <Filter>Include Files\Components</Filter>
     </ClInclude>
   </ItemGroup>

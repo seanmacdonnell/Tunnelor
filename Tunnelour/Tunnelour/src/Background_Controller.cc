@@ -16,16 +16,7 @@
 #include "Background_Controller.h"
 #include "Background_Color_Component.h"
 #include "Exceptions.h"
-#include <iostream>
-#include <fstream>
-#include <d3d11.h>
-#include <d3dx10math.h>
-#include <d3dx11tex.h>
-#include "Debug_Bitmap.h"
-#include <cstdlib>
-#include <iostream>
 #include <ctime>
-#include <vector>
 
 namespace Tunnelour {
 

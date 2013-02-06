@@ -26,6 +26,7 @@ Tunnelour/Tunnelour/include/Direct3D11_View_TransparentShader.h -text
 Tunnelour/Tunnelour/include/Engine.h -text
 Tunnelour/Tunnelour/include/Exceptions.h -text
 Tunnelour/Tunnelour/include/Frame_Component.h -text
+Tunnelour/Tunnelour/include/Game_Settings_Component.h -text
 Tunnelour/Tunnelour/include/Init_Controller.h -text
 Tunnelour/Tunnelour/include/Message_Wrapper.h -text
 Tunnelour/Tunnelour/include/SeaFloorSquare.h -text
@@ -82,6 +83,7 @@ Tunnelour/Tunnelour/src/Direct3D11_View_TextureShader.cpp -text
 Tunnelour/Tunnelour/src/Direct3D11_View_TransparentShader.cpp -text
 Tunnelour/Tunnelour/src/Engine.cc -text
 Tunnelour/Tunnelour/src/Frame_Component.cc -text
+Tunnelour/Tunnelour/src/Game_Settings_Component.cc -text
 Tunnelour/Tunnelour/src/Init_Controller.cc -text
 Tunnelour/Tunnelour/src/Message_Wrapper.cc -text
 Tunnelour/Tunnelour/src/SeaFloorSquare.cc -text

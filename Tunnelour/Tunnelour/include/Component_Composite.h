@@ -17,7 +17,6 @@
 #define TUNNELOUR_COMPONENT_COMPOSITE_H_
 
 #include "Component.h"
-
 #include <list>
 
 namespace Tunnelour {

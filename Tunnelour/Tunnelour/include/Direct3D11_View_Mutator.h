@@ -21,6 +21,7 @@
 #include "Background_Color_Component.h"
 #include "Bitmap_Component.h"
 #include "Text_Component.h"
+#include "Game_Settings_Component.h"
 
 namespace Tunnelour {
 class Direct3D11_View_Mutator: public Tunnelour::Component::Component_Mutator  {
@@ -67,9 +68,9 @@ class Direct3D11_View_Mutator: public Tunnelour::Component::Component_Mutator  {
   bool FoundCamera();
 
   //-------------------------------------------------------------------------
-  // Description : Accessors for Camera Component
+  // Description : Accessors for the Camera Component
   //-------------------------------------------------------------------------
-  Tunnelour::Camera_Component * const GetCamera();
+  Tunnelour::Camera_Component* const GetCamera();
 
   //-------------------------------------------------------------------------
   // Description : Has this component been found in the model?
@@ -77,15 +78,26 @@ class Direct3D11_View_Mutator: public Tunnelour::Component::Component_Mutator  {
   bool FoundRenderables();
 
   //-------------------------------------------------------------------------
-  // Description : Accessors for Bitmap Component
+  // Description : Accessors for the Renderables
   //-------------------------------------------------------------------------
   Renderables& const GetRenderables();
 
+  //-------------------------------------------------------------------------
+  // Description : Has this component been found in the model?
+  //-------------------------------------------------------------------------
+  bool FoundGameSettings();
+
+  //-------------------------------------------------------------------------
+  // Description : Accessors for the Game_Settings_Component
+  //-------------------------------------------------------------------------
+  Tunnelour::Game_Settings_Component* const GetGameSettings();
+
  private:
-  bool m_found_background, m_found_camera, m_found_renderables;
+  bool m_found_background, m_found_camera, m_found_renderables, m_found_game_settings;
   Tunnelour::Camera_Component * m_camera;
   Tunnelour::Background_Color_Component * m_background;
   Renderables m_renderables;
+  Tunnelour::Game_Settings_Component * m_game_settings;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_DIRECT3D11_VIEW_MUTATOR_H_

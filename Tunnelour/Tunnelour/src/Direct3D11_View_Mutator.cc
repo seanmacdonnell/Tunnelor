@@ -41,9 +41,7 @@ Direct3D11_View_Mutator::~Direct3D11_View_Mutator() {
 void Direct3D11_View_Mutator::Mutate(Tunnelour::Component * const component) {
   if (component->GetType().compare("Background_Color_Component") == 0) {
     // Found Background_Color_Component
-    Tunnelour::Background_Color_Component * background = 0;
-    background = static_cast<Tunnelour::Background_Color_Component*>(component);
-    m_background = background;
+    m_background = static_cast<Tunnelour::Background_Color_Component*>(component);;
     m_found_background = true;
   }
 
@@ -86,6 +84,15 @@ void Direct3D11_View_Mutator::Mutate(Tunnelour::Component * const component) {
     }
     m_found_renderables = true;
   }
+  
+  if (component->GetType().compare("Game_Settings_Component") == 0) {
+    // Found Game Settings
+    Tunnelour::Game_Settings_Component *game_settings = 0;
+    game_settings = static_cast<Tunnelour::Game_Settings_Component*>(component);
+    m_game_settings = game_settings;
+    m_found_game_settings = true;
+  }
+  
 }
 
 //------------------------------------------------------------------------------
@@ -104,7 +111,7 @@ bool Direct3D11_View_Mutator::FoundCamera() {
 }
 
 //------------------------------------------------------------------------------
-Tunnelour::Camera_Component * const Direct3D11_View_Mutator::GetCamera() {
+Tunnelour::Camera_Component* const Direct3D11_View_Mutator::GetCamera() {
   return m_camera;
 }
 
@@ -118,5 +125,14 @@ Direct3D11_View_Mutator::Renderables& const Direct3D11_View_Mutator::GetRenderab
   return m_renderables;
 }
 
+//------------------------------------------------------------------------------
+bool Direct3D11_View_Mutator::FoundGameSettings() {
+  return m_found_game_settings;
+}
+
+//------------------------------------------------------------------------------
+Tunnelour::Game_Settings_Component* const Direct3D11_View_Mutator::GetGameSettings() {
+  return m_game_settings;
+}
 
 }  // namespace Tunnelour

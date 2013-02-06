@@ -99,6 +99,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Direct3D11_View_TransparentShader.cpp" />
     <ClCompile Include="src\Engine.cc" />
     <ClCompile Include="src\Frame_Component.cc" />
+    <ClCompile Include="src\Game_Settings_Component.cc" />
     <ClCompile Include="src\Init_Controller.cc" />
     <ClCompile Include="src\Message_Wrapper.cc" />
     <ClCompile Include="src\Bitmap_Component.cc" />
@@ -131,6 +132,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Engine.h" />
     <ClInclude Include="include\Exceptions.h" />
     <ClInclude Include="include\Frame_Component.h" />
+    <ClInclude Include="include\Game_Settings_Component.h" />
     <ClInclude Include="include\Init_Controller.h" />
     <ClInclude Include="include\Message_Wrapper.h" />
     <ClInclude Include="include\Bitmap_Component.h" />

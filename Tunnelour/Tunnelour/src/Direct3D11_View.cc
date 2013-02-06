@@ -29,15 +29,6 @@ Direct3D11_View::Direct3D11_View() {
 
   m_is_window_init = false;
   m_is_d3d11_init = false;
-
-  m_screen_width  = 0;
-  m_screen_height = 0;
-  m_is_full_screen = false;
-
-  m_vsync_enabled = false;
-  m_screen_depth = 0;
-  m_screen_near = 0;
-
   m_swap_chain = NULL;
   m_device = NULL;
   m_device_context = NULL;
@@ -63,7 +54,7 @@ Direct3D11_View::~Direct3D11_View() {
     ShowCursor(true);
 
     // Fix the display settings if leaving full screen mode.
-    if (m_is_full_screen) {
+    if (m_game_settings->IsFullScreen()) {
       ChangeDisplaySettings(NULL, 0);
     }
 
@@ -153,37 +144,10 @@ Direct3D11_View::~Direct3D11_View() {
 //------------------------------------------------------------------------------
 void Direct3D11_View::Init(Tunnelour::Component_Composite * const model) {
   View::Init(model);
-
-  // Set Default Values
   m_is_window_init = false;
   m_is_d3d11_init = false;
 
-  m_screen_width  = 800;
-  m_screen_height = 600;
-  m_is_full_screen = false;
-
-  m_vsync_enabled = true;
-  m_screen_depth = 1000.0f;
-  m_screen_near = 0.1f;
-
-  if (!m_is_initialised) {
-    if (!m_is_window_init) { Init_Window(); }
-    if (!m_is_d3d11_init) { Init_D3D11(); }
-    if (!m_texture_shader) {
-      m_texture_shader = new Tunnelour::Direct3D11_View_TextureShader();
-      m_texture_shader->Init(m_device, &m_hwnd);
-    }
-    if (!m_font_shader) {
-      m_font_shader = new Tunnelour::Direct3D11_View_FontShader();
-      m_font_shader->Init(m_device, &m_hwnd);
-    }
-    if (!m_transparent_shader) {
-      m_transparent_shader = new Tunnelour::Direct3D11_View_TransparentShader();
-      m_transparent_shader->Init(m_device, &m_hwnd);
-    }
-
-    m_is_initialised = true;
-  }
+  m_is_initialised = true;
 }
 
 //------------------------------------------------------------------------------
@@ -204,6 +168,28 @@ void Direct3D11_View::Run() {
   if (!mutator.FoundRenderables()) {
     throw Tunnelour::Exceptions::run_error("Can't find Renderable components!");
   }
+
+  if (!mutator.FoundGameSettings())  {
+    throw Tunnelour::Exceptions::run_error("Can't find Background component!");
+  }
+
+  m_game_settings = mutator.GetGameSettings();
+  
+  if (!m_is_window_init) { Init_Window(); }
+  if (!m_is_d3d11_init) { Init_D3D11(); }
+  if (!m_texture_shader) {
+    m_texture_shader = new Tunnelour::Direct3D11_View_TextureShader();
+    m_texture_shader->Init(m_device, &m_hwnd);
+  }
+  if (!m_font_shader) {
+    m_font_shader = new Tunnelour::Direct3D11_View_FontShader();
+    m_font_shader->Init(m_device, &m_hwnd);
+  }
+  if (!m_transparent_shader) {
+    m_transparent_shader = new Tunnelour::Direct3D11_View_TransparentShader();
+    m_transparent_shader->Init(m_device, &m_hwnd);
+  }
+
 
   // <BeginScene>
   D3DXMATRIX viewmatrix;
@@ -231,7 +217,7 @@ void Direct3D11_View::Run() {
 
   // Present the rendered scene to the screen.
   // Present the back buffer to the screen since rendering is complete.
-  if (m_vsync_enabled) {
+  if (m_game_settings->IsVSyncEnabled()) {
     // Lock to screen refresh rate.
     m_swap_chain->Present(1, 0);
   } else {
@@ -275,17 +261,13 @@ void Direct3D11_View::Init_Window() {
   // Register the window class.
   RegisterClassEx(&wc);
 
-  // Determine the resolution of the clients desktop screen.
-  m_screen_width  = GetSystemMetrics(SM_CXSCREEN);
-  m_screen_height = GetSystemMetrics(SM_CYSCREEN);
-
   // Setup the screen settings depending on whether it is running in full screen or in windowed mode.
-  if(m_is_full_screen)	{
+  if(m_game_settings->IsFullScreen())	{
     // If full screen set the screen to maximum size of the users desktop and 32bit.
     memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
     dmScreenSettings.dmSize       = sizeof(dmScreenSettings);
-    dmScreenSettings.dmPelsWidth  = (unsigned long)m_screen_width;
-    dmScreenSettings.dmPelsHeight = (unsigned long)m_screen_height;
+    dmScreenSettings.dmPelsWidth  = (unsigned long)m_game_settings->GetResolution().x;
+    dmScreenSettings.dmPelsHeight = (unsigned long)m_game_settings->GetResolution().y;
     dmScreenSettings.dmBitsPerPel = 32;			
     dmScreenSettings.dmFields     = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
@@ -295,16 +277,12 @@ void Direct3D11_View::Init_Window() {
     // Set the position of the window to the top left corner.
     posX = posY = 0;
   }	else	{
-    // If windowed then set it to 1280x720 resolution.
-    m_screen_width  = 1280;
-    m_screen_height = 720;
-
     // Place the window in the middle of the screen.
-    posX = (GetSystemMetrics(SM_CXSCREEN) - m_screen_width)  / 2;
-    posY = (GetSystemMetrics(SM_CYSCREEN) - m_screen_height) / 2;
+    posX = (GetSystemMetrics(SM_CXSCREEN) - m_game_settings->GetResolution().x)  / 2;
+    posY = (GetSystemMetrics(SM_CYSCREEN) - m_game_settings->GetResolution().y) / 2;
   }
 
-  RECT r = {0, 0, m_screen_width, m_screen_height};
+  RECT r = {0, 0, m_game_settings->GetResolution().x, m_game_settings->GetResolution().y};
   int winFlags = WS_OVERLAPPEDWINDOW;
   AdjustWindowRectEx(&r, winFlags, FALSE, WS_EX_APPWINDOW | WS_EX_DLGMODALFRAME);
 
@@ -403,8 +381,8 @@ void Direct3D11_View::Init_D3D11() {
   // refresh rate for that monitor.
   // This doesen't work for windowed mode.
   for (i = 0; i < num_modes; i++) {
-    if (display_mode_list[i].Width == (unsigned int)m_screen_width) {
-      if (display_mode_list[i].Height == (unsigned int)m_screen_height) {
+    if (display_mode_list[i].Width == (unsigned int)m_game_settings->GetResolution().x) {
+      if (display_mode_list[i].Height == (unsigned int)m_game_settings->GetResolution().y) {
         numerator = display_mode_list[i].RefreshRate.Numerator;
         denominator = display_mode_list[i].RefreshRate.Denominator;
       }
@@ -452,14 +430,14 @@ void Direct3D11_View::Init_D3D11() {
   swap_chain_desc.BufferCount = 1;
 
   // Set the width and height of the back buffer.
-  swap_chain_desc.BufferDesc.Width = m_screen_width;
-  swap_chain_desc.BufferDesc.Height = m_screen_height;
+  swap_chain_desc.BufferDesc.Width = m_game_settings->GetResolution().x;
+  swap_chain_desc.BufferDesc.Height = m_game_settings->GetResolution().y;
 
   // Set regular 32-bit surface for the back buffer.
   swap_chain_desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 
   // Set the refresh rate of the back buffer.
-  if (m_vsync_enabled) {
+  if (m_game_settings->IsVSyncEnabled()) {
     swap_chain_desc.BufferDesc.RefreshRate.Numerator = numerator;
     swap_chain_desc.BufferDesc.RefreshRate.Denominator = denominator;
   } else {
@@ -478,7 +456,7 @@ void Direct3D11_View::Init_D3D11() {
   swap_chain_desc.SampleDesc.Quality = 0;
 
   // Set to full screen or windowed mode.
-  if (m_is_full_screen) {
+  if (m_game_settings->IsFullScreen()) {
     swap_chain_desc.Windowed = false;
   } else {
     swap_chain_desc.Windowed = true;
@@ -546,8 +524,8 @@ void Direct3D11_View::Init_D3D11() {
   ZeroMemory(&depth_buffer_desc, sizeof(depth_buffer_desc));
 
   // Set up the description of the depth buffer.
-  depth_buffer_desc.Width = m_screen_width;
-  depth_buffer_desc.Height = m_screen_height;
+  depth_buffer_desc.Width = m_game_settings->GetResolution().x;
+  depth_buffer_desc.Height = m_game_settings->GetResolution().y;
   depth_buffer_desc.MipLevels = 1;
   depth_buffer_desc.ArraySize = 1;
   depth_buffer_desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -643,8 +621,8 @@ void Direct3D11_View::Init_D3D11() {
   m_device_context->RSSetState(m_raster_state);
 
   // Setup the viewport for rendering.
-  viewport.Width = static_cast<float>(m_screen_width);
-  viewport.Height = static_cast<float>(m_screen_height);
+  viewport.Width = static_cast<float>(m_game_settings->GetResolution().x);
+  viewport.Height = static_cast<float>(m_game_settings->GetResolution().y);
   viewport.MinDepth = 0.0f;
   viewport.MaxDepth = 1.0f;
   viewport.TopLeftX = 0.0f;
@@ -655,18 +633,18 @@ void Direct3D11_View::Init_D3D11() {
 
   // Setup the projection matrix.
   fieldOfView = static_cast<float>(D3DX_PI) / 4.0f;
-  screen_aspect = static_cast<float>(m_screen_width) /
-                 static_cast<float>(m_screen_height);
+  screen_aspect = static_cast<float>(m_game_settings->GetResolution().x) /
+                 static_cast<float>(m_game_settings->GetResolution().y);
 
   // Initialize the world matrix to the identity matrix.
   D3DXMatrixIdentity(&m_world);
 
   // Create an orthographic projection matrix for 2D rendering.
   D3DXMatrixOrthoLH(&m_ortho,
-                    static_cast<float>(m_screen_width),
-                    static_cast<float>(m_screen_height),
-                    m_screen_near,
-                    m_screen_depth);
+                    static_cast<float>(m_game_settings->GetResolution().x),
+                    static_cast<float>(m_game_settings->GetResolution().y),
+                    m_game_settings->GetScreenNear(),
+                    m_game_settings->GetScreenDepth());
 
   // Clear the second depth stencil state before setting the parameters.
   ZeroMemory(&depthDisabledStencilDesc, sizeof(depthDisabledStencilDesc));

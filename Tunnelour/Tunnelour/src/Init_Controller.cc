@@ -15,6 +15,7 @@
 
 #include "Init_Controller.h"
 #include "Camera_Component.h"
+#include "Game_Settings_Component.h"
 
 namespace Tunnelour {
 
@@ -42,6 +43,10 @@ void Init_Controller::Run() {
   camera = m_model->Add(new Tunnelour::Camera_Component());
   camera->Init();
   
+  Tunnelour::Component * game_settings = 0;
+  game_settings = m_model->Add(new Tunnelour::Game_Settings_Component());
+  game_settings->Init();
+
   m_is_finished = true;
 }
 
