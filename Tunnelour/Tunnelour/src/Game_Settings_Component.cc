@@ -26,6 +26,7 @@ Game_Settings_Component::Game_Settings_Component(): Component() {
   m_vsync_enabled = false;
   m_screen_depth = 0.0f;
   m_screen_near = 0.0f;
+  m_color = D3DXCOLOR(1, 1, 1, 1);
 
   m_type = "Game_Settings_Component";
 }
@@ -93,6 +94,20 @@ void Game_Settings_Component::SetScreenNear(float screen_near) {
   m_screen_near = screen_near;
 }
 
+//------------------------------------------------------------------------------
+D3DXCOLOR Game_Settings_Component::GetColor() {
+  return m_color;
+}
+
+//------------------------------------------------------------------------------
+void Game_Settings_Component::SetColor(D3DXCOLOR & color) {
+  m_color = color;
+}
+
+//------------------------------------------------------------------------------
+void Game_Settings_Component::SetColor(float red, float green, float blue, float alpha) {
+  m_color = D3DXCOLOR(red, green, blue, alpha);
+}
 
 //------------------------------------------------------------------------------
 // protected:

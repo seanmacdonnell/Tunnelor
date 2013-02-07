@@ -100,6 +100,17 @@ class Game_Settings_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   void SetScreenNear(float screen_near);
 
+  //---------------------------------------------------------------------------
+  // Description : Accessor for the color
+  //---------------------------------------------------------------------------
+  D3DXCOLOR GetColor();
+
+  //---------------------------------------------------------------------------
+  // Description : Mutator for the color
+  //---------------------------------------------------------------------------
+  void SetColor(D3DXCOLOR & color);
+  void SetColor(float red, float green, float blue, float alpha);
+
  protected:
 
  private:
@@ -111,7 +122,7 @@ class Game_Settings_Component: public Tunnelour::Component {
   bool m_vsync_enabled;
   float m_screen_depth;
   float m_screen_near;
-
+  D3DXCOLOR m_color;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_COLOR_COMPONENT_H_

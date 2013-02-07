@@ -120,9 +120,6 @@
     <ClCompile Include="src\Background_Controller.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
-    <ClCompile Include="src\Background_Color_Component.cc">
-      <Filter>Source Files\Components</Filter>
-    </ClCompile>
     <ClCompile Include="src\Tile_Bitmap.cc">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
@@ -202,9 +199,6 @@
     </ClInclude>
     <ClInclude Include="include\Background_Controller.h">
       <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Background_Color_Component.h">
-      <Filter>Include Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="include\Tile_Bitmap.h">
       <Filter>Include Files\Components</Filter>

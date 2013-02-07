@@ -21,8 +21,6 @@ namespace Tunnelour {
 // public:
 //------------------------------------------------------------------------------
 Direct3D11_View_Mutator::Direct3D11_View_Mutator() {
-  m_background = 0;
-  m_found_background = false;
   m_camera = 0;
   m_found_camera = false;
   m_found_renderables = false;
@@ -30,8 +28,6 @@ Direct3D11_View_Mutator::Direct3D11_View_Mutator() {
 
 //------------------------------------------------------------------------------
 Direct3D11_View_Mutator::~Direct3D11_View_Mutator() {
-  m_background = 0;
-  m_found_background = false;
   m_camera = 0;
   m_found_camera = false;
   m_found_renderables = false;
@@ -39,12 +35,6 @@ Direct3D11_View_Mutator::~Direct3D11_View_Mutator() {
 
 //------------------------------------------------------------------------------
 void Direct3D11_View_Mutator::Mutate(Tunnelour::Component * const component) {
-  if (component->GetType().compare("Background_Color_Component") == 0) {
-    // Found Background_Color_Component
-    m_background = static_cast<Tunnelour::Background_Color_Component*>(component);;
-    m_found_background = true;
-  }
-
   if (component->GetType().compare("Camera_Component") == 0) {
     // Found Camera_Component
     Tunnelour::Camera_Component *camera = 0;
@@ -93,16 +83,6 @@ void Direct3D11_View_Mutator::Mutate(Tunnelour::Component * const component) {
     m_found_game_settings = true;
   }
   
-}
-
-//------------------------------------------------------------------------------
-bool Direct3D11_View_Mutator::FoundBackground() {
-  return m_found_background;
-}
-
-//------------------------------------------------------------------------------
-Tunnelour::Background_Color_Component * const Direct3D11_View_Mutator::GetBackground() {
-  return m_background;
 }
 
 //------------------------------------------------------------------------------

@@ -155,10 +155,6 @@ void Direct3D11_View::Run() {
 
   m_model->Apply(&mutator);
 
-  if (!mutator.FoundBackground())  {
-    throw Tunnelour::Exceptions::run_error("Can't find Background component!");
-  }
-
   if (!mutator.FoundCamera()) {
     throw Tunnelour::Exceptions::run_error("Can't find Camera component!");
   }
@@ -194,7 +190,7 @@ void Direct3D11_View::Run() {
 
   // Clear the back buffer.
   m_device_context->ClearRenderTargetView(m_render_target_view,
-                                          mutator.GetBackground()->GetColor());
+                                          mutator.GetGameSettings()->GetColor());
 
   // Clear the depth buffer.
   m_device_context->ClearDepthStencilView(m_depth_stencil_view,

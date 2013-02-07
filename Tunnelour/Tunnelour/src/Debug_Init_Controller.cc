@@ -14,7 +14,6 @@
 //
 
 #include "Debug_Init_Controller.h"
-#include "Background_Color_Component.h"
 #include "Camera_Component.h"
 #include "Debug_Bitmap.h"
 #include "Text_Component.h"
@@ -43,10 +42,6 @@ void Debug_Init_Controller::Init(Tunnelour::Component_Composite * const model) {
 void Debug_Init_Controller::Run() {
   // DO NOT DELETE THESE. I AM PASSING CONTROL TO THE MODEL FOR THESE.
   // IT SHOULD DO ALL THE CLEANUP AND DELETION.
-
-  Tunnelour::Component *background = 0;
-  background = m_model->Add(new Tunnelour::Background_Color_Component());
-  background->Init();
 
   Tunnelour::Component *camera = 0;
   camera = m_model->Add(new Tunnelour::Camera_Component());

@@ -14,7 +14,6 @@
 //
 
 #include "Background_Controller.h"
-#include "Background_Color_Component.h"
 #include "Exceptions.h"
 #include "Background_Controller_Mutator.h"
 #include <ctime>
@@ -49,15 +48,10 @@ void Background_Controller::Run() {
 
     m_model->Apply(&mutator);
     if (!mutator.FoundGameSettings())  {
-      throw Tunnelour::Exceptions::run_error("Can't a game settings component!");
+      throw Tunnelour::Exceptions::run_error("Can't find a game settings component!");
     } else {
       m_game_settings = mutator.GetGameSettings();
     }
-
-    //add the background component
-    Tunnelour::Component *background = 0;
-    background = m_model->Add(new Tunnelour::Background_Color_Component());
-    background->Init();
 
     //Load the Tileset Data
     Load_Tilset_Metadata();
