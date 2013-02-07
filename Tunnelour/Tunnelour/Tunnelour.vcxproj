@@ -83,6 +83,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
   <ItemGroup>
     <ClCompile Include="src\Background_Color_Component.cc" />
     <ClCompile Include="src\Background_Controller.cc" />
+    <ClCompile Include="src\Background_Controller_Mutator.cc" />
     <ClCompile Include="src\Camera_Component.cc" />
     <ClCompile Include="src\Component.cc" />
     <ClCompile Include="src\Component_Composite.cc" />
@@ -115,6 +116,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
   <ItemGroup>
     <ClInclude Include="include\Background_Color_Component.h" />
     <ClInclude Include="include\Background_Controller.h" />
+    <ClInclude Include="include\Background_Controller_Mutator.h" />
     <ClInclude Include="include\Camera_Component.h" />
     <ClInclude Include="include\Component.h" />
     <ClInclude Include="include\Component_Composite.h" />

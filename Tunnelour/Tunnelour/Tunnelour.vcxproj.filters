@@ -129,6 +129,9 @@
     <ClCompile Include="src\Game_Settings_Component.cc">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
+    <ClCompile Include="src\Background_Controller_Mutator.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine.h">
@@ -223,6 +226,9 @@
     </ClInclude>
     <ClInclude Include="include\Component_ID.h">
       <Filter>Include Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Background_Controller_Mutator.h">
+      <Filter>Include Files\Controllers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

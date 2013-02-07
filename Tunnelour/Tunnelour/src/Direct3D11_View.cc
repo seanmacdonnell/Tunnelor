@@ -144,8 +144,6 @@ Direct3D11_View::~Direct3D11_View() {
 //------------------------------------------------------------------------------
 void Direct3D11_View::Init(Tunnelour::Component_Composite * const model) {
   View::Init(model);
-  m_is_window_init = false;
-  m_is_d3d11_init = false;
 
   m_is_initialised = true;
 }

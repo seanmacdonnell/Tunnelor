@@ -19,7 +19,9 @@
 #include "Component_Composite.h"
 #include "Controller.h"
 #include "Tile_Bitmap.h"
+#include "Game_Settings_Component.h"
 #include <vector>
+
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -83,7 +85,10 @@ class Background_Controller: public Tunnelour::Controller {
 
   Tunnelour::Tile_Bitmap *m_bitmap;
   Tileset_Metadata m_metadata;
-  std::vector<Tunnelour::Tile_Bitmap*> m_background_tiles;
+  std::vector<std::vector<Tunnelour::Tile_Bitmap*>> m_background_tiles;
+
+  Tunnelour::Game_Settings_Component* m_game_settings;
+  bool m_has_init_background_been_generated;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_CONTROLLER_H_

@@ -16,6 +16,7 @@
 #include "Background_Controller.h"
 #include "Background_Color_Component.h"
 #include "Exceptions.h"
+#include "Background_Controller_Mutator.h"
 #include <ctime>
 
 namespace Tunnelour {
@@ -26,6 +27,8 @@ namespace Tunnelour {
 Background_Controller::Background_Controller() : Controller() {
   m_bitmap = NULL;
   std::srand(std::time(0));
+  m_game_settings = 0;
+  m_has_init_background_been_generated = false;
 }
 
 //------------------------------------------------------------------------------
@@ -34,44 +37,60 @@ Background_Controller::~Background_Controller() {
 
 //------------------------------------------------------------------------------
 void Background_Controller::Init(Tunnelour::Component_Composite * const model) {
-  Tunnelour::Controller::Init(model);
-
-  Tunnelour::Component *background = 0;
-  background = m_model->Add(new Tunnelour::Background_Color_Component());
-  background->Init();
-
-  //Load the Tileset Data
-  Load_Tilset_Metadata();
-
-  //Generate Random Tile
-
-  //Position Tile 128x128
-  //Resoltion is 1280x720
-  //That is 10x128 x
-  //and 6x128 y
-  //56.5 Tiles Total
-  //Top Left is (640,-360)
-  int start_x = -512;
-  int current_x = start_x;
-  int current_y = 232;
-  Tunnelour::Tile_Bitmap* tile;
-  for (int y = 0; y < 6 ; y++) {
-    for (int x = 0; x < 10 ; x++) {
-       tile = Create_Tile();
-       tile->SetPosition(new D3DXVECTOR3(current_x - (tile->GetSize()->x/2),
-                                         current_y + (tile->GetSize()->y/2), 0));
-       current_x += tile->GetSize()->x;
-       m_model->Add(tile);
-    }
-    current_y -= tile->GetSize()->y;
-    current_x = start_x;
-  }
+    Tunnelour::Controller::Init(model);
 }
 
 //------------------------------------------------------------------------------
 void Background_Controller::Run() {
+  //Generate an initial Random Tile Background
+  if (!m_has_init_background_been_generated) {
+    // Get game settings component from the model with the Mutator.
+    Tunnelour::Background_Controller_Mutator mutator;
 
+    m_model->Apply(&mutator);
+    if (!mutator.FoundGameSettings())  {
+      throw Tunnelour::Exceptions::run_error("Can't a game settings component!");
+    } else {
+      m_game_settings = mutator.GetGameSettings();
+    }
+
+    //add the background component
+    Tunnelour::Component *background = 0;
+    background = m_model->Add(new Tunnelour::Background_Color_Component());
+    background->Init();
+
+    //Load the Tileset Data
+    Load_Tilset_Metadata();
+
+    int top_left_window_x = (-1*(m_game_settings->GetResolution().x/2));
+    int top_left_window_y = (m_game_settings->GetResolution().y/2);
+    int current_x = top_left_window_x;
+    int current_y = top_left_window_y;
+    Tunnelour::Tile_Bitmap* tile;
+    for (int y = 0; y < 6 ; y++) {
+      std::vector<Tunnelour::Tile_Bitmap*> tile_line;
+      for (int x = 0; x < 10 ; x++) {
+         tile = Create_Tile();
+         tile->SetPosition(new D3DXVECTOR3(current_x + (tile->GetSize()->x/2),
+                                           current_y - (tile->GetSize()->y/2), 0));
+         current_x += tile->GetSize()->x;
+         
+         tile_line.push_back(tile);
+      }
+      current_y -= tile->GetSize()->y;
+      current_x = top_left_window_x;
+      m_background_tiles.push_back(tile_line);
+    }
   
+    //Add tiles to the model
+    for (std::vector<std::vector<Tunnelour::Tile_Bitmap*>>::iterator row = m_background_tiles.begin() ; row != m_background_tiles.end(); ++row) {
+      for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tile = row->begin() ; tile != row->end(); ++tile) {
+        m_model->Add(*tile);
+      }
+    }
+
+    m_has_init_background_been_generated = true;
+  }
   m_is_finished = true;
 }
 
