@@ -33,15 +33,15 @@ class Background_Controller: public Tunnelour::Controller {
  public:
   struct Line {
     int line_number;
-    float top_left_x, top_left_y;
-    float size_x, size_y;
+    int top_left_x, top_left_y;
+    int tile_size_x, tile_size_y;
     int number_of_tiles;
   };
 
   struct Tileset {
     std::string type;
-    float top_left_x, top_left_y;
-    float size_x, size_y;
+    int top_left_x, top_left_y;
+    int size_x, size_y;
     int number_of_lines;
     std::list<Line> lines;
   };
@@ -50,8 +50,8 @@ class Background_Controller: public Tunnelour::Controller {
     std::string name;
     std::string type;
     std::wstring filename;
-    float top_left_x, top_left_y;
-    float size_x, size_y;
+    int top_left_x, top_left_y;
+    int size_x, size_y;
     int number_of_subsets;
     std::list<Tileset> tilesets;
   };

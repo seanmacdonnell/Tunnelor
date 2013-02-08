@@ -101,7 +101,7 @@ bool Direct3D11_View_Mutator::FoundRenderables() {
 }
 
 //------------------------------------------------------------------------------
-Direct3D11_View_Mutator::Renderables& const Direct3D11_View_Mutator::GetRenderables() {
+Direct3D11_View_Mutator::Renderables& Direct3D11_View_Mutator::GetRenderables() {
   return m_renderables;
 }
 

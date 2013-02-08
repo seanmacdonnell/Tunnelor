@@ -272,11 +272,11 @@ void Direct3D11_View::Init_Window() {
     posX = posY = 0;
   }	else	{
     // Place the window in the middle of the screen.
-    posX = (GetSystemMetrics(SM_CXSCREEN) - m_game_settings->GetResolution().x)  / 2;
-    posY = (GetSystemMetrics(SM_CYSCREEN) - m_game_settings->GetResolution().y) / 2;
+    posX = static_cast<int>(GetSystemMetrics(SM_CXSCREEN) - m_game_settings->GetResolution().x) / 2;
+    posY = static_cast<int>(GetSystemMetrics(SM_CYSCREEN) - m_game_settings->GetResolution().y) / 2;
   }
 
-  RECT r = {0, 0, m_game_settings->GetResolution().x, m_game_settings->GetResolution().y};
+  RECT r = {0, 0, static_cast<long>(m_game_settings->GetResolution().x), static_cast<long>(m_game_settings->GetResolution().y)};
   int winFlags = WS_OVERLAPPEDWINDOW;
   AdjustWindowRectEx(&r, winFlags, FALSE, WS_EX_APPWINDOW | WS_EX_DLGMODALFRAME);
 
@@ -424,8 +424,8 @@ void Direct3D11_View::Init_D3D11() {
   swap_chain_desc.BufferCount = 1;
 
   // Set the width and height of the back buffer.
-  swap_chain_desc.BufferDesc.Width = m_game_settings->GetResolution().x;
-  swap_chain_desc.BufferDesc.Height = m_game_settings->GetResolution().y;
+  swap_chain_desc.BufferDesc.Width = static_cast<unsigned int>(m_game_settings->GetResolution().x);
+  swap_chain_desc.BufferDesc.Height = static_cast<unsigned int>(m_game_settings->GetResolution().y);
 
   // Set regular 32-bit surface for the back buffer.
   swap_chain_desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -518,8 +518,8 @@ void Direct3D11_View::Init_D3D11() {
   ZeroMemory(&depth_buffer_desc, sizeof(depth_buffer_desc));
 
   // Set up the description of the depth buffer.
-  depth_buffer_desc.Width = m_game_settings->GetResolution().x;
-  depth_buffer_desc.Height = m_game_settings->GetResolution().y;
+  depth_buffer_desc.Width = static_cast<unsigned int>(m_game_settings->GetResolution().x);
+  depth_buffer_desc.Height = static_cast<unsigned int>(m_game_settings->GetResolution().y);
   depth_buffer_desc.MipLevels = 1;
   depth_buffer_desc.ArraySize = 1;
   depth_buffer_desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;

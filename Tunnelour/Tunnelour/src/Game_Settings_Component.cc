@@ -51,7 +51,7 @@ D3DXVECTOR2 Game_Settings_Component::GetResolution() {
 
 //------------------------------------------------------------------------------
 void Game_Settings_Component::SetResolution(int x, int y) {
-  m_resolution = D3DXVECTOR2(x , y);
+  m_resolution = D3DXVECTOR2(static_cast<float>(x) , static_cast<float>(y));
 }
 
 //------------------------------------------------------------------------------

@@ -1,82 +1,82 @@
-Name Dirt
-Type Tileset
-FileName Dirt_Tileset_4_0.dds
-TopLeftX 0
-TopLeftY 0
-SizeX 512
-SizeY 512
-NumOfSubSets 2
-  SubSet 1
-  Type Middleground
-  TopLeftX 3
-  TopLeftY 3
-  SizeX 256
-  SizeY 62
-  NumOfLines 5
-    Line 1
-    TopLeftX 3
-    TopLeftY 3
-    SizeX 32
-    SizeY 32
-    NumOfTiles 8
-    Line 2
-    TopLeftX 3
-    TopLeftY 40
-    SizeX 16
-    SizeY 16
-    NumOfTiles 8
-    Line 3
-    TopLeftX 3
-    TopLeftY 61
-    SizeX 8
-    SizeY 8
-    NumOfTiles 8
-    Line 4
-    TopLeftX 3
-    TopLeftY 74
-    SizeX 4
-    SizeY 4
-    NumOfTiles 8
-    Line 5
-    TopLeftX 3
-    TopLeftY 83
-    SizeX 2
-    SizeY 2
-    NumOfTiles 8
-  SubSet 2
-  Type Background
-  TopLeftX 3
-  TopLeftY 90
-  SubSizeX 256
-  SubSizeY 62
-  NumOfLines 5
-    Line 1
-    TopLeftX 3
-    TopLeftY 90
-    SizeX 32
-    SizeY 32
-    NumOfTiles 8
-    Line 2
-    TopLeftX 3
-    TopLeftY 127
-    SizeX 16
-    SizeY 16
-    NumOfTiles 8
-    Line 3
-    TopLeftX 3
-    TopLeftY 148
-    SizeX 8
-    SizeY 8
-    NumOfTiles 8
-    Line 4
-    TopLeftX 3
-    TopLeftY 159
-    SizeX 4
-    SizeY 4
-    NumOfTiles 8
-    Line 5
-    TopLeftX 3
-    TopLeftY 167
-    SizeX 2
-    SizeY 2
-    NumOfTiles 8
+Tileset_Name Dirt
+Tileset_Type Tileset
+Tileset_FileName Dirt_Tileset_4_0.dds
+Tileset_TopLeftX 0
+Tileset_TopLeftY 0
+Tileset_SizeX 512
+Tileset_SizeY 512
+Tileset_NumOfSubSets 2
+  SubSet_Name 1
+  SubSet_Type Middleground
+  SubSet_TopLeftX 3
+  SubSet_TopLeftY 3
+  SubSet_SizeX 256
+  SubSet_SizeY 62
+  SubSet_NumOfLines 5
+    Line_Name 1
+    Line_TopLeftX 3
+    Line_TopLeftY 3
+    Tile_SizeX 32
+    Tile_SizeY 32
+    Line_NumOfTiles 8
+    Line_Name 2
+    Line_TopLeftX 3
+    Line_TopLeftY 40
+    Tile_SizeX 16
+    Tile_SizeY 16
+    Line_NumOfTiles 8
+    Line_Name 3
+    Line_TopLeftX 3
+    Line_TopLeftY 61
+    Tile_SizeX 8
+    Tile_SizeY 8
+    Line_NumOfTiles 8
+    Line_Name 4
+    Line_TopLeftX 3
+    Line_TopLeftY 74
+    Tile_SizeX 4
+    Tile_SizeY 4
+    Line_NumOfTiles 8
+    Line_Name 5
+    Line_TopLeftX 3
+    Line_TopLeftY 83
+    Tile_SizeX 2
+    Tile_SizeY 2
+    Line_NumOfTiles 8
+  SubSet_Name 2
+  SubSet_Type Background
+  SubSet_TopLeftX 3
+  SubSet_TopLeftY 90
+  SubSet_SizeX 256
+  SubSet_SizeY 62
+  SubSet_NumOfLines 5
+    Line_Name 1
+    Line_TopLeftX 3
+    Line_TopLeftY 90
+    Tile_SizeX 32
+    Tile_SizeY 32
+    Line_NumOfTiles 8
+    Line_Name 2
+    Line_TopLeftX 3
+    Line_TopLeftY 127
+    Tile_SizeX 16
+    Tile_SizeY 16
+    SubSet_NumOfTiles 8
+    Line_Name 3
+    Line_TopLeftX 3
+    Line_TopLeftY 148
+    Tile_SizeX 8
+    Tile_SizeY 8
+    SubSet_NumOfTiles 8
+    Line_Name 4
+    Line_TopLeftX 3
+    Line_TopLeftY 159
+    Tile_SizeX 4
+    Tile_SizeY 4
+    SubSet_NumOfTiles 8
+    Line_Name 5
+    Line_TopLeftX 3
+    Line_TopLeftY 167
+    Tile_SizeX 2
+    Tile_SizeY 2
+    SubSet_NumOfTiles 8

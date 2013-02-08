@@ -63,9 +63,9 @@ void Debug_Init_Controller::Run() {
   static_cast<Tunnelour::Debug_Text*>(text)->GetText()->text = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
   static_cast<Tunnelour::Debug_Text*>(text)->SetPosition(new D3DXVECTOR3(0, 0, -2));
   text = m_model->Add(new Tunnelour::Debug_Text());
-  static_cast<Tunnelour::Debug_Text*>(text)->SetPosition(new D3DXVECTOR3(10, 10, -1.2));
+  static_cast<Tunnelour::Debug_Text*>(text)->SetPosition(new D3DXVECTOR3(10.0f, 10.0f, -1.2f));
   text = m_model->Add(new Tunnelour::Debug_Text());
-  static_cast<Tunnelour::Debug_Text*>(text)->SetPosition(new D3DXVECTOR3(0, 0, -1.3));
+  static_cast<Tunnelour::Debug_Text*>(text)->SetPosition(new D3DXVECTOR3(0.0f, 0.0f, -1.3f));
   static_cast<Tunnelour::Debug_Text*>(text)->GetText()->text = "TWO";
   
   m_is_finished = true;

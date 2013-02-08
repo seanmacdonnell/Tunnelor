@@ -244,5 +244,8 @@
     <None Include="resource\Direct3D11_View_TransparentVertexShader.vs">
       <Filter>Resource Files\VertexShaders</Filter>
     </None>
+    <None Include="resource\tilesets\Dirt_Tileset_4_0.txt">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

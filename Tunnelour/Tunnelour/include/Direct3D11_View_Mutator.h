@@ -69,7 +69,7 @@ class Direct3D11_View_Mutator: public Tunnelour::Component::Component_Mutator  {
   //-------------------------------------------------------------------------
   // Description : Accessors for the Renderables
   //-------------------------------------------------------------------------
-  Renderables& const GetRenderables();
+  Renderables& GetRenderables();
 
   //-------------------------------------------------------------------------
   // Description : Has this component been found in the model?

@@ -152,6 +152,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <None Include="resource\Direct3D11_View_TexturePixelShader.ps" />
     <None Include="resource\Direct3D11_View_TextureVertexShader.vs" />
     <None Include="resource\Direct3D11_View_TransparentVertexShader.vs" />
+    <None Include="resource\tilesets\Dirt_Tileset_4_0.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -25,7 +25,7 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 Background_Controller::Background_Controller() : Controller() {
   m_bitmap = NULL;
-  std::srand(std::time(0));
+  std::srand(static_cast<unsigned int>(std::time(0)));
   m_game_settings = 0;
   m_has_init_background_been_generated = false;
 }
@@ -56,8 +56,8 @@ void Background_Controller::Run() {
     //Load the Tileset Data
     Load_Tilset_Metadata();
 
-    int top_left_window_x = (-1*(m_game_settings->GetResolution().x/2));
-    int top_left_window_y = (m_game_settings->GetResolution().y/2);
+    int top_left_window_x = static_cast<int>(-1*(m_game_settings->GetResolution().x/2));
+    int top_left_window_y = static_cast<int>(m_game_settings->GetResolution().y/2);
     int current_x = top_left_window_x;
     int current_y = top_left_window_y;
     Tunnelour::Tile_Bitmap* tile;
@@ -67,12 +67,12 @@ void Background_Controller::Run() {
          tile = Create_Tile();
          tile->SetPosition(new D3DXVECTOR3(current_x + (tile->GetSize()->x/2),
                                            current_y - (tile->GetSize()->y/2), 0));
-         current_x += tile->GetSize()->x;
+         current_x += static_cast<int>(tile->GetSize()->x);
          
          tile_line.push_back(tile);
       }
-      current_y -= tile->GetSize()->y;
-      current_x = top_left_window_x;
+      current_y -= static_cast<int>(tile->GetSize()->y);
+      current_x = static_cast<int>(top_left_window_x);
       m_background_tiles.push_back(tile_line);
     }
   
@@ -99,12 +99,9 @@ void Background_Controller::Run() {
 void Background_Controller::Load_Tilset_Metadata() {
   FILE * pFile;
   long lSize;
-  char * buffer;
-  size_t result;
 
   // Open Font File as a text file
-  pFile = fopen("resource\\tilesets\\Dirt_Tileset_4_0.txt","r");
-  if (pFile == NULL) {
+  if (fopen_s(&pFile, "resource\\tilesets\\Dirt_Tileset_4_0.txt", "r") != 0) {
     throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed!");
   }
 
@@ -113,75 +110,78 @@ void Background_Controller::Load_Tilset_Metadata() {
   lSize = ftell (pFile);
   rewind (pFile);
 
-  char line[225];
+  char * token;
+  char * next_token;
+
+  char line[255];
   fgets(line, 225, pFile);
   if (line != NULL) {
-    char * token = strtok(line," ");
-    if (strcmp(token,"Name") == 0) 	{
-      token = strtok(NULL, " =\"");
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token,"Tileset_Name") == 0) 	{
+      token = strtok_s(NULL, " =\"", &next_token);
       m_metadata.name = token;
     }
   }
 
   fgets(line, 225, pFile);
   if (line != NULL) {
-    char * token = strtok(line," ");
-    if (strcmp(token,"Type") == 0) 	{
-      token = strtok(NULL, " =\"");
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token,"Tileset_Type") == 0) 	{
+      token = strtok_s(NULL, " =\"", &next_token);
       m_metadata.type = token;
     }
   }
 
   fgets(line, 225, pFile);
   if (line != NULL) {
-    char * token = strtok(line," ");
-    if (strcmp(token,"FileName") == 0) 	{
-      token = strtok(NULL, " =\"");
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token,"Tileset_FileName") == 0) 	{
+      token = strtok_s(NULL, " =\"", &next_token);
       m_metadata.filename = CharToWChar(token);
     }
   }
 
   fgets(line, 225, pFile);
   if (line != NULL) {
-    char * token = strtok(line," ");
-    if (strcmp(token,"TopLeftX") == 0) 	{
-      token = strtok(NULL, " =\"");
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token,"Tileset_TopLeftX") == 0) 	{
+      token = strtok_s(NULL, " =\"", &next_token);
       m_metadata.top_left_x = atoi(token);
     }
   }
 
   fgets(line, 225, pFile);
   if (line != NULL) {
-    char * token = strtok(line," ");
-    if (strcmp(token,"TopLeftY") == 0) 	{
-      token = strtok(NULL, " =\"");
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token,"Tileset_TopLeftY") == 0) 	{
+      token = strtok_s(NULL, " =\"", &next_token);
       m_metadata.top_left_y = atoi(token);
     }
   }
 
   fgets(line, 225, pFile);
   if (line != NULL) {
-    char * token = strtok(line," ");
-    if (strcmp(token,"SizeX") == 0) 	{
-      token = strtok(NULL, " =\"");
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token,"Tileset_SizeX") == 0) 	{
+      token = strtok_s(NULL, " =\"", &next_token);
       m_metadata.size_x = atoi(token);
     }
   }
 
   fgets(line, 225, pFile);
   if (line != NULL) {
-    char * token = strtok(line," ");
-    if (strcmp(token,"SizeY") == 0) 	{
-      token = strtok(NULL, " =\"");
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token,"Tileset_SizeY") == 0) 	{
+      token = strtok_s(NULL, " =\"", &next_token);
       m_metadata.size_y = atoi(token);
     }
   }
 
   fgets(line, 225, pFile);
   if (line != NULL) {
-    char * token = strtok(line," ");
-    if (strcmp(token,"NumOfSubSets") == 0) 	{
-      token = strtok(NULL, " =\"");
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token,"Tileset_NumOfSubSets") == 0) 	{
+      token = strtok_s(NULL, " =\"", &next_token);
       m_metadata.number_of_subsets = atoi(token);
     }
   }
@@ -191,56 +191,62 @@ void Background_Controller::Load_Tilset_Metadata() {
       Tileset temp_tileset;
 
       fgets(line, 225, pFile);
+      if (line != NULL) {
+        token = strtok_s(line, " ", &next_token);
+        if (strcmp(token,"SubSet_Name") == 0) 	{
+        }
+      }
+
       fgets(line, 225, pFile);
       if (line != NULL) {
-        char * token = strtok(line," ");
-        if (strcmp(token,"Type") == 0) 	{
-          token = strtok(NULL, " =\"");
+        token = strtok_s(line, " ", &next_token);
+        if (strcmp(token,"SubSet_Type") == 0) 	{
+          token = strtok_s(NULL, " =\"", &next_token);
           temp_tileset.type = token;
         }
       }
 
       fgets(line, 225, pFile);
       if (line != NULL) {
-        char * token = strtok(line," ");
-        if (strcmp(token,"TopLeftX") == 0) 	{
-          token = strtok(NULL, " =\"");
+        token = strtok_s(line, " ", &next_token);
+        if (strcmp(token,"SubSet_TopLeftX") == 0) 	{
+          token = strtok_s(NULL, " =\"", &next_token);
           temp_tileset.top_left_x = atoi(token);
         }
       }
 
       fgets(line, 225, pFile);
       if (line != NULL) {
-        char * token = strtok(line," ");
-        if (strcmp(token,"TopLeftY") == 0) 	{
-          token = strtok(NULL, " =\"");
+        token = strtok_s(line, " ", &next_token);
+        if (strcmp(token,"SubSet_TopLeftY") == 0) 	{
+          token = strtok_s(NULL, " =\"", &next_token);
           temp_tileset.top_left_y = atoi(token);
         }
       }
 
       fgets(line, 225, pFile);
       if (line != NULL) {
-        char * token = strtok(line," ");
-        if (strcmp(token,"SizeX") == 0) 	{
-          token = strtok(NULL, " =\"");
+        token = strtok_s(line, " ", &next_token);
+        if (strcmp(token,"SubSet_SizeX") == 0) 	{
+          token = strtok_s(NULL, " =\"", &next_token);
           temp_tileset.size_x = atoi(token);
         }
       }
 
       fgets(line, 225, pFile);
       if (line != NULL) {
-        char * token = strtok(line," ");
-        if (strcmp(token,"SizeY") == 0) 	{
-          token = strtok(NULL, " =\"");
+        token = strtok_s(line, " ", &next_token);
+        if (strcmp(token,"SubSet_SizeY") == 0) 	{
+          token = strtok_s(NULL, " =\"", &next_token);
           temp_tileset.size_y = atoi(token);
         }
       }
 
       fgets(line, 225, pFile);
       if (line != NULL) {
-        char * token = strtok(line," ");
-        if (strcmp(token,"NumOfLines") == 0) 	{
-          token = strtok(NULL, " =\"");
+        token = strtok_s(line, " ", &next_token);
+        if (strcmp(token,"SubSet_NumOfLines") == 0) 	{
+          token = strtok_s(NULL, " =\"", &next_token);
           temp_tileset.number_of_lines = atoi(token);
         }
       }
@@ -251,54 +257,54 @@ void Background_Controller::Load_Tilset_Metadata() {
 
           fgets(line, 225, pFile);
           if (line != NULL) {
-            char * token = strtok(line," ");
-            if (strcmp(token,"Line") == 0) 	{
-              token = strtok(NULL, " =\"");
+            token = strtok_s(line, " ", &next_token);
+            if (strcmp(token,"Line_Name") == 0) 	{
+              token = strtok_s(NULL, " =\"", &next_token);
               temp_line.line_number = atoi(token);
             }
           }
 
           fgets(line, 225, pFile);
           if (line != NULL) {
-            char * token = strtok(line," ");
-            if (strcmp(token,"TopLeftX") == 0) 	{
-              token = strtok(NULL, " =\"");
+            token = strtok_s(line, " ", &next_token);
+            if (strcmp(token,"Line_TopLeftX") == 0) 	{
+              token = strtok_s(NULL, " =\"", &next_token);
               temp_line.top_left_x = atoi(token);
             }
           }
 
           fgets(line, 225, pFile);
           if (line != NULL) {
-            char * token = strtok(line," ");
-            if (strcmp(token,"TopLeftY") == 0) 	{
-              token = strtok(NULL, " =\"");
+            token = strtok_s(line, " ", &next_token);
+            if (strcmp(token,"Line_TopLeftY") == 0) 	{
+              token = strtok_s(NULL, " =\"", &next_token);
               temp_line.top_left_y = atoi(token);
             }
           }
 
           fgets(line, 225, pFile);
           if (line != NULL) {
-            char * token = strtok(line," ");
-            if (strcmp(token,"SizeX") == 0) 	{
-              token = strtok(NULL, " =\"");
-              temp_line.size_x = atoi(token);
+            token = strtok_s(line, " ", &next_token);
+            if (strcmp(token,"Tile_SizeX") == 0) 	{
+              token = strtok_s(NULL, " =\"", &next_token);
+              temp_line.tile_size_x = atoi(token);
             }
           }
 
           fgets(line, 225, pFile);
           if (line != NULL) {
-            char * token = strtok(line," ");
-            if (strcmp(token,"SizeY") == 0) 	{
-              token = strtok(NULL, " =\"");
-              temp_line.size_y = atoi(token);
+            token = strtok_s(line, " ", &next_token);
+            if (strcmp(token,"Tile_SizeY") == 0) 	{
+              token = strtok_s(NULL, " =\"", &next_token);
+              temp_line.tile_size_y = atoi(token);
             }
           }
 
           fgets(line, 225, pFile);
           if (line != NULL) {
-            char * token = strtok(line," ");
-            if (strcmp(token,"NumOfTiles") == 0) 	{
-              token = strtok(NULL, " =\"");
+            token = strtok_s(line, " ", &next_token);
+            if (strcmp(token,"Line_NumOfTiles") == 0) 	{
+              token = strtok_s(NULL, " =\"", &next_token);
               temp_line.number_of_tiles = atoi(token);
             }
           }
@@ -325,7 +331,7 @@ Tunnelour::Tile_Bitmap* Background_Controller::Create_Tile() {
   Line background_32x32_line;
   std::list<Line>::iterator line;
   for (line = background_tileset.lines.begin(); line != background_tileset.lines.end(); line++) {
-    if (line->size_x == 32 && line->size_y == 32) {
+    if (line->tile_size_x == 32 && line->tile_size_y == 32) {
       background_32x32_line = *line;
     }
   }
@@ -334,12 +340,12 @@ Tunnelour::Tile_Bitmap* Background_Controller::Create_Tile() {
   tile->SetPosition(new D3DXVECTOR3(0, 0, 0));
   tile->GetTexture()->transparency = 1.0f;
   tile->GetTexture()->texture_path = L"resource\\tilesets\\Dirt_Tileset_4_0.dds";
-  tile->GetTexture()->texture_size = D3DXVECTOR2(m_metadata.size_x, m_metadata.size_y);
-  tile->GetTexture()->tile_size = D3DXVECTOR2(background_32x32_line.size_x, background_32x32_line.size_y);
+  tile->GetTexture()->texture_size = D3DXVECTOR2(static_cast<float>(m_metadata.size_x), static_cast<float>(m_metadata.size_y));
+  tile->GetTexture()->tile_size = D3DXVECTOR2(static_cast<float>(background_32x32_line.tile_size_x), static_cast<float>(background_32x32_line.tile_size_y));
 
   int random_variable = (rand() % ((background_32x32_line.number_of_tiles)));
 
-  tile->GetTexture()->top_left_position = D3DXVECTOR2(random_variable*32, background_32x32_line.top_left_y);
+  tile->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(random_variable*(background_32x32_line.tile_size_x)), static_cast<float>(background_32x32_line.top_left_y));
 
   tile->SetSize(new D3DXVECTOR2(128, 128));
 
