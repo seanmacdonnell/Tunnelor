@@ -27,7 +27,7 @@ Game_Settings_Component::Game_Settings_Component(): Component() {
   m_screen_depth = 0.0f;
   m_screen_near = 0.0f;
   m_color = D3DXCOLOR(1, 1, 1, 1);
-
+  m_tileset_path = L"";
   m_type = "Game_Settings_Component";
 }
 
@@ -42,6 +42,7 @@ void Game_Settings_Component::Init() {
   m_vsync_enabled = true;
   m_screen_depth = 1000.0f;
   m_screen_near = 0.1f;
+  m_tileset_path = L"resource\\tilesets\\";
 }
 
 //------------------------------------------------------------------------------
@@ -107,6 +108,16 @@ void Game_Settings_Component::SetColor(D3DXCOLOR & color) {
 //------------------------------------------------------------------------------
 void Game_Settings_Component::SetColor(float red, float green, float blue, float alpha) {
   m_color = D3DXCOLOR(red, green, blue, alpha);
+}
+
+//------------------------------------------------------------------------------
+std::wstring Game_Settings_Component::GetTilesetPath() {
+  return m_tileset_path;
+}
+
+//------------------------------------------------------------------------------
+void Game_Settings_Component::SetTilesetPath(std::wstring tileset_path) {
+  m_tileset_path = tileset_path;
 }
 
 //------------------------------------------------------------------------------

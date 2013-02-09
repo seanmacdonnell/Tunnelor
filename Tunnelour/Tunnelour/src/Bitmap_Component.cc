@@ -24,7 +24,7 @@ namespace Tunnelour {
 Bitmap_Component::Bitmap_Component(): Frame_Component() {
   m_texture = new Tunnelour::Bitmap_Component::Texture();
   m_texture->texture = 0;
-  m_texture->texture_path = L"";
+  m_texture->texture_path;
   m_texture->transparency = 1.0f;
   m_texture->top_left_position = D3DXVECTOR2(0, 0);
   m_texture->tile_size = D3DXVECTOR2(0, 0);

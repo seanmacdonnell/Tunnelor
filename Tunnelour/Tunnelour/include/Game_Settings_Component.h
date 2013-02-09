@@ -111,6 +111,16 @@ class Game_Settings_Component: public Tunnelour::Component {
   void SetColor(D3DXCOLOR & color);
   void SetColor(float red, float green, float blue, float alpha);
 
+  //---------------------------------------------------------------------------
+  // Description : Accessor for the resource path
+  //---------------------------------------------------------------------------
+  std::wstring GetTilesetPath();
+
+  //---------------------------------------------------------------------------
+  // Description : Mutator for the color
+  //---------------------------------------------------------------------------
+  void SetTilesetPath(std::wstring tileset_path);
+
  protected:
 
  private:
@@ -123,6 +133,7 @@ class Game_Settings_Component: public Tunnelour::Component {
   float m_screen_depth;
   float m_screen_near;
   D3DXCOLOR m_color;
+  std::wstring m_tileset_path;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_COLOR_COMPONENT_H_

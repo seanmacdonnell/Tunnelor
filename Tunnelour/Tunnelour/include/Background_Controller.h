@@ -49,7 +49,7 @@ class Background_Controller: public Tunnelour::Controller {
   struct Tileset_Metadata {
     std::string name;
     std::string type;
-    std::wstring filename;
+    std::string filename;
     int top_left_x, top_left_y;
     int size_x, size_y;
     int number_of_subsets;
@@ -81,7 +81,7 @@ class Background_Controller: public Tunnelour::Controller {
  private:
   void Load_Tilset_Metadata();
   Tunnelour::Tile_Bitmap* Create_Tile();
-  std::wstring CharToWChar(const char* pstrSrc);
+
 
   Tunnelour::Tile_Bitmap *m_bitmap;
   Tileset_Metadata m_metadata;
@@ -89,6 +89,15 @@ class Background_Controller: public Tunnelour::Controller {
 
   Tunnelour::Game_Settings_Component* m_game_settings;
   bool m_has_init_background_been_generated;
+
+  std::string m_metadata_file_path;
+
+  //---------------------------------------------------------------------------
+  // Description : String conversion functions
+  //---------------------------------------------------------------------------
+  std::wstring CharToWChar(const char* pstrSrc);
+  std::wstring StringToWString(const std::string& string);
+  std::string WStringToString(const std::wstring& wstring);
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_CONTROLLER_H_
