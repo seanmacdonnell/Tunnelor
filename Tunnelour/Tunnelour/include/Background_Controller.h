@@ -16,12 +16,13 @@
 #ifndef TUNNELOUR_BACKGROUND_CONTROLLER_H_
 #define TUNNELOUR_BACKGROUND_CONTROLLER_H_
 
+#include <vector>
+#include <string>
+#include <list>
 #include "Component_Composite.h"
 #include "Controller.h"
 #include "Tile_Bitmap.h"
 #include "Game_Settings_Component.h"
-#include <vector>
-
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------

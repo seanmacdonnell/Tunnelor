@@ -17,7 +17,6 @@
 #include "Exceptions.h"
 
 namespace Tunnelour {
-
 //------------------------------------------------------------------------------
 // public:
 //------------------------------------------------------------------------------
@@ -92,24 +91,26 @@ void SeaFloorSquare::Init_Frame() {
   bottom = m_position.y - static_cast<float>(m_size.x / 2);
 
   // Load the vertex array with data.
-  // First triangle.
-  m_frame->vertices[0].position = D3DXVECTOR3(left, top, 0.0f);  // Top left.
+  // First triangle
+  // Top left
+  m_frame->vertices[0].position = D3DXVECTOR3(left, top, 0.0f);
   m_frame->vertices[0].texture = D3DXVECTOR2(0.0f, 0.0f);
-
-  m_frame->vertices[1].position = D3DXVECTOR3(right, bottom, 0.0f);  // Bottom right.
+  // Bottom right
+  m_frame->vertices[1].position = D3DXVECTOR3(right, bottom, 0.0f);
   m_frame->vertices[1].texture = D3DXVECTOR2(1.0f, 1.0f);
-
-  m_frame->vertices[2].position = D3DXVECTOR3(left, bottom, 0.0f);  // Bottom left.
+  // Bottom left
+  m_frame->vertices[2].position = D3DXVECTOR3(left, bottom, 0.0f);
   m_frame->vertices[2].texture = D3DXVECTOR2(0.0f, 1.0f);
 
-  // Second triangle.
-  m_frame->vertices[3].position = D3DXVECTOR3(left, top, 0.0f);  // Top left.
+  // Second triangle
+  // Top left
+  m_frame->vertices[3].position = D3DXVECTOR3(left, top, 0.0f);
   m_frame->vertices[3].texture = D3DXVECTOR2(0.0f, 0.0f);
-
-  m_frame->vertices[4].position = D3DXVECTOR3(right, top, 0.0f);  // Top right.
+  // Top right
+  m_frame->vertices[4].position = D3DXVECTOR3(right, top, 0.0f);
   m_frame->vertices[4].texture = D3DXVECTOR2(1.0f, 0.0f);
-
-  m_frame->vertices[5].position = D3DXVECTOR3(right, bottom, 0.0f);  // Bottom right.
+  // Bottom right
+  m_frame->vertices[5].position = D3DXVECTOR3(right, bottom, 0.0f);
   m_frame->vertices[5].texture = D3DXVECTOR2(1.0f, 1.0f);
 
   // Set up the description of the static vertex buffer.
@@ -155,9 +156,6 @@ void SeaFloorSquare::Init_Frame() {
 
 //------------------------------------------------------------------------------
 void SeaFloorSquare::Init_Texture() {
-  
-
-  // Load the texture in.
   if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_d3d11device,
                                                     m_texture->texture_path.c_str(),
                                                     NULL,

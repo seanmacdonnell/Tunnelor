@@ -12,12 +12,12 @@ struct PixelInputType {
 
 float4 FontPixelShader(PixelInputType input) : SV_TARGET {
   float4 color = shaderTexture.Sample(SampleType, input.tex);
-	
+  
   // If the color is white it is text, color it.
-  if(color.r == 1.0f && color.g == 1.0f && color.b == 1.0f)	{
+  if(color.r == 1.0f && color.g == 1.0f && color.b == 1.0f)  {
     color.rgb = pixelColor.rgb;
-  } else	{ //if not, it is background. Set the Alpha to 0.
-		  color.a = 0.0f;
+  } else  { //if not, it is background. Set the Alpha to 0.
+      color.a = 0.0f;
   }
 
   return color;

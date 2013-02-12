@@ -42,9 +42,7 @@ class Debug_Text: public Tunnelour::Text_Component {
   virtual void Init(ID3D11Device * const d3d11device);
 
  protected:
-
  private:
-
 };  // class Debug_Text
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_DEBUG_TEXT_H_

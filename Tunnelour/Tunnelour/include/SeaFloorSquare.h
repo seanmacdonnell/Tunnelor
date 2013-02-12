@@ -55,7 +55,6 @@ class SeaFloorSquare: public Tunnelour::Bitmap_Component {
   // Description : Inits this components texture stucture
   //---------------------------------------------------------------------------
   void Init_Texture();
-
 };  // class SeaFloorSquare
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_SEAFLOORSQUARE_H_

@@ -72,17 +72,17 @@ Text_Component::Text* Text_Component::GetText() {
 // private:
 //------------------------------------------------------------------------------
 std::wstring Text_Component::CharToWChar(const char* pstrSrc) {
-    size_t origsize = strlen(pstrSrc) + 1;
-    const size_t newsize = 100;
-    size_t convertedChars = 0;
-    wchar_t wcstring[newsize];
-    mbstowcs_s(&convertedChars, wcstring, origsize, pstrSrc, _TRUNCATE);
-    return std::wstring(wcstring);
+  size_t origsize = strlen(pstrSrc) + 1;
+  size_t convertedChars = 0;
+  wchar_t wcstring[100];
+  mbstowcs_s(&convertedChars, wcstring, origsize, pstrSrc, _TRUNCATE);
+  return std::wstring(wcstring);
 }
+
 //------------------------------------------------------------------------------
 void Text_Component::Load_Font_Struct() {
   FILE * pFile;
-  long lSize;
+  int lSize;
 
   // Open Font File as a text file
   if (fopen_s(&pFile, m_text.font_csv_file.c_str(), "r") != 0) {
@@ -90,27 +90,27 @@ void Text_Component::Load_Font_Struct() {
   }
 
   // obtain file size:
-  fseek (pFile , 0 , SEEK_END);
-  lSize = ftell (pFile);
-  rewind (pFile);
+  fseek(pFile , 0 , SEEK_END);
+  lSize = ftell(pFile);
+  rewind(pFile);
 
   char * token;
   char * next_token;
 
   // Get the first line
-	// Example line: "info face="Ariel" size=32 bold=0 italic=0 charset="" unicode=1 stretchH=100 smooth=1 aa=2 padding=0,0,0,0 spacing=1,1 outline=0"
+  // Example line: "info face="Ariel" size=32 bold=0 italic=0 charset="" unicode=1 stretchH=100 smooth=1 aa=2 padding=0,0,0,0 spacing=1,1 outline=0"
   char line[225];
   fgets(line, 225, pFile);
   if (line != NULL) {
   token = strtok_s(line, " ", &next_token);
-  if (strcmp(token,"info") == 0) 	{
-		  while (token != NULL) {
-        if (strcmp(token,"face") == 0) {
+  if (strcmp(token, "info") == 0) {
+      while (token != NULL) {
+        if (strcmp(token, "face") == 0) {
             token = strtok_s(NULL, " =\"", &next_token);
             m_font.font_name = token;
         }
         token = strtok_s(NULL, " =\"", &next_token);
-		  }
+      }
     }
   } else {
     throw Tunnelour::Exceptions::init_error("Unexpected end of file!");
@@ -121,22 +121,22 @@ void Text_Component::Load_Font_Struct() {
   fgets(line, 225, pFile);
   if (line != NULL) {
     token = strtok_s(line, " ", &next_token);
-    if (strcmp(token,"common") == 0) {
-		  while (token != NULL) {
-        if (strcmp(token,"lineHeight") == 0) {
+    if (strcmp(token, "common") == 0) {
+      while (token != NULL) {
+        if (strcmp(token, "lineHeight") == 0) {
             token = strtok_s(NULL, " =\"", &next_token);
             m_font.line_height = atof(token);
         }
-        if (strcmp(token,"scaleW") == 0) {
+        if (strcmp(token, "scaleW") == 0) {
             token = strtok_s(NULL, " =\"", &next_token);
             m_font.image_width = atoi(token);
         }
-        if (strcmp(token,"scaleH") == 0) {
+        if (strcmp(token, "scaleH") == 0) {
             token = strtok_s(NULL, " =\"", &next_token);
             m_font.image_height = atoi(token);
         }
         token = strtok_s(NULL, " =\"", &next_token);
-		  }
+      }
     }
   } else {
     throw Tunnelour::Exceptions::init_error("Unexpected end of file!");
@@ -147,15 +147,15 @@ void Text_Component::Load_Font_Struct() {
   fgets(line, 225, pFile);
   if (line != NULL) {
     token = strtok_s(line, " ", &next_token);
-    if (strcmp(token,"page") == 0) {
-		    while (token != NULL) {
-        if (strcmp(token,"file") == 0) {
+    if (strcmp(token, "page") == 0) {
+        while (token != NULL) {
+        if (strcmp(token, "file") == 0) {
             token = strtok_s(NULL, " =\"", &next_token);
             m_font.font_texture_name = CharToWChar(token);
             m_texture->texture_path.append(m_font.font_texture_name);
         }
         token = strtok_s(NULL, " =\"", &next_token);
-		    }
+        }
     }
   } else {
     throw Tunnelour::Exceptions::init_error("Unexpected end of file!");
@@ -167,14 +167,14 @@ void Text_Component::Load_Font_Struct() {
   int number_of_chars = 0;
   if (line != NULL) {
     token = strtok_s(line, " ", &next_token);
-    if (strcmp(token,"chars") == 0) {
-		    while (token != NULL) {
-        if (strcmp(token,"count") == 0) {
+    if (strcmp(token, "chars") == 0) {
+        while (token != NULL) {
+        if (strcmp(token, "count") == 0) {
             token = strtok_s(NULL, " =\"", &next_token);
             number_of_chars = atoi(token);
         }
         token = strtok_s(NULL, " =\"", &next_token);
-		    }
+        }
     }
   } else {
     throw Tunnelour::Exceptions::init_error("Unexpected end of file!");
@@ -187,44 +187,44 @@ void Text_Component::Load_Font_Struct() {
     int number_of_chars = 0;
     if (line != NULL) {
       token = strtok_s(line, " ", &next_token);
-      if (strcmp(token,"char") == 0) {
+      if (strcmp(token, "char") == 0) {
         int id = 0;
-	       while (token != NULL) {
-          if (strcmp(token,"id") == 0) {
+         while (token != NULL) {
+          if (strcmp(token, "id") == 0) {
               token = strtok_s(NULL, " =\"", &next_token);
               id = atoi(token);
               m_font.raw_character_frames[id].id = id;
           }
-          if (strcmp(token,"x") == 0) {
+          if (strcmp(token, "x") == 0) {
               token = strtok_s(NULL, " =\"", &next_token);
               m_font.raw_character_frames[id].x = atoi(token);
           }
-          if (strcmp(token,"y") == 0) {
+          if (strcmp(token, "y") == 0) {
               token = strtok_s(NULL, " =\"", &next_token);
               m_font.raw_character_frames[id].y = atoi(token);
           }
-          if (strcmp(token,"width") == 0) {
+          if (strcmp(token, "width") == 0) {
               token = strtok_s(NULL, " =\"", &next_token);
               m_font.raw_character_frames[id].width = atoi(token);
           }
-          if (strcmp(token,"height") == 0) {
+          if (strcmp(token, "height") == 0) {
               token = strtok_s(NULL, " =\"", &next_token);
               m_font.raw_character_frames[id].height = atoi(token);
           }
-          if (strcmp(token,"xoffset") == 0) {
+          if (strcmp(token, "xoffset") == 0) {
               token = strtok_s(NULL, " =\"", &next_token);
               m_font.raw_character_frames[id].xoffset = atoi(token);
           }
-          if (strcmp(token,"yoffset") == 0) {
+          if (strcmp(token, "yoffset") == 0) {
               token = strtok_s(NULL, " =\"", &next_token);
               m_font.raw_character_frames[id].yoffset = atoi(token);
           }
-          if (strcmp(token,"xadvance") == 0) {
+          if (strcmp(token, "xadvance") == 0) {
               token = strtok_s(NULL, " =\"", &next_token);
               m_font.raw_character_frames[id].xadvance = atoi(token);
           }
           token = strtok_s(NULL, " =\"", &next_token);
-	       }
+         }
       }
 
     } else {
@@ -242,7 +242,8 @@ void Text_Component::Load_Character_Frames() {
   double position_left, position_right, position_top, position_bottom;
   double texture_left, texture_right, texture_top, texture_bottom;
 
-  // Load the Character Frame Struct Array from the Raw Character Frame Struct Array
+  // Load the Character Frame Struct Array from the 
+  // Raw Character Frame Struct Array
   for (int index = 0; index < 256; index++) {
     if (m_font.raw_character_frames[index].id != -1) {
       if (m_font.raw_character_frames[index].id == 55) {
@@ -252,43 +253,43 @@ void Text_Component::Load_Character_Frames() {
       D3DXVECTOR2 size = D3DXVECTOR2(static_cast<float>(m_font.raw_character_frames[index].width), static_cast<float>(m_font.raw_character_frames[index].height));
       D3DXVECTOR2 position = D3DXVECTOR2(0, 0);
 
-      // Calculate the screen coordinates of the left side of the bitmap.
+      // Calculate the screen coordinates of the left side of the bitmap
       position_left = position.x;
       texture_left = m_font.raw_character_frames[index].x / m_font.image_width;
 
-      // Calculate the screen coordinates of the right side of the bitmap.
+      // Calculate the screen coordinates of the right side of the bitmap
       position_right = position.x + size.x;
       texture_right = (m_font.raw_character_frames[index].x + size.x) / m_font.image_width;
 
-      // Calculate the screen coordinates of the top of the bitmap.
+      // Calculate the screen coordinates of the top of the bitmap
       position_top = position.y;
       texture_top = m_font.raw_character_frames[index].y / m_font.image_height;
 
-      // Calculate the screen coordinates of the bottom of the bitmap.
+      // Calculate the screen coordinates of the bottom of the bitmap
       position_bottom = position.y - size.y;
       texture_bottom = (m_font.raw_character_frames[index].y + size.y) / m_font.image_height;
 
-		    // First triangle in quad.
-      // Top left.
-		    m_font.character_frames[index][0].position = D3DXVECTOR3(static_cast<float>(position_left), static_cast<float>(position_top), 0.0f);
+      // First triangle in quad.
+      // Top left
+      m_font.character_frames[index][0].position = D3DXVECTOR3(static_cast<float>(position_left), static_cast<float>(position_top), 0.0f);
       m_font.character_frames[index][0].texture = D3DXVECTOR2(static_cast<float>(texture_left), static_cast<float>(texture_top));
-      // Bottom right.
-		    m_font.character_frames[index][1].position = D3DXVECTOR3(static_cast<float>(position_right), static_cast<float>(position_bottom), 0.0f);
-		    m_font.character_frames[index][1].texture = D3DXVECTOR2(static_cast<float>(texture_right), static_cast<float>(texture_bottom));
-      // Bottom left.
-		    m_font.character_frames[index][2].position = D3DXVECTOR3(static_cast<float>(position_left), static_cast<float>(position_bottom), 0.0f);
-		    m_font.character_frames[index][2].texture = D3DXVECTOR2(static_cast<float>(texture_left), static_cast<float>(texture_bottom));
+      // Bottom right
+      m_font.character_frames[index][1].position = D3DXVECTOR3(static_cast<float>(position_right), static_cast<float>(position_bottom), 0.0f);
+      m_font.character_frames[index][1].texture = D3DXVECTOR2(static_cast<float>(texture_right), static_cast<float>(texture_bottom));
+      // Bottom left
+      m_font.character_frames[index][2].position = D3DXVECTOR3(static_cast<float>(position_left), static_cast<float>(position_bottom), 0.0f);
+      m_font.character_frames[index][2].texture = D3DXVECTOR2(static_cast<float>(texture_left), static_cast<float>(texture_bottom));
 
-		    // Second triangle in quad.
-      // Top left.
-		    m_font.character_frames[index][3].position = m_font.character_frames[index][0].position;
-		    m_font.character_frames[index][3].texture = m_font.character_frames[index][0].texture;
-      // Top right.
-		    m_font.character_frames[index][4].position = D3DXVECTOR3(static_cast<float>(position_right), static_cast<float>(position_top), 0.0f);
-		    m_font.character_frames[index][4].texture = D3DXVECTOR2(static_cast<float>(texture_right), static_cast<float>(texture_top));
-      // Bottom right.
-		    m_font.character_frames[index][5].position = m_font.character_frames[index][1].position;
-		    m_font.character_frames[index][5].texture = m_font.character_frames[index][1].texture;
+      // Second triangle in quad.
+      // Top left
+      m_font.character_frames[index][3].position = m_font.character_frames[index][0].position;
+      m_font.character_frames[index][3].texture = m_font.character_frames[index][0].texture;
+      // Top right
+      m_font.character_frames[index][4].position = D3DXVECTOR3(static_cast<float>(position_right), static_cast<float>(position_top), 0.0f);
+      m_font.character_frames[index][4].texture = D3DXVECTOR2(static_cast<float>(texture_right), static_cast<float>(texture_top));
+      // Bottom right
+      m_font.character_frames[index][5].position = m_font.character_frames[index][1].position;
+      m_font.character_frames[index][5].texture = m_font.character_frames[index][1].texture;
     }
   }
 }
@@ -298,7 +299,6 @@ void Text_Component::Load_Character_Frames() {
 void Text_Component::Create_String_Frame() {
   D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
   D3D11_SUBRESOURCE_DATA vertexData, indexData;
-  
   // Set Frame Size
   m_size = D3DXVECTOR2(0, 0);
   for (std::string::size_type i = 0; i < m_text.text.size(); i++) {
@@ -334,7 +334,7 @@ void Text_Component::Create_String_Frame() {
   for (int i = 0; i < m_frame->index_count; i++)  {
     m_frame->indices[i] = i;
   }
-  
+
   // Load the vertex array with data.
   int vertex_index = 0;
   double offset = 0;

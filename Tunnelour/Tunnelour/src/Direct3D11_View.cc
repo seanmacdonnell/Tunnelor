@@ -39,8 +39,8 @@ Direct3D11_View::Direct3D11_View() {
   m_raster_state = NULL;
   m_texture_shader = NULL;
   m_depthDisabledStencilState = NULL;
-	 m_alphaEnableBlendingState = NULL;
-	 m_alphaDisableBlendingState = NULL;
+   m_alphaEnableBlendingState = NULL;
+   m_alphaDisableBlendingState = NULL;
 
   m_texture_shader = NULL;
   m_font_shader = NULL;
@@ -244,25 +244,25 @@ void Direct3D11_View::Init_Window() {
   wc.cbClsExtra    = 0;
   wc.cbWndExtra    = 0;
   wc.hInstance     = m_hinstance;
-  wc.hIcon		       = LoadIcon(NULL, IDI_WINLOGO);
+  wc.hIcon           = LoadIcon(NULL, IDI_WINLOGO);
   wc.hIconSm       = wc.hIcon;
   wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
   wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
   wc.lpszMenuName  = NULL;
   wc.lpszClassName = m_application_name;
   wc.cbSize        = sizeof(WNDCLASSEX);
-	
+  
   // Register the window class.
   RegisterClassEx(&wc);
 
   // Setup the screen settings depending on whether it is running in full screen or in windowed mode.
-  if(m_game_settings->IsFullScreen())	{
+  if(m_game_settings->IsFullScreen())  {
     // If full screen set the screen to maximum size of the users desktop and 32bit.
     memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
     dmScreenSettings.dmSize       = sizeof(dmScreenSettings);
     dmScreenSettings.dmPelsWidth  = (unsigned long)m_game_settings->GetResolution().x;
     dmScreenSettings.dmPelsHeight = (unsigned long)m_game_settings->GetResolution().y;
-    dmScreenSettings.dmBitsPerPel = 32;			
+    dmScreenSettings.dmBitsPerPel = 32;      
     dmScreenSettings.dmFields     = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
     // Change the display settings to full screen.
@@ -270,7 +270,7 @@ void Direct3D11_View::Init_Window() {
 
     // Set the position of the window to the top left corner.
     posX = posY = 0;
-  }	else	{
+  }  else  {
     // Place the window in the middle of the screen.
     posX = static_cast<int>(GetSystemMetrics(SM_CXSCREEN) - m_game_settings->GetResolution().x) / 2;
     posY = static_cast<int>(GetSystemMetrics(SM_CYSCREEN) - m_game_settings->GetResolution().y) / 2;
@@ -291,7 +291,7 @@ void Direct3D11_View::Init_Window() {
   m_hwnd = CreateWindowEx(WS_EX_APPWINDOW|WS_EX_DLGMODALFRAME,
                 m_application_name,
                 m_application_name, 
-						          winFlags,
+                      winFlags,
   posX, posY, r.right, r.bottom, NULL, NULL, m_hinstance, NULL);
 
   // Bring the window up on the screen and set it as main focus.
@@ -747,7 +747,7 @@ void Direct3D11_View::Render_Bitmap(Tunnelour::Bitmap_Component* bitmap,
                                     D3DXMATRIX &viewmatrix) {
   // Put the model vertex and index buffers on the graphics pipeline to
   // prepare them for drawing.
-	 unsigned int stride, offset;
+   unsigned int stride, offset;
 
   D3DXMATRIX RotateMatrix_x, RotateMatrix_y, RotateMatrix_z;
   D3DXMATRIX TranslateMatrix;
@@ -782,9 +782,9 @@ void Direct3D11_View::Render_Bitmap(Tunnelour::Bitmap_Component* bitmap,
   ID3D11Buffer *vertexbuffer = bitmap->GetFrame()->vertex_buffer;
   ID3D11Buffer *indexbuffer = bitmap->GetFrame()->index_buffer;
 
-	 // Set vertex buffer stride and offset.
+   // Set vertex buffer stride and offset.
   stride = sizeof(Tunnelour::Bitmap_Component::Vertex_Type); 
-	 offset = 0;
+   offset = 0;
 
   // Set the vertex buffer to active in the input assembler
   // so it can be rendered.
@@ -811,8 +811,8 @@ void Direct3D11_View::Render_Bitmap(Tunnelour::Bitmap_Component* bitmap,
 //------------------------------------------------------------------------------
 void Direct3D11_View::Render_Text(Tunnelour::Text_Component *text,
                                   D3DXMATRIX &viewmatrix) {
-	 unsigned int stride, offset;
-	 D3DXCOLOR pixelColor;
+   unsigned int stride, offset;
+   D3DXCOLOR pixelColor;
   ID3D11Buffer *vertexbuffer, *indexbuffer;
   
   D3DXMATRIX RotateMatrix_x, RotateMatrix_y, RotateMatrix_z;
@@ -847,63 +847,63 @@ void Direct3D11_View::Render_Text(Tunnelour::Text_Component *text,
   vertexbuffer = text->GetFrame()->vertex_buffer;
   indexbuffer = text->GetFrame()->index_buffer;
 
-	 // Set vertex buffer stride and offset.
+   // Set vertex buffer stride and offset.
   stride = sizeof(Tunnelour::Text_Component::Vertex_Type); 
-	 offset = 0;
+   offset = 0;
 
-	 // Set the vertex buffer to active in the input assembler so it can be rendered.
-	 m_device_context->IASetVertexBuffers(0, 1, &vertexbuffer, &stride, &offset);
+   // Set the vertex buffer to active in the input assembler so it can be rendered.
+   m_device_context->IASetVertexBuffers(0, 1, &vertexbuffer, &stride, &offset);
 
   // Set the index buffer to active in the input assembler so it can be rendered.
-	 m_device_context->IASetIndexBuffer(indexbuffer, DXGI_FORMAT_R32_UINT, 0);
+   m_device_context->IASetIndexBuffer(indexbuffer, DXGI_FORMAT_R32_UINT, 0);
 
   // Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
-	 m_device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+   m_device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	 // Create a pixel color vector with the input sentence color.
-	 pixelColor = text->GetFont()->font_color;
+   // Create a pixel color vector with the input sentence color.
+   pixelColor = text->GetFont()->font_color;
 
-	 // Render the text using the font shader.
-	 m_font_shader->Render(m_device_context,
+   // Render the text using the font shader.
+   m_font_shader->Render(m_device_context,
                         text->GetFrame()->index_count,
                         m_world,
                         viewmatrix,
                         m_ortho,
                         text->GetTexture()->texture, 
-						 		               pixelColor);
+                                pixelColor);
 
 }
 
 void Direct3D11_View::TurnOnAlphaBlending()
 {
-	float blendFactor[4];
-	
-	// Setup the blend factor.
-	blendFactor[0] = 0.0f;
-	blendFactor[1] = 0.0f;
-	blendFactor[2] = 0.0f;
-	blendFactor[3] = 0.0f;
-	
-	// Turn on the alpha blending.
-	m_device_context->OMSetBlendState(m_alphaEnableBlendingState, blendFactor, 0xffffffff);
+  float blendFactor[4];
+  
+  // Setup the blend factor.
+  blendFactor[0] = 0.0f;
+  blendFactor[1] = 0.0f;
+  blendFactor[2] = 0.0f;
+  blendFactor[3] = 0.0f;
+  
+  // Turn on the alpha blending.
+  m_device_context->OMSetBlendState(m_alphaEnableBlendingState, blendFactor, 0xffffffff);
 
-	return;
+  return;
 }
 
 void Direct3D11_View::TurnOffAlphaBlending()
 {
-	float blendFactor[4];
-	
-	// Setup the blend factor.
-	blendFactor[0] = 0.0f;
-	blendFactor[1] = 0.0f;
-	blendFactor[2] = 0.0f;
-	blendFactor[3] = 0.0f;
-	
-	// Turn off the alpha blending.
-	m_device_context->OMSetBlendState(m_alphaDisableBlendingState, blendFactor, 0xffffffff);
+  float blendFactor[4];
+  
+  // Setup the blend factor.
+  blendFactor[0] = 0.0f;
+  blendFactor[1] = 0.0f;
+  blendFactor[2] = 0.0f;
+  blendFactor[3] = 0.0f;
+  
+  // Turn off the alpha blending.
+  m_device_context->OMSetBlendState(m_alphaDisableBlendingState, blendFactor, 0xffffffff);
 
-	return;
+  return;
 }
 
 void Direct3D11_View::TurnZBufferOn() {

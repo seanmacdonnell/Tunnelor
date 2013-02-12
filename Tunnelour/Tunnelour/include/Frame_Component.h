@@ -118,7 +118,6 @@ class Frame_Component: public Tunnelour::Component {
   Frame  * m_frame;
 
  private:
-
 };  // class Frame_Component
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_FRAME_COMPONENT_H_

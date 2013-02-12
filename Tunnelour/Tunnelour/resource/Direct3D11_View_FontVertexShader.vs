@@ -1,7 +1,7 @@
 cbuffer PerFrameBuffer {
-	matrix worldMatrix;
-	matrix viewMatrix;
-	matrix projectionMatrix;
+  matrix worldMatrix;
+  matrix viewMatrix;
+  matrix projectionMatrix;
 };
 
 struct VertexInputType {

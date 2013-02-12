@@ -109,7 +109,6 @@ class Text_Component: public Tunnelour::Bitmap_Component {
   //---------------------------------------------------------------------------
   void Create_String_Frame();
   void Load_Font_Texture();
-
 };  // class Text_Component
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_TEXT_COMPONENT_H_

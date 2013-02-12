@@ -59,7 +59,7 @@ class Game_Settings_Component: public Tunnelour::Component {
   // Description : Mutator for the resolution
   //---------------------------------------------------------------------------
   void SetResolution(int x, int y);
- 
+
   //---------------------------------------------------------------------------
   // Description : Accessor for the full screen flag
   //---------------------------------------------------------------------------

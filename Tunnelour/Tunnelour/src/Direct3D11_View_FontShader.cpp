@@ -29,7 +29,7 @@ Direct3D11_View_FontShader::Direct3D11_View_FontShader() {
   m_layout = 0;
   m_matrixbuffer = 0;
   m_sampleState = 0;
-	 m_pixelbuffer = 0;
+   m_pixelbuffer = 0;
 
   m_vertexshaderfile = L"resource/Direct3D11_View_FontVertexShader.vs";
   m_pixelshaderfile  = L"resource/Direct3D11_View_FontPixelShader.ps";
@@ -91,7 +91,7 @@ void Direct3D11_View_FontShader::Init(ID3D11Device *d3d11device, HWND *hwnd) {
   unsigned int numberofelements;
   D3D11_BUFFER_DESC matrixbufferdescription;
   D3D11_SAMPLER_DESC samplerDesc;
-	 D3D11_BUFFER_DESC pixelBufferDesc;
+   D3D11_BUFFER_DESC pixelBufferDesc;
 
   // Compile the vertex shader code.
   LPCSTR pProfile;
@@ -245,11 +245,11 @@ void Direct3D11_View_FontShader::Init(ID3D11Device *d3d11device, HWND *hwnd) {
 
   // Setup the description of the dynamic pixel constant buffer that is in the pixel shader.
   pixelBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	 pixelBufferDesc.ByteWidth = sizeof(PixelBufferType);
+   pixelBufferDesc.ByteWidth = sizeof(PixelBufferType);
   pixelBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
   pixelBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
   pixelBufferDesc.MiscFlags = 0;
-	 pixelBufferDesc.StructureByteStride = 0;
+   pixelBufferDesc.StructureByteStride = 0;
 
   // Create the pixel constant buffer pointer so we can access the pixel shader constant buffer from within this class.
   if(FAILED(m_d3d11device->CreateBuffer(&pixelBufferDesc, NULL, &m_pixelbuffer)))  {
@@ -271,7 +271,7 @@ void Direct3D11_View_FontShader::Render(ID3D11DeviceContext* devicecontext,
   D3D11_MAPPED_SUBRESOURCE mappedresource;
   MatrixBufferType* dataptr;
   unsigned int buffernumber;
-	 PixelBufferType* dataPtr2;
+   PixelBufferType* dataPtr2;
 
   // Lock the constant buffer so it can be written to.
   if (FAILED(devicecontext->Map(m_matrixbuffer,
@@ -309,23 +309,23 @@ void Direct3D11_View_FontShader::Render(ID3D11DeviceContext* devicecontext,
   devicecontext->PSSetShaderResources(0, 1, &texture);
 
   // Lock the pixel constant buffer so it can be written to.
-  if(FAILED(devicecontext->Map(m_pixelbuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedresource)))	{
+  if(FAILED(devicecontext->Map(m_pixelbuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedresource)))  {
     throw Tunnelour::Exceptions::init_error("Locking Failed!");
   }
 
-	 // Get a pointer to the data in the pixel constant buffer.
-	 dataPtr2 = (PixelBufferType*)mappedresource.pData;
+   // Get a pointer to the data in the pixel constant buffer.
+   dataPtr2 = (PixelBufferType*)mappedresource.pData;
 
-	 // Copy the pixel color into the pixel constant buffer.
-	 dataPtr2->pixelColor = pixelcolor;
+   // Copy the pixel color into the pixel constant buffer.
+   dataPtr2->pixelColor = pixelcolor;
 
-	 // Unlock the pixel constant buffer.
+   // Unlock the pixel constant buffer.
   devicecontext->Unmap(m_pixelbuffer, 0);
 
-	 // Set the position of the pixel constant buffer in the pixel shader.
-	 buffernumber = 0;
+   // Set the position of the pixel constant buffer in the pixel shader.
+   buffernumber = 0;
 
-	 // Now set the pixel constant buffer in the pixel shader with the updated value.
+   // Now set the pixel constant buffer in the pixel shader with the updated value.
   devicecontext->PSSetConstantBuffers(buffernumber, 1, &m_pixelbuffer);
 
   // Now render the prepared buffers with the shader.

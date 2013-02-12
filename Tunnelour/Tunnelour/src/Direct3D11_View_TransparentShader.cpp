@@ -273,7 +273,7 @@ void Direct3D11_View_TransparentShader::Render(ID3D11DeviceContext* devicecontex
   D3D11_MAPPED_SUBRESOURCE mappedresource;
   MatrixBufferType* dataptr;
   unsigned int buffernumber;
-	 TransparentBufferType* dataPtr2;
+   TransparentBufferType* dataPtr2;
 
   // Transpose the matrices to prepare them for the shader.
   D3DXMatrixTranspose(&world, &world);

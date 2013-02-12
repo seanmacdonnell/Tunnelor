@@ -41,9 +41,9 @@ class Direct3D11_View_FontShader {
   };
 
   struct PixelBufferType
-	 {
-		  D3DXCOLOR pixelColor;
-	 };
+   {
+      D3DXCOLOR pixelColor;
+   };
 
   //---------------------------------------------------------------------------
   // Description : Constructor
@@ -92,7 +92,7 @@ class Direct3D11_View_FontShader {
   ID3D11InputLayout *m_layout;
   ID3D11Buffer *m_matrixbuffer;
   ID3D11SamplerState* m_sampleState;
-	 ID3D11Buffer* m_pixelbuffer;
+   ID3D11Buffer* m_pixelbuffer;
 
   wchar_t *m_vertexshaderfile, *m_pixelshaderfile;
 

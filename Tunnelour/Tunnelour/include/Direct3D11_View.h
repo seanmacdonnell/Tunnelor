@@ -141,8 +141,8 @@ class Direct3D11_View : public Tunnelour::View {
   ID3D11DepthStencilView * m_depth_stencil_view;
   ID3D11RasterizerState * m_raster_state;
   ID3D11DepthStencilState * m_depthDisabledStencilState;
-	 ID3D11BlendState* m_alphaEnableBlendingState;
-	 ID3D11BlendState* m_alphaDisableBlendingState;
+   ID3D11BlendState* m_alphaEnableBlendingState;
+   ID3D11BlendState* m_alphaDisableBlendingState;
   D3DXMATRIX m_world;
   D3DXMATRIX m_ortho;
 

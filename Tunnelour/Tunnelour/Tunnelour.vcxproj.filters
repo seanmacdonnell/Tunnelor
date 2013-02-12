@@ -9,9 +9,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\Components">
-      <UniqueIdentifier>{8ceb3084-34eb-4d48-a505-cd767097a0c3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Controllers">
       <UniqueIdentifier>{5ce0711a-7eef-4db8-ae20-9ec55a5f070b}</UniqueIdentifier>
     </Filter>
@@ -28,74 +25,29 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Include Files\Components">
-      <UniqueIdentifier>{359cadd9-3a1a-4184-a1bd-035794a4d0b2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Include Files\Controllers">
       <UniqueIdentifier>{17fb5bc3-2396-4232-a349-e3fc0c5951ed}</UniqueIdentifier>
     </Filter>
     <Filter Include="Include Files\View">
       <UniqueIdentifier>{29166d8a-f90c-49ba-8c59-696090c8d57e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Model">
+      <UniqueIdentifier>{8ceb3084-34eb-4d48-a505-cd767097a0c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\Model">
+      <UniqueIdentifier>{359cadd9-3a1a-4184-a1bd-035794a4d0b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\Engine">
+      <UniqueIdentifier>{d0a0ac9b-8d6f-4b2d-81c5-965f8c7a3a68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\TileSets">
+      <UniqueIdentifier>{fe5754ab-29d9-4fd8-aeaf-68964ff71064}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine">
+      <UniqueIdentifier>{030236ff-5a35-4455-935d-8d8d1a4c0b14}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Engine.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Message_Wrapper.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Component_Composite.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Component.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Component_ID.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Controller.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Controller_Composite.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\View.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Tunnelour_Launcher.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\View_Composite.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Tunnelour_View.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Tunnelour_Controller.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Camera_Component.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Direct3D11_View_Mutator.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Direct3D11_View_TextureShader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Bitmap_Component.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Frame_Component.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Text_Component.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Direct3D11_View_FontShader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Direct3D11_View.cc">
       <Filter>Source Files\View</Filter>
     </ClCompile>
@@ -103,16 +55,13 @@
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
     <ClCompile Include="src\Debug_Bitmap.cc">
-      <Filter>Source Files\Components</Filter>
+      <Filter>Source Files\Model</Filter>
     </ClCompile>
     <ClCompile Include="src\Debug_Text.cc">
-      <Filter>Source Files\Components</Filter>
+      <Filter>Source Files\Model</Filter>
     </ClCompile>
     <ClCompile Include="src\SeaFloorSquare.cc">
-      <Filter>Source Files\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Direct3D11_View_TransparentShader.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Model</Filter>
     </ClCompile>
     <ClCompile Include="src\Debug_Init_Controller.cc">
       <Filter>Source Files\Controllers</Filter>
@@ -121,78 +70,90 @@
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
     <ClCompile Include="src\Tile_Bitmap.cc">
-      <Filter>Source Files\Components</Filter>
+      <Filter>Source Files\Model</Filter>
     </ClCompile>
     <ClCompile Include="src\Game_Settings_Component.cc">
-      <Filter>Source Files\Components</Filter>
+      <Filter>Source Files\Model</Filter>
     </ClCompile>
     <ClCompile Include="src\Background_Controller_Mutator.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
+    <ClCompile Include="src\Bitmap_Component.cc">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Camera_Component.cc">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Controller.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Component.cc">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Component_Composite.cc">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Component_ID.cc">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Direct3D11_View_FontShader.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Direct3D11_View_TransparentShader.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Direct3D11_View_Mutator.cc">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Direct3D11_View_TextureShader.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Controller_Composite.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine.cc">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Frame_Component.cc">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Message_Wrapper.cc">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Text_Component.cc">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tunnelour_Launcher.cc">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tunnelour_Controller.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tunnelour_View.cc">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="src\View.cc">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="src\View_Composite.cc">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Engine.h">
-      <Filter>Include Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Message_Wrapper.h">
-      <Filter>Include Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Controller.h">
-      <Filter>Include Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Controller_Composite.h">
-      <Filter>Include Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\View.h">
-      <Filter>Include Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Tunnelour_Launcher.h">
-      <Filter>Include Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Exceptions.h">
-      <Filter>Include Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\View_Composite.h">
-      <Filter>Include Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Tunnelour_View.h">
-      <Filter>Include Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Tunnelour_Controller.h">
-      <Filter>Include Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Direct3D11_View_Mutator.h">
-      <Filter>Include Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Direct3D11_View_TextureShader.h">
-      <Filter>Include Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Frame_Component.h">
-      <Filter>Include Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Text_Component.h">
-      <Filter>Include Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Direct3D11_View_FontShader.h">
-      <Filter>Include Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Debug_Bitmap.h">
-      <Filter>Include Files\Components</Filter>
+      <Filter>Include Files\Model</Filter>
     </ClInclude>
     <ClInclude Include="include\Debug_Text.h">
-      <Filter>Include Files\Components</Filter>
+      <Filter>Include Files\Model</Filter>
     </ClInclude>
     <ClInclude Include="include\SeaFloorSquare.h">
-      <Filter>Include Files\Components</Filter>
+      <Filter>Include Files\Model</Filter>
     </ClInclude>
     <ClInclude Include="include\Init_Controller.h">
       <Filter>Include Files\Controllers</Filter>
     </ClInclude>
     <ClInclude Include="include\Direct3D11_View.h">
       <Filter>Include Files\View</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Direct3D11_View_TransparentShader.h">
-      <Filter>Include Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Debug_Init_Controller.h">
       <Filter>Include Files\Controllers</Filter>
@@ -201,28 +162,76 @@
       <Filter>Include Files\Controllers</Filter>
     </ClInclude>
     <ClInclude Include="include\Tile_Bitmap.h">
-      <Filter>Include Files\Components</Filter>
+      <Filter>Include Files\Model</Filter>
     </ClInclude>
     <ClInclude Include="include\Game_Settings_Component.h">
-      <Filter>Include Files\Components</Filter>
+      <Filter>Include Files\Model</Filter>
     </ClInclude>
     <ClInclude Include="include\Bitmap_Component.h">
-      <Filter>Include Files\Components</Filter>
+      <Filter>Include Files\Model</Filter>
     </ClInclude>
     <ClInclude Include="include\Camera_Component.h">
-      <Filter>Include Files\Components</Filter>
+      <Filter>Include Files\Model</Filter>
     </ClInclude>
     <ClInclude Include="include\Component.h">
-      <Filter>Include Files\Components</Filter>
+      <Filter>Include Files\Model</Filter>
     </ClInclude>
     <ClInclude Include="include\Component_Composite.h">
-      <Filter>Include Files\Components</Filter>
+      <Filter>Include Files\Model</Filter>
     </ClInclude>
     <ClInclude Include="include\Component_ID.h">
-      <Filter>Include Files\Components</Filter>
+      <Filter>Include Files\Model</Filter>
     </ClInclude>
     <ClInclude Include="include\Background_Controller_Mutator.h">
       <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Frame_Component.h">
+      <Filter>Include Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Text_Component.h">
+      <Filter>Include Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Controller.h">
+      <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Controller_Composite.h">
+      <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Direct3D11_View_FontShader.h">
+      <Filter>Include Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Direct3D11_View_TransparentShader.h">
+      <Filter>Include Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Direct3D11_View_Mutator.h">
+      <Filter>Include Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Direct3D11_View_TextureShader.h">
+      <Filter>Include Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine.h">
+      <Filter>Include Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Exceptions.h">
+      <Filter>Include Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Message_Wrapper.h">
+      <Filter>Include Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Tunnelour_Controller.h">
+      <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Tunnelour_Launcher.h">
+      <Filter>Include Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Tunnelour_View.h">
+      <Filter>Include Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="include\View.h">
+      <Filter>Include Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="include\View_Composite.h">
+      <Filter>Include Files\View</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -245,7 +254,7 @@
       <Filter>Resource Files\VertexShaders</Filter>
     </None>
     <None Include="resource\tilesets\Dirt_Tileset_4_0.txt">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\TileSets</Filter>
     </None>
   </ItemGroup>
 </Project>
