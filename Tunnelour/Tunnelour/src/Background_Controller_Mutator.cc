@@ -32,7 +32,7 @@ Background_Controller_Mutator::~Background_Controller_Mutator() {
 }
 
 //------------------------------------------------------------------------------
-void Background_Controller_Mutator::Mutate(Tunnelour::Component * const component) {  
+void Background_Controller_Mutator::Mutate(Tunnelour::Component * const component) {
   if (component->GetType().compare("Game_Settings_Component") == 0) {
     // Found Game Settings
     Tunnelour::Game_Settings_Component *game_settings = 0;

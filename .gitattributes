@@ -30,6 +30,7 @@ Tunnelour/Tunnelour/include/Game_Settings_Component.h -text
 Tunnelour/Tunnelour/include/Init_Controller.h -text
 Tunnelour/Tunnelour/include/Message_Wrapper.h -text
 Tunnelour/Tunnelour/include/SeaFloorSquare.h -text
+Tunnelour/Tunnelour/include/String_Helper.h -text
 Tunnelour/Tunnelour/include/Text_Component.h -text
 Tunnelour/Tunnelour/include/Tile_Bitmap.h -text
 Tunnelour/Tunnelour/include/Tunnelour_Controller.h -text

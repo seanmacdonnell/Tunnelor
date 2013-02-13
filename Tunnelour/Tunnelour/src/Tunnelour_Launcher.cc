@@ -16,19 +16,10 @@
 #include "Tunnelour_Launcher.h"
 #include "Engine.h"
 #include "windows.h"
+#include "String_Helper.h"
 
 //------------------------------------------------------------------------------
 // private:
-//------------------------------------------------------------------------------
-std::wstring CharToWChar(const char* pstrSrc) {
-    size_t origsize = strlen(pstrSrc) + 1;
-    const size_t newsize = 100;
-    size_t convertedChars = 0;
-    wchar_t wcstring[newsize];
-    mbstowcs_s(&convertedChars, wcstring, origsize, pstrSrc, _TRUNCATE);
-    return std::wstring(wcstring);
-}
-
 //------------------------------------------------------------------------------
 int WINAPI WinMain(HINSTANCE hInstance,
                    HINSTANCE hPrevInstance,
@@ -52,7 +43,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
   }
   catch (const std::exception& e) {
     const char* raw_message = e.what();
-    std::wstring converted_message = CharToWChar(raw_message);
+    std::wstring converted_message = String_Helper::CharToWChar(raw_message);
     LPCTSTR message = converted_message.c_str();
     MessageBox( NULL, message, TEXT("Unhandled exception"), MB_OK );
     return EXIT_FAILURE;

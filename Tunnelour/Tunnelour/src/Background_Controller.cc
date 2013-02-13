@@ -19,6 +19,7 @@
 #include <ctime>
 #include "Exceptions.h"
 #include "Background_Controller_Mutator.h"
+#include "String_Helper.h"
 
 namespace Tunnelour {
 
@@ -103,7 +104,7 @@ void Background_Controller::Load_Tilset_Metadata() {
   int lSize;
 
   std::wstring wtileset_path = m_game_settings->GetTilesetPath();
-  m_metadata_file_path = WStringToString(wtileset_path + L"Dirt_Tileset_4_0.txt");
+  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Dirt_Tileset_4_0.txt");
 
   // Open Font File as a text file
   if (fopen_s(&pFile, m_metadata_file_path.c_str(), "r") != 0) {
@@ -344,7 +345,7 @@ Tunnelour::Tile_Bitmap* Background_Controller::Create_Tile() {
   tile->SetPosition(new D3DXVECTOR3(0, 0, 0));
   tile->GetTexture()->transparency = 1.0f;
   std::wstring texture_path = m_game_settings->GetTilesetPath();
-  texture_path += StringToWString(m_metadata.filename);
+  texture_path += String_Helper::StringToWString(m_metadata.filename);
   tile->GetTexture()->texture_path = texture_path;
   tile->GetTexture()->texture_size = D3DXVECTOR2(static_cast<float>(m_metadata.size_x),
                                                  static_cast<float>(m_metadata.size_y));
@@ -359,35 +360,6 @@ Tunnelour::Tile_Bitmap* Background_Controller::Create_Tile() {
   tile->SetSize(new D3DXVECTOR2(128, 128));
 
   return tile;
-}
-
-//------------------------------------------------------------------------------
-std::wstring Background_Controller::CharToWChar(const char* pstrSrc) {
-    size_t origsize = strlen(pstrSrc) + 1;
-    size_t convertedChars = 0;
-    wchar_t wcstring[100];
-    mbstowcs_s(&convertedChars, wcstring, origsize, pstrSrc, _TRUNCATE);
-    return std::wstring(wcstring);
-}
-
-//------------------------------------------------------------------------------
-std::wstring Background_Controller::StringToWString(const std::string& string) {
-    int len;
-    int slength = static_cast<int>(string.length() + 1);
-    len = MultiByteToWideChar(CP_ACP, 0, string.c_str(), slength, 0, 0);
-    std::wstring r(len, L'\0');
-    MultiByteToWideChar(CP_ACP, 0, string.c_str(), slength, &r[0], len);
-    return r;
-}
-
-//------------------------------------------------------------------------------
-std::string Background_Controller::WStringToString(const std::wstring& wstring) {
-    int len;
-    int slength = static_cast<int>(wstring.length() + 1);
-    len = WideCharToMultiByte(CP_ACP, 0, wstring.c_str(), slength, 0, 0, 0, 0);
-    std::string r(len, '\0');
-    WideCharToMultiByte(CP_ACP, 0, wstring.c_str(), slength, &r[0], len, 0, 0);
-    return r;
 }
 
 }  // namespace Tunnelour

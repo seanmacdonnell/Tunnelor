@@ -92,13 +92,6 @@ class Background_Controller: public Tunnelour::Controller {
   bool m_has_init_background_been_generated;
 
   std::string m_metadata_file_path;
-
-  //---------------------------------------------------------------------------
-  // Description : String conversion functions
-  //---------------------------------------------------------------------------
-  std::wstring CharToWChar(const char* pstrSrc);
-  std::wstring StringToWString(const std::string& string);
-  std::string WStringToString(const std::wstring& wstring);
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_CONTROLLER_H_

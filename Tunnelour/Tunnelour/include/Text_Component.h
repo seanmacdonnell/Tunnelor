@@ -100,8 +100,6 @@ class Text_Component: public Tunnelour::Bitmap_Component {
   Text m_text;
   Font m_font;
  private:
-  std::wstring CharToWChar(const char* pstrSrc);
-
   void Load_Font_Struct();
   void Load_Character_Frames();
   //---------------------------------------------------------------------------

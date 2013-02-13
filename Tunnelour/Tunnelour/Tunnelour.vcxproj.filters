@@ -233,6 +233,9 @@
     <ClInclude Include="include\View_Composite.h">
       <Filter>Include Files\View</Filter>
     </ClInclude>
+    <ClInclude Include="include\String_Helper.h">
+      <Filter>Include Files\Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resource\Direct3D11_View_FontPixelShader.ps">

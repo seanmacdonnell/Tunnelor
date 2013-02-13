@@ -16,6 +16,7 @@
 #include "Text_Component.h"
 #include <stdio.h>
 #include "Exceptions.h"
+#include "String_Helper.h"
 
 namespace Tunnelour {
 
@@ -70,15 +71,6 @@ Text_Component::Text* Text_Component::GetText() {
 
 //------------------------------------------------------------------------------
 // private:
-//------------------------------------------------------------------------------
-std::wstring Text_Component::CharToWChar(const char* pstrSrc) {
-  size_t origsize = strlen(pstrSrc) + 1;
-  size_t convertedChars = 0;
-  wchar_t wcstring[100];
-  mbstowcs_s(&convertedChars, wcstring, origsize, pstrSrc, _TRUNCATE);
-  return std::wstring(wcstring);
-}
-
 //------------------------------------------------------------------------------
 void Text_Component::Load_Font_Struct() {
   FILE * pFile;
@@ -151,7 +143,7 @@ void Text_Component::Load_Font_Struct() {
         while (token != NULL) {
         if (strcmp(token, "file") == 0) {
             token = strtok_s(NULL, " =\"", &next_token);
-            m_font.font_texture_name = CharToWChar(token);
+            m_font.font_texture_name = String_Helper::CharToWChar(token);
             m_texture->texture_path.append(m_font.font_texture_name);
         }
         token = strtok_s(NULL, " =\"", &next_token);
