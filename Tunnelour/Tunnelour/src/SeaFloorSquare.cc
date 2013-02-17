@@ -162,7 +162,7 @@ void SeaFloorSquare::Init_Texture() {
                                                     NULL,
                                                     &m_texture->texture,
                                                     NULL)))  {
-    throw Tunnelour::Exceptions::init_error("D3DX11CreateShaderResourceViewFromFile Failed!");
+    throw Tunnelour::Exceptions::init_error("Loading texture file failed!");
   }
 }
 }  // namespace Tunnelour

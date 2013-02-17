@@ -163,7 +163,7 @@ void Debug_Bitmap::Init_Texture() {
                                               NULL,
                                               &m_texture->texture,
                                               NULL)))  {
-    throw Tunnelour::Exceptions::init_error("D3DX11CreateShaderResourceViewFromFile Failed!");
+    throw Tunnelour::Exceptions::init_error("Loading the texture file Failed!");
   }
 }
 }  // namespace Tunnelour

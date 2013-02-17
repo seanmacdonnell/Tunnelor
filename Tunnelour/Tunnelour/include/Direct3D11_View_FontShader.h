@@ -19,7 +19,6 @@
 #include <d3d11.h>
 #include <d3dx10math.h>
 #include <d3dx11async.h>
-#include <fstream>
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -40,10 +39,9 @@ class Direct3D11_View_FontShader {
     D3DXMATRIX projection;
   };
 
-  struct PixelBufferType
-   {
-      D3DXCOLOR pixelColor;
-   };
+  struct PixelBufferType {
+    D3DXCOLOR pixelColor;
+  };
 
   //---------------------------------------------------------------------------
   // Description : Constructor
@@ -92,11 +90,9 @@ class Direct3D11_View_FontShader {
   ID3D11InputLayout *m_layout;
   ID3D11Buffer *m_matrixbuffer;
   ID3D11SamplerState* m_sampleState;
-   ID3D11Buffer* m_pixelbuffer;
+  ID3D11Buffer* m_pixelbuffer;
 
   wchar_t *m_vertexshaderfile, *m_pixelshaderfile;
-
-
 };  // class Direct3D11_View_FontShader
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_DIRECT3D11_VIEW_FONTSHADER_H_

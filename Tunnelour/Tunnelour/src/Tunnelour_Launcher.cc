@@ -24,7 +24,7 @@
 int WINAPI WinMain(HINSTANCE hInstance,
                    HINSTANCE hPrevInstance,
                    LPSTR lpCmdLine,
-                   int nCmdShow) {    
+                   int nCmdShow) {
   bool result = 0;
 
   try {
@@ -41,15 +41,15 @@ int WINAPI WinMain(HINSTANCE hInstance,
     // Kill Engine
     delete engine;
   }
-  catch (const std::exception& e) {
+  catch(const std::exception& e) {
     const char* raw_message = e.what();
     std::wstring converted_message = String_Helper::CharToWChar(raw_message);
     LPCTSTR message = converted_message.c_str();
-    MessageBox( NULL, message, TEXT("Unhandled exception"), MB_OK );
+    MessageBox(NULL, message, TEXT("Unhandled exception"), MB_OK);
     return EXIT_FAILURE;
   }
-  catch (...)  {
-    MessageBox( NULL, TEXT("Unknown error"), NULL, MB_OK );
+  catch(...)  {
+    MessageBox(NULL, TEXT("Unknown error"), NULL, MB_OK);
     return EXIT_FAILURE;
   }
 

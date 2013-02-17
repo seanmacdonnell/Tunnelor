@@ -17,8 +17,8 @@
 //               of custom exceptions used by the Game_Engine.
 //
 
-#ifndef TUNNELOUR_STRING_HELPER_H_
-#define TUNNELOUR_STRING_HELPER_H_
+#ifndef STRING_HELPER_H_
+#define STRING_HELPER_H_
 
 #include <windows.h>
 #include <stdlib.h>
@@ -67,4 +67,4 @@ inline std::string WStringToString(const std::wstring& wstring) {
 
 
 }  // namespace String_Helper
-#endif  // TUNNELOUR_STRING_HELPER_H_
+#endif  // STRING_HELPER_H_

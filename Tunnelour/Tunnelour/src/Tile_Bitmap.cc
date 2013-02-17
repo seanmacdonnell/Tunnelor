@@ -101,15 +101,13 @@ void Tile_Bitmap::Init_Frame() {
 
   // Bottom right
   m_frame->vertices[1].position = D3DXVECTOR3(right, bottom, 0.0f);
-  m_frame->vertices[1].texture = D3DXVECTOR2(
-    (m_texture->tile_size.x + m_texture->top_left_position.x) / m_texture->texture_size.x,
-    (m_texture->tile_size.y + m_texture->top_left_position.y) / m_texture->texture_size.y);
+  m_frame->vertices[1].texture = D3DXVECTOR2((m_texture->tile_size.x + m_texture->top_left_position.x) / m_texture->texture_size.x,
+                                             (m_texture->tile_size.y + m_texture->top_left_position.y) / m_texture->texture_size.y);
 
   // Bottom left
   m_frame->vertices[2].position = D3DXVECTOR3(left, bottom, 0.0f);
-  m_frame->vertices[2].texture = D3DXVECTOR2(
-    (m_texture->top_left_position.x)/m_texture->texture_size.x,
-    (m_texture->tile_size.y + m_texture->top_left_position.y)/m_texture->texture_size.y);
+  m_frame->vertices[2].texture = D3DXVECTOR2(m_texture->top_left_position.x / m_texture->texture_size.x,
+                                            (m_texture->tile_size.y + m_texture->top_left_position.y) / m_texture->texture_size.y);
 
   // Second triangle.
   // Top left
@@ -174,7 +172,7 @@ void Tile_Bitmap::Init_Texture() {
                                                     NULL,
                                                     &m_texture->texture,
                                                     NULL)))  {
-    throw Tunnelour::Exceptions::init_error("D3DX11CreateShaderResourceViewFromFile Failed!");
+    throw Tunnelour::Exceptions::init_error("Loading texture file Failed!");
   }
 }
 }  // namespace Tunnelour

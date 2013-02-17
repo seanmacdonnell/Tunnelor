@@ -19,7 +19,6 @@
 #include <d3d11.h>
 #include <d3dx10math.h>
 #include <d3dx11async.h>
-#include <fstream>
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -40,10 +39,10 @@ class Direct3D11_View_TransparentShader {
     D3DXMATRIX projection;
   };
 
-   struct TransparentBufferType  {
+  struct TransparentBufferType  {
     float blendAmount;
     D3DXVECTOR3 padding;
-   };
+  };
 
   //---------------------------------------------------------------------------
   // Description : Constructor
@@ -92,11 +91,9 @@ class Direct3D11_View_TransparentShader {
   ID3D11InputLayout *m_layout;
   ID3D11Buffer *m_matrixbuffer;
   ID3D11SamplerState* m_sampleState;
-   ID3D11Buffer* m_transparentBuffer;
+  ID3D11Buffer* m_transparentBuffer;
 
   wchar_t *m_vertexshaderfile, *m_pixelshaderfile;
-
-
 };  // class Direct3D11_View_TransparentShader
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_DIRECT3D11_VIEW_TRANSPARENTSHADER_H_

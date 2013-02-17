@@ -49,7 +49,7 @@ void Direct3D11_View_Mutator::Mutate(Tunnelour::Component * const component) {
     bitmap = static_cast<Tunnelour::Bitmap_Component*>(component);
     if (bitmap->GetPosition()->z > -1) {
       m_renderables.Layer_00.push_back(bitmap);
-    } 
+    }
     if (bitmap->GetPosition()->z <= -1 && bitmap->GetPosition()->z > -2) {
       m_renderables.Layer_01.push_back(bitmap);
     }
@@ -65,7 +65,7 @@ void Direct3D11_View_Mutator::Mutate(Tunnelour::Component * const component) {
     text = static_cast<Tunnelour::Text_Component*>(component);
     if (text->GetPosition()->z > -1) {
       m_renderables.Layer_00.push_back(text);
-    } 
+    }
     if (text->GetPosition()->z <= -1 && text->GetPosition()->z > -2) {
       m_renderables.Layer_01.push_back(text);
     }
@@ -74,7 +74,7 @@ void Direct3D11_View_Mutator::Mutate(Tunnelour::Component * const component) {
     }
     m_found_renderables = true;
   }
-  
+
   if (component->GetType().compare("Game_Settings_Component") == 0) {
     // Found Game Settings
     Tunnelour::Game_Settings_Component *game_settings = 0;
@@ -82,7 +82,6 @@ void Direct3D11_View_Mutator::Mutate(Tunnelour::Component * const component) {
     m_game_settings = game_settings;
     m_found_game_settings = true;
   }
-  
 }
 
 //------------------------------------------------------------------------------

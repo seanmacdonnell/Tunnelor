@@ -63,7 +63,7 @@ class Text_Component: public Tunnelour::Bitmap_Component {
     std::string font_name;
     std::wstring font_texture_name;
     double character_widths[256];
-    Raw_Character_Frame raw_character_frames[256];
+    Raw_Character_Frame raw_char_frames[256];
     Vertex_Type character_frames[256][6];
     D3DXCOLOR font_color;
   };

@@ -27,7 +27,7 @@
 #include <d3dx10math.h>
 
 #include <windows.h>
-#include <iostream>
+#include <list>
 
 #include "Component_Composite.h"
 #include "View.h"
@@ -88,25 +88,25 @@ class Direct3D11_View : public Tunnelour::View {
   // Description : Render the components
   //---------------------------------------------------------------------------
   void Render(std::list<Tunnelour::Component*> layer,
-              D3DXMATRIX &viewmatrix);
+              D3DXMATRIX *viewmatrix);
 
   //---------------------------------------------------------------------------
   // Description : Render the Camera
   //---------------------------------------------------------------------------
   void Render_Camera(Tunnelour::Camera_Component *camera,
-                     D3DXMATRIX &viewmatrix);
+                     D3DXMATRIX *viewmatrix);
 
   //---------------------------------------------------------------------------
   // Description : Render a Bitmap
   //---------------------------------------------------------------------------
   void Render_Bitmap(Tunnelour::Bitmap_Component *bitmap,
-                     D3DXMATRIX &viewmatrix);
+                     D3DXMATRIX *viewmatrix);
 
   //---------------------------------------------------------------------------
   // Description : Render Text
   //---------------------------------------------------------------------------
   void Render_Text(Tunnelour::Text_Component *text,
-                   D3DXMATRIX &viewmatrix);
+                   D3DXMATRIX *viewmatrix);
 
   //---------------------------------------------------------------------------
   // Description : Turn on Alpha Blending
@@ -141,8 +141,8 @@ class Direct3D11_View : public Tunnelour::View {
   ID3D11DepthStencilView * m_depth_stencil_view;
   ID3D11RasterizerState * m_raster_state;
   ID3D11DepthStencilState * m_depthDisabledStencilState;
-   ID3D11BlendState* m_alphaEnableBlendingState;
-   ID3D11BlendState* m_alphaDisableBlendingState;
+  ID3D11BlendState* m_alphaEnableBlendingState;
+  ID3D11BlendState* m_alphaDisableBlendingState;
   D3DXMATRIX m_world;
   D3DXMATRIX m_ortho;
 

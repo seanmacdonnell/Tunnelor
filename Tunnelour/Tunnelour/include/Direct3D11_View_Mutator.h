@@ -16,6 +16,8 @@
 #ifndef TUNNELOUR_DIRECT3D11_VIEW_MUTATOR_H_
 #define TUNNELOUR_DIRECT3D11_VIEW_MUTATOR_H_
 
+#include <list>
+
 #include "Component.h"
 #include "Camera_Component.h"
 #include "Bitmap_Component.h"

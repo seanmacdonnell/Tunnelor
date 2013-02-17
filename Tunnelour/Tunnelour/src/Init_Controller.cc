@@ -36,13 +36,11 @@ void Init_Controller::Init(Tunnelour::Component_Composite * const model) {
 
 //------------------------------------------------------------------------------
 void Init_Controller::Run() {
-  // DO NOT DELETE THESE. I AM PASSING CONTROL TO THE MODEL FOR THESE.
-  // IT SHOULD DO ALL THE CLEANUP AND DELETION.
-
+  // DO NOT DELETE THESE. PASSING DELETE CONTROL TO THE MODEL FOR THESE.
   Tunnelour::Component *camera = 0;
   camera = m_model->Add(new Tunnelour::Camera_Component());
   camera->Init();
-  
+
   Tunnelour::Component * game_settings = 0;
   game_settings = m_model->Add(new Tunnelour::Game_Settings_Component());
   game_settings->Init();

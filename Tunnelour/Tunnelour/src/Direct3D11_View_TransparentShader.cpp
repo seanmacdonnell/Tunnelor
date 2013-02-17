@@ -43,7 +43,7 @@ Direct3D11_View_TransparentShader::~Direct3D11_View_TransparentShader() {
   m_d3d11device = 0;
 
   // Release the transparent constant buffer.
-  if(m_transparentBuffer) {
+  if (m_transparentBuffer) {
     m_transparentBuffer->Release();
     m_transparentBuffer = 0;
   }
@@ -222,7 +222,7 @@ void Direct3D11_View_TransparentShader::Init(ID3D11Device *d3d11device, HWND *hw
                                          NULL,
                                          &m_matrixbuffer))) {
     throw Tunnelour::Exceptions::init_error("CreateBuffer Failed!");
-  } 
+  }
 
   // Create a texture sampler state description.
   // This is clamp so the sampler doesent sample beyond the size of
@@ -245,7 +245,8 @@ void Direct3D11_View_TransparentShader::Init(ID3D11Device *d3d11device, HWND *hw
     throw Tunnelour::Exceptions::init_error("samplerDesc Failed!");
   }
 
-  // Setup the description of the transparent dynamic constant buffer that is in the pixel shader.
+  // Setup the description of the transparent dynamic constant buffer
+  // that is in the pixel shader.
   transparentBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
   transparentBufferDesc.ByteWidth = sizeof(TransparentBufferType);
   transparentBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -253,7 +254,8 @@ void Direct3D11_View_TransparentShader::Init(ID3D11Device *d3d11device, HWND *hw
   transparentBufferDesc.MiscFlags = 0;
   transparentBufferDesc.StructureByteStride = 0;
 
-  // Create the constant buffer pointer so we can access the pixel shader constant buffer from within this class.
+  // Create the constant buffer pointer so we can access the pixel shader
+  // constant buffer from within this class.
   if (FAILED(m_d3d11device->CreateBuffer(&transparentBufferDesc, NULL, &m_transparentBuffer))) {
     throw Tunnelour::Exceptions::init_error("transparentBufferDesc Failed!");
   }
@@ -273,7 +275,7 @@ void Direct3D11_View_TransparentShader::Render(ID3D11DeviceContext* devicecontex
   D3D11_MAPPED_SUBRESOURCE mappedresource;
   MatrixBufferType* dataptr;
   unsigned int buffernumber;
-   TransparentBufferType* dataPtr2;
+  TransparentBufferType* dataPtr2;
 
   // Transpose the matrices to prepare them for the shader.
   D3DXMatrixTranspose(&world, &world);
@@ -311,12 +313,16 @@ void Direct3D11_View_TransparentShader::Render(ID3D11DeviceContext* devicecontex
   devicecontext->PSSetShaderResources(0, 1, &texture);
 
   // Lock the transparent constant buffer so it can be written to.
-  if (FAILED(devicecontext->Map(m_transparentBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedresource))) {
+  if (FAILED(devicecontext->Map(m_transparentBuffer,
+                                0,
+                                D3D11_MAP_WRITE_DISCARD,
+                                0,
+                                &mappedresource))) {
     throw Tunnelour::Exceptions::init_error("Map Failed!");
   }
 
   // Get a pointer to the data in the transparent constant buffer.
-  dataPtr2 = (TransparentBufferType*)mappedresource.pData;
+  dataPtr2 = reinterpret_cast<TransparentBufferType*>(mappedresource.pData);
 
   // Copy the blend amount value into the transparent constant buffer.
   dataPtr2->blendAmount = blend;
@@ -327,8 +333,11 @@ void Direct3D11_View_TransparentShader::Render(ID3D11DeviceContext* devicecontex
   // Set the position of the transparent constant buffer in the pixel shader.
   buffernumber = 0;
 
-  // Now set the texture translation constant buffer in the pixel shader with the updated values.
-  devicecontext->PSSetConstantBuffers(buffernumber, 1, &m_transparentBuffer);
+  // Now set the texture translation constant buffer in the
+  // pixel shader with the updated values.
+  devicecontext->PSSetConstantBuffers(buffernumber,
+                                      1,
+                                      &m_transparentBuffer);
 
   // Now render the prepared buffers with the shader.
   // Set the vertex input layout.

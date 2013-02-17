@@ -19,7 +19,6 @@
 #include <d3d11.h>
 #include <d3dx10math.h>
 #include <d3dx11async.h>
-#include <fstream>
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -88,8 +87,6 @@ class Direct3D11_View_TextureShader {
   ID3D11SamplerState* m_sampleState;
 
   wchar_t *m_vertexshaderfile, *m_pixelshaderfile;
-
-
 };  // class Direct3D11_View_TextureShader
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_DIRECT3D11_VIEW_COLORSHADER_H_

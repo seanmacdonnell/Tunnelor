@@ -46,10 +46,10 @@ void Debug_Init_Controller::Run() {
   Tunnelour::Component *camera = 0;
   camera = m_model->Add(new Tunnelour::Camera_Component());
   camera->Init();
-  
+
   Tunnelour::Component *bitmap = 0;
   bitmap = m_model->Add(new Tunnelour::Debug_Bitmap());
-  static_cast<Tunnelour::Debug_Bitmap*>(bitmap)->SetPosition(new D3DXVECTOR3(50, 50, -1));  
+  static_cast<Tunnelour::Debug_Bitmap*>(bitmap)->SetPosition(new D3DXVECTOR3(50, 50, -1));
   static_cast<Tunnelour::Debug_Bitmap*>(bitmap)->GetTexture()->transparency = 0.8f;
   bitmap = m_model->Add(new Tunnelour::Debug_Bitmap());
   static_cast<Tunnelour::Debug_Bitmap*>(bitmap)->SetPosition(new D3DXVECTOR3(-50, -50, 0));
@@ -66,8 +66,8 @@ void Debug_Init_Controller::Run() {
   static_cast<Tunnelour::Debug_Text*>(text)->SetPosition(new D3DXVECTOR3(10.0f, 10.0f, -1.2f));
   text = m_model->Add(new Tunnelour::Debug_Text());
   static_cast<Tunnelour::Debug_Text*>(text)->SetPosition(new D3DXVECTOR3(0.0f, 0.0f, -1.3f));
-  static_cast<Tunnelour::Debug_Text*>(text)->GetText()->text = "TWO";
-  
+  static_cast<Tunnelour::Debug_Text*>(text)->GetText()->text = "111111111111111111111111111111111111111111111111111111111111111111111";
+
   m_is_finished = true;
 }
 
