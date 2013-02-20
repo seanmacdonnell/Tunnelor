@@ -104,7 +104,7 @@ void Background_Controller::Load_Tilset_Metadata() {
   int lSize;
 
   std::wstring wtileset_path = m_game_settings->GetTilesetPath();
-  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Dirt_Tileset_4_0.txt");
+  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Debug_Tileset_0_0.txt");
 
   // Open Font File as a text file
   if (fopen_s(&pFile, m_metadata_file_path.c_str(), "r") != 0) {
@@ -328,7 +328,7 @@ Tunnelour::Tile_Bitmap* Background_Controller::Create_Tile() {
   Tileset background_tileset;
   std::list<Tileset>::iterator tileset;
   for (tileset = m_metadata.tilesets.begin(); tileset != m_metadata.tilesets.end(); tileset++) {
-    if (tileset->type.compare("Background")) {
+    if (tileset->type.compare("Background") == 0) {
       background_tileset = *tileset;
     }
   }
@@ -354,7 +354,7 @@ Tunnelour::Tile_Bitmap* Background_Controller::Create_Tile() {
 
   int random_variable = rand() % background_32x32_line.number_of_tiles;
 
-  tile->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(random_variable*(background_32x32_line.tile_size_x)),
+  tile->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(random_variable*(background_32x32_line.tile_size_x) + static_cast<float>(background_32x32_line.top_left_x)),
                                                       static_cast<float>(background_32x32_line.top_left_y));
 
   tile->SetSize(new D3DXVECTOR2(128, 128));

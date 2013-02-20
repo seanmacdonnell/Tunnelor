@@ -138,6 +138,12 @@
     <ClCompile Include="src\View_Composite.cc">
       <Filter>Source Files\View</Filter>
     </ClCompile>
+    <ClCompile Include="src\Middleground_Controller.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Middleground_Controller_Mutator.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Debug_Bitmap.h">
@@ -235,6 +241,12 @@
     </ClInclude>
     <ClInclude Include="include\String_Helper.h">
       <Filter>Include Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Middleground_Controller.h">
+      <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Middleground_Controller_Mutator.h">
+      <Filter>Include Files\Controllers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
