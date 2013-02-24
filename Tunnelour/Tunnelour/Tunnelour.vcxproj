@@ -90,9 +90,6 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Component_ID.cc" />
     <ClCompile Include="src\Controller_Composite.cc" />
     <ClCompile Include="src\Controller.cc" />
-    <ClCompile Include="src\Debug_Bitmap.cc" />
-    <ClCompile Include="src\Debug_Init_Controller.cc" />
-    <ClCompile Include="src\Debug_Text.cc" />
     <ClCompile Include="src\Direct3D11_View.cc" />
     <ClCompile Include="src\Direct3D11_View_FontShader.cpp" />
     <ClCompile Include="src\Direct3D11_View_Mutator.cc" />
@@ -106,7 +103,6 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Bitmap_Component.cc" />
     <ClCompile Include="src\Middleground_Controller.cc" />
     <ClCompile Include="src\Middleground_Controller_Mutator.cc" />
-    <ClCompile Include="src\SeaFloorSquare.cc" />
     <ClCompile Include="src\Text_Component.cc" />
     <ClCompile Include="src\Tile_Bitmap.cc" />
     <ClCompile Include="src\Tunnelour_Controller.cc" />
@@ -124,9 +120,6 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Component_ID.h" />
     <ClInclude Include="include\Controller_Composite.h" />
     <ClInclude Include="include\Controller.h" />
-    <ClInclude Include="include\Debug_Bitmap.h" />
-    <ClInclude Include="include\Debug_Init_Controller.h" />
-    <ClInclude Include="include\Debug_Text.h" />
     <ClInclude Include="include\Direct3D11_View.h" />
     <ClInclude Include="include\Direct3D11_View_FontShader.h" />
     <ClInclude Include="include\Direct3D11_View_Mutator.h" />
@@ -141,7 +134,6 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Bitmap_Component.h" />
     <ClInclude Include="include\Middleground_Controller.h" />
     <ClInclude Include="include\Middleground_Controller_Mutator.h" />
-    <ClInclude Include="include\SeaFloorSquare.h" />
     <ClInclude Include="include\String_Helper.h" />
     <ClInclude Include="include\Text_Component.h" />
     <ClInclude Include="include\Tile_Bitmap.h" />
@@ -158,6 +150,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <None Include="resource\Direct3D11_View_TexturePixelShader.ps" />
     <None Include="resource\Direct3D11_View_TextureVertexShader.vs" />
     <None Include="resource\Direct3D11_View_TransparentVertexShader.vs" />
+    <None Include="resource\tilesets\Debug_Tileset_0_0.txt" />
     <None Include="resource\tilesets\Dirt_Tileset_4_0.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -81,7 +81,7 @@ class Text_Component: public Tunnelour::Bitmap_Component {
   //---------------------------------------------------------------------------
   // Description : Initialise this Component
   //---------------------------------------------------------------------------
-  virtual void Init(ID3D11Device * const d3d11device);
+  virtual void Init();
 
   //---------------------------------------------------------------------------
   // Description : Retrives a pointer to the font struct for this compoent
@@ -106,7 +106,6 @@ class Text_Component: public Tunnelour::Bitmap_Component {
   // Description : Inits this components frame stucture
   //---------------------------------------------------------------------------
   void Create_String_Frame();
-  void Load_Font_Texture();
 };  // class Text_Component
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_TEXT_COMPONENT_H_

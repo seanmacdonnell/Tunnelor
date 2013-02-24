@@ -22,8 +22,6 @@ namespace Tunnelour {
 // public:
 //------------------------------------------------------------------------------
 Frame_Component::Frame_Component(): Component() {
-  m_d3d11device = 0;
-
   m_frame = new Tunnelour::Frame_Component::Frame();
   m_frame->vertex_buffer = 0;
   m_frame->vertex_count = 0;
@@ -63,8 +61,7 @@ Frame_Component::~Frame_Component() {
 }
 
 //------------------------------------------------------------------------------
-void Frame_Component::Init(ID3D11Device * const d3d11device) {
-  m_d3d11device = d3d11device;
+void Frame_Component::Init() {
 
   m_is_initialised = true;
 }

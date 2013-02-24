@@ -41,7 +41,7 @@ class Tile_Bitmap: public Tunnelour::Bitmap_Component {
   //---------------------------------------------------------------------------
   // Description : Initialise this Component
   //---------------------------------------------------------------------------
-  virtual void Init(ID3D11Device * const d3d11device);
+  virtual void Init();
 
  protected:
 
@@ -50,11 +50,6 @@ class Tile_Bitmap: public Tunnelour::Bitmap_Component {
   // Description : Inits this components frame stucture
   //---------------------------------------------------------------------------
   void Init_Frame();
-
-  //---------------------------------------------------------------------------
-  // Description : Inits this components texture stucture
-  //---------------------------------------------------------------------------
-  void Init_Texture();
 };  // class Tile_Bitmap
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_TILE_BITMAP_H_

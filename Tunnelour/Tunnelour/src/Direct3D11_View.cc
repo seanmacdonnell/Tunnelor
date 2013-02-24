@@ -705,12 +705,120 @@ void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX 
   for (std::list<Tunnelour::Component*>::const_iterator iterator = layer.begin(), end = layer.end(); iterator != end; ++iterator) {
     if ((*iterator)->GetType().compare("Bitmap_Component") == 0) {
       Tunnelour::Bitmap_Component *bitmap = static_cast<Tunnelour::Bitmap_Component*>(*iterator);
-      if (!bitmap->IsInitialised()) { bitmap->Init(m_device); }
+      if (!bitmap->IsInitialised()) {
+        bitmap->Init(); 
+
+        D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
+        D3D11_SUBRESOURCE_DATA vertexData, indexData;
+
+        // Set up the description of the static vertex buffer.
+        vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+        vertexBufferDesc.ByteWidth = sizeof(Frame_Component::Vertex_Type) * bitmap->GetFrame()->vertex_count;
+        vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        vertexBufferDesc.MiscFlags = 0;
+        vertexBufferDesc.StructureByteStride = 0;
+
+        // Give the subresource structure a pointer to the vertex data.
+        vertexData.pSysMem = bitmap->GetFrame()->vertices;
+        vertexData.SysMemPitch = 0;
+        vertexData.SysMemSlicePitch = 0;
+
+        // Now create the vertex buffer.
+        if (FAILED(m_device->CreateBuffer(&vertexBufferDesc,
+                                          &vertexData,
+                                          &(bitmap->GetFrame()->vertex_buffer)))) {
+          throw Tunnelour::Exceptions::init_error("CreateBuffer (vertex_buffer) Failed!");
+        }
+
+        // Set up the description of the static index buffer.
+        indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+        indexBufferDesc.ByteWidth = sizeof(unsigned int) * bitmap->GetFrame()->index_count;
+        indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+        indexBufferDesc.CPUAccessFlags = 0;
+        indexBufferDesc.MiscFlags = 0;
+        indexBufferDesc.StructureByteStride = 0;
+
+        // Give the subresource structure a pointer to the index data.
+        indexData.pSysMem = bitmap->GetFrame()->indices;
+        indexData.SysMemPitch = 0;
+        indexData.SysMemSlicePitch = 0;
+
+        // Create the index buffer.
+        if (FAILED(m_device->CreateBuffer(&indexBufferDesc,
+                                          &indexData,
+                                          &(bitmap->GetFrame()->index_buffer)))) {
+          throw Tunnelour::Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
+        }
+
+        // Load the texture in.
+        if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_device,
+                                                          bitmap->GetTexture()->texture_path.c_str(),
+                                                          NULL,
+                                                          NULL,
+                                                          &bitmap->GetTexture()->texture,
+                                                          NULL)))  {
+          throw Tunnelour::Exceptions::init_error("Loading texture file Failed!");
+        }
+      }
       Render_Bitmap(bitmap, viewmatrix);
     }
     if ((*iterator)->GetType().compare("Text_Component") == 0) {
       Tunnelour::Text_Component *text = static_cast<Tunnelour::Text_Component*>(*iterator);
-      if (!text->IsInitialised()) { text->Init(m_device); }
+      if (!text->IsInitialised()) {
+        text->Init(); 
+        D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
+        D3D11_SUBRESOURCE_DATA vertexData, indexData;
+
+        // Set up the description of the static vertex buffer.
+        vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+        vertexBufferDesc.ByteWidth = sizeof(Text_Component::Vertex_Type) * text->GetFrame()->vertex_count;
+        vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        vertexBufferDesc.MiscFlags = 0;
+        vertexBufferDesc.StructureByteStride = 0;
+
+        // Give the subresource structure a pointer to the vertex data.
+        vertexData.pSysMem = text->GetFrame()->vertices;
+        vertexData.SysMemPitch = 0;
+        vertexData.SysMemSlicePitch = 0;
+
+        // Now create the vertex buffer.
+        if (FAILED(m_device->CreateBuffer(&vertexBufferDesc,
+                                                &vertexData,
+                                                &(text->GetFrame()->vertex_buffer)))) {
+          throw Tunnelour::Exceptions::init_error("CreateBuffer (vertex_buffer) Failed!");
+        }
+
+        // Set up the description of the static index buffer.
+        indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+        indexBufferDesc.ByteWidth = sizeof(unsigned int) * text->GetFrame()->index_count;
+        indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+        indexBufferDesc.CPUAccessFlags = 0;
+        indexBufferDesc.MiscFlags = 0;
+        indexBufferDesc.StructureByteStride = 0;
+
+        // Give the subresource structure a pointer to the index data.
+        indexData.pSysMem = text->GetFrame()->indices;
+        indexData.SysMemPitch = 0;
+        indexData.SysMemSlicePitch = 0;
+
+        // Create the index buffer.
+        if (FAILED(m_device->CreateBuffer(&indexBufferDesc,
+                                                &indexData,
+                                                &(text->GetFrame()->index_buffer)))) {
+          throw Tunnelour::Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
+        }
+
+        if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_device,
+                                                          text->GetTexture()->texture_path.c_str(),
+                                                          NULL,
+                                                          NULL,
+                                                          &text->GetTexture()->texture,
+                                                          NULL)))  {
+          throw Tunnelour::Exceptions::init_error("Loading font file failed!");
+        }
+      }
       Render_Text(text, viewmatrix);
     }
   }

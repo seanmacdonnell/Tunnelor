@@ -32,11 +32,8 @@ Tile_Bitmap::~Tile_Bitmap() {
 }
 
 //------------------------------------------------------------------------------
-void Tile_Bitmap::Init(ID3D11Device * const d3d11device) {
-  Bitmap_Component::Init(d3d11device);
-
+void Tile_Bitmap::Init() {
   Init_Frame();
-  Init_Texture();
 
   m_is_initialised = true;
 }
@@ -50,8 +47,6 @@ void Tile_Bitmap::Init(ID3D11Device * const d3d11device) {
 //------------------------------------------------------------------------------
 void Tile_Bitmap::Init_Frame() {
   float left, right, top, bottom;
-  D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
-  D3D11_SUBRESOURCE_DATA vertexData, indexData;
 
   // Set the number of vertices in the vertex array.
   m_frame->vertex_count = 6;
@@ -119,58 +114,5 @@ void Tile_Bitmap::Init_Frame() {
   // Bottom right
   m_frame->vertices[5].position = D3DXVECTOR3(right, bottom, 0.0f);
   m_frame->vertices[5].texture = m_frame->vertices[1].texture;
-
-  // Set up the description of the static vertex buffer.
-  vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-  vertexBufferDesc.ByteWidth = sizeof(Vertex_Type) * m_frame->vertex_count;
-  vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-  vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-  vertexBufferDesc.MiscFlags = 0;
-  vertexBufferDesc.StructureByteStride = 0;
-
-  // Give the subresource structure a pointer to the vertex data.
-  vertexData.pSysMem = m_frame->vertices;
-  vertexData.SysMemPitch = 0;
-  vertexData.SysMemSlicePitch = 0;
-
-  // Now create the vertex buffer.
-  if (FAILED(m_d3d11device->CreateBuffer(&vertexBufferDesc,
-                                         &vertexData,
-                                         &(m_frame->vertex_buffer)))) {
-    throw Tunnelour::Exceptions::init_error("CreateBuffer (vertex_buffer) Failed!");
-  }
-
-  // Set up the description of the static index buffer.
-  indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-  indexBufferDesc.ByteWidth = sizeof(unsigned int) * m_frame->index_count;
-  indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-  indexBufferDesc.CPUAccessFlags = 0;
-  indexBufferDesc.MiscFlags = 0;
-  indexBufferDesc.StructureByteStride = 0;
-
-  // Give the subresource structure a pointer to the index data.
-  indexData.pSysMem = m_frame->indices;
-  indexData.SysMemPitch = 0;
-  indexData.SysMemSlicePitch = 0;
-
-  // Create the index buffer.
-  if (FAILED(m_d3d11device->CreateBuffer(&indexBufferDesc,
-                                         &indexData,
-                                         &(m_frame->index_buffer)))) {
-    throw Tunnelour::Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
-  }
-}
-
-//------------------------------------------------------------------------------
-void Tile_Bitmap::Init_Texture() {
-  // Load the texture in.
-  if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_d3d11device,
-                                                    m_texture->texture_path.c_str(),
-                                                    NULL,
-                                                    NULL,
-                                                    &m_texture->texture,
-                                                    NULL)))  {
-    throw Tunnelour::Exceptions::init_error("Loading texture file Failed!");
-  }
 }
 }  // namespace Tunnelour

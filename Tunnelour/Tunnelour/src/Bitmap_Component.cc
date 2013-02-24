@@ -43,8 +43,7 @@ Bitmap_Component::~Bitmap_Component()  {
 }
 
 //------------------------------------------------------------------------------
-void Bitmap_Component::Init(ID3D11Device * const d3d11device) {
-  Frame_Component::Init(d3d11device);
+void Bitmap_Component::Init() {
   m_is_initialised = true;
 }
 

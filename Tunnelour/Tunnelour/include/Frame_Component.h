@@ -59,7 +59,7 @@ class Frame_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   // Description : Initialise this Component
   //---------------------------------------------------------------------------
-  virtual void Init(ID3D11Device * const d3d11device);
+  virtual void Init();
 
   //---------------------------------------------------------------------------
   // Description : Accessor for the Frame
@@ -111,7 +111,6 @@ class Frame_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   // Description : Class variables
   //---------------------------------------------------------------------------
-  ID3D11Device * m_d3d11device;
   D3DXVECTOR3 m_position;
   D3DXVECTOR3 m_scale;
   D3DXVECTOR2 m_size;

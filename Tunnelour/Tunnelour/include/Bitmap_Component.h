@@ -50,7 +50,7 @@ class Bitmap_Component: public Tunnelour::Frame_Component {
   //---------------------------------------------------------------------------
   // Description : Initialise this Component
   //---------------------------------------------------------------------------
-  virtual void Init(ID3D11Device * const d3d11device);
+  virtual void Init();
 
   //---------------------------------------------------------------------------
   // Description : Accessor for the Texture
