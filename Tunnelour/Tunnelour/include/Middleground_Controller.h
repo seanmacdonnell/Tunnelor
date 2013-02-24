@@ -28,7 +28,7 @@ namespace Tunnelour {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
 //  Description : This controller is responsible for the generation of the
-//                background (Layer 0)
+//                middleground (Layer 0)
 //-----------------------------------------------------------------------------
 class Middleground_Controller: public Tunnelour::Controller {
  public:
@@ -80,18 +80,22 @@ class Middleground_Controller: public Tunnelour::Controller {
  protected:
 
  private:
+  void Tile_Tunnel();
+  void Tile_Middleground();
   void Load_Tilset_Metadata();
-  Tunnelour::Tile_Bitmap* Create_Tile();
-
+  Tunnelour::Tile_Bitmap* Create_Tile(int base_tile_size, int resised_tile_size);
+  bool DoTheseTilesCollide(Tunnelour::Tile_Bitmap* TileA, Tunnelour::Tile_Bitmap* TileB);
 
   Tunnelour::Tile_Bitmap *m_bitmap;
   Tileset_Metadata m_metadata;
-  std::vector<std::vector<Tunnelour::Tile_Bitmap*>> m_background_tiles;
+  std::vector<std::vector<Tunnelour::Tile_Bitmap*>> m_middleground_tiles;
+  std::vector<std::vector<Tunnelour::Tile_Bitmap*>> m_tunnel_tiles;
 
   Tunnelour::Game_Settings_Component* m_game_settings;
-  bool m_has_init_background_been_generated;
+  bool m_has_init_middleground_been_generated, m_has_init_tunnel_been_generated;
 
   std::string m_metadata_file_path;
+  int m_tunnel_x_size;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_MIDDLEGROUND_CONTROLLER_H_

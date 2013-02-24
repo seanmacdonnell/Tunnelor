@@ -95,9 +95,8 @@ void Tile_Bitmap::Init_Frame() {
   // First triangle
   // Top left
   m_frame->vertices[0].position = D3DXVECTOR3(left, top, 0.0f);
-  m_frame->vertices[0].texture =  D3DXVECTOR2(
-    m_texture->top_left_position.x / m_texture->texture_size.x,
-    m_texture->top_left_position.y / m_texture->texture_size.y);
+  m_frame->vertices[0].texture =  D3DXVECTOR2(m_texture->top_left_position.x / m_texture->texture_size.x,
+                                              m_texture->top_left_position.y / m_texture->texture_size.y);
 
   // Bottom right
   m_frame->vertices[1].position = D3DXVECTOR3(right, bottom, 0.0f);
@@ -115,9 +114,8 @@ void Tile_Bitmap::Init_Frame() {
   m_frame->vertices[3].texture = m_frame->vertices[0].texture;
   // Top right
   m_frame->vertices[4].position = D3DXVECTOR3(right, top, 0.0f);
-  m_frame->vertices[4].texture = D3DXVECTOR2(
-    (m_texture->tile_size.x + m_texture->top_left_position.x) / m_texture->texture_size.x,
-    m_texture->top_left_position.y / m_texture->texture_size.y);
+  m_frame->vertices[4].texture = D3DXVECTOR2((m_texture->tile_size.x + m_texture->top_left_position.x) / m_texture->texture_size.x,
+                                              m_texture->top_left_position.y / m_texture->texture_size.y);
   // Bottom right
   m_frame->vertices[5].position = D3DXVECTOR3(right, bottom, 0.0f);
   m_frame->vertices[5].texture = m_frame->vertices[1].texture;

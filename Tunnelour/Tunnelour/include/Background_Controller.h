@@ -81,8 +81,7 @@ class Background_Controller: public Tunnelour::Controller {
 
  private:
   void Load_Tilset_Metadata();
-  Tunnelour::Tile_Bitmap* Create_Tile();
-
+  Tunnelour::Tile_Bitmap* Create_Tile(int base_tile_size, int resised_tile_size);
 
   Tunnelour::Tile_Bitmap *m_bitmap;
   Tileset_Metadata m_metadata;
