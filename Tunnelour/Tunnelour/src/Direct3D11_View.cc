@@ -139,6 +139,13 @@ Direct3D11_View::~Direct3D11_View() {
       m_alphaEnableBlendingState = NULL;
     }
   }
+
+  if (!m_texture_map.empty()) {
+    for (std::map<std::wstring, ID3D11ShaderResourceView*>::iterator texture = m_texture_map.begin(); texture != m_texture_map.end(); texture++) {
+      texture->second->Release();
+      texture->second = 0;
+    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -751,14 +758,21 @@ void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX 
           throw Tunnelour::Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
         }
 
-        // Load the texture in.
-        if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_device,
-                                                          bitmap->GetTexture()->texture_path.c_str(),
-                                                          NULL,
-                                                          NULL,
-                                                          &bitmap->GetTexture()->texture,
-                                                          NULL)))  {
-          throw Tunnelour::Exceptions::init_error("Loading texture file Failed!");
+        std::map<std::wstring, ID3D11ShaderResourceView*>::iterator stored_texture;
+        stored_texture = m_texture_map.find(bitmap->GetTexture()->texture_path);
+        if (stored_texture == m_texture_map.end()) {
+          ID3D11ShaderResourceView* texture;
+          if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_device,
+                                                            bitmap->GetTexture()->texture_path.c_str(),
+                                                            NULL,
+                                                            NULL,
+                                                            &texture,
+                                                            NULL)))  {
+            throw Tunnelour::Exceptions::init_error("Loading font file failed!");
+          }
+          m_texture_map[bitmap->GetTexture()->texture_path]=texture;
+        } else {
+          bitmap->GetTexture()->texture = (*stored_texture).second;
         }
       }
       Render_Bitmap(bitmap, viewmatrix);
@@ -810,13 +824,21 @@ void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX 
           throw Tunnelour::Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
         }
 
-        if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_device,
-                                                          text->GetTexture()->texture_path.c_str(),
-                                                          NULL,
-                                                          NULL,
-                                                          &text->GetTexture()->texture,
-                                                          NULL)))  {
-          throw Tunnelour::Exceptions::init_error("Loading font file failed!");
+        std::map<std::wstring, ID3D11ShaderResourceView*>::iterator stored_texture;
+        stored_texture = m_texture_map.find(text->GetTexture()->texture_path);
+        if (stored_texture == m_texture_map.end()) {
+          ID3D11ShaderResourceView* texture;
+          if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_device,
+                                                            text->GetTexture()->texture_path.c_str(),
+                                                            NULL,
+                                                            NULL,
+                                                            &texture,
+                                                            NULL)))  {
+            throw Tunnelour::Exceptions::init_error("Loading font file failed!");
+          }
+          m_texture_map[text->GetTexture()->texture_path]=texture;
+        } else {
+          text->GetTexture()->texture = (*stored_texture).second;
         }
       }
       Render_Text(text, viewmatrix);

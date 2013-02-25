@@ -28,6 +28,7 @@
 
 #include <windows.h>
 #include <list>
+#include <map>
 
 #include "Component_Composite.h"
 #include "View.h"
@@ -157,6 +158,8 @@ class Direct3D11_View : public Tunnelour::View {
   // Description : Model Components
   //---------------------------------------------------------------------------
   Tunnelour::Game_Settings_Component* m_game_settings;
+  std::map<std::wstring, ID3D11ShaderResourceView*> m_texture_map;
+  
 };
 }  // namespace Tunnelour
 

@@ -124,7 +124,7 @@ class Game_Settings_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   // Description : Mutator for the Screen Depth
   //---------------------------------------------------------------------------
-  void SetTileMultiplicationFactor(float tile_multiplication_factor);
+  void SetTileSizeMultiplicationFactor(float tile_multiplication_factor);
 
   //---------------------------------------------------------------------------
   // Description : Accessor for the Screen Near
@@ -144,7 +144,7 @@ class Game_Settings_Component: public Tunnelour::Component {
   float m_screen_near;
   D3DXCOLOR m_color;
   std::wstring m_tileset_path;
-  float m_tile_multiplication_factor;
+  float m_tile_size_multiplication_factor;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_COLOR_COMPONENT_H_
