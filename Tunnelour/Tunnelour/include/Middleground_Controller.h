@@ -84,7 +84,8 @@ class Middleground_Controller: public Tunnelour::Controller {
   void Tile_Middleground();
   void Load_Tilset_Metadata();
   Tunnelour::Tile_Bitmap* Create_Tile(int base_tile_size, int resised_tile_size);
-  bool DoTheseTilesCollide(Tunnelour::Tile_Bitmap* TileA, Tunnelour::Tile_Bitmap* TileB);
+  bool DoTheseTilesCollide(Tunnelour::Tile_Bitmap* TileA, Tunnelour::Tile_Bitmap* TileB, D3DXVECTOR2 &tile_a_output_colision);
+  bool WhereDoThesePointsIntersect( D3DXVECTOR2 p1, D3DXVECTOR2 p2, D3DXVECTOR2 p3, D3DXVECTOR2 p4, D3DXVECTOR2 &output);
 
   Tunnelour::Tile_Bitmap *m_bitmap;
   Tileset_Metadata m_metadata;

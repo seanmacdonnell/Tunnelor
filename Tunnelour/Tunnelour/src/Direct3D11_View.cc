@@ -712,11 +712,10 @@ void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX 
   for (std::list<Tunnelour::Component*>::const_iterator iterator = layer.begin(), end = layer.end(); iterator != end; ++iterator) {
     if ((*iterator)->GetType().compare("Bitmap_Component") == 0) {
       Tunnelour::Bitmap_Component *bitmap = static_cast<Tunnelour::Bitmap_Component*>(*iterator);
-      if (!bitmap->IsInitialised()) {
-        bitmap->Init(); 
-
-        D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
-        D3D11_SUBRESOURCE_DATA vertexData, indexData;
+      if (!bitmap->IsInitialised()) {  bitmap->Init(); }
+      if (bitmap->GetFrame()->vertex_buffer == 0) {
+        D3D11_BUFFER_DESC vertexBufferDesc;
+        D3D11_SUBRESOURCE_DATA vertexData;
 
         // Set up the description of the static vertex buffer.
         vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -737,6 +736,10 @@ void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX 
                                           &(bitmap->GetFrame()->vertex_buffer)))) {
           throw Tunnelour::Exceptions::init_error("CreateBuffer (vertex_buffer) Failed!");
         }
+      }
+      if (bitmap->GetFrame()->index_buffer == 0) {
+        D3D11_BUFFER_DESC indexBufferDesc;
+        D3D11_SUBRESOURCE_DATA indexData;
 
         // Set up the description of the static index buffer.
         indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -757,7 +760,8 @@ void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX 
                                           &(bitmap->GetFrame()->index_buffer)))) {
           throw Tunnelour::Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
         }
-
+      }
+      if (bitmap->GetTexture()->texture == 0) { 
         std::map<std::wstring, ID3D11ShaderResourceView*>::iterator stored_texture;
         stored_texture = m_texture_map.find(bitmap->GetTexture()->texture_path);
         if (stored_texture == m_texture_map.end()) {
@@ -779,10 +783,10 @@ void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX 
     }
     if ((*iterator)->GetType().compare("Text_Component") == 0) {
       Tunnelour::Text_Component *text = static_cast<Tunnelour::Text_Component*>(*iterator);
-      if (!text->IsInitialised()) {
-        text->Init(); 
-        D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
-        D3D11_SUBRESOURCE_DATA vertexData, indexData;
+      if (!text->IsInitialised()) {  text->Init(); }
+      if (text->GetFrame()->vertex_buffer == 0) {
+        D3D11_BUFFER_DESC vertexBufferDesc;
+        D3D11_SUBRESOURCE_DATA vertexData;
 
         // Set up the description of the static vertex buffer.
         vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -803,7 +807,10 @@ void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX 
                                                 &(text->GetFrame()->vertex_buffer)))) {
           throw Tunnelour::Exceptions::init_error("CreateBuffer (vertex_buffer) Failed!");
         }
-
+      }
+      if (text->GetFrame()->index_buffer == 0) {
+        D3D11_BUFFER_DESC indexBufferDesc;
+        D3D11_SUBRESOURCE_DATA indexData;
         // Set up the description of the static index buffer.
         indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
         indexBufferDesc.ByteWidth = sizeof(unsigned int) * text->GetFrame()->index_count;
@@ -823,7 +830,8 @@ void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX 
                                                 &(text->GetFrame()->index_buffer)))) {
           throw Tunnelour::Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
         }
-
+      }
+      if (text->GetTexture()->texture == 0) { 
         std::map<std::wstring, ID3D11ShaderResourceView*>::iterator stored_texture;
         stored_texture = m_texture_map.find(text->GetTexture()->texture_path);
         if (stored_texture == m_texture_map.end()) {
