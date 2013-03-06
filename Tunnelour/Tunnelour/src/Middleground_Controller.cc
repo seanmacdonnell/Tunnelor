@@ -173,15 +173,22 @@ void Middleground_Controller::Tile_Middleground() {
   if (!m_has_init_middleground_been_generated) {
     std::vector<Tunnelour::Tile_Bitmap*> middleground_tiles;
     middleground_tiles = GenerateMiddlegroundTiles();
-    // Check for Collisions with the Tunnel Tiles
-    
-    // You changed this to a for loop but you need to remove the "deletion" out of the function so it does this
-      // While there are collisions repeat 
-        // Detect Collision and make list of collision tiles - one loop
 
+    // Check for Collisions with the Tunnel Tiles
     std::vector<Collision> collisions;
     while (DoTheseTilesetsHaveCollisions(&middleground_tiles, &m_tunnel_tiles, &collisions)) {
       // For each collision create new tiles and add them to the collection
+      for (std::vector<Collision>::iterator collision = collisions.begin(); collision != collisions.end() ; collision++) {
+        // If Collision Resize the tile out of the collision zone
+        Tunnelour::Tile_Bitmap* boundary = GetResizedBoundarySize(collision->a_tile, collision->b_tile, collision->a_tile_collision_point);
+
+        // Generate Replacement tiles within that boundary
+        std::vector<Tunnelour::Tile_Bitmap*> new_tiles = GenerateBoundayFittingTiles(boundary, collision->b_tile, collision->a_tile_collision_point);
+
+        for (std::vector<Tunnelour::Tile_Bitmap*>::iterator new_tile = new_tiles.begin(); new_tile != new_tiles.end(); new_tile++) {
+          middleground_tiles.push_back(*new_tile);
+        }
+      }
 
       // Remove the tiles - one loop
       for (std::vector<Collision>::iterator collision = collisions.begin(); collision != collisions.end() ; collision++) {
@@ -195,36 +202,7 @@ void Middleground_Controller::Tile_Middleground() {
         }
       }
     }
-    /*
-    for (std::vector<Tunnelour::Tile_Bitmap*>::size_type tile_index = 0; tile_index < middleground_tiles.size(); tile_index++) {
-      for (std::vector<std::vector<Tunnelour::Tile_Bitmap*>>::iterator tunnel_line = m_tunnel_tiles.begin(); tunnel_line != m_tunnel_tiles.end(); tunnel_line++) {
-        for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tunnel_tile = tunnel_line->begin(); tunnel_tile != tunnel_line->end(); tunnel_tile++) {
-          D3DXVECTOR2 tile_collision_point;
-          if (DoTheseTilesCollide(middleground_tiles[tile_index], *tunnel_tile, tile_collision_point)) {
-            // If Collision Resize the tile out of the collision zone
-            //Tunnelour::Tile_Bitmap* boundary = GetResizedBoundarySize(*tile, *tunnel_tile, tile_collision_point);
 
-            // Generate Replacement tiles within that boundary
-            //std::vector<Tunnelour::Tile_Bitmap*> new_tiles = GenerateBoundayFittingTiles(boundary, *tunnel_tile, tile_collision_point);
-
-            // Remove the original tile
-            delete middleground_tiles[tile_index];
-            middleground_tiles.erase(middleground_tiles.begin() + (tile_index -1));
-
-            // Add the new tiles to the middleground_tiles
-            //for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tile = new_tiles.begin() ; tile != new_tiles.end(); ++tile) {
-            //  middleground_tiles.push_back(*tile);
-            //}
-
-            // This is not very efficient and should be replaced with a loop
-            // Because I am adding tiles to the vector it is invalidating the iterator
-            // I am resolving this by setting the iterator back to the begining when I add new tiles
-            //tile = middleground_tiles.begin();
-          }
-        }
-      }
-    }
-    */
     // Add tiles to Model
     for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tile = middleground_tiles.begin(); tile != middleground_tiles.end(); ++tile) {
       m_model->Add(*tile);
@@ -337,10 +315,10 @@ Tunnelour::Tile_Bitmap* Middleground_Controller::GetResizedBoundarySize(Tunnelou
 
   if (tile_boundary_top == tile_collision_point.y) {
     // Resize Top Down
-    tile_boundary_top = tunnel_tile_bottom;
+    tile_boundary_top = tunnel_tile_bottom - 2;
   } else if (tile_boundary_bottom ==  tile_collision_point.y) {
     // Resize Bottom Up
-    tile_boundary_bottom = tunnel_tile_top;
+    tile_boundary_bottom = tunnel_tile_top + 2;
   }
 
   Tunnelour::Tile_Bitmap* boundary_tile = new Tunnelour::Tile_Bitmap();
@@ -377,9 +355,9 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFit
 
   bool boundary_at_top = false;
   bool boundary_at_bottom = false;
-  if (tile_bottom == tunnel_tile_top) {
+  if (tile_bottom == tunnel_tile_top + 2) {
     boundary_at_bottom = true;
-  } else if (tile_top ==  tunnel_tile_bottom) {
+  } else if (tile_top ==  tunnel_tile_bottom - 2) {
     boundary_at_top = true;
   }
 
@@ -407,7 +385,7 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFit
           div_y_result =  div(div_y_result.rem, 2 * m_game_settings->GetTileMultiplicationFactor());
           number_of_2x2_y_tiles = div_y_result.quot;
           if  (div_y_result.rem != 0) {
-            throw Tunnelour::Exceptions::run_error("New tile isn't divisable by two!");
+            //throw Tunnelour::Exceptions::run_error("New tile isn't divisable by two!");
           }
         }
       }
