@@ -37,12 +37,10 @@ Direct3D11_View::Direct3D11_View() {
   m_depth_stencil_state = NULL;
   m_depth_stencil_view = NULL;
   m_raster_state = NULL;
-  m_texture_shader = NULL;
   m_depthDisabledStencilState = NULL;
   m_alphaEnableBlendingState = NULL;
   m_alphaDisableBlendingState = NULL;
 
-  m_texture_shader = NULL;
   m_font_shader = NULL;
   m_transparent_shader = NULL;
 }
@@ -114,11 +112,6 @@ Direct3D11_View::~Direct3D11_View() {
       m_swap_chain = 0;
     }
 
-    if (m_texture_shader) {
-      delete m_texture_shader;
-      m_texture_shader = NULL;
-    }
-
     if (m_font_shader) {
       delete m_font_shader;
       m_font_shader = NULL;
@@ -178,10 +171,6 @@ void Direct3D11_View::Run() {
 
   if (!m_is_window_init) { Init_Window(); }
   if (!m_is_d3d11_init) { Init_D3D11(); }
-  if (!m_texture_shader) {
-    m_texture_shader = new Tunnelour::Direct3D11_View_TextureShader();
-    m_texture_shader->Init(m_device, &m_hwnd);
-  }
   if (!m_font_shader) {
     m_font_shader = new Tunnelour::Direct3D11_View_FontShader();
     m_font_shader->Init(m_device, &m_hwnd);
@@ -894,7 +883,7 @@ void Direct3D11_View::Render_Bitmap(Tunnelour::Bitmap_Component* bitmap,
   D3DXMatrixIdentity(&ScaleMatrix);
 
   // Offset from centre
-  D3DXVECTOR3 SubsetOffsetMatrix = bitmap->GetCentre();
+  D3DXVECTOR3 SubsetOffsetMatrix = bitmap->GetFrameCentre();
   D3DXMatrixTranslation(&OffsetMatrix,
                         -1 * SubsetOffsetMatrix.x,
                         -1 * SubsetOffsetMatrix.y,
@@ -959,7 +948,7 @@ void Direct3D11_View::Render_Text(Tunnelour::Text_Component *text,
   D3DXMATRIX ScaleMatrix;
   D3DXMatrixIdentity(&ScaleMatrix);
 
-  D3DXVECTOR3 SubsetOffsetMatrix = text->GetCentre();
+  D3DXVECTOR3 SubsetOffsetMatrix = text->GetFrameCentre();
   D3DXMatrixTranslation(&OffsetMatrix,
                         -1 * SubsetOffsetMatrix.x,
                         -1 * SubsetOffsetMatrix.y,

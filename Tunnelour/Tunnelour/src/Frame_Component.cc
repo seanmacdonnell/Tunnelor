@@ -107,7 +107,13 @@ void Frame_Component::SetSize(D3DXVECTOR2 * const size) {
 }
 
 //---------------------------------------------------------------------------
-D3DXVECTOR3 const Frame_Component::GetCentre() {
+void Frame_Component::SetSize(const float size_x, const float size_y) {
+  m_size.x = size_x;
+  m_size.y = size_y;
+}
+
+//---------------------------------------------------------------------------
+D3DXVECTOR3 const Frame_Component::GetFrameCentre() {
   D3DXVECTOR3 centre = D3DXVECTOR3(0, 0, 0);
 
   for (int i = 0; i < m_frame->vertex_count; i++) {

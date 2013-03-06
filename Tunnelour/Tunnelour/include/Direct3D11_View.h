@@ -150,7 +150,6 @@ class Direct3D11_View : public Tunnelour::View {
   //---------------------------------------------------------------------------
   // Description : Shaders
   //---------------------------------------------------------------------------
-  Tunnelour::Direct3D11_View_TextureShader * m_texture_shader;
   Tunnelour::Direct3D11_View_FontShader * m_font_shader;
   Tunnelour::Direct3D11_View_TransparentShader* m_transparent_shader;
 

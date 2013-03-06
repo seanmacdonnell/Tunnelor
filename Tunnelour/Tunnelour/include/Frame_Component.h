@@ -91,7 +91,6 @@ class Frame_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   void SetScale(D3DXVECTOR3 * const scale);
 
-
   //---------------------------------------------------------------------------
   // Description : Mutator for the Size
   //---------------------------------------------------------------------------
@@ -103,9 +102,14 @@ class Frame_Component: public Tunnelour::Component {
   void SetSize(D3DXVECTOR2 * const size);
 
   //---------------------------------------------------------------------------
+  // Description : Mutator for the Size
+  //---------------------------------------------------------------------------
+  void SetSize(const float size_x, const float size_y);
+
+  //---------------------------------------------------------------------------
   // Description : Returns the calculated centre point of the frame
   //---------------------------------------------------------------------------
-  D3DXVECTOR3 const GetCentre();
+  D3DXVECTOR3 const GetFrameCentre();
 
  protected:
   //---------------------------------------------------------------------------

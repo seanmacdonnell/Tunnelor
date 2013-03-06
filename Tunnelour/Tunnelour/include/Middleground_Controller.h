@@ -57,6 +57,13 @@ class Middleground_Controller: public Tunnelour::Controller {
     std::list<Tileset> tilesets;
   };
 
+  struct Collision {
+    Tunnelour::Tile_Bitmap* a_tile;
+    Tunnelour::Tile_Bitmap* b_tile;
+    D3DXVECTOR2 a_tile_collision_point;
+    D3DXVECTOR2 b_tile_collision_point;
+  };
+
   //---------------------------------------------------------------------------
   // Description : Constructor
   //---------------------------------------------------------------------------
@@ -82,10 +89,16 @@ class Middleground_Controller: public Tunnelour::Controller {
  private:
   void Tile_Tunnel();
   void Tile_Middleground();
+  std::vector<Tunnelour::Tile_Bitmap*> GenerateMiddlegroundTiles();
+  bool DoTheseTilesetsHaveCollisions(std::vector<Tunnelour::Tile_Bitmap*> *a_tileset, std::vector<std::vector<Tunnelour::Tile_Bitmap*>> *b_tileset, std::vector<Collision> *output_collisions);
+  Tunnelour::Tile_Bitmap* GetResizedBoundarySize(Tunnelour::Tile_Bitmap* tile, Tunnelour::Tile_Bitmap* tunnel_tile, D3DXVECTOR2 tile_collision_point);
+  std::vector<Tunnelour::Tile_Bitmap*> GenerateBoundayFittingTiles(Tunnelour::Tile_Bitmap* tile, Tunnelour::Tile_Bitmap* tunnel_tile, D3DXVECTOR2 tile_collision_point);
+
   void Load_Tilset_Metadata();
-  Tunnelour::Tile_Bitmap* Create_Tile(int base_tile_size, int resised_tile_size);
+  Tunnelour::Tile_Bitmap* Create_Tile(int base_tile_size, int resised_tile_size, bool isborder);
   bool DoTheseTilesCollide(Tunnelour::Tile_Bitmap* TileA, Tunnelour::Tile_Bitmap* TileB, D3DXVECTOR2 &tile_a_output_colision);
-  bool WhereDoThesePointsIntersect( D3DXVECTOR2 p1, D3DXVECTOR2 p2, D3DXVECTOR2 p3, D3DXVECTOR2 p4, D3DXVECTOR2 &output);
+  bool WhereDoThesePointsIntersect(D3DXVECTOR2 p1, D3DXVECTOR2 p2, D3DXVECTOR2 p3, D3DXVECTOR2 p4, D3DXVECTOR2 &output);
+
 
   Tunnelour::Tile_Bitmap *m_bitmap;
   Tileset_Metadata m_metadata;

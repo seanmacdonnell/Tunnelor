@@ -229,13 +229,7 @@
     <None Include="resource\Direct3D11_View_FontPixelShader.ps">
       <Filter>Resource Files\PixelShaders</Filter>
     </None>
-    <None Include="resource\Direct3D11_View_TexturePixelShader.ps">
-      <Filter>Resource Files\PixelShaders</Filter>
-    </None>
     <None Include="resource\Direct3D11_View_FontVertexShader.vs">
-      <Filter>Resource Files\VertexShaders</Filter>
-    </None>
-    <None Include="resource\Direct3D11_View_TextureVertexShader.vs">
       <Filter>Resource Files\VertexShaders</Filter>
     </None>
     <None Include="resource\Direct3D11_View_TransparentPixelShader.ps">
@@ -244,10 +238,10 @@
     <None Include="resource\Direct3D11_View_TransparentVertexShader.vs">
       <Filter>Resource Files\VertexShaders</Filter>
     </None>
-    <None Include="resource\tilesets\Dirt_Tileset_4_0.txt">
+    <None Include="resource\tilesets\Debug_Tileset_0_2.txt">
       <Filter>Resource Files\TileSets</Filter>
     </None>
-    <None Include="resource\tilesets\Debug_Tileset_0_0.txt">
+    <None Include="resource\tilesets\Dirt_Tileset_4_2.txt">
       <Filter>Resource Files\TileSets</Filter>
     </None>
   </ItemGroup>
