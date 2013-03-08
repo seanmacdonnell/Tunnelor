@@ -32,7 +32,7 @@ Middleground_Controller::Middleground_Controller() : Controller() {
   m_game_settings = 0;
   m_has_init_middleground_been_generated = false;
   m_has_init_tunnel_been_generated = false;
-  m_tunnel_x_size = 32;
+  m_tunnel_x_size = 48;
 }
 
 //------------------------------------------------------------------------------
@@ -160,7 +160,7 @@ void Middleground_Controller::Tile_Tunnel() {
          tile->SetPosition(new D3DXVECTOR3(current_x + (tile->GetSize()->x/2),
                                            current_y - (tile->GetSize()->y/2),
                                            -1)); // Middleground Z Space is -1
-         tile->GetTexture()->transparency = 1.0f;
+         tile->GetTexture()->transparency = 0.0f;
          current_x += static_cast<int>(tile->GetSize()->x);
          tile_line.push_back(tile);
       }
@@ -397,9 +397,9 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFit
   // Sort out the 1 pixel boundary line
   bool boundary_at_top = false;
   bool boundary_at_bottom = false;
-  if (tile_bottom == tunnel_tile_top + 1) {
+  if (tile_bottom == tunnel_tile_top) {
     boundary_at_bottom = true;
-  } else if (tile_top ==  tunnel_tile_bottom - 1) {
+  } else if (tile_top ==  tunnel_tile_bottom) {
     boundary_at_top = true;
   }
 
@@ -740,7 +740,6 @@ Tunnelour::Tile_Bitmap* Middleground_Controller::Create_Tile(int base_tile_size,
 //------------------------------------------------------------------------------
 bool Middleground_Controller::DoTheseTilesCollide(Tunnelour::Tile_Bitmap* TileA, Tunnelour::Tile_Bitmap* TileB, D3DXVECTOR2 &tile_a_output_colision) {
   // At least one vertex in TileA is contained in the TileB.
-
   float a_tile_left, a_tile_right, a_tile_top, a_tile_bottom;
   a_tile_left = TileA->GetPosition()->x - static_cast<float>(TileA->GetSize()->x / 2);
   a_tile_right = TileA->GetPosition()->x + static_cast<float>(TileA->GetSize()->x / 2);
@@ -753,7 +752,7 @@ bool Middleground_Controller::DoTheseTilesCollide(Tunnelour::Tile_Bitmap* TileA,
   b_tile_top = TileB->GetPosition()->y + static_cast<float>(TileB->GetSize()->x / 2);
   b_tile_bottom = TileB->GetPosition()->y - static_cast<float>(TileB->GetSize()->x / 2);
 
-  if ((a_tile_left == b_tile_left) || (a_tile_left < b_tile_left && a_tile_left > b_tile_right)) {
+  if ((a_tile_left == b_tile_left) || (a_tile_left > b_tile_left && a_tile_left < b_tile_right)) {
     // Horrizontal Collision
     if (a_tile_top < b_tile_top && a_tile_top > b_tile_bottom) {
       // Vertical Collision!
@@ -767,14 +766,14 @@ bool Middleground_Controller::DoTheseTilesCollide(Tunnelour::Tile_Bitmap* TileA,
     }
   }
 
-  if ((a_tile_right == b_tile_right) || (a_tile_right < b_tile_left && a_tile_right > b_tile_right)) {
+  if ((a_tile_right == b_tile_right) || (a_tile_right > b_tile_left && a_tile_right < b_tile_right)) {
     // Horrizontal Collision
-    if (a_tile_top < b_tile_top && a_tile_top > b_tile_bottom) {
+    if (a_tile_top > b_tile_top && a_tile_top < b_tile_bottom) {
       // Vertical Collision!
       tile_a_output_colision = D3DXVECTOR2(a_tile_left, a_tile_top);
       return true;
     }
-    if (a_tile_bottom < b_tile_top && a_tile_bottom > b_tile_bottom) {
+    if (a_tile_bottom > b_tile_top && a_tile_bottom < b_tile_bottom) {
       // Vertical Collision!
       tile_a_output_colision = D3DXVECTOR2(a_tile_left, a_tile_bottom);
       return true;
@@ -783,6 +782,10 @@ bool Middleground_Controller::DoTheseTilesCollide(Tunnelour::Tile_Bitmap* TileA,
 
   // At least one vertex in TileA is contained within TileB.
   // Any edge of TileA intersects any edge of TileB.
+
+  if (TileA->GetSize()->x == 4) {
+    int pause = 1;
+  }
 
   return false;
 }
