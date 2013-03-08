@@ -46,6 +46,8 @@ Tunnelour/Tunnelour/resource/Direct3D11_View_TransparentPixelShader.ps -text
 Tunnelour/Tunnelour/resource/Direct3D11_View_TransparentVertexShader.vs -text
 Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_2.dds -text
 Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_2.txt -text
+Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_3.dds -text
+Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_3.txt -text
 Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_4_2.dds -text
 Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_4_2.txt -text
 Tunnelour/Tunnelour/src/Background_Controller.cc -text

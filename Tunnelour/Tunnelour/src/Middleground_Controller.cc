@@ -19,7 +19,6 @@
 #include <ctime>
 #include <string>
 #include "Exceptions.h"
-#include "Middleground_Controller_Mutator.h"
 #include "String_Helper.h"
 
 namespace Tunnelour {
@@ -33,7 +32,7 @@ Middleground_Controller::Middleground_Controller() : Controller() {
   m_game_settings = 0;
   m_has_init_middleground_been_generated = false;
   m_has_init_tunnel_been_generated = false;
-  m_tunnel_x_size = 48;
+  m_tunnel_x_size = 32;
 }
 
 //------------------------------------------------------------------------------
@@ -47,6 +46,17 @@ void Middleground_Controller::Init(Tunnelour::Component_Composite * const model)
 
 //------------------------------------------------------------------------------
 void Middleground_Controller::Run() {
+  // Get game settings component from the model with the Mutator.
+  m_model->Apply(&m_mutator);
+  if (!m_mutator.FoundGameSettings())  {
+    throw Tunnelour::Exceptions::run_error("Can't find a game settings component!");
+  } else {
+    m_game_settings = m_mutator.GetGameSettings();
+  }
+
+  // Load the Tileset Data
+  Load_Tilset_Metadata();
+
   Tile_Tunnel();
   Tile_Middleground();
   m_is_finished = true;
@@ -85,6 +95,7 @@ void Middleground_Controller::Tile_Tunnel() {
     int number_of_8x8_y_tiles = 0;
     int number_of_4x4_y_tiles = 0;
     int number_of_2x2_y_tiles = 0;
+    int number_of_1x1_y_tiles = 0;
 
     std:div_t div_y_result =  div(m_tunnel_x_size, 32);
     number_of_32x32_y_tiles = div_y_result.quot;
@@ -101,15 +112,14 @@ void Middleground_Controller::Tile_Tunnel() {
             div_y_result =  div(div_y_result.rem, 2);
             number_of_2x2_y_tiles = div_y_result.quot;
             if  (div_y_result.rem != 0) {
-              number_of_2x2_y_tiles += 1;
-              m_tunnel_x_size += 1;
+              number_of_1x1_y_tiles = div_y_result.rem;
             }
           }
         }
       }
     }
 
-    int number_of_y_tiles = number_of_32x32_y_tiles + number_of_16x16_y_tiles + number_of_8x8_y_tiles + number_of_4x4_y_tiles + number_of_2x2_y_tiles;
+    int number_of_y_tiles = number_of_32x32_y_tiles + number_of_16x16_y_tiles + number_of_8x8_y_tiles + number_of_4x4_y_tiles + number_of_2x2_y_tiles + number_of_1x1_y_tiles;
 
     for (int y = 0; y < number_of_y_tiles ; y++) {
       int base_tile_size = 0;
@@ -128,6 +138,9 @@ void Middleground_Controller::Tile_Tunnel() {
       } else if (number_of_2x2_y_tiles != 0) {
         base_tile_size = 2;
         number_of_2x2_y_tiles--;
+      } else if (number_of_1x1_y_tiles != 0) {
+        base_tile_size = 1;
+        number_of_1x1_y_tiles--;
       }
 
       int resised_tile_size = static_cast<int>(base_tile_size * m_game_settings->GetTileMultiplicationFactor());
@@ -136,7 +149,7 @@ void Middleground_Controller::Tile_Tunnel() {
       int number_of_x_tiles = 0;
       std::div_t div_x_result = div(m_game_settings->GetResolution().x, resised_tile_size);
       if (div_x_result.rem != 0) {
-        number_of_x_tiles = div_x_result.quot + 1;
+        number_of_x_tiles = div_x_result.quot + 1; //Add Another Tile if it doesne't fit
       } else {
         number_of_x_tiles = div_x_result.quot;
       }
@@ -235,18 +248,6 @@ bool Middleground_Controller::DoTheseTilesetsHaveCollisions(std::vector<Tunnelou
 //------------------------------------------------------------------------------
 std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateMiddlegroundTiles() {
   std::vector<Tunnelour::Tile_Bitmap*> middleground_tiles;
-  // Get game settings component from the model with the Mutator.
-  Tunnelour::Middleground_Controller_Mutator mutator;
-
-  m_model->Apply(&mutator);
-  if (!mutator.FoundGameSettings())  {
-    throw Tunnelour::Exceptions::run_error("Can't find a game settings component!");
-  } else {
-    m_game_settings = mutator.GetGameSettings();
-  }
-
-  // Load the Tileset Data
-  Load_Tilset_Metadata();
 
   int top_left_window_x = static_cast<int>((m_game_settings->GetResolution().x/2) * -1);
   int top_left_window_y = static_cast<int>(m_game_settings->GetResolution().y/2);
@@ -265,7 +266,6 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateMiddlegrou
     number_of_y_tiles = div_y_result.quot;
   }
 
-  //Calculate number of x tiles
   int number_of_x_tiles = 0;
   std::div_t div_x_result = div(m_game_settings->GetResolution().x, resised_tile_size);
   if (div_x_result.rem != 0) {
@@ -289,6 +289,10 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateMiddlegrou
     current_y -= static_cast<int>(tile->GetSize()->y);
     current_x = static_cast<int>(top_left_window_x);
   }
+
+  //D3DXVECTOR2 collision;
+ // DoTheseTilesCollide(middleground_tiles[0], middleground_tiles[1], collision);
+
   return middleground_tiles;
 }
 
@@ -315,10 +319,10 @@ Tunnelour::Tile_Bitmap* Middleground_Controller::GetResizedBoundarySize(Tunnelou
 
   if (tile_boundary_top == tile_collision_point.y) {
     // Resize Top Down
-    tile_boundary_top = tunnel_tile_bottom - 2;
+    tile_boundary_top = tunnel_tile_bottom;
   } else if (tile_boundary_bottom ==  tile_collision_point.y) {
     // Resize Bottom Up
-    tile_boundary_bottom = tunnel_tile_top + 2;
+    tile_boundary_bottom = tunnel_tile_top;
   }
 
   Tunnelour::Tile_Bitmap* boundary_tile = new Tunnelour::Tile_Bitmap();
@@ -353,23 +357,15 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFit
   float tunnel_tile_top = tunnel_tile->GetPosition()->y + static_cast<float>(tunnel_tile->GetSize()->y / 2);
   float tunnel_tile_bottom = tunnel_tile->GetPosition()->y - static_cast<float>(tunnel_tile->GetSize()->y / 2);
 
-  bool boundary_at_top = false;
-  bool boundary_at_bottom = false;
-  if (tile_bottom == tunnel_tile_top + 2) {
-    boundary_at_bottom = true;
-  } else if (tile_top ==  tunnel_tile_bottom - 2) {
-    boundary_at_top = true;
-  }
-
   // Calculate the tile which will fit in this boundary
   int number_of_32x32_y_tiles = 0, number_of_32x32_x_tiles = 0;
   int number_of_16x16_y_tiles = 0, number_of_16x16_x_tiles = 0;
   int number_of_8x8_y_tiles = 0, number_of_8x8_x_tiles = 0;
   int number_of_4x4_y_tiles = 0, number_of_4x4_x_tiles = 0;
   int number_of_2x2_y_tiles = 0, number_of_2x2_x_tiles = 0;
+  int number_of_1x1_y_tiles = 1, number_of_1x1_x_tiles = 0;
 
-  int horizontal_boundary_size =  tile_top - tile_bottom;
-  horizontal_boundary_size = horizontal_boundary_size - (2 * m_game_settings->GetTileMultiplicationFactor());
+  int horizontal_boundary_size =  tile_top - tile_bottom - (1 * m_game_settings->GetTileMultiplicationFactor());
   std:div_t div_y_result = div(horizontal_boundary_size, 32 * m_game_settings->GetTileMultiplicationFactor());
   number_of_32x32_y_tiles = div_y_result.quot;
   if (div_y_result.rem != 0) {
@@ -385,24 +381,35 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFit
           div_y_result =  div(div_y_result.rem, 2 * m_game_settings->GetTileMultiplicationFactor());
           number_of_2x2_y_tiles = div_y_result.quot;
           if  (div_y_result.rem != 0) {
-            //throw Tunnelour::Exceptions::run_error("New tile isn't divisable by two!");
+            div_y_result =  div(div_y_result.rem, 1 * m_game_settings->GetTileMultiplicationFactor());
+            number_of_1x1_y_tiles = div_y_result.quot + 1;
           }
         }
       }
     }
   }
 
-  int sub_number_of_y_tiles = number_of_32x32_y_tiles + number_of_16x16_y_tiles + number_of_8x8_y_tiles + number_of_4x4_y_tiles + number_of_2x2_y_tiles + 1; //one boundary run
+  int sub_number_of_y_tiles = number_of_32x32_y_tiles + number_of_16x16_y_tiles + number_of_8x8_y_tiles + number_of_4x4_y_tiles + number_of_2x2_y_tiles + number_of_1x1_y_tiles;
   int sub_number_of_x_tiles = 0;
   int sub_current_y = tile_top;
   int sub_current_x = tile_left;
+
+  // Sort out the 1 pixel boundary line
+  bool boundary_at_top = false;
+  bool boundary_at_bottom = false;
+  if (tile_bottom == tunnel_tile_top + 1) {
+    boundary_at_bottom = true;
+  } else if (tile_top ==  tunnel_tile_bottom - 1) {
+    boundary_at_top = true;
+  }
 
   for (int y = 0; y < sub_number_of_y_tiles ; y++) {
     int border = false;
     int base_tile_size = 0;
     if (boundary_at_top) {
-      base_tile_size = 2;
+      base_tile_size = 1;
       boundary_at_top = false;
+      number_of_1x1_y_tiles--;
       border = true;
     } else if (number_of_32x32_y_tiles != 0) {
       base_tile_size = 32;
@@ -419,17 +426,24 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFit
     } else if (number_of_2x2_y_tiles != 0) {
       base_tile_size = 2;
       number_of_2x2_y_tiles--;
-    } else if (boundary_at_bottom) {
-      //Last run of the tile, put in the boundary
-      base_tile_size = 2;
-      boundary_at_bottom = false;
-      border = true;
+    } else if (number_of_1x1_y_tiles != 0) {
+      base_tile_size = 1;
+      if (number_of_1x1_y_tiles == 1 && boundary_at_bottom) {
+        boundary_at_bottom = false;
+        border = true;
+      }
+      number_of_1x1_y_tiles--;
     }
 
     div_t div_y_result = div((int)tile->GetSize()->x, base_tile_size * m_game_settings->GetTileMultiplicationFactor());
+
     sub_number_of_x_tiles = div_y_result.quot;
+    if  (div_y_result.rem != 0) {
+      throw Tunnelour::Exceptions::run_error("Border isn't divisable by horizontally two!");
+    }
 
     int resised_tile_size = static_cast<int>(base_tile_size * m_game_settings->GetTileMultiplicationFactor());
+
 
     Tunnelour::Tile_Bitmap* sub_tile;
     for (int x = 0; x < sub_number_of_x_tiles ; x++) {
@@ -456,7 +470,7 @@ void Middleground_Controller::Load_Tilset_Metadata() {
   int lSize;
 
   std::wstring wtileset_path = m_game_settings->GetTilesetPath();
-  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Debug_Tileset_0_2.txt");
+  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Debug_Tileset_0_3.txt");
   //m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Dirt_Tileset_4_2.txt");
 
   // Open Font File as a text file
@@ -719,74 +733,58 @@ Tunnelour::Tile_Bitmap* Middleground_Controller::Create_Tile(int base_tile_size,
                                                       static_cast<float>(middleground_line.top_left_y));
 
   tile->SetSize(new D3DXVECTOR2(resised_tile_size, resised_tile_size));
+
   return tile;
 }
 
 //------------------------------------------------------------------------------
 bool Middleground_Controller::DoTheseTilesCollide(Tunnelour::Tile_Bitmap* TileA, Tunnelour::Tile_Bitmap* TileB, D3DXVECTOR2 &tile_a_output_colision) {
-    // At least one vertex in TileA is contained in the TileB.
-    // Check Horrizontally (x) first.
-    // Remember that verticies are stored clockwise.
-    // 0 is left top
-    // 1 is right bottom
-    // 2 is left bottom
-    // 4 is right top
+  // At least one vertex in TileA is contained in the TileB.
 
-    int A0X = TileA->GetPosition()->x - (TileA->GetSize()->x/2);
-    int A0Y = TileA->GetPosition()->y + (TileA->GetSize()->y/2);
-    int A1X = TileA->GetPosition()->x + (TileA->GetSize()->x/2);
-    int A1Y = TileA->GetPosition()->y - (TileA->GetSize()->y/2);
-    int A2X = TileA->GetPosition()->x - (TileA->GetSize()->x/2);
-    int A2Y = TileA->GetPosition()->y - (TileA->GetSize()->y/2);
-    int A4X = TileA->GetPosition()->x + (TileA->GetSize()->x/2);
-    int A4Y = TileA->GetPosition()->y + (TileA->GetSize()->y/2);
+  float a_tile_left, a_tile_right, a_tile_top, a_tile_bottom;
+  a_tile_left = TileA->GetPosition()->x - static_cast<float>(TileA->GetSize()->x / 2);
+  a_tile_right = TileA->GetPosition()->x + static_cast<float>(TileA->GetSize()->x / 2);
+  a_tile_top = TileA->GetPosition()->y + static_cast<float>(TileA->GetSize()->x / 2);
+  a_tile_bottom = TileA->GetPosition()->y - static_cast<float>(TileA->GetSize()->x / 2);
 
-    int B0X = TileB->GetPosition()->x - (TileB->GetSize()->x/2);
-    int B0Y = TileB->GetPosition()->y + (TileB->GetSize()->y/2);
-    int B1X = TileB->GetPosition()->x + (TileB->GetSize()->x/2);
-    int B1Y = TileB->GetPosition()->y - (TileB->GetSize()->y/2);
-    int B2X = TileB->GetPosition()->x - (TileB->GetSize()->x/2);
-    int B2Y = TileB->GetPosition()->y - (TileB->GetSize()->y/2);
-    int B4X = TileB->GetPosition()->x + (TileB->GetSize()->x/2);
-    int B4Y = TileB->GetPosition()->y + (TileB->GetSize()->y/2);
+  float b_tile_left, b_tile_right, b_tile_top, b_tile_bottom;
+  b_tile_left = TileB->GetPosition()->x - static_cast<float>(TileB->GetSize()->x / 2);
+  b_tile_right = TileB->GetPosition()->x + static_cast<float>(TileB->GetSize()->x / 2);
+  b_tile_top = TileB->GetPosition()->y + static_cast<float>(TileB->GetSize()->x / 2);
+  b_tile_bottom = TileB->GetPosition()->y - static_cast<float>(TileB->GetSize()->x / 2);
 
-    if (A0X >= B0X && A0X <= B4X) {
-      // X Collision!        
-      if (A0Y <= B0Y && A0Y >= B2Y) {
-        //Y Collision!
-        tile_a_output_colision = D3DXVECTOR2(A0X, A0Y);
-        return true;
-      }
+  if ((a_tile_left == b_tile_left) || (a_tile_left < b_tile_left && a_tile_left > b_tile_right)) {
+    // Horrizontal Collision
+    if (a_tile_top < b_tile_top && a_tile_top > b_tile_bottom) {
+      // Vertical Collision!
+      tile_a_output_colision = D3DXVECTOR2(a_tile_left, a_tile_top);
+      return true;
     }
-    if (A4X >= B0X && A4X <= B4X) {
-      // X Collision!        
-      if (A4Y <= B0Y && A4Y >= B2Y) {
-        //Y Collision!
-        tile_a_output_colision = D3DXVECTOR2(A4X, A4Y);
-        return true;
-      }
+    if (a_tile_bottom < b_tile_top && a_tile_bottom > b_tile_bottom) {
+      // Vertical Collision!
+      tile_a_output_colision = D3DXVECTOR2(a_tile_left, a_tile_bottom);
+      return true;
     }
-    if (A1X >= B0X && A1X <= B4X) {
-      // X Collision!        
-      if (A1Y <= B0Y && A1Y >= B2Y) {
-        //Y Collision!
-        tile_a_output_colision = D3DXVECTOR2(A1X, A1Y);
-        return true;
-      }
-    }
-    if (A2X >= B0X && A2X <= B4X) {
-      // X Collision!        
-      if (A2Y <= B0Y && A2Y >= B2Y) {
-        // Y Collision!
-        tile_a_output_colision = D3DXVECTOR2(A2X, A2Y);
-        return true;
-      }
-    }
+  }
 
-    // At least one vertex in TileA is contained within TileB.
-    // Any edge of TileA intersects any edge of TileB.
+  if ((a_tile_right == b_tile_right) || (a_tile_right < b_tile_left && a_tile_right > b_tile_right)) {
+    // Horrizontal Collision
+    if (a_tile_top < b_tile_top && a_tile_top > b_tile_bottom) {
+      // Vertical Collision!
+      tile_a_output_colision = D3DXVECTOR2(a_tile_left, a_tile_top);
+      return true;
+    }
+    if (a_tile_bottom < b_tile_top && a_tile_bottom > b_tile_bottom) {
+      // Vertical Collision!
+      tile_a_output_colision = D3DXVECTOR2(a_tile_left, a_tile_bottom);
+      return true;
+    }
+  }
 
-    return false;
+  // At least one vertex in TileA is contained within TileB.
+  // Any edge of TileA intersects any edge of TileB.
+
+  return false;
 }
 
 //------------------------------------------------------------------------------
@@ -804,8 +802,8 @@ bool Middleground_Controller::WhereDoThesePointsIntersect( D3DXVECTOR2 p1, D3DXV
   float x = ( pre * (x3 - x4) - (x1 - x2) * pos ) / d;
   float y = ( pre * (y3 - y4) - (y1 - y2) * pos ) / d;
 
-  if ( x < min(x1, x2) || x > max(x1, x2) || x < min(x3, x4) || x > max(x3, x4) ) return false;
-  if ( y < min(y1, y2) || y > max(y1, y2) || y < min(y3, y4) || y > max(y3, y4) ) return false;
+  if ( x <= min(x1, x2) || x >= max(x1, x2) || x <= min(x3, x4) || x >= max(x3, x4) ) return false;
+  if ( y <= min(y1, y2) || y >= max(y1, y2) || y <= min(y3, y4) || y >= max(y3, y4) ) return false;
 
   // Return the point of intersection
   output.x = x;

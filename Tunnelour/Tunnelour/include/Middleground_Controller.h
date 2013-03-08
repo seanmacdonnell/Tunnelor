@@ -23,6 +23,7 @@
 #include "Controller.h"
 #include "Tile_Bitmap.h"
 #include "Game_Settings_Component.h"
+#include "Middleground_Controller_Mutator.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -110,6 +111,7 @@ class Middleground_Controller: public Tunnelour::Controller {
 
   std::string m_metadata_file_path;
   int m_tunnel_x_size;
+  Middleground_Controller_Mutator m_mutator;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_MIDDLEGROUND_CONTROLLER_H_
