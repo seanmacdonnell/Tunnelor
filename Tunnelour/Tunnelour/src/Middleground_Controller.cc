@@ -32,7 +32,7 @@ Middleground_Controller::Middleground_Controller() : Controller() {
   m_game_settings = 0;
   m_has_init_middleground_been_generated = false;
   m_has_init_tunnel_been_generated = false;
-  m_tunnel_x_size = 48;
+  m_tunnel_x_size = 64;
 }
 
 //------------------------------------------------------------------------------
@@ -160,7 +160,7 @@ void Middleground_Controller::Tile_Tunnel() {
          tile->SetPosition(new D3DXVECTOR3(current_x + (tile->GetSize()->x/2),
                                            current_y - (tile->GetSize()->y/2),
                                            -1)); // Middleground Z Space is -1
-         tile->GetTexture()->transparency = 0.0f;
+         tile->GetTexture()->transparency = 1.0f;
          current_x += static_cast<int>(tile->GetSize()->x);
          tile_line.push_back(tile);
       }
@@ -394,45 +394,65 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFit
   int sub_current_y = tile_top;
   int sub_current_x = tile_left;
 
-  // Sort out the 1 pixel boundary line
-  bool boundary_at_top = false;
-  bool boundary_at_bottom = false;
+  bool big_tiles_to_small = false;
+  int border_is_first = false;
   if (tile_bottom == tunnel_tile_top) {
-    boundary_at_bottom = true;
+    big_tiles_to_small = true;
   } else if (tile_top ==  tunnel_tile_bottom) {
-    boundary_at_top = true;
+    big_tiles_to_small = false;
+    border_is_first = true;
   }
 
   for (int y = 0; y < sub_number_of_y_tiles ; y++) {
     int border = false;
     int base_tile_size = 0;
-    if (boundary_at_top) {
-      base_tile_size = 1;
-      boundary_at_top = false;
-      number_of_1x1_y_tiles--;
-      border = true;
-    } else if (number_of_32x32_y_tiles != 0) {
-      base_tile_size = 32;
-      number_of_32x32_y_tiles--;
-    } else if (number_of_16x16_y_tiles != 0) {
-      base_tile_size = 16;
-      number_of_16x16_y_tiles--;
-    } else if (number_of_8x8_y_tiles != 0) {
-      base_tile_size = 8;
-      number_of_8x8_y_tiles--;
-    } else if (number_of_4x4_y_tiles != 0) {
-      base_tile_size = 4;
-      number_of_4x4_y_tiles--;
-    } else if (number_of_2x2_y_tiles != 0) {
-      base_tile_size = 2;
-      number_of_2x2_y_tiles--;
-    } else if (number_of_1x1_y_tiles != 0) {
-      base_tile_size = 1;
-      if (number_of_1x1_y_tiles == 1 && boundary_at_bottom) {
-        boundary_at_bottom = false;
-        border = true;
+    if (big_tiles_to_small) {
+      if (number_of_32x32_y_tiles != 0) {
+        base_tile_size = 32;
+        number_of_32x32_y_tiles--;
+      } else if (number_of_16x16_y_tiles != 0) {
+        base_tile_size = 16;
+        number_of_16x16_y_tiles--;
+      } else if (number_of_8x8_y_tiles != 0) {
+        base_tile_size = 8;
+        number_of_8x8_y_tiles--;
+      } else if (number_of_4x4_y_tiles != 0) {
+        base_tile_size = 4;
+        number_of_4x4_y_tiles--;
+      } else if (number_of_2x2_y_tiles != 0) {
+        base_tile_size = 2;
+        number_of_2x2_y_tiles--;
+      } else if (number_of_1x1_y_tiles != 0) {
+        base_tile_size = 1;
+        if (number_of_1x1_y_tiles == 1) {
+          border = true;
+        }
+        number_of_1x1_y_tiles--;
       }
-      number_of_1x1_y_tiles--;
+    } else {
+      if (number_of_1x1_y_tiles != 0) {
+        base_tile_size = 1;
+        if (border_is_first) {
+          border = true;
+          border_is_first = false;
+        }
+        number_of_1x1_y_tiles--;
+      } else if (number_of_2x2_y_tiles != 0) {
+        base_tile_size = 2;
+        number_of_2x2_y_tiles--;
+      } else if (number_of_4x4_y_tiles != 0) {
+        base_tile_size = 4;
+        number_of_4x4_y_tiles--;
+      } else if (number_of_8x8_y_tiles != 0) {
+        base_tile_size = 8;
+        number_of_8x8_y_tiles--;
+      } else if (number_of_16x16_y_tiles != 0) {
+        base_tile_size = 16;
+        number_of_16x16_y_tiles--;
+      } else if (number_of_32x32_y_tiles != 0) {
+        base_tile_size = 32;
+        number_of_32x32_y_tiles--;
+      }
     }
 
     div_t div_y_result = div((int)tile->GetSize()->x, base_tile_size * m_game_settings->GetTileMultiplicationFactor());
