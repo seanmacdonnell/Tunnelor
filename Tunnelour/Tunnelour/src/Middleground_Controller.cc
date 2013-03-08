@@ -160,7 +160,7 @@ void Middleground_Controller::Tile_Tunnel() {
          tile->SetPosition(new D3DXVECTOR3(current_x + (tile->GetSize()->x/2),
                                            current_y - (tile->GetSize()->y/2),
                                            -1)); // Middleground Z Space is -1
-         tile->GetTexture()->transparency = 1.0f;
+         tile->GetTexture()->transparency = 0.0f;
          current_x += static_cast<int>(tile->GetSize()->x);
          tile_line.push_back(tile);
       }
@@ -490,8 +490,8 @@ void Middleground_Controller::Load_Tilset_Metadata() {
   int lSize;
 
   std::wstring wtileset_path = m_game_settings->GetTilesetPath();
-  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Debug_Tileset_0_3.txt");
-  //m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Dirt_Tileset_4_2.txt");
+  //m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Debug_Tileset_0_3.txt");
+  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Dirt_Tileset_4_3.txt");
 
   // Open Font File as a text file
   if (fopen_s(&pFile, m_metadata_file_path.c_str(), "r") != 0) {

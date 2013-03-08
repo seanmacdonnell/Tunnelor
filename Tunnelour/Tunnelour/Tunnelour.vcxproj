@@ -151,6 +151,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <None Include="resource\tilesets\Debug_Tileset_0_2.txt" />
     <None Include="resource\tilesets\Debug_Tileset_0_3.txt" />
     <None Include="resource\tilesets\Dirt_Tileset_4_2.txt" />
+    <None Include="resource\tilesets\Dirt_Tileset_4_3.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

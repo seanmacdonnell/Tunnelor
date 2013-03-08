@@ -50,6 +50,9 @@ Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_3.dds -text
 Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_3.txt -text
 Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_4_2.dds -text
 Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_4_2.txt -text
+Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_4_3.dds -text
+Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_4_3.txt -text
+Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_4_3.xcf -text
 Tunnelour/Tunnelour/src/Background_Controller.cc -text
 Tunnelour/Tunnelour/src/Background_Controller_Mutator.cc -text
 Tunnelour/Tunnelour/src/Bitmap_Component.cc -text

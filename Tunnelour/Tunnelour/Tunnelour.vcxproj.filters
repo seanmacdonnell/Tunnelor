@@ -247,5 +247,8 @@
     <None Include="resource\tilesets\Debug_Tileset_0_3.txt">
       <Filter>Resource Files\TileSets</Filter>
     </None>
+    <None Include="resource\tilesets\Dirt_Tileset_4_3.txt">
+      <Filter>Resource Files\TileSets</Filter>
+    </None>
   </ItemGroup>
 </Project>
