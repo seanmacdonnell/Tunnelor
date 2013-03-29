@@ -26,7 +26,8 @@ Game_Settings_Component::Game_Settings_Component(): Component() {
   m_vsync_enabled = false;
   m_screen_depth = 0.0f;
   m_screen_near = 0.0f;
-  m_color = D3DXCOLOR(1, 1, 1, 1);
+  //m_color = D3DXCOLOR(1, 1, 1, 1);
+  m_color = D3DXCOLOR(0, 0, 0, 1);
   m_tileset_path = L"";
   m_type = "Game_Settings_Component";
   m_tile_size_multiplication_factor = 0;
@@ -45,7 +46,7 @@ void Game_Settings_Component::Init() {
   m_screen_depth = 1000.0f;
   m_screen_near = 0.1f;
   m_tileset_path = L"resource\\tilesets\\";
-  m_tile_size_multiplication_factor = 4;
+  m_tile_size_multiplication_factor = 1;
 }
 
 //------------------------------------------------------------------------------

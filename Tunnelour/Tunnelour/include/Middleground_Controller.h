@@ -41,6 +41,7 @@ class Middleground_Controller: public Tunnelour::Controller {
   };
 
   struct Tileset {
+    std::string name;
     std::string type;
     int top_left_x, top_left_y;
     int size_x, size_y;

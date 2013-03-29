@@ -82,6 +82,8 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Avatar_Controller.cc" />
+    <ClCompile Include="src\Avatar_Controller_Mutator.cc" />
     <ClCompile Include="src\Background_Controller.cc" />
     <ClCompile Include="src\Background_Controller_Mutator.cc" />
     <ClCompile Include="src\Camera_Component.cc" />
@@ -112,6 +114,8 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\View_Composite.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Avatar_Controller.h" />
+    <ClInclude Include="include\Avatar_Controller_Mutator.h" />
     <ClInclude Include="include\Background_Controller.h" />
     <ClInclude Include="include\Background_Controller_Mutator.h" />
     <ClInclude Include="include\Camera_Component.h" />
@@ -148,10 +152,15 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <None Include="resource\Direct3D11_View_FontVertexShader.vs" />
     <None Include="resource\Direct3D11_View_TransparentPixelShader.ps" />
     <None Include="resource\Direct3D11_View_TransparentVertexShader.vs" />
+    <None Include="resource\tilesets\Charlie_Standing_Animation_Tileset_0_1.txt" />
+    <None Include="resource\tilesets\Charlie_Standing_Animation_Tileset_0_2.txt" />
+    <None Include="resource\tilesets\Charlie_Standing_Animation_Tileset_0_3.txt" />
     <None Include="resource\tilesets\Debug_Tileset_0_2.txt" />
     <None Include="resource\tilesets\Debug_Tileset_0_3.txt" />
+    <None Include="resource\tilesets\Debug_Tileset_0_4.txt" />
     <None Include="resource\tilesets\Dirt_Tileset_4_2.txt" />
     <None Include="resource\tilesets\Dirt_Tileset_4_3.txt" />
+    <None Include="resource\tilesets\Dirt_Tileset_5.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -132,6 +132,12 @@
     <ClCompile Include="src\Text_Component.cc">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
+    <ClCompile Include="src\Avatar_Controller.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Avatar_Controller_Mutator.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Init_Controller.h">
@@ -224,6 +230,12 @@
     <ClInclude Include="include\Text_Component.h">
       <Filter>Include Files\Model</Filter>
     </ClInclude>
+    <ClInclude Include="include\Avatar_Controller.h">
+      <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Avatar_Controller_Mutator.h">
+      <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resource\Direct3D11_View_FontPixelShader.ps">
@@ -248,6 +260,21 @@
       <Filter>Resource Files\TileSets</Filter>
     </None>
     <None Include="resource\tilesets\Dirt_Tileset_4_3.txt">
+      <Filter>Resource Files\TileSets</Filter>
+    </None>
+    <None Include="resource\tilesets\Charlie_Standing_Animation_Tileset_0_1.txt">
+      <Filter>Resource Files\TileSets</Filter>
+    </None>
+    <None Include="resource\tilesets\Debug_Tileset_0_4.txt">
+      <Filter>Resource Files\TileSets</Filter>
+    </None>
+    <None Include="resource\tilesets\Charlie_Standing_Animation_Tileset_0_2.txt">
+      <Filter>Resource Files\TileSets</Filter>
+    </None>
+    <None Include="resource\tilesets\Charlie_Standing_Animation_Tileset_0_3.txt">
+      <Filter>Resource Files\TileSets</Filter>
+    </None>
+    <None Include="resource\tilesets\Dirt_Tileset_5.txt">
       <Filter>Resource Files\TileSets</Filter>
     </None>
   </ItemGroup>

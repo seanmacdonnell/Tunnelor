@@ -754,16 +754,31 @@ void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX 
         std::map<std::wstring, ID3D11ShaderResourceView*>::iterator stored_texture;
         stored_texture = m_texture_map.find(bitmap->GetTexture()->texture_path);
         if (stored_texture == m_texture_map.end()) {
+          D3DX11_IMAGE_LOAD_INFO imageLoadInfo;
+          imageLoadInfo.Width = D3DX11_DEFAULT;
+          imageLoadInfo.Height = D3DX11_DEFAULT;
+          imageLoadInfo.Depth = D3DX11_DEFAULT;
+          imageLoadInfo.FirstMipLevel = D3DX11_DEFAULT;
+          imageLoadInfo.MipLevels = D3DX11_DEFAULT;
+          imageLoadInfo.Usage = (D3D11_USAGE) D3DX11_DEFAULT;
+          imageLoadInfo.BindFlags = D3DX11_DEFAULT;
+          imageLoadInfo.CpuAccessFlags = D3DX11_DEFAULT;
+          imageLoadInfo.MiscFlags = D3DX11_DEFAULT;
+          imageLoadInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+          imageLoadInfo.Filter = D3DX11_DEFAULT;
+          imageLoadInfo.MipFilter = D3DX11_DEFAULT;
+          imageLoadInfo.pSrcInfo = NULL;
           ID3D11ShaderResourceView* texture;
           if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_device,
                                                             bitmap->GetTexture()->texture_path.c_str(),
-                                                            NULL,
+                                                            &imageLoadInfo,
                                                             NULL,
                                                             &texture,
                                                             NULL)))  {
             throw Tunnelour::Exceptions::init_error("Loading font file failed!");
           }
-          m_texture_map[bitmap->GetTexture()->texture_path]=texture;
+          m_texture_map[bitmap->GetTexture()->texture_path] = texture;
+          bitmap->GetTexture()->texture = texture;
         } else {
           bitmap->GetTexture()->texture = (*stored_texture).second;
         }

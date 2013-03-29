@@ -65,7 +65,7 @@ void Background_Controller::Run() {
     int current_y = top_left_window_y;
     Tunnelour::Tile_Bitmap* tile;
 
-    int base_tile_size = 32;
+    int base_tile_size = 128;
     int resised_tile_size = static_cast<int>(base_tile_size * m_game_settings->GetTileMultiplicationFactor());
 
     int number_of_y_tiles = 0;
@@ -126,8 +126,8 @@ void Background_Controller::Load_Tilset_Metadata() {
   int lSize;
 
   std::wstring wtileset_path = m_game_settings->GetTilesetPath();
-  //m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Debug_Tileset_0_3.txt");
-  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Dirt_Tileset_4_3.txt");
+  //m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Debug_Tileset_0_4.txt");
+  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Dirt_Tileset_5.txt");
 
   // Open Font File as a text file
   if (fopen_s(&pFile, m_metadata_file_path.c_str(), "r") != 0) {

@@ -32,7 +32,7 @@ Middleground_Controller::Middleground_Controller() : Controller() {
   m_game_settings = 0;
   m_has_init_middleground_been_generated = false;
   m_has_init_tunnel_been_generated = false;
-  m_tunnel_x_size = 64;
+  m_tunnel_x_size = 128;
 }
 
 //------------------------------------------------------------------------------
@@ -90,6 +90,8 @@ void Middleground_Controller::Tile_Tunnel() {
     int current_y = tunnel_start_y;
     Tunnelour::Tile_Bitmap* tile;
 
+    int number_of_128x128_y_tiles = 0;
+    int number_of_64x64_y_tiles = 0;
     int number_of_32x32_y_tiles = 0;
     int number_of_16x16_y_tiles = 0;
     int number_of_8x8_y_tiles = 0;
@@ -97,33 +99,58 @@ void Middleground_Controller::Tile_Tunnel() {
     int number_of_2x2_y_tiles = 0;
     int number_of_1x1_y_tiles = 0;
 
-    std:div_t div_y_result =  div(m_tunnel_x_size, 32);
-    number_of_32x32_y_tiles = div_y_result.quot;
+    std:div_t div_y_result =  div(m_tunnel_x_size, 128);
+    number_of_128x128_y_tiles = div_y_result.quot;
     if (div_y_result.rem != 0) {
-      div_y_result =  div(div_y_result.rem, 16);
-      number_of_16x16_y_tiles = div_y_result.quot;
+      div_y_result =  div(div_y_result.rem, 64);
+      number_of_64x64_y_tiles = div_y_result.quot;
       if (div_y_result.rem != 0) {
-        div_y_result =  div(div_y_result.rem, 8);
-        number_of_8x8_y_tiles = div_y_result.quot;
+        div_y_result =  div(div_y_result.rem, 32);
+        number_of_32x32_y_tiles = div_y_result.quot;
         if (div_y_result.rem != 0) {
-          div_y_result =  div(div_y_result.rem, 4);
-          number_of_4x4_y_tiles = div_y_result.quot;
+          div_y_result =  div(div_y_result.rem, 32);
+          number_of_16x16_y_tiles = div_y_result.quot;
           if (div_y_result.rem != 0) {
-            div_y_result =  div(div_y_result.rem, 2);
-            number_of_2x2_y_tiles = div_y_result.quot;
-            if  (div_y_result.rem != 0) {
-              number_of_1x1_y_tiles = div_y_result.rem;
+            div_y_result =  div(div_y_result.rem, 16);
+            number_of_16x16_y_tiles = div_y_result.quot;
+            if (div_y_result.rem != 0) {
+              div_y_result =  div(div_y_result.rem, 8);
+              number_of_8x8_y_tiles = div_y_result.quot;
+              if (div_y_result.rem != 0) {
+                div_y_result =  div(div_y_result.rem, 4);
+                number_of_4x4_y_tiles = div_y_result.quot;
+                if (div_y_result.rem != 0) {
+                  div_y_result =  div(div_y_result.rem, 2);
+                  number_of_2x2_y_tiles = div_y_result.quot;
+                  if  (div_y_result.rem != 0) {
+                    number_of_1x1_y_tiles = div_y_result.rem;
+                  }
+                }
+              }
             }
           }
         }
       }
     }
 
-    int number_of_y_tiles = number_of_32x32_y_tiles + number_of_16x16_y_tiles + number_of_8x8_y_tiles + number_of_4x4_y_tiles + number_of_2x2_y_tiles + number_of_1x1_y_tiles;
+    int number_of_y_tiles = number_of_128x128_y_tiles + 
+                            number_of_64x64_y_tiles +
+                            number_of_32x32_y_tiles +
+                            number_of_16x16_y_tiles +
+                            number_of_8x8_y_tiles +
+                            number_of_4x4_y_tiles +
+                            number_of_2x2_y_tiles +
+                            number_of_1x1_y_tiles;
 
     for (int y = 0; y < number_of_y_tiles ; y++) {
       int base_tile_size = 0;
-      if (number_of_32x32_y_tiles != 0) {
+      if (number_of_128x128_y_tiles != 0) {
+        base_tile_size = 128;
+        number_of_32x32_y_tiles--;
+      } else if (number_of_64x64_y_tiles != 0) {
+        base_tile_size = 64;
+        number_of_32x32_y_tiles--;
+      } else if (number_of_32x32_y_tiles != 0) {
         base_tile_size = 32;
         number_of_32x32_y_tiles--;
       } else if (number_of_16x16_y_tiles != 0) {
@@ -255,7 +282,7 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateMiddlegrou
   int current_y = top_left_window_y;
   Tunnelour::Tile_Bitmap* tile;
 
-  int base_tile_size = 32;
+  int base_tile_size = 128;
   int resised_tile_size = static_cast<int>(base_tile_size * m_game_settings->GetTileMultiplicationFactor());
 
   int number_of_y_tiles = 0;
@@ -281,7 +308,7 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateMiddlegrou
       tile->GetTexture()->transparency = 1.0f;
       tile->SetPosition(new D3DXVECTOR3(current_x + (tile->GetSize()->x/2),
                                           current_y - (tile->GetSize()->y/2),
-                                          -3)); // Middleground Z Space is -1
+                                          -1)); // Middleground Z Space is -1
       current_x += static_cast<int>(tile->GetSize()->x);
         
       middleground_tiles.push_back(tile);
@@ -358,6 +385,8 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFit
   float tunnel_tile_bottom = tunnel_tile->GetPosition()->y - static_cast<float>(tunnel_tile->GetSize()->y / 2);
 
   // Calculate the tile which will fit in this boundary
+  int number_of_128x128_y_tiles = 0, number_of_128x128_x_tiles = 0;
+  int number_of_64x64_y_tiles = 0, number_of_64x64_x_tiles = 0;
   int number_of_32x32_y_tiles = 0, number_of_32x32_x_tiles = 0;
   int number_of_16x16_y_tiles = 0, number_of_16x16_x_tiles = 0;
   int number_of_8x8_y_tiles = 0, number_of_8x8_x_tiles = 0;
@@ -366,30 +395,38 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFit
   int number_of_1x1_y_tiles = 1, number_of_1x1_x_tiles = 0;
 
   int horizontal_boundary_size =  tile_top - tile_bottom - (1 * m_game_settings->GetTileMultiplicationFactor());
-  std:div_t div_y_result = div(horizontal_boundary_size, 32 * m_game_settings->GetTileMultiplicationFactor());
-  number_of_32x32_y_tiles = div_y_result.quot;
+  std:div_t div_y_result = div(horizontal_boundary_size, 128 * m_game_settings->GetTileMultiplicationFactor());
+  number_of_128x128_y_tiles = div_y_result.quot;
   if (div_y_result.rem != 0) {
-    div_y_result =  div(div_y_result.rem, 16 * m_game_settings->GetTileMultiplicationFactor());
-    number_of_16x16_y_tiles = div_y_result.quot;
+    div_y_result =  div(div_y_result.rem, 64 * m_game_settings->GetTileMultiplicationFactor());
+    number_of_64x64_y_tiles = div_y_result.quot;
     if (div_y_result.rem != 0) {
-      div_y_result =  div(div_y_result.rem, 8 * m_game_settings->GetTileMultiplicationFactor());
-      number_of_8x8_y_tiles = div_y_result.quot;
+      div_y_result =  div(div_y_result.rem, 32 * m_game_settings->GetTileMultiplicationFactor());
+      number_of_32x32_y_tiles = div_y_result.quot;
       if (div_y_result.rem != 0) {
-        div_y_result =  div(div_y_result.rem, 4 * m_game_settings->GetTileMultiplicationFactor());
-        number_of_4x4_y_tiles = div_y_result.quot;
+        div_y_result =  div(div_y_result.rem, 16 * m_game_settings->GetTileMultiplicationFactor());
+        number_of_16x16_y_tiles = div_y_result.quot;
         if (div_y_result.rem != 0) {
-          div_y_result =  div(div_y_result.rem, 2 * m_game_settings->GetTileMultiplicationFactor());
-          number_of_2x2_y_tiles = div_y_result.quot;
-          if  (div_y_result.rem != 0) {
-            div_y_result =  div(div_y_result.rem, 1 * m_game_settings->GetTileMultiplicationFactor());
-            number_of_1x1_y_tiles = div_y_result.quot + 1;
+          div_y_result =  div(div_y_result.rem, 8 * m_game_settings->GetTileMultiplicationFactor());
+          number_of_8x8_y_tiles = div_y_result.quot;
+          if (div_y_result.rem != 0) {
+            div_y_result =  div(div_y_result.rem, 4 * m_game_settings->GetTileMultiplicationFactor());
+            number_of_4x4_y_tiles = div_y_result.quot;
+            if (div_y_result.rem != 0) {
+              div_y_result =  div(div_y_result.rem, 2 * m_game_settings->GetTileMultiplicationFactor());
+              number_of_2x2_y_tiles = div_y_result.quot;
+              if  (div_y_result.rem != 0) {
+                div_y_result =  div(div_y_result.rem, 1 * m_game_settings->GetTileMultiplicationFactor());
+                number_of_1x1_y_tiles = div_y_result.quot + 1;
+              }
+            }
           }
         }
       }
     }
   }
 
-  int sub_number_of_y_tiles = number_of_32x32_y_tiles + number_of_16x16_y_tiles + number_of_8x8_y_tiles + number_of_4x4_y_tiles + number_of_2x2_y_tiles + number_of_1x1_y_tiles;
+  int sub_number_of_y_tiles = number_of_128x128_y_tiles + number_of_64x64_y_tiles + number_of_32x32_y_tiles + number_of_16x16_y_tiles + number_of_8x8_y_tiles + number_of_4x4_y_tiles + number_of_2x2_y_tiles + number_of_1x1_y_tiles;
   int sub_number_of_x_tiles = 0;
   int sub_current_y = tile_top;
   int sub_current_x = tile_left;
@@ -407,7 +444,13 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFit
     int border = false;
     int base_tile_size = 0;
     if (big_tiles_to_small) {
-      if (number_of_32x32_y_tiles != 0) {
+       if (number_of_128x128_y_tiles != 0) {
+        base_tile_size = 128;
+        number_of_128x128_y_tiles--;
+      } else if (number_of_64x64_y_tiles != 0) {
+        base_tile_size = 64;
+        number_of_64x64_y_tiles--;
+      } else if (number_of_32x32_y_tiles != 0) {
         base_tile_size = 32;
         number_of_32x32_y_tiles--;
       } else if (number_of_16x16_y_tiles != 0) {
@@ -452,6 +495,12 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFit
       } else if (number_of_32x32_y_tiles != 0) {
         base_tile_size = 32;
         number_of_32x32_y_tiles--;
+      } else if (number_of_64x64_y_tiles != 0) {
+        base_tile_size = 64;
+        number_of_64x64_y_tiles--;
+      } else if (number_of_128x128_y_tiles != 0) {
+        base_tile_size = 128;
+        number_of_128x128_y_tiles--;
       }
     }
 
@@ -470,7 +519,7 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFit
       sub_tile = Create_Tile(base_tile_size, resised_tile_size, border);
       sub_tile->SetPosition(new D3DXVECTOR3(sub_current_x + (sub_tile->GetSize()->x/2),
                                             sub_current_y - (sub_tile->GetSize()->y/2),
-                                            -2)); // Middleground Z Space is -1
+                                            -1)); // Middleground Z Space is -1
       sub_tile->GetTexture()->transparency = 1.0f;
       sub_current_x += static_cast<int>(sub_tile->GetSize()->x);
       tiles.push_back(sub_tile);
@@ -490,8 +539,8 @@ void Middleground_Controller::Load_Tilset_Metadata() {
   int lSize;
 
   std::wstring wtileset_path = m_game_settings->GetTilesetPath();
-  //m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Debug_Tileset_0_3.txt");
-  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Dirt_Tileset_4_3.txt");
+  //m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Debug_Tileset_0_4.txt");
+  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Dirt_Tileset_5.txt");
 
   // Open Font File as a text file
   if (fopen_s(&pFile, m_metadata_file_path.c_str(), "r") != 0) {
@@ -580,13 +629,15 @@ void Middleground_Controller::Load_Tilset_Metadata() {
   }
 
   if (m_metadata.number_of_subsets != 0) {
-    for (int i = 0; i <  m_metadata.number_of_subsets; i++) {
+    for (int subset_num = 0; subset_num <  m_metadata.number_of_subsets; subset_num++) {
       Tileset temp_tileset;
 
       fgets(line, 225, pFile);
       if (line != NULL) {
         token = strtok_s(line, " ", &next_token);
         if (strcmp(token, "SubSet_Name") == 0)   {
+          token = strtok_s(NULL, " =\"", &next_token);
+          temp_tileset.name = token;
         }
       }
 
@@ -645,7 +696,7 @@ void Middleground_Controller::Load_Tilset_Metadata() {
       }
 
       if (temp_tileset.number_of_lines != 0) {
-        for (int i = 0; i < temp_tileset.number_of_lines; i++) {
+        for (int line_num = 0; line_num < temp_tileset.number_of_lines; line_num++) {
           Line temp_line;
 
           fgets(line, 225, pFile);
