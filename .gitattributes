@@ -30,6 +30,7 @@ Tunnelour/Tunnelour/include/Exceptions.h -text
 Tunnelour/Tunnelour/include/Frame_Component.h -text
 Tunnelour/Tunnelour/include/Game_Settings_Component.h -text
 Tunnelour/Tunnelour/include/Init_Controller.h -text
+Tunnelour/Tunnelour/include/Input_Controller.h -text
 Tunnelour/Tunnelour/include/Message_Wrapper.h -text
 Tunnelour/Tunnelour/include/Middleground_Controller.h -text
 Tunnelour/Tunnelour/include/Middleground_Controller_Mutator.h -text
@@ -54,15 +55,12 @@ Tunnelour/Tunnelour/resource/tilesets/Charlie_Standing_Animation_Tileset_0_2.txt
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Standing_Animation_Tileset_0_3.dds -text
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Standing_Animation_Tileset_0_3.png -text
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Standing_Animation_Tileset_0_3.txt -text
-Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_2.dds -text
 Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_3.dds -text
 Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_3.txt -text
 Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_4.dds -text
 Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_4.txt -text
-Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_4_2.dds -text
 Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_4_3.dds -text
 Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_4_3.txt -text
-Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_4_3.xcf -text
 Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_5.dds -text
 Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_5.txt -text
 Tunnelour/Tunnelour/src/Avatar_Controller.cc -text
@@ -88,6 +86,7 @@ Tunnelour/Tunnelour/src/Engine.cc -text
 Tunnelour/Tunnelour/src/Frame_Component.cc -text
 Tunnelour/Tunnelour/src/Game_Settings_Component.cc -text
 Tunnelour/Tunnelour/src/Init_Controller.cc -text
+Tunnelour/Tunnelour/src/Input_Controller.cc -text
 Tunnelour/Tunnelour/src/Message_Wrapper.cc -text
 Tunnelour/Tunnelour/src/Middleground_Controller.cc -text
 Tunnelour/Tunnelour/src/Middleground_Controller_Mutator.cc -text

@@ -57,12 +57,12 @@ Direct3D11_View::~Direct3D11_View() {
     }
 
     // Remove the window.
-    DestroyWindow(m_hwnd);
-    m_hwnd = NULL;
+    DestroyWindow(m_game_settings->GetHWnd());
+    m_game_settings->SetHWnd(NULL);
 
     // Remove the application instance.
-    UnregisterClass(m_application_name, m_hinstance);
-    m_hinstance = NULL;
+    UnregisterClass(m_application_name, m_game_settings->GetHInstance());
+    m_game_settings->SetHInstance(NULL);
   }
 
   if (m_is_d3d11_init) {
@@ -173,13 +173,12 @@ void Direct3D11_View::Run() {
   if (!m_is_d3d11_init) { Init_D3D11(); }
   if (!m_font_shader) {
     m_font_shader = new Tunnelour::Direct3D11_View_FontShader();
-    m_font_shader->Init(m_device, &m_hwnd);
+    m_font_shader->Init(m_device, &(m_game_settings->GetHWnd()));
   }
   if (!m_transparent_shader) {
     m_transparent_shader = new Tunnelour::Direct3D11_View_TransparentShader();
-    m_transparent_shader->Init(m_device, &m_hwnd);
+    m_transparent_shader->Init(m_device, &(m_game_settings->GetHWnd()));
   }
-
 
   // <BeginScene>
   D3DXMATRIX *viewmatrix = new D3DXMATRIX();
@@ -229,7 +228,7 @@ void Direct3D11_View::Init_Window() {
   int posX, posY;
 
   // Get the instance of this application.
-  m_hinstance = GetModuleHandle(NULL);
+  m_game_settings->SetHInstance(GetModuleHandle(NULL));
 
   // Give the application a name.
   m_application_name = L"Tunnelour";
@@ -239,8 +238,8 @@ void Direct3D11_View::Init_Window() {
   wc.lpfnWndProc   = Message_Wrapper::WindowProc;
   wc.cbClsExtra    = 0;
   wc.cbWndExtra    = 0;
-  wc.hInstance     = m_hinstance;
-  wc.hIcon           = LoadIcon(NULL, IDI_WINLOGO);
+  wc.hInstance     = m_game_settings->GetHInstance();
+  wc.hIcon         = LoadIcon(NULL, IDI_WINLOGO);
   wc.hIconSm       = wc.hIcon;
   wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
   wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
@@ -275,28 +274,28 @@ void Direct3D11_View::Init_Window() {
   RECT r = {0, 0, static_cast<long>(m_game_settings->GetResolution().x), static_cast<long>(m_game_settings->GetResolution().y)};
   int winFlags = WS_OVERLAPPEDWINDOW;
   AdjustWindowRectEx(&r, winFlags, FALSE, WS_EX_APPWINDOW | WS_EX_DLGMODALFRAME);
-
-  m_hwnd = CreateWindowEx(WS_EX_APPWINDOW | WS_EX_DLGMODALFRAME,
+  /*
+  m_game_settings->SetHWnd(CreateWindowEx(WS_EX_APPWINDOW | WS_EX_DLGMODALFRAME,
                           m_application_name,
                           m_application_name,
                           WS_OVERLAPPEDWINDOW, posX, posY,
                           r.right - r.left, r.bottom - r.top,
                           NULL,
                           NULL,
-                          m_hinstance,
-                          NULL);
-
+                          m_game_settings->GetHInstance(),
+                          NULL));
+*/
   // Create the window with the screen settings and get the handle to it.
-  m_hwnd = CreateWindowEx(WS_EX_APPWINDOW|WS_EX_DLGMODALFRAME,
+  m_game_settings->SetHWnd(CreateWindowEx(WS_EX_APPWINDOW|WS_EX_DLGMODALFRAME,
                           m_application_name,
                           m_application_name,
                           winFlags,
-                          posX, posY, r.right, r.bottom, NULL, NULL, m_hinstance, NULL);
+                          posX, posY, r.right, r.bottom, NULL, NULL, m_game_settings->GetHInstance(), NULL));
 
   // Bring the window up on the screen and set it as main focus.
-  ShowWindow(m_hwnd, SW_SHOW);
-  SetForegroundWindow(m_hwnd);
-  SetFocus(m_hwnd);
+  ShowWindow(m_game_settings->GetHWnd(), SW_SHOW);
+  SetForegroundWindow(m_game_settings->GetHWnd());
+  SetFocus(m_game_settings->GetHWnd());
 
   m_is_window_init = true;
 
@@ -442,7 +441,7 @@ void Direct3D11_View::Init_D3D11() {
   swap_chain_desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 
   // Set the handle for the window to render to.
-  swap_chain_desc.OutputWindow = m_hwnd;
+  swap_chain_desc.OutputWindow = m_game_settings->GetHWnd();
 
   // Turn multisampling off.
   swap_chain_desc.SampleDesc.Count = 1;

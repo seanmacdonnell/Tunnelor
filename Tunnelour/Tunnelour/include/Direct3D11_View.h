@@ -127,8 +127,6 @@ class Direct3D11_View : public Tunnelour::View {
   // Description : Class Variables
   //---------------------------------------------------------------------------
   LPCWSTR m_application_name;
-  HINSTANCE m_hinstance;
-  HWND m_hwnd;
   bool m_is_window_init;
   bool m_is_d3d11_init;
   int m_videoCardMemory;

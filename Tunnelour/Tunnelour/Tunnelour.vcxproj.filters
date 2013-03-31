@@ -138,6 +138,9 @@
     <ClCompile Include="src\Avatar_Controller_Mutator.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
+    <ClCompile Include="src\Input_Controller.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Init_Controller.h">
@@ -234,6 +237,9 @@
       <Filter>Include Files\Controllers</Filter>
     </ClInclude>
     <ClInclude Include="include\Avatar_Controller_Mutator.h">
+      <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Input_Controller.h">
       <Filter>Include Files\Controllers</Filter>
     </ClInclude>
   </ItemGroup>

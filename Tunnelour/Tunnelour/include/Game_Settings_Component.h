@@ -131,6 +131,26 @@ class Game_Settings_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   float GetTileMultiplicationFactor();
 
+  //---------------------------------------------------------------------------
+  // Description : Accessor for the HInstance
+  //---------------------------------------------------------------------------
+  HINSTANCE& GetHInstance();
+
+  //---------------------------------------------------------------------------
+  // Description : Accessor for the HInstance
+  //---------------------------------------------------------------------------
+  void SetHInstance(HINSTANCE hinstance);
+
+  //---------------------------------------------------------------------------
+  // Description : Accessor for the HWnd
+  //---------------------------------------------------------------------------
+  HWND& GetHWnd();
+
+  //---------------------------------------------------------------------------
+  // Description : Accessor for the HWnd
+  //---------------------------------------------------------------------------
+  void SetHWnd(HWND hwnd);
+
  protected:
 
  private:
@@ -145,6 +165,8 @@ class Game_Settings_Component: public Tunnelour::Component {
   D3DXCOLOR m_color;
   std::wstring m_tileset_path;
   float m_tile_size_multiplication_factor;
+  HINSTANCE m_hinstance;
+  HWND m_hwnd;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_COLOR_COMPONENT_H_

@@ -101,6 +101,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Frame_Component.cc" />
     <ClCompile Include="src\Game_Settings_Component.cc" />
     <ClCompile Include="src\Init_Controller.cc" />
+    <ClCompile Include="src\Input_Controller.cc" />
     <ClCompile Include="src\Message_Wrapper.cc" />
     <ClCompile Include="src\Bitmap_Component.cc" />
     <ClCompile Include="src\Middleground_Controller.cc" />
@@ -134,6 +135,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Frame_Component.h" />
     <ClInclude Include="include\Game_Settings_Component.h" />
     <ClInclude Include="include\Init_Controller.h" />
+    <ClInclude Include="include\Input_Controller.h" />
     <ClInclude Include="include\Message_Wrapper.h" />
     <ClInclude Include="include\Bitmap_Component.h" />
     <ClInclude Include="include\Middleground_Controller.h" />
