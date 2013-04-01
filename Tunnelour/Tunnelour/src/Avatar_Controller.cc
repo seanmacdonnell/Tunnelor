@@ -77,7 +77,7 @@ void Avatar_Controller::Generate_Avatar_Tile() {
     }
   }
 
-  m_avatar = new Tunnelour::Tile_Bitmap();
+  m_avatar = new Tunnelour::Avatar_Component();
   m_avatar->GetTexture()->transparency = 1.0f;
 
   std::wstring texture_path = m_game_settings->GetTilesetPath();
@@ -94,7 +94,7 @@ void Avatar_Controller::Generate_Avatar_Tile() {
 
 //------------------------------------------------------------------------------
 void Avatar_Controller::Place_Avatar_Tile() {
-  m_avatar->SetPosition(new D3DXVECTOR3(0, 0, -2)); // Middleground Z Space is -1
+  m_avatar->SetPosition(D3DXVECTOR3(0, 0, -2)); // Middleground Z Space is -1
 }
 
 //------------------------------------------------------------------------------

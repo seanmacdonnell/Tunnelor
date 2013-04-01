@@ -6,6 +6,7 @@ Tunnelour/Tunnelour.suo -text
 Tunnelour/Tunnelour/Tunnelour.vcxproj -text
 Tunnelour/Tunnelour/Tunnelour.vcxproj.filters -text
 Tunnelour/Tunnelour/Tunnelour.vcxproj.user -text
+Tunnelour/Tunnelour/include/Avatar_Component.h -text
 Tunnelour/Tunnelour/include/Avatar_Controller.h -text
 Tunnelour/Tunnelour/include/Avatar_Controller_Mutator.h -text
 Tunnelour/Tunnelour/include/Background_Controller.h -text
@@ -31,6 +32,7 @@ Tunnelour/Tunnelour/include/Frame_Component.h -text
 Tunnelour/Tunnelour/include/Game_Settings_Component.h -text
 Tunnelour/Tunnelour/include/Init_Controller.h -text
 Tunnelour/Tunnelour/include/Input_Controller.h -text
+Tunnelour/Tunnelour/include/Input_Controller_Mutator.h -text
 Tunnelour/Tunnelour/include/Message_Wrapper.h -text
 Tunnelour/Tunnelour/include/Middleground_Controller.h -text
 Tunnelour/Tunnelour/include/Middleground_Controller_Mutator.h -text
@@ -63,6 +65,7 @@ Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_4_3.dds -text
 Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_4_3.txt -text
 Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_5.dds -text
 Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_5.txt -text
+Tunnelour/Tunnelour/src/Avatar_Component.cc -text
 Tunnelour/Tunnelour/src/Avatar_Controller.cc -text
 Tunnelour/Tunnelour/src/Avatar_Controller_Mutator.cc -text
 Tunnelour/Tunnelour/src/Background_Controller.cc -text
@@ -87,6 +90,7 @@ Tunnelour/Tunnelour/src/Frame_Component.cc -text
 Tunnelour/Tunnelour/src/Game_Settings_Component.cc -text
 Tunnelour/Tunnelour/src/Init_Controller.cc -text
 Tunnelour/Tunnelour/src/Input_Controller.cc -text
+Tunnelour/Tunnelour/src/Input_Controller_Mutator.cc -text
 Tunnelour/Tunnelour/src/Message_Wrapper.cc -text
 Tunnelour/Tunnelour/src/Middleground_Controller.cc -text
 Tunnelour/Tunnelour/src/Middleground_Controller_Mutator.cc -text

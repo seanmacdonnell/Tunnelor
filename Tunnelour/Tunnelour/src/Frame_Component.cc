@@ -77,13 +77,13 @@ void Frame_Component::SetFrame(Tunnelour::Frame_Component::Frame * frame) {
 }
 
 //---------------------------------------------------------------------------
-D3DXVECTOR3 * const Frame_Component::GetPosition() {
-  return &m_position;
+D3DXVECTOR3 Frame_Component::GetPosition() {
+  return m_position;
 }
 
 //---------------------------------------------------------------------------
-void Frame_Component::SetPosition(D3DXVECTOR3 * const position) {
-  m_position = *position;
+void Frame_Component::SetPosition(D3DXVECTOR3 position) {
+  m_position = position;
 }
 
 //---------------------------------------------------------------------------

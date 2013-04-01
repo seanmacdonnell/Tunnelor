@@ -18,6 +18,7 @@
 
 #include "Component.h"
 #include "Game_Settings_Component.h"
+#include "Avatar_Component.h"
 
 namespace Tunnelour {
 class Avatar_Controller_Mutator: public Tunnelour::Component::Component_Mutator  {
@@ -52,9 +53,21 @@ class Avatar_Controller_Mutator: public Tunnelour::Component::Component_Mutator 
   //-------------------------------------------------------------------------
   Tunnelour::Game_Settings_Component* const GetGameSettings();
 
+  //-------------------------------------------------------------------------
+  // Description : Has this component been found in the model?
+  //-------------------------------------------------------------------------
+  bool FoundAvatarComponent();
+
+  //-------------------------------------------------------------------------
+  // Description : Accessors for the Game_Settings_Component
+  //-------------------------------------------------------------------------
+  Tunnelour::Avatar_Component* const GetAvatarComponent();
+
  private:
   bool m_found_game_settings;
-  Tunnelour::Game_Settings_Component * m_game_settings;
+  bool m_found_avatar_component;
+  Tunnelour::Game_Settings_Component *m_game_settings;
+  Avatar_Component *m_avatar_component;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_MUTATOR_H_

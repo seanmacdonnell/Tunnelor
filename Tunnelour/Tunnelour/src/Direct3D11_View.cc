@@ -908,9 +908,9 @@ void Direct3D11_View::Render_Bitmap(Tunnelour::Bitmap_Component* bitmap,
 
   // Translate
   D3DXMatrixTranslation(&TranslateMatrix,
-                        bitmap->GetPosition()->x,
-                        bitmap->GetPosition()->y,
-                        bitmap->GetPosition()->z);
+                        bitmap->GetPosition().x,
+                        bitmap->GetPosition().y,
+                        bitmap->GetPosition().z);
 
   // Scale
   D3DXMatrixScaling(&ScaleMatrix,
@@ -973,9 +973,9 @@ void Direct3D11_View::Render_Text(Tunnelour::Text_Component *text,
 
   // Translate
   D3DXMatrixTranslation(&TranslateMatrix,
-                        text->GetPosition()->x,
-                        text->GetPosition()->y,
-                        text->GetPosition()->z);
+                        text->GetPosition().x,
+                        text->GetPosition().y,
+                        text->GetPosition().z);
 
   // Scale
   D3DXMatrixScaling(&ScaleMatrix,

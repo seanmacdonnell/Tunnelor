@@ -23,6 +23,8 @@ namespace Tunnelour {
 Avatar_Controller_Mutator::Avatar_Controller_Mutator() {
   m_found_game_settings = false;
   m_game_settings = 0;
+  m_found_avatar_component = true;
+  m_avatar_component = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -39,6 +41,13 @@ void Avatar_Controller_Mutator::Mutate(Tunnelour::Component * const component) {
     game_settings = static_cast<Tunnelour::Game_Settings_Component*>(component);
     m_game_settings = game_settings;
     m_found_game_settings = true;
+  } else {
+    if (!m_found_avatar_component) {
+      m_avatar_component = dynamic_cast<Avatar_Component*>(component);
+      if (m_avatar_component != 0) {
+        m_found_avatar_component = true;
+      }
+    }
   }
 }
 
@@ -50,6 +59,17 @@ bool Avatar_Controller_Mutator::FoundGameSettings() {
 //------------------------------------------------------------------------------
 Tunnelour::Game_Settings_Component* const Avatar_Controller_Mutator::GetGameSettings() {
   return m_game_settings;
+}
+
+
+//------------------------------------------------------------------------------
+bool Avatar_Controller_Mutator::FoundAvatarComponent() {
+  return m_found_avatar_component;
+}
+
+//------------------------------------------------------------------------------
+Tunnelour::Avatar_Component* const Avatar_Controller_Mutator::GetAvatarComponent() {
+  return m_avatar_component;
 }
 
 }  // namespace Tunnelour

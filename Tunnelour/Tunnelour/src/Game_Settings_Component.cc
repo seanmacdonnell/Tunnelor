@@ -31,9 +31,8 @@ Game_Settings_Component::Game_Settings_Component(): Component() {
   m_tileset_path = L"";
   m_type = "Game_Settings_Component";
   m_tile_size_multiplication_factor = 0;
-  m_hinstance = 0;
-  m_hwnd = 0;
-
+  m_hinstance = NULL;
+  m_hwnd = NULL;
 }
 
 //------------------------------------------------------------------------------

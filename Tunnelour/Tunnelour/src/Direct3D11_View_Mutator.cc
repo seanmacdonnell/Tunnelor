@@ -47,13 +47,13 @@ void Direct3D11_View_Mutator::Mutate(Tunnelour::Component * const component) {
     // Found Bitmap_Component
     Tunnelour::Bitmap_Component *bitmap = 0;
     bitmap = static_cast<Tunnelour::Bitmap_Component*>(component);
-    if (bitmap->GetPosition()->z > -1) {
+    if (bitmap->GetPosition().z > -1) {
       m_renderables.Layer_00.push_back(bitmap);
     }
-    if (bitmap->GetPosition()->z <= -1 && bitmap->GetPosition()->z > -2) {
+    if (bitmap->GetPosition().z <= -1 && bitmap->GetPosition().z > -2) {
       m_renderables.Layer_01.push_back(bitmap);
     }
-    if (bitmap->GetPosition()->z <= -2) {
+    if (bitmap->GetPosition().z <= -2) {
       m_renderables.Layer_02.push_back(bitmap);
     }
     m_found_renderables = true;
@@ -63,13 +63,13 @@ void Direct3D11_View_Mutator::Mutate(Tunnelour::Component * const component) {
     // Found Text_Component
     Tunnelour::Text_Component *text = 0;
     text = static_cast<Tunnelour::Text_Component*>(component);
-    if (text->GetPosition()->z > -1) {
+    if (text->GetPosition().z > -1) {
       m_renderables.Layer_00.push_back(text);
     }
-    if (text->GetPosition()->z <= -1 && text->GetPosition()->z > -2) {
+    if (text->GetPosition().z <= -1 && text->GetPosition().z > -2) {
       m_renderables.Layer_01.push_back(text);
     }
-    if (text->GetPosition()->z <= -2) {
+    if (text->GetPosition().z <= -2) {
       m_renderables.Layer_02.push_back(text);
     }
     m_found_renderables = true;

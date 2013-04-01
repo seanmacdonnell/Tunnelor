@@ -82,6 +82,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Avatar_Component.cc" />
     <ClCompile Include="src\Avatar_Controller.cc" />
     <ClCompile Include="src\Avatar_Controller_Mutator.cc" />
     <ClCompile Include="src\Background_Controller.cc" />
@@ -102,6 +103,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Game_Settings_Component.cc" />
     <ClCompile Include="src\Init_Controller.cc" />
     <ClCompile Include="src\Input_Controller.cc" />
+    <ClCompile Include="src\Input_Controller_Mutator.cc" />
     <ClCompile Include="src\Message_Wrapper.cc" />
     <ClCompile Include="src\Bitmap_Component.cc" />
     <ClCompile Include="src\Middleground_Controller.cc" />
@@ -115,6 +117,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\View_Composite.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Avatar_Component.h" />
     <ClInclude Include="include\Avatar_Controller.h" />
     <ClInclude Include="include\Avatar_Controller_Mutator.h" />
     <ClInclude Include="include\Background_Controller.h" />
@@ -136,6 +139,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Game_Settings_Component.h" />
     <ClInclude Include="include\Init_Controller.h" />
     <ClInclude Include="include\Input_Controller.h" />
+    <ClInclude Include="include\Input_Controller_Mutator.h" />
     <ClInclude Include="include\Message_Wrapper.h" />
     <ClInclude Include="include\Bitmap_Component.h" />
     <ClInclude Include="include\Middleground_Controller.h" />

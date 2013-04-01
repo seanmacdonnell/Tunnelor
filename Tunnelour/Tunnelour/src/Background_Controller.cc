@@ -89,7 +89,7 @@ void Background_Controller::Run() {
       std::vector<Tunnelour::Tile_Bitmap*> tile_line;
       for (int x = 0; x < number_of_x_tiles ; x++) {
          tile = Create_Tile(base_tile_size, resised_tile_size);
-         tile->SetPosition(new D3DXVECTOR3(current_x + (tile->GetSize()->x/2),
+         tile->SetPosition(D3DXVECTOR3(current_x + (tile->GetSize()->x/2),
                                            current_y - (tile->GetSize()->y/2),
                                            0)); // Background Z Space is 0
          current_x += static_cast<int>(tile->GetSize()->x);
@@ -365,7 +365,7 @@ Tunnelour::Tile_Bitmap* Background_Controller::Create_Tile(int base_tile_size, i
   }
 
   Tunnelour::Tile_Bitmap* tile = new Tunnelour::Tile_Bitmap();
-  tile->SetPosition(new D3DXVECTOR3(0, 0, 0));
+  tile->SetPosition(D3DXVECTOR3(0, 0, 0));
   tile->GetTexture()->transparency = 1.0f;
 
   std::wstring texture_path = m_game_settings->GetTilesetPath();

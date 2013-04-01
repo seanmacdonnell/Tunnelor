@@ -74,12 +74,12 @@ class Frame_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   // Description : Accessor for the Position
   //---------------------------------------------------------------------------
-  D3DXVECTOR3 * const GetPosition();
+  D3DXVECTOR3 GetPosition();
 
   //---------------------------------------------------------------------------
   // Description : Mutator for the Position
   //---------------------------------------------------------------------------
-  void SetPosition(D3DXVECTOR3 * const position);
+  void SetPosition(D3DXVECTOR3 position);
 
   //---------------------------------------------------------------------------
   // Description : Accessor for the Scale

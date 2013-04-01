@@ -24,6 +24,9 @@
 #include <dinput.h>
 #include "Component_Composite.h"
 #include "Controller.h"
+#include "Game_Settings_Component.h"
+#include "Avatar_Component.h"
+
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -49,13 +52,40 @@ class Input_Controller: public Tunnelour::Controller {
   virtual void Init(Tunnelour::Component_Composite * const model);
 
   //---------------------------------------------------------------------------
+  // Description : Initialisation function for the Direct Input Variables
+  //---------------------------------------------------------------------------
+  void Init_DirectInput();
+
+  //---------------------------------------------------------------------------
   // Description : Controller Runner
   //---------------------------------------------------------------------------
   virtual void Run();
 
+  bool Frame();
+
+  bool IsEscapePressed();
+  void GetMouseLocation(int&, int&);
+  bool ReadKeyboard();
+  bool ReadMouse();
+  void ProcessInput();
+  
  protected:
 
  private:
+ Tunnelour::Game_Settings_Component* m_game_settings;
+	IDirectInput8* m_directInput;
+	IDirectInputDevice8* m_keyboard;
+	IDirectInputDevice8* m_mouse;
+
+	unsigned char m_keyboardState[256];
+	DIMOUSESTATE m_mouseState;
+
+	int m_screenWidth, m_screenHeight;
+	int m_mouseX, m_mouseY;
+
+ bool m_has_direct_input_been_init;
+
+ Tunnelour::Avatar_Component* m_avatar_component;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_INPUT_CONTROLLER_H_

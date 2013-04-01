@@ -24,6 +24,7 @@
 #include "Tile_Bitmap.h"
 #include "Game_Settings_Component.h"
 #include "Avatar_Controller_Mutator.h"
+#include "Avatar_Component.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -86,7 +87,7 @@ class Avatar_Controller: public Tunnelour::Controller {
   void Place_Avatar_Tile();
   void Load_Tilset_Metadata();
 
-  Tunnelour::Tile_Bitmap *m_avatar;
+  Tunnelour::Avatar_Component *m_avatar;
   
   Tunnelour::Game_Settings_Component* m_game_settings;
 

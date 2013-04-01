@@ -18,6 +18,7 @@
 #include "Background_Controller.h"
 #include "Middleground_Controller.h"
 #include "Avatar_Controller.h"
+#include "Input_Controller.h"
 
 namespace Tunnelour {
 
@@ -48,7 +49,8 @@ void Tunnelour_Controller::Init(Tunnelour::Component_Composite * const model) {
   controller = Add(new Tunnelour::Middleground_Controller());
   controller->Init(m_model);
   
-
+  controller = Add(new Tunnelour::Input_Controller());
+  controller->Init(m_model);
 }
 
 //------------------------------------------------------------------------------

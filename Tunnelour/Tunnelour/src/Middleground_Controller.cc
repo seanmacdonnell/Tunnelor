@@ -184,7 +184,7 @@ void Middleground_Controller::Tile_Tunnel() {
       std::vector<Tunnelour::Tile_Bitmap*> tile_line;
       for (int x = 0; x < number_of_x_tiles ; x++) {
          tile = Create_Tile(base_tile_size, resised_tile_size, false);
-         tile->SetPosition(new D3DXVECTOR3(current_x + (tile->GetSize()->x/2),
+         tile->SetPosition(D3DXVECTOR3(current_x + (tile->GetSize()->x/2),
                                            current_y - (tile->GetSize()->y/2),
                                            -1)); // Middleground Z Space is -1
          tile->GetTexture()->transparency = 0.0f;
@@ -306,7 +306,7 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateMiddlegrou
     for (int x = 0; x < number_of_x_tiles ; x++) {
       tile = Create_Tile(base_tile_size, resised_tile_size, false);
       tile->GetTexture()->transparency = 1.0f;
-      tile->SetPosition(new D3DXVECTOR3(current_x + (tile->GetSize()->x/2),
+      tile->SetPosition(D3DXVECTOR3(current_x + (tile->GetSize()->x/2),
                                           current_y - (tile->GetSize()->y/2),
                                           -1)); // Middleground Z Space is -1
       current_x += static_cast<int>(tile->GetSize()->x);
@@ -326,16 +326,16 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateMiddlegrou
 //------------------------------------------------------------------------------
 Tunnelour::Tile_Bitmap* Middleground_Controller::GetResizedBoundarySize(Tunnelour::Tile_Bitmap* tile, Tunnelour::Tile_Bitmap* tunnel_tile, D3DXVECTOR2 tile_collision_point) {
   float tile_left, tile_right, tile_top, tile_bottom;
-  tile_left = tile->GetPosition()->x - static_cast<float>(tile->GetSize()->x / 2);
-  tile_right = tile->GetPosition()->x + static_cast<float>(tile->GetSize()->x / 2);
-  tile_top = tile->GetPosition()->y + static_cast<float>(tile->GetSize()->x / 2);
-  tile_bottom = tile->GetPosition()->y - static_cast<float>(tile->GetSize()->x / 2);
+  tile_left = tile->GetPosition().x - static_cast<float>(tile->GetSize()->x / 2);
+  tile_right = tile->GetPosition().x + static_cast<float>(tile->GetSize()->x / 2);
+  tile_top = tile->GetPosition().y + static_cast<float>(tile->GetSize()->x / 2);
+  tile_bottom = tile->GetPosition().y - static_cast<float>(tile->GetSize()->x / 2);
 
   float tunnel_tile_left, tunnel_tile_right, tunnel_tile_top, tunnel_tile_bottom;
-  tunnel_tile_left = tunnel_tile->GetPosition()->x - static_cast<float>(tunnel_tile->GetSize()->x / 2);
-  tunnel_tile_right = tunnel_tile->GetPosition()->x + static_cast<float>(tunnel_tile->GetSize()->x / 2);
-  tunnel_tile_top = tunnel_tile->GetPosition()->y + static_cast<float>(tunnel_tile->GetSize()->x / 2);
-  tunnel_tile_bottom = tunnel_tile->GetPosition()->y - static_cast<float>(tunnel_tile->GetSize()->x / 2);
+  tunnel_tile_left = tunnel_tile->GetPosition().x - static_cast<float>(tunnel_tile->GetSize()->x / 2);
+  tunnel_tile_right = tunnel_tile->GetPosition().x + static_cast<float>(tunnel_tile->GetSize()->x / 2);
+  tunnel_tile_top = tunnel_tile->GetPosition().y + static_cast<float>(tunnel_tile->GetSize()->x / 2);
+  tunnel_tile_bottom = tunnel_tile->GetPosition().y - static_cast<float>(tunnel_tile->GetSize()->x / 2);
 
   //Create a new tile border with the original tile and the horizontal intersect
   float tile_boundary_left, tile_boundary_right, tile_boundary_top, tile_boundary_bottom;
@@ -366,7 +366,7 @@ Tunnelour::Tile_Bitmap* Middleground_Controller::GetResizedBoundarySize(Tunnelou
   centre.y += tile_boundary_bottom;
   centre.x = centre.x / 4;
   centre.y = centre.y / 4;
-  boundary_tile->SetPosition(&centre);
+  boundary_tile->SetPosition(centre);
 
   return boundary_tile;
 }
@@ -376,13 +376,13 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFit
   std::vector<Tunnelour::Tile_Bitmap*> tiles;
 
   float tile_left, tile_right, tile_top, tile_bottom;
-  tile_left = tile->GetPosition()->x - static_cast<float>(tile->GetSize()->x / 2);
-  tile_right = tile->GetPosition()->x + static_cast<float>(tile->GetSize()->x / 2);
-  tile_top = tile->GetPosition()->y + static_cast<float>(tile->GetSize()->y / 2);
-  tile_bottom = tile->GetPosition()->y - static_cast<float>(tile->GetSize()->y / 2);
+  tile_left = tile->GetPosition().x - static_cast<float>(tile->GetSize()->x / 2);
+  tile_right = tile->GetPosition().x + static_cast<float>(tile->GetSize()->x / 2);
+  tile_top = tile->GetPosition().y + static_cast<float>(tile->GetSize()->y / 2);
+  tile_bottom = tile->GetPosition().y - static_cast<float>(tile->GetSize()->y / 2);
 
-  float tunnel_tile_top = tunnel_tile->GetPosition()->y + static_cast<float>(tunnel_tile->GetSize()->y / 2);
-  float tunnel_tile_bottom = tunnel_tile->GetPosition()->y - static_cast<float>(tunnel_tile->GetSize()->y / 2);
+  float tunnel_tile_top = tunnel_tile->GetPosition().y + static_cast<float>(tunnel_tile->GetSize()->y / 2);
+  float tunnel_tile_bottom = tunnel_tile->GetPosition().y - static_cast<float>(tunnel_tile->GetSize()->y / 2);
 
   // Calculate the tile which will fit in this boundary
   int number_of_128x128_y_tiles = 0, number_of_128x128_x_tiles = 0;
@@ -517,7 +517,7 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFit
     Tunnelour::Tile_Bitmap* sub_tile;
     for (int x = 0; x < sub_number_of_x_tiles ; x++) {
       sub_tile = Create_Tile(base_tile_size, resised_tile_size, border);
-      sub_tile->SetPosition(new D3DXVECTOR3(sub_current_x + (sub_tile->GetSize()->x/2),
+      sub_tile->SetPosition(D3DXVECTOR3(sub_current_x + (sub_tile->GetSize()->x/2),
                                             sub_current_y - (sub_tile->GetSize()->y/2),
                                             -1)); // Middleground Z Space is -1
       sub_tile->GetTexture()->transparency = 1.0f;
@@ -787,7 +787,7 @@ Tunnelour::Tile_Bitmap* Middleground_Controller::Create_Tile(int base_tile_size,
   }
 
   Tunnelour::Tile_Bitmap* tile = new Tunnelour::Tile_Bitmap();
-  tile->SetPosition(new D3DXVECTOR3(0, 0, 0));
+  tile->SetPosition(D3DXVECTOR3(0, 0, 0));
   tile->GetTexture()->transparency = 1.0f;
 
   std::wstring texture_path = m_game_settings->GetTilesetPath();
@@ -812,16 +812,16 @@ Tunnelour::Tile_Bitmap* Middleground_Controller::Create_Tile(int base_tile_size,
 bool Middleground_Controller::DoTheseTilesCollide(Tunnelour::Tile_Bitmap* TileA, Tunnelour::Tile_Bitmap* TileB, D3DXVECTOR2 &tile_a_output_colision) {
   // At least one vertex in TileA is contained in the TileB.
   float a_tile_left, a_tile_right, a_tile_top, a_tile_bottom;
-  a_tile_left = TileA->GetPosition()->x - static_cast<float>(TileA->GetSize()->x / 2);
-  a_tile_right = TileA->GetPosition()->x + static_cast<float>(TileA->GetSize()->x / 2);
-  a_tile_top = TileA->GetPosition()->y + static_cast<float>(TileA->GetSize()->x / 2);
-  a_tile_bottom = TileA->GetPosition()->y - static_cast<float>(TileA->GetSize()->x / 2);
+  a_tile_left = TileA->GetPosition().x - static_cast<float>(TileA->GetSize()->x / 2);
+  a_tile_right = TileA->GetPosition().x + static_cast<float>(TileA->GetSize()->x / 2);
+  a_tile_top = TileA->GetPosition().y + static_cast<float>(TileA->GetSize()->x / 2);
+  a_tile_bottom = TileA->GetPosition().y - static_cast<float>(TileA->GetSize()->x / 2);
 
   float b_tile_left, b_tile_right, b_tile_top, b_tile_bottom;
-  b_tile_left = TileB->GetPosition()->x - static_cast<float>(TileB->GetSize()->x / 2);
-  b_tile_right = TileB->GetPosition()->x + static_cast<float>(TileB->GetSize()->x / 2);
-  b_tile_top = TileB->GetPosition()->y + static_cast<float>(TileB->GetSize()->x / 2);
-  b_tile_bottom = TileB->GetPosition()->y - static_cast<float>(TileB->GetSize()->x / 2);
+  b_tile_left = TileB->GetPosition().x - static_cast<float>(TileB->GetSize()->x / 2);
+  b_tile_right = TileB->GetPosition().x + static_cast<float>(TileB->GetSize()->x / 2);
+  b_tile_top = TileB->GetPosition().y + static_cast<float>(TileB->GetSize()->x / 2);
+  b_tile_bottom = TileB->GetPosition().y - static_cast<float>(TileB->GetSize()->x / 2);
 
   if ((a_tile_left == b_tile_left) || (a_tile_left > b_tile_left && a_tile_left < b_tile_right)) {
     // Horrizontal Collision
