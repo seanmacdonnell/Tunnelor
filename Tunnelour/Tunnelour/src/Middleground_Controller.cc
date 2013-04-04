@@ -392,9 +392,13 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFit
   int number_of_8x8_y_tiles = 0, number_of_8x8_x_tiles = 0;
   int number_of_4x4_y_tiles = 0, number_of_4x4_x_tiles = 0;
   int number_of_2x2_y_tiles = 0, number_of_2x2_x_tiles = 0;
-  int number_of_1x1_y_tiles = 1, number_of_1x1_x_tiles = 0;
+  // Removing the Border
+  // int number_of_1x1_y_tiles = 1, number_of_1x1_x_tiles = 0;
+  int number_of_1x1_y_tiles = 0, number_of_1x1_x_tiles = 0;
 
-  int horizontal_boundary_size =  tile_top - tile_bottom - (1 * m_game_settings->GetTileMultiplicationFactor());
+  // Removing Border
+  //int horizontal_boundary_size =  tile_top - tile_bottom - (1 * m_game_settings->GetTileMultiplicationFactor());
+  int horizontal_boundary_size =  tile_top - tile_bottom;
   std:div_t div_y_result = div(horizontal_boundary_size, 128 * m_game_settings->GetTileMultiplicationFactor());
   number_of_128x128_y_tiles = div_y_result.quot;
   if (div_y_result.rem != 0) {
@@ -417,7 +421,9 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFit
               number_of_2x2_y_tiles = div_y_result.quot;
               if  (div_y_result.rem != 0) {
                 div_y_result =  div(div_y_result.rem, 1 * m_game_settings->GetTileMultiplicationFactor());
-                number_of_1x1_y_tiles = div_y_result.quot + 1;
+                // Removing Border
+                // number_of_1x1_y_tiles = div_y_result.quot + 1;
+                number_of_1x1_y_tiles = div_y_result.quot;
               }
             }
           }
@@ -468,7 +474,8 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFit
       } else if (number_of_1x1_y_tiles != 0) {
         base_tile_size = 1;
         if (number_of_1x1_y_tiles == 1) {
-          border = true;
+          // Removing the Border
+          // border = true;
         }
         number_of_1x1_y_tiles--;
       }
@@ -476,8 +483,9 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFit
       if (number_of_1x1_y_tiles != 0) {
         base_tile_size = 1;
         if (border_is_first) {
-          border = true;
-          border_is_first = false;
+          // Removing the Border
+          // border = true;
+          // border_is_first = false;
         }
         number_of_1x1_y_tiles--;
       } else if (number_of_2x2_y_tiles != 0) {
