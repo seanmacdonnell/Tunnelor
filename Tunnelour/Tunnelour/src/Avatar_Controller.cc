@@ -53,13 +53,72 @@ void Avatar_Controller::Run() {
     }
 
     // Load the Tileset Data
-    Load_Tilset_Metadata();
     Generate_Avatar_Tile();
     Place_Avatar_Tile();
     m_model->Add(m_avatar);
     m_has_avatar_been_generated = true;
   }
-  m_is_finished = true;
+
+  if (m_avatar->GetNextCommand() != "") {
+    if (m_avatar->GetNextCommand().compare("DIK_RIGHT") == 0) {
+      if (m_avatar->GetState().compare("Walking")) {
+        // Start the waking animation from the begining
+        Load_Tilset_Metadata(L"Charlie_Walking_Animation_Tileset_1_0.txt");
+        Animation_Subset walkinging_animation_subset;
+        for (std::list<Animation_Subset>::iterator tileset = m_metadata.subsets.begin(); tileset != m_metadata.subsets.end(); tileset++) {
+          if (tileset->name.compare("Walking") == 0) {
+            walkinging_animation_subset = *tileset;
+          }
+        }
+
+        std::wstring texture_path = m_game_settings->GetTilesetPath();
+        texture_path += String_Helper::StringToWString(m_metadata.filename);
+
+        m_avatar->GetTexture()->texture_path = texture_path;
+        m_avatar->GetTexture()->texture_size = D3DXVECTOR2(static_cast<float>(m_metadata.size_x),
+                                                           static_cast<float>(m_metadata.size_y));
+        m_avatar->GetTexture()->tile_size = D3DXVECTOR2(static_cast<float>(walkinging_animation_subset.tile_size_x),
+                                                        static_cast<float>(walkinging_animation_subset.tile_size_y));
+        m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(walkinging_animation_subset.top_left_x),
+                                                                static_cast<float>(walkinging_animation_subset.top_left_y));
+        m_avatar->SetSize(new D3DXVECTOR2(walkinging_animation_subset.tile_size_x, walkinging_animation_subset.tile_size_y));
+        
+        m_avatar->SetState(walkinging_animation_subset.name);
+        m_avatar->SetStateIndex(0);
+        D3DXVECTOR3 position = m_avatar->GetPosition(); 
+        position.x += 1;
+        m_avatar->SetPosition(position);
+        m_avatar->SetLastCommand(m_avatar->GetNextCommand());
+        m_avatar->SetNextCommand("");
+        m_avatar->GetTexture()->texture = 0;
+        m_avatar->GetFrame()->vertex_buffer = 0;
+        m_avatar->Init();
+      } else {
+        // Increment the walking animation
+        Animation_Subset walkinging_animation_subset;
+        for (std::list<Animation_Subset>::iterator tileset = m_metadata.subsets.begin(); tileset != m_metadata.subsets.end(); tileset++) {
+          if (tileset->name.compare("Walking") == 0) {
+            walkinging_animation_subset = *tileset;
+          }
+        }
+
+        unsigned int state_index = m_avatar->GetStateIndex();
+        state_index++;
+        if (state_index > walkinging_animation_subset.number_of_tiles) { state_index = 0; }
+        m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(walkinging_animation_subset.top_left_x + (state_index * walkinging_animation_subset.tile_size_x)),
+                                                                static_cast<float>(walkinging_animation_subset.top_left_y));
+        D3DXVECTOR3 position = m_avatar->GetPosition(); 
+        position.x += 1;
+        m_avatar->SetPosition(position);
+        m_avatar->SetLastCommand(m_avatar->GetNextCommand());
+        m_avatar->SetNextCommand("");
+        m_avatar->GetTexture()->texture = 0;
+        m_avatar->GetFrame()->vertex_buffer = 0;
+        m_avatar->Init();
+        m_avatar->SetStateIndex(state_index);
+      }
+    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -70,6 +129,7 @@ void Avatar_Controller::Run() {
 // private:
 //------------------------------------------------------------------------------
 void Avatar_Controller::Generate_Avatar_Tile() {
+  Load_Tilset_Metadata(L"Charlie_Standing_Animation_Tileset_0_3.txt");
   Animation_Subset standing_animation_subset;
   for (std::list<Animation_Subset>::iterator tileset = m_metadata.subsets.begin(); tileset != m_metadata.subsets.end(); tileset++) {
     if (tileset->name.compare("Standing") == 0) {
@@ -90,6 +150,9 @@ void Avatar_Controller::Generate_Avatar_Tile() {
   m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(standing_animation_subset.top_left_x),
                                                           static_cast<float>(standing_animation_subset.top_left_y));
   m_avatar->SetSize(new D3DXVECTOR2(standing_animation_subset.tile_size_x, standing_animation_subset.tile_size_y));
+
+  m_avatar->SetState(standing_animation_subset.name);
+  m_avatar->SetStateIndex(1);
 }
 
 //------------------------------------------------------------------------------
@@ -98,12 +161,12 @@ void Avatar_Controller::Place_Avatar_Tile() {
 }
 
 //------------------------------------------------------------------------------
-void Avatar_Controller::Load_Tilset_Metadata() {
+void Avatar_Controller::Load_Tilset_Metadata(std::wstring metadata_file) {
   FILE * pFile;
   int lSize;
 
   std::wstring wtileset_path = m_game_settings->GetTilesetPath();
-  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Standing_Animation_Tileset_0_3.txt");
+  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + metadata_file);
 
   // Open Font File as a text file
   if (fopen_s(&pFile, m_metadata_file_path.c_str(), "r") != 0) {
@@ -272,7 +335,7 @@ void Avatar_Controller::Load_Tilset_Metadata() {
         token = strtok_s(line, " ", &next_token);
         if (strcmp(token, "SubSet_NumOfTiles") == 0)   {
           token = strtok_s(NULL, " =\"", &next_token);
-          temp_subset.number_of_lines = atoi(token);
+          temp_subset.number_of_tiles = atoi(token);
         }
       }
 

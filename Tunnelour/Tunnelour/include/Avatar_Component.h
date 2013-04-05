@@ -20,6 +20,7 @@
 #include <d3dx10math.h>
 #include <d3dx11tex.h>
 #include "Bitmap_Component.h"
+#include <string>
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -43,6 +44,21 @@ class Avatar_Component: public Tunnelour::Bitmap_Component {
   //---------------------------------------------------------------------------
   virtual void Init();
 
+  std::string GetState();
+  void SetState(std::string state);
+
+  unsigned int GetStateIndex();
+  void SetStateIndex(unsigned int state_index);
+
+  std::string GetLastCommand();
+  void SetLastCommand(std::string last_command);
+
+  std::string GetCurrentCommand();
+  void SetCurrentCommand(std::string current_command);
+
+  std::string GetNextCommand();
+  void SetNextCommand(std::string next_command);
+
  protected:
 
  private:
@@ -50,6 +66,12 @@ class Avatar_Component: public Tunnelour::Bitmap_Component {
   // Description : Inits this components frame stucture
   //---------------------------------------------------------------------------
   void Init_Frame();
+
+  std::string m_state;
+  unsigned int m_state_index;
+  std::string m_last_command;
+  std::string m_current_command;
+  std::string m_next_command;
 };  // class Avatar_Component
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_COMPONENT_H_

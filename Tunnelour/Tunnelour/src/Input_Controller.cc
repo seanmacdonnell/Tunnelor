@@ -228,9 +228,7 @@ void Input_Controller::ProcessInput() {
 	if(m_mouseY > m_screenHeight) { m_mouseY = m_screenHeight; }
 	
 	if(m_keyboardState[DIK_RIGHT] & 0x80)	{
-	  D3DXVECTOR3 position =	m_avatar_component->GetPosition();
-   position.x += 1;
-   m_avatar_component->SetPosition(position);
+	  m_avatar_component->SetNextCommand("DIK_RIGHT");
 	}
 
 	return;

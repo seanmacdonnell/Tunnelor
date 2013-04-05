@@ -40,7 +40,7 @@ class Avatar_Controller: public Tunnelour::Controller {
     int top_left_x, top_left_y;
     int size_x, size_y;
     int tile_size_x, tile_size_y;
-    int number_of_lines;
+    int number_of_tiles;
   };
 
   struct Animation_Tileset_Metadata {
@@ -85,7 +85,7 @@ class Avatar_Controller: public Tunnelour::Controller {
  private:
   void Generate_Avatar_Tile();
   void Place_Avatar_Tile();
-  void Load_Tilset_Metadata();
+  void Load_Tilset_Metadata(std::wstring metadata_file);
 
   Tunnelour::Avatar_Component *m_avatar;
   

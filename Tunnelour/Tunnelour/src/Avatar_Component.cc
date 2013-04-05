@@ -25,6 +25,11 @@ Avatar_Component::Avatar_Component(): Bitmap_Component() {
   m_position = D3DXVECTOR3(0, 0, 0);
   m_size = D3DXVECTOR2(0, 0);
   m_texture->texture_path = L"";
+  m_state = "";
+  m_state_index = 0;
+  m_last_command = "";
+  m_current_command = "";
+  m_next_command = "";
 }
 
 //------------------------------------------------------------------------------
@@ -36,6 +41,56 @@ void Avatar_Component::Init() {
   Init_Frame();
 
   m_is_initialised = true;
+}
+
+//---------------------------------------------------------------------------
+std::string Avatar_Component::GetState() {
+  return m_state;
+}
+
+//---------------------------------------------------------------------------
+void Avatar_Component::SetState(std::string state) {
+  m_state = state;
+}
+
+//---------------------------------------------------------------------------
+unsigned int Avatar_Component::GetStateIndex() {
+  return m_state_index;
+}
+
+//---------------------------------------------------------------------------
+void Avatar_Component::SetStateIndex(unsigned int state_index) {
+  m_state_index = state_index;
+}
+
+//---------------------------------------------------------------------------
+std::string Avatar_Component::GetLastCommand() {
+  return m_last_command;
+}
+
+//---------------------------------------------------------------------------
+void Avatar_Component::SetLastCommand(std::string last_command) {
+  m_last_command = last_command;
+}
+
+//---------------------------------------------------------------------------
+std::string Avatar_Component::GetCurrentCommand() {
+  return m_current_command;
+}
+
+//---------------------------------------------------------------------------
+void Avatar_Component::SetCurrentCommand(std::string current_command) {
+  m_current_command = current_command;
+}
+
+//---------------------------------------------------------------------------
+std::string Avatar_Component::GetNextCommand() {
+  return m_next_command;
+}
+
+//---------------------------------------------------------------------------
+void Avatar_Component::SetNextCommand(std::string next_command) {
+  m_next_command = next_command;
 }
 
 //------------------------------------------------------------------------------

@@ -145,7 +145,7 @@
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
     <ClCompile Include="src\Avatar_Component.cc">
-      <Filter>Source Files\Controllers</Filter>
+      <Filter>Source Files\Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -252,7 +252,7 @@
       <Filter>Include Files\Controllers</Filter>
     </ClInclude>
     <ClInclude Include="include\Avatar_Component.h">
-      <Filter>Include Files\Controllers</Filter>
+      <Filter>Include Files\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -293,6 +293,12 @@
       <Filter>Resource Files\TileSets</Filter>
     </None>
     <None Include="resource\tilesets\Dirt_Tileset_5.txt">
+      <Filter>Resource Files\TileSets</Filter>
+    </None>
+    <None Include="resource\tilesets\Charlie_Walking_Animation_Tileset_1_0.dds">
+      <Filter>Resource Files\TileSets</Filter>
+    </None>
+    <None Include="resource\tilesets\Charlie_Walking_Animation_Tileset_1_0.txt">
       <Filter>Resource Files\TileSets</Filter>
     </None>
   </ItemGroup>

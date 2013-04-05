@@ -274,17 +274,7 @@ void Direct3D11_View::Init_Window() {
   RECT r = {0, 0, static_cast<long>(m_game_settings->GetResolution().x), static_cast<long>(m_game_settings->GetResolution().y)};
   int winFlags = WS_OVERLAPPEDWINDOW;
   AdjustWindowRectEx(&r, winFlags, FALSE, WS_EX_APPWINDOW | WS_EX_DLGMODALFRAME);
-  /*
-  m_game_settings->SetHWnd(CreateWindowEx(WS_EX_APPWINDOW | WS_EX_DLGMODALFRAME,
-                          m_application_name,
-                          m_application_name,
-                          WS_OVERLAPPEDWINDOW, posX, posY,
-                          r.right - r.left, r.bottom - r.top,
-                          NULL,
-                          NULL,
-                          m_game_settings->GetHInstance(),
-                          NULL));
-*/
+
   // Create the window with the screen settings and get the handle to it.
   m_game_settings->SetHWnd(CreateWindowEx(WS_EX_APPWINDOW|WS_EX_DLGMODALFRAME,
                           m_application_name,
