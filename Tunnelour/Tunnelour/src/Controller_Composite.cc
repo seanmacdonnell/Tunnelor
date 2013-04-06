@@ -28,7 +28,7 @@ Controller_Composite::Controller_Composite() {
 Controller_Composite::~Controller_Composite() {
   while (!m_controllers.empty()) {
     delete m_controllers.front();
-    m_controllers.pop_back();
+    m_controllers.pop_front();
   }
 }
 
