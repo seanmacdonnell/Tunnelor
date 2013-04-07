@@ -106,6 +106,7 @@ class Text_Component: public Tunnelour::Bitmap_Component {
   // Description : Inits this components frame stucture
   //---------------------------------------------------------------------------
   void Create_String_Frame();
+  bool m_has_font_been_loaded;
 };  // class Text_Component
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_TEXT_COMPONENT_H_

@@ -24,6 +24,8 @@ Direct3D11_View_Mutator::Direct3D11_View_Mutator() {
   m_camera = 0;
   m_found_camera = false;
   m_found_renderables = false;
+  m_game_metics = 0;
+  m_found_game_metics = false;
 }
 
 //------------------------------------------------------------------------------
@@ -31,6 +33,7 @@ Direct3D11_View_Mutator::~Direct3D11_View_Mutator() {
   m_camera = 0;
   m_found_camera = false;
   m_found_renderables = false;
+  m_found_game_metics = false;
 }
 
 //------------------------------------------------------------------------------
@@ -82,6 +85,14 @@ void Direct3D11_View_Mutator::Mutate(Tunnelour::Component * const component) {
     m_game_settings = game_settings;
     m_found_game_settings = true;
   }
+
+  if (component->GetType().compare("Game_Metrics_Component") == 0) {
+    // Found Game Settings
+    Tunnelour::Game_Metrics_Component *game_metics = 0;
+    game_metics = static_cast<Tunnelour::Game_Metrics_Component*>(component);
+    m_game_metics = game_metics;
+    m_found_game_metics = true;
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -112,6 +123,16 @@ bool Direct3D11_View_Mutator::FoundGameSettings() {
 //------------------------------------------------------------------------------
 Tunnelour::Game_Settings_Component* const Direct3D11_View_Mutator::GetGameSettings() {
   return m_game_settings;
+}
+
+//------------------------------------------------------------------------------
+bool Direct3D11_View_Mutator::FoundGameMetrics() {
+  return m_found_game_metics;
+}
+
+//------------------------------------------------------------------------------
+Tunnelour::Game_Metrics_Component* const Direct3D11_View_Mutator::GetGameMetrics() {
+  return m_game_metics;
 }
 
 }  // namespace Tunnelour

@@ -43,6 +43,8 @@ Direct3D11_View::Direct3D11_View() {
 
   m_font_shader = NULL;
   m_transparent_shader = NULL;
+  m_game_settings = 0;
+  m_game_metrics = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -167,6 +169,10 @@ void Direct3D11_View::Run() {
     throw Tunnelour::Exceptions::run_error("Can't find Background component!");
   }
 
+  if (mutator.FoundGameMetrics() && m_game_metrics == 0)  {
+    m_game_metrics = mutator.GetGameMetrics();
+  }
+  
   m_game_settings = mutator.GetGameSettings();
 
   if (!m_is_window_init) { Init_Window(); }
@@ -212,6 +218,21 @@ void Direct3D11_View::Run() {
   } else {
     // Present as fast as possible.
     m_swap_chain->Present(0, 0);
+  }
+
+  if (m_game_metrics != 0 ) {
+	   Tunnelour::Game_Metrics_Component::FPS_Data fps_data = m_game_metrics->GetFPSData();
+      
+    fps_data.count++;
+
+	   if(timeGetTime() >= (fps_data.startTime + 1000)) {
+		    fps_data.fps = fps_data.count;
+		    fps_data.count = 0;
+		
+		    fps_data.startTime = timeGetTime();
+	   }
+
+    m_game_metrics->SetFPSData(fps_data);
   }
 }
 

@@ -23,6 +23,7 @@
 #include "Bitmap_Component.h"
 #include "Text_Component.h"
 #include "Game_Settings_Component.h"
+#include "Game_Metrics_Component.h"
 
 namespace Tunnelour {
 class Direct3D11_View_Mutator: public Tunnelour::Component::Component_Mutator  {
@@ -83,11 +84,18 @@ class Direct3D11_View_Mutator: public Tunnelour::Component::Component_Mutator  {
   //-------------------------------------------------------------------------
   Tunnelour::Game_Settings_Component* const GetGameSettings();
 
+  //-------------------------------------------------------------------------
+  // Description : Has this component been found in the model?
+  //-------------------------------------------------------------------------
+  bool Direct3D11_View_Mutator::FoundGameMetrics();
+  Tunnelour::Game_Metrics_Component* const Direct3D11_View_Mutator::GetGameMetrics();
+
  private:
-  bool m_found_camera, m_found_renderables, m_found_game_settings;
+  bool m_found_camera, m_found_renderables, m_found_game_settings, m_found_game_metics;
   Tunnelour::Camera_Component * m_camera;
   Renderables m_renderables;
   Tunnelour::Game_Settings_Component * m_game_settings;
+  Tunnelour::Game_Metrics_Component * m_game_metics;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_DIRECT3D11_VIEW_MUTATOR_H_

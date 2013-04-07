@@ -147,6 +147,12 @@
     <ClCompile Include="src\Avatar_Component.cc">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
+    <ClCompile Include="src\Debug_Data_Display_Controller.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Game_Metrics_Component.cc">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Init_Controller.h">
@@ -252,6 +258,12 @@
       <Filter>Include Files\Controllers</Filter>
     </ClInclude>
     <ClInclude Include="include\Avatar_Component.h">
+      <Filter>Include Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Debug_Data_Display_Controller.h">
+      <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Game_Metrics_Component.h">
       <Filter>Include Files\Model</Filter>
     </ClInclude>
   </ItemGroup>

@@ -31,9 +31,10 @@ Text_Component::Text_Component(): Bitmap_Component() {
   m_font.image_height = 0;
   m_font.font_color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
-  m_texture->texture_path = L"resource\\";
+  m_texture->texture_path = L"resource\\tilesets\\";
 
   m_type = "Text_Component";
+  m_has_font_been_loaded = false;
 }
 
 //------------------------------------------------------------------------------
@@ -44,12 +45,12 @@ Text_Component::~Text_Component()  {
 void Text_Component::Init() {
   Bitmap_Component::Init();
 
-  Load_Font_Struct();
-
-  Load_Character_Frames();
+  if (!m_has_font_been_loaded) { 
+    Load_Font_Struct(); 
+    Load_Character_Frames();
+  }
 
   Create_String_Frame();
-
 
   m_is_initialised = true;
 }
@@ -224,6 +225,7 @@ void Text_Component::Load_Font_Struct() {
   }
 
   fclose(pFile);
+  m_has_font_been_loaded = true;
 }
 
 //------------------------------------------------------------------------------
@@ -237,10 +239,6 @@ void Text_Component::Load_Character_Frames() {
   // Raw Character Frame Struct Array
   for (int index = 0; index < 256; index++) {
     if (m_font.raw_char_frames[index].id != -1) {
-      if (m_font.raw_char_frames[index].id == 55) {
-        m_font.raw_char_frames[index].id = 55;
-      }
-
       D3DXVECTOR2 size = D3DXVECTOR2(static_cast<float>(m_font.raw_char_frames[index].width),
                                      static_cast<float>(m_font.raw_char_frames[index].height));
       D3DXVECTOR2 position = D3DXVECTOR2(0, 0);

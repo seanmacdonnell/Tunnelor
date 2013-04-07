@@ -20,6 +20,7 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dx11.lib")
 #pragma comment(lib, "d3dx10.lib")
+#pragma comment(lib, "winmm.lib")
 
 #include <dxgi.h>
 #include <d3dcommon.h>
@@ -27,6 +28,7 @@
 #include <d3dx10math.h>
 
 #include <windows.h>
+#include <mmsystem.h>
 #include <list>
 #include <map>
 
@@ -40,6 +42,7 @@
 #include "Bitmap_Component.h"
 #include "Text_Component.h"
 #include "Game_Settings_Component.h"
+#include "Game_Metrics_Component.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -148,7 +151,7 @@ class Direct3D11_View : public Tunnelour::View {
   //---------------------------------------------------------------------------
   // Description : Shaders
   //---------------------------------------------------------------------------
-  Tunnelour::Direct3D11_View_FontShader * m_font_shader;
+  Tunnelour::Direct3D11_View_FontShader* m_font_shader;
   Tunnelour::Direct3D11_View_TransparentShader* m_transparent_shader;
 
   //---------------------------------------------------------------------------
@@ -156,7 +159,8 @@ class Direct3D11_View : public Tunnelour::View {
   //---------------------------------------------------------------------------
   Tunnelour::Game_Settings_Component* m_game_settings;
   std::map<std::wstring, ID3D11ShaderResourceView*> m_texture_map;
-  
+
+  Tunnelour::Game_Metrics_Component* m_game_metrics;
 };
 }  // namespace Tunnelour
 
