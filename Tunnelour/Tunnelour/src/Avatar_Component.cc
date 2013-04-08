@@ -30,6 +30,7 @@ Avatar_Component::Avatar_Component(): Bitmap_Component() {
   m_last_command = "";
   m_current_command = "";
   m_next_command = "";
+  m_direction = "RIGHT";
 }
 
 //------------------------------------------------------------------------------
@@ -93,6 +94,16 @@ void Avatar_Component::SetNextCommand(std::string next_command) {
   m_next_command = next_command;
 }
 
+//---------------------------------------------------------------------------
+std::string Avatar_Component::GetDirection() {
+  return m_direction;
+}
+
+//---------------------------------------------------------------------------
+void Avatar_Component::SetDirection(std::string direction) {
+  m_direction = direction;
+}
+
 //------------------------------------------------------------------------------
 // protected:
 //------------------------------------------------------------------------------
@@ -134,7 +145,7 @@ void Avatar_Component::Init_Frame() {
 
   // Calculate the screen coordinates of the right side of the bitmap.
   right = m_position.x + static_cast<float>(m_size.x / 2);
-
+  
   // Calculate the screen coordinates of the top of the bitmap.
   top = m_position.y + static_cast<float>(m_size.x / 2);
 
@@ -143,20 +154,39 @@ void Avatar_Component::Init_Frame() {
 
   // Load the vertex array with data
   // First triangle
+
   // Top left
   m_frame->vertices[0].position = D3DXVECTOR3(left, top, 0.0f);
-  m_frame->vertices[0].texture =  D3DXVECTOR2(m_texture->top_left_position.x / m_texture->texture_size.x,
-                                              m_texture->top_left_position.y / m_texture->texture_size.y);
+  if (m_direction.compare("RIGHT") == 0) {
+    m_frame->vertices[0].texture =  D3DXVECTOR2(m_texture->top_left_position.x / m_texture->texture_size.x,
+                                                m_texture->top_left_position.y / m_texture->texture_size.y);
+  } else {
+    //TOP LEFT NOW TOP RIGHT
+    m_frame->vertices[0].texture = D3DXVECTOR2((m_texture->tile_size.x + m_texture->top_left_position.x) / m_texture->texture_size.x,
+                                                m_texture->top_left_position.y / m_texture->texture_size.y);
+  }
 
   // Bottom right
   m_frame->vertices[1].position = D3DXVECTOR3(right, bottom, 0.0f);
-  m_frame->vertices[1].texture = D3DXVECTOR2((m_texture->tile_size.x + m_texture->top_left_position.x) / m_texture->texture_size.x,
-                                             (m_texture->tile_size.y + m_texture->top_left_position.y) / m_texture->texture_size.y);
+  if (m_direction.compare("RIGHT") == 0) {
+    m_frame->vertices[1].texture = D3DXVECTOR2((m_texture->tile_size.x + m_texture->top_left_position.x) / m_texture->texture_size.x,
+                                               (m_texture->tile_size.y + m_texture->top_left_position.y) / m_texture->texture_size.y);
+  } else {
+    // BOTTOM RIGHT NOW BOTTOM LEFT
+    m_frame->vertices[1].texture = D3DXVECTOR2(m_texture->top_left_position.x / m_texture->texture_size.x,
+                                              (m_texture->tile_size.y + m_texture->top_left_position.y) / m_texture->texture_size.y);
+  }
 
   // Bottom left
   m_frame->vertices[2].position = D3DXVECTOR3(left, bottom, 0.0f);
-  m_frame->vertices[2].texture = D3DXVECTOR2(m_texture->top_left_position.x / m_texture->texture_size.x,
-                                            (m_texture->tile_size.y + m_texture->top_left_position.y) / m_texture->texture_size.y);
+  if (m_direction.compare("RIGHT") == 0) {
+    m_frame->vertices[2].texture = D3DXVECTOR2(m_texture->top_left_position.x / m_texture->texture_size.x,
+                                              (m_texture->tile_size.y + m_texture->top_left_position.y) / m_texture->texture_size.y);
+  } else {
+    // BOTTOM LEFT NOW BOTTOM RIGHT
+    m_frame->vertices[2].texture = D3DXVECTOR2((m_texture->tile_size.x + m_texture->top_left_position.x) / m_texture->texture_size.x,
+                                               (m_texture->tile_size.y + m_texture->top_left_position.y) / m_texture->texture_size.y);
+  }
 
   // Second triangle.
   // Top left
@@ -164,8 +194,14 @@ void Avatar_Component::Init_Frame() {
   m_frame->vertices[3].texture = m_frame->vertices[0].texture;
   // Top right
   m_frame->vertices[4].position = D3DXVECTOR3(right, top, 0.0f);
-  m_frame->vertices[4].texture = D3DXVECTOR2((m_texture->tile_size.x + m_texture->top_left_position.x) / m_texture->texture_size.x,
-                                              m_texture->top_left_position.y / m_texture->texture_size.y);
+  if (m_direction.compare("RIGHT") == 0) {
+    m_frame->vertices[4].texture = D3DXVECTOR2((m_texture->tile_size.x + m_texture->top_left_position.x) / m_texture->texture_size.x,
+                                                m_texture->top_left_position.y / m_texture->texture_size.y);
+  } else {
+    // TOP RIGHT NOW TOP LEFT
+    m_frame->vertices[4].texture =  D3DXVECTOR2(m_texture->top_left_position.x / m_texture->texture_size.x,
+                                                m_texture->top_left_position.y / m_texture->texture_size.y);
+  }
   // Bottom right
   m_frame->vertices[5].position = D3DXVECTOR3(right, bottom, 0.0f);
   m_frame->vertices[5].texture = m_frame->vertices[1].texture;

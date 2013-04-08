@@ -91,6 +91,73 @@ void Avatar_Controller::Run() {
         D3DXVECTOR3 position = m_avatar->GetPosition(); 
         position.x += 1;
         m_avatar->SetPosition(position);
+        m_avatar->SetScale(new D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+        m_avatar->SetLastCommand(m_avatar->GetNextCommand());
+        m_avatar->SetNextCommand("");
+        m_avatar->GetTexture()->texture = 0;
+        m_avatar->GetFrame()->vertex_buffer = 0;
+        m_avatar->SetDirection("RIGHT");
+        m_avatar->Init();
+      } else {
+        Update_Timer();
+        if (m_animation_tick) {
+          // Increment the walking animation
+          Animation_Subset walkinging_animation_subset;
+          for (std::list<Animation_Subset>::iterator tileset = m_metadata.subsets.begin(); tileset != m_metadata.subsets.end(); tileset++) {
+            if (tileset->name.compare("Walking") == 0) {
+              walkinging_animation_subset = *tileset;
+            }
+          }
+
+          unsigned int state_index = m_avatar->GetStateIndex();
+          state_index++;
+          if (state_index > (walkinging_animation_subset.number_of_tiles - 1)) { state_index = 0; }
+          m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(walkinging_animation_subset.top_left_x + (state_index * walkinging_animation_subset.tile_size_x)),
+                                                                  static_cast<float>(walkinging_animation_subset.top_left_y));
+          D3DXVECTOR3 position = m_avatar->GetPosition(); 
+          position.x += 6;
+          m_avatar->SetPosition(position);
+          m_avatar->SetLastCommand(m_avatar->GetNextCommand());
+          m_avatar->SetNextCommand("");
+          m_avatar->GetTexture()->texture = 0;
+          m_avatar->GetFrame()->vertex_buffer = 0;
+          m_avatar->SetDirection("RIGHT");
+          m_avatar->Init();
+          m_avatar->SetStateIndex(state_index);
+          m_animation_tick = false;
+        }
+      }
+    }
+    if (m_avatar->GetNextCommand().compare("DIK_LEFT") == 0) {
+      if (m_avatar->GetState().compare("Walking")) {
+        // Start the waking animation from the begining
+        Load_Tilset_Metadata(L"Charlie_Walking_Animation_Tileset_1_0.txt");
+        Animation_Subset walkinging_animation_subset;
+        for (std::list<Animation_Subset>::iterator tileset = m_metadata.subsets.begin(); tileset != m_metadata.subsets.end(); tileset++) {
+          if (tileset->name.compare("Walking") == 0) {
+            walkinging_animation_subset = *tileset;
+          }
+        }
+
+        std::wstring texture_path = m_game_settings->GetTilesetPath();
+        texture_path += String_Helper::StringToWString(m_metadata.filename);
+
+        m_avatar->GetTexture()->texture_path = texture_path;
+        m_avatar->GetTexture()->texture_size = D3DXVECTOR2(static_cast<float>(m_metadata.size_x),
+                                                           static_cast<float>(m_metadata.size_y));
+        m_avatar->GetTexture()->tile_size = D3DXVECTOR2(static_cast<float>(walkinging_animation_subset.tile_size_x),
+                                                        static_cast<float>(walkinging_animation_subset.tile_size_y));
+        m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(walkinging_animation_subset.top_left_x),
+                                                                static_cast<float>(walkinging_animation_subset.top_left_y));
+        m_avatar->SetSize(new D3DXVECTOR2(walkinging_animation_subset.tile_size_x, walkinging_animation_subset.tile_size_y));
+        
+        m_avatar->SetState(walkinging_animation_subset.name);
+        m_avatar->SetStateIndex(0);
+        D3DXVECTOR3 position = m_avatar->GetPosition(); 
+        position.x -= 1;
+        m_avatar->SetPosition(position);
+        m_avatar->SetDirection("LEFT");
+        m_avatar->SetScale(new D3DXVECTOR3(1.0f, 1.0f, 1.0f));
         m_avatar->SetLastCommand(m_avatar->GetNextCommand());
         m_avatar->SetNextCommand("");
         m_avatar->GetTexture()->texture = 0;
@@ -113,7 +180,8 @@ void Avatar_Controller::Run() {
           m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(walkinging_animation_subset.top_left_x + (state_index * walkinging_animation_subset.tile_size_x)),
                                                                   static_cast<float>(walkinging_animation_subset.top_left_y));
           D3DXVECTOR3 position = m_avatar->GetPosition(); 
-          position.x += 6;
+          position.x -= 6;
+          m_avatar->SetDirection("LEFT");
           m_avatar->SetPosition(position);
           m_avatar->SetLastCommand(m_avatar->GetNextCommand());
           m_avatar->SetNextCommand("");

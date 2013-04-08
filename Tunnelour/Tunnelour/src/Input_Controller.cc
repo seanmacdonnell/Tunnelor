@@ -231,6 +231,10 @@ void Input_Controller::ProcessInput() {
 	  m_avatar_component->SetNextCommand("DIK_RIGHT");
 	}
 
+ if(m_keyboardState[DIK_LEFT] & 0x80)	{
+	  m_avatar_component->SetNextCommand("DIK_LEFT");
+	}
+
 	return;
 }
 

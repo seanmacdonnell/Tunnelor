@@ -59,6 +59,9 @@ class Avatar_Component: public Tunnelour::Bitmap_Component {
   std::string GetNextCommand();
   void SetNextCommand(std::string next_command);
 
+  std::string GetDirection();
+  void SetDirection(std::string direction);
+
  protected:
 
  private:
@@ -72,6 +75,7 @@ class Avatar_Component: public Tunnelour::Bitmap_Component {
   std::string m_last_command;
   std::string m_current_command;
   std::string m_next_command;
+  std::string m_direction;
 };  // class Avatar_Component
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_COMPONENT_H_
