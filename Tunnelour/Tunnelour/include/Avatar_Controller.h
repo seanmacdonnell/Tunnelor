@@ -25,6 +25,7 @@
 #include "Game_Settings_Component.h"
 #include "Avatar_Controller_Mutator.h"
 #include "Avatar_Component.h"
+#include <windows.h>
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -97,6 +98,15 @@ class Avatar_Controller: public Tunnelour::Controller {
   Animation_Tileset_Metadata m_metadata;
 
   Avatar_Controller_Mutator m_mutator;
+
+  bool Init_Timer();
+  void Update_Timer();
+
+  INT64 m_frequency;
+  float m_ticksPerMs;
+  INT64 m_startTime;
+  float m_frameTime;
+  bool m_animation_tick;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_H_

@@ -30,6 +30,7 @@ Avatar_Controller::Avatar_Controller() : Controller() {
   m_avatar = 0;
   m_game_settings = 0;
   m_has_avatar_been_generated = false;
+  m_animation_tick = false;
 }
 
 //------------------------------------------------------------------------------
@@ -39,10 +40,12 @@ Avatar_Controller::~Avatar_Controller() {
 //------------------------------------------------------------------------------
 void Avatar_Controller::Init(Tunnelour::Component_Composite * const model) {
     Tunnelour::Controller::Init(model);
+    Init_Timer();
 }
 
 //------------------------------------------------------------------------------
 void Avatar_Controller::Run() {
+
   if (!m_has_avatar_been_generated) {
     // Get game settings component from the model with the Mutator.
     m_model->Apply(&m_mutator);
@@ -94,28 +97,32 @@ void Avatar_Controller::Run() {
         m_avatar->GetFrame()->vertex_buffer = 0;
         m_avatar->Init();
       } else {
-        // Increment the walking animation
-        Animation_Subset walkinging_animation_subset;
-        for (std::list<Animation_Subset>::iterator tileset = m_metadata.subsets.begin(); tileset != m_metadata.subsets.end(); tileset++) {
-          if (tileset->name.compare("Walking") == 0) {
-            walkinging_animation_subset = *tileset;
+        Update_Timer();
+        if (m_animation_tick) {
+          // Increment the walking animation
+          Animation_Subset walkinging_animation_subset;
+          for (std::list<Animation_Subset>::iterator tileset = m_metadata.subsets.begin(); tileset != m_metadata.subsets.end(); tileset++) {
+            if (tileset->name.compare("Walking") == 0) {
+              walkinging_animation_subset = *tileset;
+            }
           }
-        }
 
-        unsigned int state_index = m_avatar->GetStateIndex();
-        state_index++;
-        if (state_index > walkinging_animation_subset.number_of_tiles) { state_index = 0; }
-        m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(walkinging_animation_subset.top_left_x + (state_index * walkinging_animation_subset.tile_size_x)),
-                                                                static_cast<float>(walkinging_animation_subset.top_left_y));
-        D3DXVECTOR3 position = m_avatar->GetPosition(); 
-        position.x += 1;
-        m_avatar->SetPosition(position);
-        m_avatar->SetLastCommand(m_avatar->GetNextCommand());
-        m_avatar->SetNextCommand("");
-        m_avatar->GetTexture()->texture = 0;
-        m_avatar->GetFrame()->vertex_buffer = 0;
-        m_avatar->Init();
-        m_avatar->SetStateIndex(state_index);
+          unsigned int state_index = m_avatar->GetStateIndex();
+          state_index++;
+          if (state_index > (walkinging_animation_subset.number_of_tiles - 1)) { state_index = 0; }
+          m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(walkinging_animation_subset.top_left_x + (state_index * walkinging_animation_subset.tile_size_x)),
+                                                                  static_cast<float>(walkinging_animation_subset.top_left_y));
+          D3DXVECTOR3 position = m_avatar->GetPosition(); 
+          position.x += 6;
+          m_avatar->SetPosition(position);
+          m_avatar->SetLastCommand(m_avatar->GetNextCommand());
+          m_avatar->SetNextCommand("");
+          m_avatar->GetTexture()->texture = 0;
+          m_avatar->GetFrame()->vertex_buffer = 0;
+          m_avatar->Init();
+          m_avatar->SetStateIndex(state_index);
+          m_animation_tick = false;
+        }
       }
     }
   }
@@ -342,6 +349,43 @@ void Avatar_Controller::Load_Tilset_Metadata(std::wstring metadata_file) {
       m_metadata.subsets.push_back(temp_subset);
     }
   }
+}
+
+//------------------------------------------------------------------------------
+bool Avatar_Controller::Init_Timer() {
+	// Check to see if this system supports high performance timers.
+	QueryPerformanceFrequency((LARGE_INTEGER*)&m_frequency);
+	if(m_frequency == 0)
+	{
+		return false;
+	}
+
+	// Find out how many times the frequency counter ticks every millisecond.
+	m_ticksPerMs = (float)(m_frequency / 1000);
+
+	QueryPerformanceCounter((LARGE_INTEGER*)&m_startTime);
+
+	return true;
+}
+
+//------------------------------------------------------------------------------
+void Avatar_Controller::Update_Timer() {
+ //avatar is 16 fps one frame every 62.5 milliseond
+
+	INT64 currentTime;
+	float timeDifference;
+
+	QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
+
+	timeDifference = (float)(currentTime - m_startTime);
+
+	m_frameTime = timeDifference / m_ticksPerMs;
+
+ if (m_frameTime >= 62.5) {
+   m_startTime = currentTime;
+   m_frameTime = m_frameTime - 62.5;
+   m_animation_tick = true;
+ }
 }
 
 } // Tunnelour

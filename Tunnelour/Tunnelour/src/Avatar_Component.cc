@@ -170,4 +170,5 @@ void Avatar_Component::Init_Frame() {
   m_frame->vertices[5].position = D3DXVECTOR3(right, bottom, 0.0f);
   m_frame->vertices[5].texture = m_frame->vertices[1].texture;
 }
+
 }  // namespace Tunnelour
