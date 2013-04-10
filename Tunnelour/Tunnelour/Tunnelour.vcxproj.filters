@@ -153,6 +153,9 @@
     <ClCompile Include="src\Game_Metrics_Component.cc">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
+    <ClCompile Include="src\Camera_Controller.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Init_Controller.h">
@@ -265,6 +268,9 @@
     </ClInclude>
     <ClInclude Include="include\Game_Metrics_Component.h">
       <Filter>Include Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Camera_Controller.h">
+      <Filter>Include Files\Controllers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

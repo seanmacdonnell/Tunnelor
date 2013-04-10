@@ -23,7 +23,7 @@ namespace Tunnelour {
 Avatar_Controller_Mutator::Avatar_Controller_Mutator() {
   m_found_game_settings = false;
   m_game_settings = 0;
-  m_found_avatar_component = true;
+  m_found_avatar_component = false;
   m_avatar_component = 0;
 }
 
