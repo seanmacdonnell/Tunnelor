@@ -32,7 +32,7 @@ Middleground_Controller::Middleground_Controller() : Controller() {
   m_game_settings = 0;
   m_has_init_middleground_been_generated = false;
   m_has_init_tunnel_been_generated = false;
-  m_tunnel_x_size = 128;
+  m_tunnel_x_size = 256;
 }
 
 //------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ void Middleground_Controller::Tile_Tunnel() {
     Load_Tilset_Metadata();
 
     int tunnel_start_x = static_cast<int>((m_game_settings->GetResolution().x/2) * -1);
-    int tunnel_start_y = 64;
+    int tunnel_start_y = 128;
     int current_x = tunnel_start_x;
     int current_y = tunnel_start_y;
     Tunnelour::Tile_Bitmap* tile;
@@ -437,6 +437,7 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFit
   int sub_current_y = tile_top;
   int sub_current_x = tile_left;
 
+  bool is_platform = false;
   bool big_tiles_to_small = false;
   int border_is_first = false;
   if (tile_bottom == tunnel_tile_top) {
@@ -469,6 +470,9 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFit
         base_tile_size = 4;
         number_of_4x4_y_tiles--;
       } else if (number_of_2x2_y_tiles != 0) {
+        if (number_of_2x2_y_tiles == 1) {
+          is_platform = true;
+        }
         base_tile_size = 2;
         number_of_2x2_y_tiles--;
       } else if (number_of_1x1_y_tiles != 0) {
@@ -489,6 +493,9 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFit
         }
         number_of_1x1_y_tiles--;
       } else if (number_of_2x2_y_tiles != 0) {
+        if (number_of_2x2_y_tiles == 1) {
+          is_platform = true;
+        }
         base_tile_size = 2;
         number_of_2x2_y_tiles--;
       } else if (number_of_4x4_y_tiles != 0) {
@@ -512,6 +519,12 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFit
       }
     }
 
+    if (y == 0 && big_tiles_to_small == false) {
+      is_platform = true;
+    } else {
+      is_platform = false;
+    }
+
     div_t div_y_result = div((int)tile->GetSize()->x, base_tile_size * m_game_settings->GetTileMultiplicationFactor());
 
     sub_number_of_x_tiles = div_y_result.quot;
@@ -530,6 +543,9 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFit
                                             -1)); // Middleground Z Space is -1
       sub_tile->GetTexture()->transparency = 1.0f;
       sub_current_x += static_cast<int>(sub_tile->GetSize()->x);
+      if (is_platform) {
+        sub_tile->Set_Is_Platform(true);
+      }
       tiles.push_back(sub_tile);
     }
     if (sub_number_of_x_tiles != 0) {
@@ -547,8 +563,8 @@ void Middleground_Controller::Load_Tilset_Metadata() {
   int lSize;
 
   std::wstring wtileset_path = m_game_settings->GetTilesetPath();
-  //m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Debug_Tileset_0_4.txt");
-  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Dirt_Tileset_5.txt");
+  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Debug_Tileset_0_4.txt");
+  //m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Dirt_Tileset_5.txt");
 
   // Open Font File as a text file
   if (fopen_s(&pFile, m_metadata_file_path.c_str(), "r") != 0) {
@@ -861,10 +877,6 @@ bool Middleground_Controller::DoTheseTilesCollide(Tunnelour::Tile_Bitmap* TileA,
 
   // At least one vertex in TileA is contained within TileB.
   // Any edge of TileA intersects any edge of TileB.
-
-  if (TileA->GetSize()->x == 4) {
-    int pause = 1;
-  }
 
   return false;
 }

@@ -126,8 +126,8 @@ void Background_Controller::Load_Tilset_Metadata() {
   int lSize;
 
   std::wstring wtileset_path = m_game_settings->GetTilesetPath();
-  //m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Debug_Tileset_0_4.txt");
-  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Dirt_Tileset_5.txt");
+  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Debug_Tileset_0_4.txt");
+  //m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Dirt_Tileset_5.txt");
 
   // Open Font File as a text file
   if (fopen_s(&pFile, m_metadata_file_path.c_str(), "r") != 0) {

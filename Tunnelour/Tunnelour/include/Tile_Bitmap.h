@@ -43,6 +43,10 @@ class Tile_Bitmap: public Tunnelour::Bitmap_Component {
   //---------------------------------------------------------------------------
   virtual void Init();
 
+  bool Is_Platform();
+
+  void Set_Is_Platform(bool is_platform);
+
  protected:
 
  private:
@@ -50,6 +54,7 @@ class Tile_Bitmap: public Tunnelour::Bitmap_Component {
   // Description : Inits this components frame stucture
   //---------------------------------------------------------------------------
   void Init_Frame();
+  bool m_is_platform;
 };  // class Tile_Bitmap
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_TILE_BITMAP_H_

@@ -45,19 +45,19 @@ void Avatar_Controller::Init(Tunnelour::Component_Composite * const model) {
 
 //------------------------------------------------------------------------------
 void Avatar_Controller::Run() {
-
   if (!m_has_avatar_been_generated) {
     // Get game settings component from the model with the Mutator.
-    m_model->Apply(&m_mutator);
-    if (!m_mutator.FoundGameSettings())  {
+    Avatar_Controller_Mutator mutator;
+    m_model->Apply(&mutator);
+    if (!mutator.FoundGameSettings())  {
       throw Tunnelour::Exceptions::run_error("Can't find a game settings component!");
     } else {
-      m_game_settings = m_mutator.GetGameSettings();
+      m_game_settings = mutator.GetGameSettings();
     }
 
     // Load the Tileset Data
     Generate_Avatar_Tile();
-    Place_Avatar_Tile();
+    Place_Avatar_Tile(&mutator);
     m_model->Add(m_avatar);
     m_has_avatar_been_generated = true;
   }
@@ -231,8 +231,31 @@ void Avatar_Controller::Generate_Avatar_Tile() {
 }
 
 //------------------------------------------------------------------------------
-void Avatar_Controller::Place_Avatar_Tile() {
+void Avatar_Controller::Place_Avatar_Tile(Avatar_Controller_Mutator *mutator) {
   m_avatar->SetPosition(D3DXVECTOR3(0, 0, -2)); // Middleground Z Space is -1
+  if (mutator->FoundBorderTiles()) {
+    // Cull the border tiles which are not within the x range of the avatar square
+    std::list<Tunnelour::Bitmap_Component*> horizontal_collision_border_tiles;
+    std::list<Tunnelour::Bitmap_Component*> border_tiles = mutator->GetBorderTiles();
+    std::list<Tunnelour::Bitmap_Component*>::iterator it;
+    for (it = border_tiles.begin(); it != border_tiles.end(); it++) {
+      if (DoTheseTilesXCollide(*it, m_avatar)) {
+        horizontal_collision_border_tiles.push_back(*it);
+      }
+    }
+
+    if (horizontal_collision_border_tiles.empty()) { return; }
+    // Check to see if the avatar is on a border
+    Tunnelour::Bitmap_Component* tile = horizontal_collision_border_tiles.front();
+    int tile_top = tile->GetPosition().y + static_cast<float>(tile->GetSize()->y / 2);
+    int avatar_bottom = m_avatar->GetPosition().y - static_cast<float>(m_avatar->GetSize()->y / 2);
+    if (tile_top != avatar_bottom) {
+      // if not
+      // Move the avatar down so he is on the floor
+      avatar_bottom = tile_top + static_cast<float>(m_avatar->GetSize()->y / 2);
+      m_avatar->SetPosition(D3DXVECTOR3(0, avatar_bottom, -2)); // Middleground Z Space is -1
+    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -454,6 +477,30 @@ void Avatar_Controller::Update_Timer() {
    m_frameTime = m_frameTime - 62.5;
    m_animation_tick = true;
  }
+}
+
+//------------------------------------------------------------------------------
+bool Avatar_Controller::DoTheseTilesXCollide(Tunnelour::Bitmap_Component* TileA, Tunnelour::Bitmap_Component* TileB) {
+  // At least one vertex in TileA is contained in the TileB.
+  float a_tile_left, a_tile_right, a_tile_top, a_tile_bottom;
+  a_tile_left = TileA->GetPosition().x - static_cast<float>(TileA->GetSize()->x / 2);
+  a_tile_right = TileA->GetPosition().x + static_cast<float>(TileA->GetSize()->x / 2);
+
+  float b_tile_left, b_tile_right, b_tile_top, b_tile_bottom;
+  b_tile_left = TileB->GetPosition().x - static_cast<float>(TileB->GetSize()->x / 2);
+  b_tile_right = TileB->GetPosition().x + static_cast<float>(TileB->GetSize()->x / 2);
+
+  if ((a_tile_left == b_tile_left) || (a_tile_left > b_tile_left && a_tile_left < b_tile_right)) {
+    // Horrizontal Collision
+    return true;
+  }
+
+  if ((a_tile_right == b_tile_right) || (a_tile_right > b_tile_left && a_tile_right < b_tile_right)) {
+    // Horrizontal Collision
+    return true;
+  }
+
+  return false;
 }
 
 } // Tunnelour

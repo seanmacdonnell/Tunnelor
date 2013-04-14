@@ -25,6 +25,7 @@ Tile_Bitmap::Tile_Bitmap(): Bitmap_Component() {
   m_position = D3DXVECTOR3(0, 0, 0);
   m_size = D3DXVECTOR2(0, 0);
   m_texture->texture_path = L"";
+  m_is_platform = false;
 }
 
 //------------------------------------------------------------------------------
@@ -115,4 +116,15 @@ void Tile_Bitmap::Init_Frame() {
   m_frame->vertices[5].position = D3DXVECTOR3(right, bottom, 0.0f);
   m_frame->vertices[5].texture = m_frame->vertices[1].texture;
 }
+
+//------------------------------------------------------------------------------
+bool Tile_Bitmap::Is_Platform() {
+  return m_is_platform;
+}
+
+//------------------------------------------------------------------------------
+void Tile_Bitmap::Set_Is_Platform(bool is_platform) {
+  m_is_platform = is_platform;
+}
+
 }  // namespace Tunnelour

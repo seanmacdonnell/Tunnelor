@@ -19,6 +19,7 @@
 #include "Component.h"
 #include "Game_Settings_Component.h"
 #include "Avatar_Component.h"
+#include "Tile_Bitmap.h"
 
 namespace Tunnelour {
 class Avatar_Controller_Mutator: public Tunnelour::Component::Component_Mutator  {
@@ -63,11 +64,14 @@ class Avatar_Controller_Mutator: public Tunnelour::Component::Component_Mutator 
   //-------------------------------------------------------------------------
   Tunnelour::Avatar_Component* const GetAvatarComponent();
 
+  bool FoundBorderTiles();
+  std::list<Tunnelour::Bitmap_Component*> GetBorderTiles();
+
  private:
-  bool m_found_game_settings;
-  bool m_found_avatar_component;
+  bool m_found_game_settings, m_found_avatar_component, m_found_border_tiles;
   Tunnelour::Game_Settings_Component *m_game_settings;
   Avatar_Component *m_avatar_component;
+  std::list<Tunnelour::Bitmap_Component*> m_border_tiles;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_MUTATOR_H_

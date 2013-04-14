@@ -25,6 +25,7 @@ Avatar_Controller_Mutator::Avatar_Controller_Mutator() {
   m_game_settings = 0;
   m_found_avatar_component = false;
   m_avatar_component = 0;
+  m_found_border_tiles = false;
 }
 
 //------------------------------------------------------------------------------
@@ -41,8 +42,16 @@ void Avatar_Controller_Mutator::Mutate(Tunnelour::Component * const component) {
     game_settings = static_cast<Tunnelour::Game_Settings_Component*>(component);
     m_game_settings = game_settings;
     m_found_game_settings = true;
-  } else {
-    if (!m_found_avatar_component) {
+  } else if (component->GetType().compare("Bitmap_Component") == 0) {
+    // Found Bitmap_Component
+    Tunnelour::Tile_Bitmap *tile = 0;
+    tile = dynamic_cast<Tunnelour::Tile_Bitmap*>(component);
+    if (tile != 0) {
+      if (tile->Is_Platform()) {
+        m_border_tiles.push_back(tile);
+        m_found_border_tiles = true;
+      }
+    } else if (!m_found_avatar_component) {
       m_avatar_component = dynamic_cast<Avatar_Component*>(component);
       if (m_avatar_component != 0) {
         m_found_avatar_component = true;
@@ -70,6 +79,16 @@ bool Avatar_Controller_Mutator::FoundAvatarComponent() {
 //------------------------------------------------------------------------------
 Tunnelour::Avatar_Component* const Avatar_Controller_Mutator::GetAvatarComponent() {
   return m_avatar_component;
+}
+
+//------------------------------------------------------------------------------
+bool Avatar_Controller_Mutator::FoundBorderTiles() {
+  return m_found_border_tiles;
+}
+
+//------------------------------------------------------------------------------
+std::list<Tunnelour::Bitmap_Component*> Avatar_Controller_Mutator::GetBorderTiles() {
+  return m_border_tiles;
 }
 
 }  // namespace Tunnelour

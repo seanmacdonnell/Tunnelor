@@ -81,11 +81,12 @@ class Avatar_Controller: public Tunnelour::Controller {
   //---------------------------------------------------------------------------
   virtual void Run();
 
+
  protected:
 
  private:
   void Generate_Avatar_Tile();
-  void Place_Avatar_Tile();
+  void Place_Avatar_Tile(Avatar_Controller_Mutator *mutator);
   void Load_Tilset_Metadata(std::wstring metadata_file);
 
   Tunnelour::Avatar_Component *m_avatar;
@@ -97,8 +98,6 @@ class Avatar_Controller: public Tunnelour::Controller {
   std::string m_metadata_file_path;
   Animation_Tileset_Metadata m_metadata;
 
-  Avatar_Controller_Mutator m_mutator;
-
   bool Init_Timer();
   void Update_Timer();
 
@@ -107,6 +106,8 @@ class Avatar_Controller: public Tunnelour::Controller {
   INT64 m_startTime;
   float m_frameTime;
   bool m_animation_tick;
+
+  bool DoTheseTilesXCollide(Tunnelour::Bitmap_Component* TileA, Tunnelour::Bitmap_Component* TileB);
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_H_
