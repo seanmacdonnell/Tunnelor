@@ -84,7 +84,7 @@ void Avatar_Controller::Run() {
                                                         static_cast<float>(walkinging_animation_subset.tile_size_y));
         m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(walkinging_animation_subset.top_left_x),
                                                                 static_cast<float>(walkinging_animation_subset.top_left_y));
-        m_avatar->SetSize(new D3DXVECTOR2(walkinging_animation_subset.tile_size_x, walkinging_animation_subset.tile_size_y));
+        m_avatar->SetSize(new D3DXVECTOR2(static_cast<float>(walkinging_animation_subset.tile_size_x), static_cast<float>(walkinging_animation_subset.tile_size_y)));
         
         m_avatar->SetState(walkinging_animation_subset.name);
         m_avatar->SetStateIndex(0);
@@ -149,7 +149,7 @@ void Avatar_Controller::Run() {
                                                         static_cast<float>(walkinging_animation_subset.tile_size_y));
         m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(walkinging_animation_subset.top_left_x),
                                                                 static_cast<float>(walkinging_animation_subset.top_left_y));
-        m_avatar->SetSize(new D3DXVECTOR2(walkinging_animation_subset.tile_size_x, walkinging_animation_subset.tile_size_y));
+        m_avatar->SetSize(new D3DXVECTOR2(static_cast<float>(walkinging_animation_subset.tile_size_x), static_cast<float>(walkinging_animation_subset.tile_size_y)));
         
         m_avatar->SetState(walkinging_animation_subset.name);
         m_avatar->SetStateIndex(0);
@@ -224,7 +224,7 @@ void Avatar_Controller::Generate_Avatar_Tile() {
                                                   static_cast<float>(standing_animation_subset.tile_size_y));
   m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(standing_animation_subset.top_left_x),
                                                           static_cast<float>(standing_animation_subset.top_left_y));
-  m_avatar->SetSize(new D3DXVECTOR2(standing_animation_subset.tile_size_x, standing_animation_subset.tile_size_y));
+  m_avatar->SetSize(new D3DXVECTOR2(static_cast<float>(standing_animation_subset.tile_size_x), static_cast<float>(standing_animation_subset.tile_size_y)));
 
   m_avatar->SetState(standing_animation_subset.name);
   m_avatar->SetStateIndex(1);
@@ -247,13 +247,13 @@ void Avatar_Controller::Place_Avatar_Tile(Avatar_Controller_Mutator *mutator) {
     if (horizontal_collision_border_tiles.empty()) { return; }
     // Check to see if the avatar is on a border
     Tunnelour::Bitmap_Component* tile = horizontal_collision_border_tiles.front();
-    int tile_top = tile->GetPosition().y + static_cast<float>(tile->GetSize()->y / 2);
-    int avatar_bottom = m_avatar->GetPosition().y - static_cast<float>(m_avatar->GetSize()->y / 2);
+    int tile_top = static_cast<int>(tile->GetPosition().y + tile->GetSize()->y / 2);
+    int avatar_bottom = static_cast<int>(m_avatar->GetPosition().y - m_avatar->GetSize()->y / 2);
     if (tile_top != avatar_bottom) {
       // if not
       // Move the avatar down so he is on the floor
-      avatar_bottom = tile_top + static_cast<float>(m_avatar->GetSize()->y / 2);
-      m_avatar->SetPosition(D3DXVECTOR3(0, avatar_bottom, -2)); // Middleground Z Space is -1
+      avatar_bottom = static_cast<int>(tile_top + m_avatar->GetSize()->y / 2);
+      m_avatar->SetPosition(D3DXVECTOR3(0.0, static_cast<float>(avatar_bottom), -2.0)); // Middleground Z Space is -1
     }
   }
 }
@@ -474,7 +474,7 @@ void Avatar_Controller::Update_Timer() {
 
  if (m_frameTime >= 62.5) {
    m_startTime = currentTime;
-   m_frameTime = m_frameTime - 62.5;
+   m_frameTime = static_cast<float>(m_frameTime - 62.5);
    m_animation_tick = true;
  }
 }
@@ -482,11 +482,11 @@ void Avatar_Controller::Update_Timer() {
 //------------------------------------------------------------------------------
 bool Avatar_Controller::DoTheseTilesXCollide(Tunnelour::Bitmap_Component* TileA, Tunnelour::Bitmap_Component* TileB) {
   // At least one vertex in TileA is contained in the TileB.
-  float a_tile_left, a_tile_right, a_tile_top, a_tile_bottom;
+  float a_tile_left, a_tile_right;
   a_tile_left = TileA->GetPosition().x - static_cast<float>(TileA->GetSize()->x / 2);
   a_tile_right = TileA->GetPosition().x + static_cast<float>(TileA->GetSize()->x / 2);
 
-  float b_tile_left, b_tile_right, b_tile_top, b_tile_bottom;
+  float b_tile_left, b_tile_right;
   b_tile_left = TileB->GetPosition().x - static_cast<float>(TileB->GetSize()->x / 2);
   b_tile_right = TileB->GetPosition().x + static_cast<float>(TileB->GetSize()->x / 2);
 

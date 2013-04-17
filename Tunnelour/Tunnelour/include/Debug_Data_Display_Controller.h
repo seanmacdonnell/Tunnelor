@@ -21,6 +21,7 @@
 #include "Controller.h"
 #include "Game_Settings_Component.h"
 #include "Game_Metrics_Component.h"
+#include "Camera_Component.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -58,6 +59,9 @@ class Debug_Data_Display_Controller: public Tunnelour::Controller {
   Tunnelour::Game_Metrics_Component* m_game_metrics; 
   Tunnelour::Text_Component *m_debug_data_text_title;
   Tunnelour::Text_Component *m_debug_data_fps;
+  Tunnelour::Text_Component *m_debug_position;
+  Tunnelour::Text_Component *m_debug_last_position;
+  Tunnelour::Camera_Component *m_camera;
 
   long double m_fps;
 };

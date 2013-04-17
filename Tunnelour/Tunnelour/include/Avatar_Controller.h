@@ -41,7 +41,7 @@ class Avatar_Controller: public Tunnelour::Controller {
     int top_left_x, top_left_y;
     int size_x, size_y;
     int tile_size_x, tile_size_y;
-    int number_of_tiles;
+    unsigned int number_of_tiles;
   };
 
   struct Animation_Tileset_Metadata {

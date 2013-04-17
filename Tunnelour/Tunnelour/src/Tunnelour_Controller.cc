@@ -42,22 +42,22 @@ void Tunnelour_Controller::Init(Tunnelour::Component_Composite * const model) {
   controller = Add(new Tunnelour::Init_Controller());
   controller->Init(m_model);
 
-  controller = Add(new Tunnelour::Background_Controller());
+  controller = Add(new Tunnelour::Input_Controller());
   controller->Init(m_model);
-  
-  controller = Add(new Tunnelour::Middleground_Controller());
-  controller->Init(m_model);
-  
+
   controller = Add(new Tunnelour::Avatar_Controller());
   controller->Init(m_model);
 
-  controller = Add(new Tunnelour::Debug_Data_Display_Controller());
-  controller->Init(m_model);
-  
   controller = Add(new Tunnelour::Camera_Controller());
   controller->Init(m_model);
 
-  controller = Add(new Tunnelour::Input_Controller());
+  controller = Add(new Tunnelour::Background_Controller());
+  controller->Init(m_model);
+  
+  //controller = Add(new Tunnelour::Middleground_Controller());
+  //controller->Init(m_model);
+ 
+  controller = Add(new Tunnelour::Debug_Data_Display_Controller());
   controller->Init(m_model);
 }
 

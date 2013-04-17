@@ -82,8 +82,8 @@ void Input_Controller::Init_DirectInput() {
   if (m_game_settings != 0) {
     if (m_game_settings->GetHInstance() != NULL && m_game_settings->GetHWnd() != NULL) {
       // Store the screen size which will be used for positioning the mouse cursor.
-      m_screenWidth = m_game_settings->GetResolution().x;
-      m_screenHeight = m_game_settings->GetResolution().y;
+      m_screenWidth = static_cast<int>(m_game_settings->GetResolution().x);
+      m_screenHeight = static_cast<int>(m_game_settings->GetResolution().y);
 
       // Initialize the main direct input interface.
       if (FAILED(DirectInput8Create(m_game_settings->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_directInput, NULL)))   {
@@ -139,7 +139,7 @@ void Input_Controller::Init_DirectInput() {
 
 //------------------------------------------------------------------------------
 void Input_Controller::Run() {
-  if (m_game_settings == 0) {
+  if (m_game_settings == 0 || m_avatar_component == 0) {
     Tunnelour::Input_Controller_Mutator mutator;
     m_model->Apply(&mutator);
     if (mutator.FoundGameSettings()) {
@@ -228,11 +228,11 @@ void Input_Controller::ProcessInput() {
 	if(m_mouseY > m_screenHeight) { m_mouseY = m_screenHeight; }
 	
 	if(m_keyboardState[DIK_RIGHT] & 0x80)	{
-	  m_avatar_component->SetNextCommand("DIK_RIGHT");
+    if (m_avatar_component != 0) { m_avatar_component->SetNextCommand("DIK_RIGHT"); }
 	}
 
  if(m_keyboardState[DIK_LEFT] & 0x80)	{
-	  m_avatar_component->SetNextCommand("DIK_LEFT");
+   if (m_avatar_component != 0) { m_avatar_component->SetNextCommand("DIK_LEFT"); }
 	}
 
 	return;

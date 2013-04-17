@@ -18,6 +18,7 @@
 
 #include "Component.h"
 #include "Game_Settings_Component.h"
+#include "Camera_Component.h"
 
 namespace Tunnelour {
 class Background_Controller_Mutator: public Tunnelour::Component::Component_Mutator  {
@@ -52,9 +53,20 @@ class Background_Controller_Mutator: public Tunnelour::Component::Component_Muta
   //-------------------------------------------------------------------------
   Tunnelour::Game_Settings_Component* const GetGameSettings();
 
+  //-------------------------------------------------------------------------
+  // Description : Has this component been found in the model?
+  //-------------------------------------------------------------------------
+  bool FoundCamera();
+
+  //-------------------------------------------------------------------------
+  // Description : Accessors for the Camera Component
+  //-------------------------------------------------------------------------
+  Tunnelour::Camera_Component* const GetCamera();
+
  private:
-  bool m_found_game_settings;
+  bool m_found_game_settings, m_found_camera;
   Tunnelour::Game_Settings_Component * m_game_settings;
+  Tunnelour::Camera_Component * m_camera;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_CONTROLLER_MUTATOR_H_
