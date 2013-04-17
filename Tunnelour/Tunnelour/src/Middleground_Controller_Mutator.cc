@@ -39,6 +39,12 @@ void Middleground_Controller_Mutator::Mutate(Tunnelour::Component * const compon
     game_settings = static_cast<Tunnelour::Game_Settings_Component*>(component);
     m_game_settings = game_settings;
     m_found_game_settings = true;
+  } else  if (component->GetType().compare("Camera_Component") == 0) {
+    // Found Camera_Component
+    Tunnelour::Camera_Component *camera = 0;
+    camera = static_cast<Tunnelour::Camera_Component*>(component);
+    m_camera = camera;
+    m_found_camera = true;
   }
 }
 
@@ -50,6 +56,16 @@ bool Middleground_Controller_Mutator::FoundGameSettings() {
 //------------------------------------------------------------------------------
 Tunnelour::Game_Settings_Component* const Middleground_Controller_Mutator::GetGameSettings() {
   return m_game_settings;
+}
+
+//------------------------------------------------------------------------------
+bool Middleground_Controller_Mutator::FoundCamera() {
+  return m_found_camera;
+}
+
+//------------------------------------------------------------------------------
+Tunnelour::Camera_Component* const Middleground_Controller_Mutator::GetCamera() {
+  return m_camera;
 }
 
 }  // namespace Tunnelour

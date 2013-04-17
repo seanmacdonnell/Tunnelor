@@ -26,6 +26,8 @@ Tile_Bitmap::Tile_Bitmap(): Bitmap_Component() {
   m_size = D3DXVECTOR2(0, 0);
   m_texture->texture_path = L"";
   m_is_platform = false;
+  m_is_top_edge = false;
+  m_is_bottom_edge = false;
 }
 
 //------------------------------------------------------------------------------
@@ -125,6 +127,26 @@ bool Tile_Bitmap::Is_Platform() {
 //------------------------------------------------------------------------------
 void Tile_Bitmap::Set_Is_Platform(bool is_platform) {
   m_is_platform = is_platform;
+}
+
+//------------------------------------------------------------------------------
+bool Tile_Bitmap::Is_Top_Edge() {
+  return m_is_top_edge;
+}
+
+//------------------------------------------------------------------------------
+void Tile_Bitmap::Set_Is_Top_Edge(bool is_top_edge) {
+  m_is_top_edge = is_top_edge;
+}
+
+//------------------------------------------------------------------------------
+bool Tile_Bitmap::Is_Bottom_Edge() {
+  return m_is_bottom_edge;
+}
+
+//------------------------------------------------------------------------------
+void Tile_Bitmap::Set_Is_Bottom_Edge(bool is_bottom_edge) {
+  m_is_bottom_edge = is_bottom_edge;
 }
 
 }  // namespace Tunnelour

@@ -24,6 +24,7 @@
 #include "Tile_Bitmap.h"
 #include "Game_Settings_Component.h"
 #include "Middleground_Controller_Mutator.h"
+#include "Camera_Component.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -91,28 +92,22 @@ class Middleground_Controller: public Tunnelour::Controller {
  private:
   void Tile_Tunnel();
   void Tile_Middleground();
-  std::vector<Tunnelour::Tile_Bitmap*> GenerateMiddlegroundTiles();
-  bool DoTheseTilesetsHaveCollisions(std::vector<Tunnelour::Tile_Bitmap*> *a_tileset, std::vector<std::vector<Tunnelour::Tile_Bitmap*>> *b_tileset, std::vector<Collision> *output_collisions);
-  Tunnelour::Tile_Bitmap* GetResizedBoundarySize(Tunnelour::Tile_Bitmap* tile, Tunnelour::Tile_Bitmap* tunnel_tile, D3DXVECTOR2 tile_collision_point);
-  std::vector<Tunnelour::Tile_Bitmap*> GenerateBoundayFittingTiles(Tunnelour::Tile_Bitmap* tile, Tunnelour::Tile_Bitmap* tunnel_tile, D3DXVECTOR2 tile_collision_point);
+  std::vector<Tunnelour::Tile_Bitmap*> GenerateTilesUpwards(Tunnelour::Tile_Bitmap* from_tile);
+  std::vector<Tunnelour::Tile_Bitmap*> GenerateTilesDownwards(Tunnelour::Tile_Bitmap* from_tile);
+  Tunnelour::Tile_Bitmap* Create_Tile(int base_tile_size);
 
   void Load_Tilset_Metadata();
-  Tunnelour::Tile_Bitmap* Create_Tile(int base_tile_size, int resised_tile_size, bool isborder);
-  bool DoTheseTilesCollide(Tunnelour::Tile_Bitmap* TileA, Tunnelour::Tile_Bitmap* TileB, D3DXVECTOR2 &tile_a_output_colision);
-  bool WhereDoThesePointsIntersect(D3DXVECTOR2 p1, D3DXVECTOR2 p2, D3DXVECTOR2 p3, D3DXVECTOR2 p4, D3DXVECTOR2 &output);
 
-
-  Tunnelour::Tile_Bitmap *m_bitmap;
   Tileset_Metadata m_metadata;
   std::vector<std::vector<Tunnelour::Tile_Bitmap*>> m_middleground_tiles;
-  std::vector<std::vector<Tunnelour::Tile_Bitmap*>> m_tunnel_tiles;
+  std::vector<Tunnelour::Tile_Bitmap*> m_tunnel_tiles;
 
   Tunnelour::Game_Settings_Component* m_game_settings;
   bool m_has_init_middleground_been_generated, m_has_init_tunnel_been_generated;
 
   std::string m_metadata_file_path;
   int m_tunnel_x_size;
-  Middleground_Controller_Mutator m_mutator;
+  Tunnelour::Camera_Component *m_camera;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_MIDDLEGROUND_CONTROLLER_H_

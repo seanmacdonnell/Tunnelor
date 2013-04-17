@@ -47,6 +47,14 @@ class Tile_Bitmap: public Tunnelour::Bitmap_Component {
 
   void Set_Is_Platform(bool is_platform);
 
+  bool Is_Top_Edge();
+
+  void Set_Is_Top_Edge(bool is_top_edge);
+
+  bool Is_Bottom_Edge();
+
+  void Set_Is_Bottom_Edge(bool is_bottom_edge);
+
  protected:
 
  private:
@@ -55,6 +63,8 @@ class Tile_Bitmap: public Tunnelour::Bitmap_Component {
   //---------------------------------------------------------------------------
   void Init_Frame();
   bool m_is_platform;
+  bool m_is_top_edge;
+  bool m_is_bottom_edge;
 };  // class Tile_Bitmap
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_TILE_BITMAP_H_

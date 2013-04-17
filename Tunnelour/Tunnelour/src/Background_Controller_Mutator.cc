@@ -59,7 +59,6 @@ Tunnelour::Game_Settings_Component* const Background_Controller_Mutator::GetGame
   return m_game_settings;
 }
 
-
 //------------------------------------------------------------------------------
 bool Background_Controller_Mutator::FoundCamera() {
   return m_found_camera;

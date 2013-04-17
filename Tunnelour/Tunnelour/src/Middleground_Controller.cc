@@ -27,12 +27,12 @@ namespace Tunnelour {
 // public:
 //------------------------------------------------------------------------------
 Middleground_Controller::Middleground_Controller() : Controller() {
-  m_bitmap = NULL;
   std::srand(static_cast<unsigned int>(std::time(0)));
   m_game_settings = 0;
   m_has_init_middleground_been_generated = false;
   m_has_init_tunnel_been_generated = false;
   m_tunnel_x_size = 256;
+  m_camera = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -47,19 +47,20 @@ void Middleground_Controller::Init(Tunnelour::Component_Composite * const model)
 //------------------------------------------------------------------------------
 void Middleground_Controller::Run() {
   // Get game settings component from the model with the Mutator.
-  m_model->Apply(&m_mutator);
-  if (!m_mutator.FoundGameSettings())  {
-    throw Tunnelour::Exceptions::run_error("Can't find a game settings component!");
-  } else {
-    m_game_settings = m_mutator.GetGameSettings();
+  Tunnelour::Middleground_Controller_Mutator mutator;
+  m_model->Apply(&mutator);
+  if (mutator.FoundGameSettings() && mutator.FoundCamera() )  {
+    m_game_settings = mutator.GetGameSettings();
+    m_camera = mutator.GetCamera();
+    
+    Load_Tilset_Metadata();
+
+    Tile_Tunnel();
+
+    Tile_Middleground();
+
+    m_is_finished = true;
   }
-
-  // Load the Tileset Data
-  Load_Tilset_Metadata();
-
-  Tile_Tunnel();
-  Tile_Middleground();
-  m_is_finished = true;
 }
 
 //------------------------------------------------------------------------------
@@ -99,7 +100,7 @@ void Middleground_Controller::Tile_Tunnel() {
     int number_of_2x2_y_tiles = 0;
     int number_of_1x1_y_tiles = 0;
 
-    std:div_t div_y_result =  div(m_tunnel_x_size, 128);
+    div_t div_y_result =  div(m_tunnel_x_size, 128);
     number_of_128x128_y_tiles = div_y_result.quot;
     if (div_y_result.rem != 0) {
       div_y_result =  div(div_y_result.rem, 64);
@@ -174,7 +175,7 @@ void Middleground_Controller::Tile_Tunnel() {
 
       //Calculate number of x tiles
       int number_of_x_tiles = 0;
-      std::div_t div_x_result = div(m_game_settings->GetResolution().x, resised_tile_size);
+      std::div_t div_x_result = div(static_cast<int>(m_game_settings->GetResolution().x), resised_tile_size);
       if (div_x_result.rem != 0) {
         number_of_x_tiles = div_x_result.quot + 1; //Add Another Tile if it doesne't fit
       } else {
@@ -183,24 +184,26 @@ void Middleground_Controller::Tile_Tunnel() {
 
       std::vector<Tunnelour::Tile_Bitmap*> tile_line;
       for (int x = 0; x < number_of_x_tiles ; x++) {
-         tile = Create_Tile(base_tile_size, resised_tile_size, false);
+         tile = Create_Tile(base_tile_size);
+         if (y == 0) {
+           tile->Set_Is_Top_Edge(true);
+         } else if (y == (number_of_y_tiles - 1)) {
+           tile->Set_Is_Bottom_Edge(true);
+         }
          tile->SetPosition(D3DXVECTOR3(current_x + (tile->GetSize()->x/2),
                                            current_y - (tile->GetSize()->y/2),
                                            -1)); // Middleground Z Space is -1
          tile->GetTexture()->transparency = 0.0f;
          current_x += static_cast<int>(tile->GetSize()->x);
-         tile_line.push_back(tile);
+         m_tunnel_tiles.push_back(tile);
       }
       current_y -= static_cast<int>(tile->GetSize()->y);
       current_x = static_cast<int>(tunnel_start_x);
-      m_tunnel_tiles.push_back(tile_line);
     }
 
     // Add tiles to the model
-    for (std::vector<std::vector<Tunnelour::Tile_Bitmap*>>::iterator row = m_tunnel_tiles.begin(); row != m_tunnel_tiles.end(); ++row) {
-      for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tile = row->begin() ; tile != row->end(); ++tile) {
-        m_model->Add(*tile);
-      }
+    for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tile = m_tunnel_tiles.begin(); tile != m_tunnel_tiles.end(); tile++) {
+      m_model->Add(*tile);
     }
 
     m_has_init_tunnel_been_generated = true;
@@ -212,34 +215,19 @@ void Middleground_Controller::Tile_Middleground() {
   // Generate an initial Random Tile Middleground Spanning the Screen
   if (!m_has_init_middleground_been_generated) {
     std::vector<Tunnelour::Tile_Bitmap*> middleground_tiles;
-    middleground_tiles = GenerateMiddlegroundTiles();
 
-    // Check for Collisions with the Tunnel Tiles
-    std::vector<Collision> collisions;
-    while (DoTheseTilesetsHaveCollisions(&middleground_tiles, &m_tunnel_tiles, &collisions)) {
-      // For each collision create new tiles and add them to the collection
-      for (std::vector<Collision>::iterator collision = collisions.begin(); collision != collisions.end() ; collision++) {
-        // If Collision Resize the tile out of the collision zone
-        Tunnelour::Tile_Bitmap* boundary = GetResizedBoundarySize(collision->a_tile, collision->b_tile, collision->a_tile_collision_point);
+    for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tunnel_tile = m_tunnel_tiles.begin(); tunnel_tile != m_tunnel_tiles.end(); tunnel_tile++) {
+      std::vector<Tunnelour::Tile_Bitmap*> tiles;
+      if ((*tunnel_tile)->Is_Top_Edge()) {
+        // produce tiles upwards of the same size until out of camera view
+        tiles = GenerateTilesUpwards(*tunnel_tile);
+      } else if ((*tunnel_tile)->Is_Bottom_Edge()) {
+        // produce tiles upwards of the same size until out of camera view
+        tiles = GenerateTilesDownwards(*tunnel_tile);
+      } 
 
-        // Generate Replacement tiles within that boundary
-        std::vector<Tunnelour::Tile_Bitmap*> new_tiles = GenerateBoundayFittingTiles(boundary, collision->b_tile, collision->a_tile_collision_point);
-
-        for (std::vector<Tunnelour::Tile_Bitmap*>::iterator new_tile = new_tiles.begin(); new_tile != new_tiles.end(); new_tile++) {
-          middleground_tiles.push_back(*new_tile);
-        }
-      }
-
-      // Remove the tiles - one loop
-      for (std::vector<Collision>::iterator collision = collisions.begin(); collision != collisions.end() ; collision++) {
-        for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tile = middleground_tiles.begin(); tile != middleground_tiles.end() ;) {
-          if (collision->a_tile == *tile) {
-            delete *tile;
-            tile = middleground_tiles.erase(tile);
-          } else {
-            tile++;
-          }
-        }
+      for (std::vector<Tunnelour::Tile_Bitmap*>::iterator middleground_tile = tiles.begin(); middleground_tile != tiles.end(); ++middleground_tile) {
+        middleground_tiles.push_back(*middleground_tile);
       }
     }
 
@@ -253,308 +241,83 @@ void Middleground_Controller::Tile_Middleground() {
 }
 
 //------------------------------------------------------------------------------
-bool Middleground_Controller::DoTheseTilesetsHaveCollisions(std::vector<Tunnelour::Tile_Bitmap*> *a_tileset, std::vector<std::vector<Tunnelour::Tile_Bitmap*>> *b_tileset, std::vector<Collision> *output_collisions) {
-  bool do_these_tilesets_have_collisions = false;
-    for (std::vector<Tunnelour::Tile_Bitmap*>::iterator a_tile = a_tileset->begin(); a_tile != a_tileset->end(); a_tile++) {
-      for (std::vector<std::vector<Tunnelour::Tile_Bitmap*>>::iterator tunnel_line = m_tunnel_tiles.begin(); tunnel_line != m_tunnel_tiles.end(); tunnel_line++) {
-        for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tunnel_tile = tunnel_line->begin(); tunnel_tile != tunnel_line->end(); tunnel_tile++) {
-          Collision collision;
-          if (DoTheseTilesCollide(*a_tile, *tunnel_tile, collision.a_tile_collision_point)) {
-            collision.a_tile = *a_tile;
-            collision.b_tile = *tunnel_tile;
-            output_collisions->push_back(collision);
-            do_these_tilesets_have_collisions = true;
-          }
-        }
-      }
-    }
+std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateTilesUpwards(Tunnelour::Tile_Bitmap* from_tile) {
+  std::vector<Tunnelour::Tile_Bitmap*> new_tiles;
 
-  return do_these_tilesets_have_collisions;
+  int y_boundary_top = m_camera->GetPosition().y + (m_game_settings->GetResolution().y / 2);
+  int y_current = (from_tile->GetPosition().y + (from_tile->GetSize()->y / 2));
+  while (y_current < y_boundary_top) {
+    Tunnelour::Tile_Bitmap* tile = Create_Tile(static_cast<int>(from_tile->GetSize()->y));
+    D3DXVECTOR3 position = from_tile->GetPosition();
+    position.y = y_current + (tile->GetSize()->y / 2);
+    tile->SetPosition(position);
+    y_current = (tile->GetPosition().y + (tile->GetSize()->y / 2));
+    new_tiles.push_back(tile);
+  }
+
+  return new_tiles;
 }
 
 //------------------------------------------------------------------------------
-std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateMiddlegroundTiles() {
-  std::vector<Tunnelour::Tile_Bitmap*> middleground_tiles;
+std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateTilesDownwards(Tunnelour::Tile_Bitmap* from_tile) {
+  std::vector<Tunnelour::Tile_Bitmap*> new_tiles;
 
-  int top_left_window_x = static_cast<int>((m_game_settings->GetResolution().x/2) * -1);
-  int top_left_window_y = static_cast<int>(m_game_settings->GetResolution().y/2);
-  int current_x = top_left_window_x;
-  int current_y = top_left_window_y;
-  Tunnelour::Tile_Bitmap* tile;
-
-  int base_tile_size = 128;
-  int resised_tile_size = static_cast<int>(base_tile_size * m_game_settings->GetTileMultiplicationFactor());
-
-  int number_of_y_tiles = 0;
-  std::div_t div_y_result =  div(m_game_settings->GetResolution().y, resised_tile_size);
-  if (div_y_result.rem != 0) {
-    number_of_y_tiles = div_y_result.quot + 1;
-  } else {
-    number_of_y_tiles = div_y_result.quot;
+  int y_boundary_top = m_camera->GetPosition().y - (m_game_settings->GetResolution().y / 2);
+  int y_current = (from_tile->GetPosition().y - (from_tile->GetSize()->y / 2));
+  bool is_platform = true;
+  while (y_current > y_boundary_top) {
+    Tunnelour::Tile_Bitmap* tile = Create_Tile(static_cast<int>(from_tile->GetSize()->y));
+    D3DXVECTOR3 position = from_tile->GetPosition();
+    position.y = y_current - (tile->GetSize()->y / 2);
+    tile->SetPosition(position);
+    tile->Set_Is_Platform(is_platform);
+    y_current = (tile->GetPosition().y - (tile->GetSize()->y / 2));
+    new_tiles.push_back(tile);
+    is_platform = false;
   }
 
-  int number_of_x_tiles = 0;
-  std::div_t div_x_result = div(m_game_settings->GetResolution().x, resised_tile_size);
-  if (div_x_result.rem != 0) {
-    number_of_x_tiles = div_x_result.quot + 1;
-  } else {
-    number_of_x_tiles = div_x_result.quot;
-  }
-
-  for (int y = 0; y < number_of_y_tiles ; y++) {
-    std::vector<Tunnelour::Tile_Bitmap*> tile_line;
-    for (int x = 0; x < number_of_x_tiles ; x++) {
-      tile = Create_Tile(base_tile_size, resised_tile_size, false);
-      tile->GetTexture()->transparency = 1.0f;
-      tile->SetPosition(D3DXVECTOR3(current_x + (tile->GetSize()->x/2),
-                                          current_y - (tile->GetSize()->y/2),
-                                          -1)); // Middleground Z Space is -1
-      current_x += static_cast<int>(tile->GetSize()->x);
-        
-      middleground_tiles.push_back(tile);
-    }
-    current_y -= static_cast<int>(tile->GetSize()->y);
-    current_x = static_cast<int>(top_left_window_x);
-  }
-
-  //D3DXVECTOR2 collision;
- // DoTheseTilesCollide(middleground_tiles[0], middleground_tiles[1], collision);
-
-  return middleground_tiles;
+  return new_tiles;
 }
 
 //------------------------------------------------------------------------------
-Tunnelour::Tile_Bitmap* Middleground_Controller::GetResizedBoundarySize(Tunnelour::Tile_Bitmap* tile, Tunnelour::Tile_Bitmap* tunnel_tile, D3DXVECTOR2 tile_collision_point) {
-  float tile_left, tile_right, tile_top, tile_bottom;
-  tile_left = tile->GetPosition().x - static_cast<float>(tile->GetSize()->x / 2);
-  tile_right = tile->GetPosition().x + static_cast<float>(tile->GetSize()->x / 2);
-  tile_top = tile->GetPosition().y + static_cast<float>(tile->GetSize()->x / 2);
-  tile_bottom = tile->GetPosition().y - static_cast<float>(tile->GetSize()->x / 2);
+Tunnelour::Tile_Bitmap* Middleground_Controller::Create_Tile(int base_tile_size) {
+  Tileset middleground_tileset;
+  std::list<Tileset>::iterator tileset;
 
-  float tunnel_tile_left, tunnel_tile_right, tunnel_tile_top, tunnel_tile_bottom;
-  tunnel_tile_left = tunnel_tile->GetPosition().x - static_cast<float>(tunnel_tile->GetSize()->x / 2);
-  tunnel_tile_right = tunnel_tile->GetPosition().x + static_cast<float>(tunnel_tile->GetSize()->x / 2);
-  tunnel_tile_top = tunnel_tile->GetPosition().y + static_cast<float>(tunnel_tile->GetSize()->x / 2);
-  tunnel_tile_bottom = tunnel_tile->GetPosition().y - static_cast<float>(tunnel_tile->GetSize()->x / 2);
-
-  //Create a new tile border with the original tile and the horizontal intersect
-  float tile_boundary_left, tile_boundary_right, tile_boundary_top, tile_boundary_bottom;
-  tile_boundary_left = tile_left;
-  tile_boundary_right = tile_right;
-  tile_boundary_top = tile_top;
-  tile_boundary_bottom = tile_bottom;
-
-  if (tile_boundary_top == tile_collision_point.y) {
-    // Resize Top Down
-    tile_boundary_top = tunnel_tile_bottom;
-  } else if (tile_boundary_bottom ==  tile_collision_point.y) {
-    // Resize Bottom Up
-    tile_boundary_bottom = tunnel_tile_top;
-  }
-
-  Tunnelour::Tile_Bitmap* boundary_tile = new Tunnelour::Tile_Bitmap();
-  boundary_tile->SetSize(tile_boundary_right - tile_boundary_left, tile_boundary_top - tile_boundary_bottom);
-
-  D3DXVECTOR3 centre = D3DXVECTOR3(0, 0, 0);
-  centre.x += tile_boundary_left;
-  centre.y += tile_boundary_top;
-  centre.x += tile_boundary_right;
-  centre.y += tile_boundary_top;
-  centre.x += tile_boundary_right;
-  centre.y += tile_boundary_bottom;
-  centre.x += tile_boundary_left;
-  centre.y += tile_boundary_bottom;
-  centre.x = centre.x / 4;
-  centre.y = centre.y / 4;
-  boundary_tile->SetPosition(centre);
-
-  return boundary_tile;
-}
-
-//------------------------------------------------------------------------------
-std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateBoundayFittingTiles(Tunnelour::Tile_Bitmap* tile, Tunnelour::Tile_Bitmap* tunnel_tile, D3DXVECTOR2 tile_collision_point) {
-  std::vector<Tunnelour::Tile_Bitmap*> tiles;
-
-  float tile_left, tile_right, tile_top, tile_bottom;
-  tile_left = tile->GetPosition().x - static_cast<float>(tile->GetSize()->x / 2);
-  tile_right = tile->GetPosition().x + static_cast<float>(tile->GetSize()->x / 2);
-  tile_top = tile->GetPosition().y + static_cast<float>(tile->GetSize()->y / 2);
-  tile_bottom = tile->GetPosition().y - static_cast<float>(tile->GetSize()->y / 2);
-
-  float tunnel_tile_top = tunnel_tile->GetPosition().y + static_cast<float>(tunnel_tile->GetSize()->y / 2);
-  float tunnel_tile_bottom = tunnel_tile->GetPosition().y - static_cast<float>(tunnel_tile->GetSize()->y / 2);
-
-  // Calculate the tile which will fit in this boundary
-  int number_of_128x128_y_tiles = 0, number_of_128x128_x_tiles = 0;
-  int number_of_64x64_y_tiles = 0, number_of_64x64_x_tiles = 0;
-  int number_of_32x32_y_tiles = 0, number_of_32x32_x_tiles = 0;
-  int number_of_16x16_y_tiles = 0, number_of_16x16_x_tiles = 0;
-  int number_of_8x8_y_tiles = 0, number_of_8x8_x_tiles = 0;
-  int number_of_4x4_y_tiles = 0, number_of_4x4_x_tiles = 0;
-  int number_of_2x2_y_tiles = 0, number_of_2x2_x_tiles = 0;
-  // Removing the Border
-  // int number_of_1x1_y_tiles = 1, number_of_1x1_x_tiles = 0;
-  int number_of_1x1_y_tiles = 0, number_of_1x1_x_tiles = 0;
-
-  // Removing Border
-  //int horizontal_boundary_size =  tile_top - tile_bottom - (1 * m_game_settings->GetTileMultiplicationFactor());
-  int horizontal_boundary_size =  tile_top - tile_bottom;
-  std:div_t div_y_result = div(horizontal_boundary_size, 128 * m_game_settings->GetTileMultiplicationFactor());
-  number_of_128x128_y_tiles = div_y_result.quot;
-  if (div_y_result.rem != 0) {
-    div_y_result =  div(div_y_result.rem, 64 * m_game_settings->GetTileMultiplicationFactor());
-    number_of_64x64_y_tiles = div_y_result.quot;
-    if (div_y_result.rem != 0) {
-      div_y_result =  div(div_y_result.rem, 32 * m_game_settings->GetTileMultiplicationFactor());
-      number_of_32x32_y_tiles = div_y_result.quot;
-      if (div_y_result.rem != 0) {
-        div_y_result =  div(div_y_result.rem, 16 * m_game_settings->GetTileMultiplicationFactor());
-        number_of_16x16_y_tiles = div_y_result.quot;
-        if (div_y_result.rem != 0) {
-          div_y_result =  div(div_y_result.rem, 8 * m_game_settings->GetTileMultiplicationFactor());
-          number_of_8x8_y_tiles = div_y_result.quot;
-          if (div_y_result.rem != 0) {
-            div_y_result =  div(div_y_result.rem, 4 * m_game_settings->GetTileMultiplicationFactor());
-            number_of_4x4_y_tiles = div_y_result.quot;
-            if (div_y_result.rem != 0) {
-              div_y_result =  div(div_y_result.rem, 2 * m_game_settings->GetTileMultiplicationFactor());
-              number_of_2x2_y_tiles = div_y_result.quot;
-              if  (div_y_result.rem != 0) {
-                div_y_result =  div(div_y_result.rem, 1 * m_game_settings->GetTileMultiplicationFactor());
-                // Removing Border
-                // number_of_1x1_y_tiles = div_y_result.quot + 1;
-                number_of_1x1_y_tiles = div_y_result.quot;
-              }
-            }
-          }
-        }
-      }
+  for (tileset = m_metadata.tilesets.begin(); tileset != m_metadata.tilesets.end(); tileset++) {
+    if (tileset->type.compare("Middleground") == 0) {
+      middleground_tileset = *tileset;
     }
   }
 
-  int sub_number_of_y_tiles = number_of_128x128_y_tiles + number_of_64x64_y_tiles + number_of_32x32_y_tiles + number_of_16x16_y_tiles + number_of_8x8_y_tiles + number_of_4x4_y_tiles + number_of_2x2_y_tiles + number_of_1x1_y_tiles;
-  int sub_number_of_x_tiles = 0;
-  int sub_current_y = tile_top;
-  int sub_current_x = tile_left;
-
-  bool is_platform = false;
-  bool big_tiles_to_small = false;
-  int border_is_first = false;
-  if (tile_bottom == tunnel_tile_top) {
-    big_tiles_to_small = true;
-  } else if (tile_top ==  tunnel_tile_bottom) {
-    big_tiles_to_small = false;
-    border_is_first = true;
-  }
-
-  for (int y = 0; y < sub_number_of_y_tiles ; y++) {
-    int border = false;
-    int base_tile_size = 0;
-    if (big_tiles_to_small) {
-       if (number_of_128x128_y_tiles != 0) {
-        base_tile_size = 128;
-        number_of_128x128_y_tiles--;
-      } else if (number_of_64x64_y_tiles != 0) {
-        base_tile_size = 64;
-        number_of_64x64_y_tiles--;
-      } else if (number_of_32x32_y_tiles != 0) {
-        base_tile_size = 32;
-        number_of_32x32_y_tiles--;
-      } else if (number_of_16x16_y_tiles != 0) {
-        base_tile_size = 16;
-        number_of_16x16_y_tiles--;
-      } else if (number_of_8x8_y_tiles != 0) {
-        base_tile_size = 8;
-        number_of_8x8_y_tiles--;
-      } else if (number_of_4x4_y_tiles != 0) {
-        base_tile_size = 4;
-        number_of_4x4_y_tiles--;
-      } else if (number_of_2x2_y_tiles != 0) {
-        if (number_of_2x2_y_tiles == 1) {
-          is_platform = true;
-        }
-        base_tile_size = 2;
-        number_of_2x2_y_tiles--;
-      } else if (number_of_1x1_y_tiles != 0) {
-        base_tile_size = 1;
-        if (number_of_1x1_y_tiles == 1) {
-          // Removing the Border
-          // border = true;
-        }
-        number_of_1x1_y_tiles--;
-      }
-    } else {
-      if (number_of_1x1_y_tiles != 0) {
-        base_tile_size = 1;
-        if (border_is_first) {
-          // Removing the Border
-          // border = true;
-          // border_is_first = false;
-        }
-        number_of_1x1_y_tiles--;
-      } else if (number_of_2x2_y_tiles != 0) {
-        if (number_of_2x2_y_tiles == 1) {
-          is_platform = true;
-        }
-        base_tile_size = 2;
-        number_of_2x2_y_tiles--;
-      } else if (number_of_4x4_y_tiles != 0) {
-        base_tile_size = 4;
-        number_of_4x4_y_tiles--;
-      } else if (number_of_8x8_y_tiles != 0) {
-        base_tile_size = 8;
-        number_of_8x8_y_tiles--;
-      } else if (number_of_16x16_y_tiles != 0) {
-        base_tile_size = 16;
-        number_of_16x16_y_tiles--;
-      } else if (number_of_32x32_y_tiles != 0) {
-        base_tile_size = 32;
-        number_of_32x32_y_tiles--;
-      } else if (number_of_64x64_y_tiles != 0) {
-        base_tile_size = 64;
-        number_of_64x64_y_tiles--;
-      } else if (number_of_128x128_y_tiles != 0) {
-        base_tile_size = 128;
-        number_of_128x128_y_tiles--;
-      }
-    }
-
-    if (y == 0 && big_tiles_to_small == false) {
-      is_platform = true;
-    } else {
-      is_platform = false;
-    }
-
-    div_t div_y_result = div((int)tile->GetSize()->x, base_tile_size * m_game_settings->GetTileMultiplicationFactor());
-
-    sub_number_of_x_tiles = div_y_result.quot;
-    if  (div_y_result.rem != 0) {
-      throw Tunnelour::Exceptions::run_error("Border isn't divisable by horizontally two!");
-    }
-
-    int resised_tile_size = static_cast<int>(base_tile_size * m_game_settings->GetTileMultiplicationFactor());
-
-
-    Tunnelour::Tile_Bitmap* sub_tile;
-    for (int x = 0; x < sub_number_of_x_tiles ; x++) {
-      sub_tile = Create_Tile(base_tile_size, resised_tile_size, border);
-      sub_tile->SetPosition(D3DXVECTOR3(sub_current_x + (sub_tile->GetSize()->x/2),
-                                            sub_current_y - (sub_tile->GetSize()->y/2),
-                                            -1)); // Middleground Z Space is -1
-      sub_tile->GetTexture()->transparency = 1.0f;
-      sub_current_x += static_cast<int>(sub_tile->GetSize()->x);
-      if (is_platform) {
-        sub_tile->Set_Is_Platform(true);
-      }
-      tiles.push_back(sub_tile);
-    }
-    if (sub_number_of_x_tiles != 0) {
-      sub_current_y -= static_cast<int>(sub_tile->GetSize()->y);
-      sub_current_x = static_cast<int>(tile_left);
+  Line middleground_line;
+  std::list<Line>::iterator line;
+  for (line = middleground_tileset.lines.begin(); line != middleground_tileset.lines.end(); line++) {
+    if (line->tile_size_x == base_tile_size && line->tile_size_y == base_tile_size) {
+      middleground_line = *line;
     }
   }
 
-  return tiles;
+  Tunnelour::Tile_Bitmap* tile = new Tunnelour::Tile_Bitmap();
+  tile->SetPosition(D3DXVECTOR3(0, 0, 0));
+  tile->GetTexture()->transparency = 1.0f;
+
+  std::wstring texture_path = m_game_settings->GetTilesetPath();
+  texture_path += String_Helper::StringToWString(m_metadata.filename);
+  tile->GetTexture()->texture_path = texture_path;
+  tile->GetTexture()->texture_size = D3DXVECTOR2(static_cast<float>(m_metadata.size_x),
+                                                 static_cast<float>(m_metadata.size_y));
+  tile->GetTexture()->tile_size = D3DXVECTOR2(static_cast<float>(middleground_line.tile_size_x),
+                                              static_cast<float>(middleground_line.tile_size_y));
+
+  int random_variable = rand() % middleground_line.number_of_tiles;
+
+  tile->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(random_variable*(middleground_line.tile_size_x) + static_cast<float>(middleground_line.top_left_x)),
+                                                      static_cast<float>(middleground_line.top_left_y));
+
+  tile->SetSize(new D3DXVECTOR2(static_cast<float>(base_tile_size), static_cast<float>(base_tile_size)));
+
+  return tile;
 }
 
 //------------------------------------------------------------------------------
@@ -783,126 +546,6 @@ void Middleground_Controller::Load_Tilset_Metadata() {
       m_metadata.tilesets.push_back(temp_tileset);
     }
   }
-}
-
-//------------------------------------------------------------------------------
-Tunnelour::Tile_Bitmap* Middleground_Controller::Create_Tile(int base_tile_size, int resised_tile_size, bool isborder) {
-  Tileset middleground_tileset;
-  std::list<Tileset>::iterator tileset;
-
-  for (tileset = m_metadata.tilesets.begin(); tileset != m_metadata.tilesets.end(); tileset++) {
-    if (isborder) {
-      if (tileset->type.compare("Border") == 0) {
-        middleground_tileset = *tileset;
-      }
-    } else {
-      if (tileset->type.compare("Middleground") == 0) {
-        middleground_tileset = *tileset;
-      }
-    }
-  }
-
-  Line middleground_line;
-  std::list<Line>::iterator line;
-  for (line = middleground_tileset.lines.begin(); line != middleground_tileset.lines.end(); line++) {
-    if (line->tile_size_x == base_tile_size && line->tile_size_y == base_tile_size) {
-      middleground_line = *line;
-    }
-  }
-
-  Tunnelour::Tile_Bitmap* tile = new Tunnelour::Tile_Bitmap();
-  tile->SetPosition(D3DXVECTOR3(0, 0, 0));
-  tile->GetTexture()->transparency = 1.0f;
-
-  std::wstring texture_path = m_game_settings->GetTilesetPath();
-  texture_path += String_Helper::StringToWString(m_metadata.filename);
-  tile->GetTexture()->texture_path = texture_path;
-  tile->GetTexture()->texture_size = D3DXVECTOR2(static_cast<float>(m_metadata.size_x),
-                                                 static_cast<float>(m_metadata.size_y));
-  tile->GetTexture()->tile_size = D3DXVECTOR2(static_cast<float>(middleground_line.tile_size_x),
-                                              static_cast<float>(middleground_line.tile_size_y));
-
-  int random_variable = rand() % middleground_line.number_of_tiles;
-
-  tile->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(random_variable*(middleground_line.tile_size_x) + static_cast<float>(middleground_line.top_left_x)),
-                                                      static_cast<float>(middleground_line.top_left_y));
-
-  tile->SetSize(new D3DXVECTOR2(resised_tile_size, resised_tile_size));
-
-  return tile;
-}
-
-//------------------------------------------------------------------------------
-bool Middleground_Controller::DoTheseTilesCollide(Tunnelour::Tile_Bitmap* TileA, Tunnelour::Tile_Bitmap* TileB, D3DXVECTOR2 &tile_a_output_colision) {
-  // At least one vertex in TileA is contained in the TileB.
-  float a_tile_left, a_tile_right, a_tile_top, a_tile_bottom;
-  a_tile_left = TileA->GetPosition().x - static_cast<float>(TileA->GetSize()->x / 2);
-  a_tile_right = TileA->GetPosition().x + static_cast<float>(TileA->GetSize()->x / 2);
-  a_tile_top = TileA->GetPosition().y + static_cast<float>(TileA->GetSize()->x / 2);
-  a_tile_bottom = TileA->GetPosition().y - static_cast<float>(TileA->GetSize()->x / 2);
-
-  float b_tile_left, b_tile_right, b_tile_top, b_tile_bottom;
-  b_tile_left = TileB->GetPosition().x - static_cast<float>(TileB->GetSize()->x / 2);
-  b_tile_right = TileB->GetPosition().x + static_cast<float>(TileB->GetSize()->x / 2);
-  b_tile_top = TileB->GetPosition().y + static_cast<float>(TileB->GetSize()->x / 2);
-  b_tile_bottom = TileB->GetPosition().y - static_cast<float>(TileB->GetSize()->x / 2);
-
-  if ((a_tile_left == b_tile_left) || (a_tile_left > b_tile_left && a_tile_left < b_tile_right)) {
-    // Horrizontal Collision
-    if (a_tile_top < b_tile_top && a_tile_top > b_tile_bottom) {
-      // Vertical Collision!
-      tile_a_output_colision = D3DXVECTOR2(a_tile_left, a_tile_top);
-      return true;
-    }
-    if (a_tile_bottom < b_tile_top && a_tile_bottom > b_tile_bottom) {
-      // Vertical Collision!
-      tile_a_output_colision = D3DXVECTOR2(a_tile_left, a_tile_bottom);
-      return true;
-    }
-  }
-
-  if ((a_tile_right == b_tile_right) || (a_tile_right > b_tile_left && a_tile_right < b_tile_right)) {
-    // Horrizontal Collision
-    if (a_tile_top > b_tile_top && a_tile_top < b_tile_bottom) {
-      // Vertical Collision!
-      tile_a_output_colision = D3DXVECTOR2(a_tile_left, a_tile_top);
-      return true;
-    }
-    if (a_tile_bottom > b_tile_top && a_tile_bottom < b_tile_bottom) {
-      // Vertical Collision!
-      tile_a_output_colision = D3DXVECTOR2(a_tile_left, a_tile_bottom);
-      return true;
-    }
-  }
-
-  // At least one vertex in TileA is contained within TileB.
-  // Any edge of TileA intersects any edge of TileB.
-
-  return false;
-}
-
-//------------------------------------------------------------------------------
-bool Middleground_Controller::WhereDoThesePointsIntersect( D3DXVECTOR2 p1, D3DXVECTOR2 p2, D3DXVECTOR2 p3, D3DXVECTOR2 p4, D3DXVECTOR2 &output) {
-  //p1-p2 is the first edge. 
-  //p3-p4 is the second edge.
-  float x1 = p1.x, x2 = p2.x, x3 = p3.x, x4 = p4.x;
-  float y1 = p1.y, y2 = p2.y, y3 = p3.y, y4 = p4.y;
-
-  float d = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-
-  if (d == 0) return NULL;
-
-  float pre = (x1*y2 - y1*x2), pos = (x3*y4 - y3*x4);
-  float x = ( pre * (x3 - x4) - (x1 - x2) * pos ) / d;
-  float y = ( pre * (y3 - y4) - (y1 - y2) * pos ) / d;
-
-  if ( x <= min(x1, x2) || x >= max(x1, x2) || x <= min(x3, x4) || x >= max(x3, x4) ) return false;
-  if ( y <= min(y1, y2) || y >= max(y1, y2) || y <= min(y3, y4) || y >= max(y3, y4) ) return false;
-
-  // Return the point of intersection
-  output.x = x;
-  output.y = y;
-  return true;; 
 }
 
 } // Tunnelour
