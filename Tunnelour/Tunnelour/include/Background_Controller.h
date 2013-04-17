@@ -23,6 +23,7 @@
 #include "Controller.h"
 #include "Tile_Bitmap.h"
 #include "Game_Settings_Component.h"
+#include "Camera_Component.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -81,16 +82,18 @@ class Background_Controller: public Tunnelour::Controller {
 
  private:
   void Load_Tilset_Metadata();
-  Tunnelour::Tile_Bitmap* Create_Tile(int base_tile_size, int resised_tile_size);
+  Tunnelour::Tile_Bitmap* Create_Tile(int base_tile_size);
 
   Tunnelour::Tile_Bitmap *m_bitmap;
   Tileset_Metadata m_metadata;
   std::vector<std::vector<Tunnelour::Tile_Bitmap*>> m_background_tiles;
 
   Tunnelour::Game_Settings_Component* m_game_settings;
+  Tunnelour::Camera_Component* m_camera;
   bool m_has_init_background_been_generated;
 
   std::string m_metadata_file_path;
+  int m_background_top, m_background_bottom, m_background_left, m_background_right;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_CONTROLLER_H_

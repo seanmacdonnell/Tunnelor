@@ -22,13 +22,17 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 Background_Controller_Mutator::Background_Controller_Mutator() {
   m_found_game_settings = false;
+  m_found_camera = false;
   m_game_settings = 0;
+  m_camera = 0;
 }
 
 //------------------------------------------------------------------------------
 Background_Controller_Mutator::~Background_Controller_Mutator() {
   m_found_game_settings = false;
+  m_found_camera = false;
   m_game_settings = 0;
+  m_camera = 0;
 }
 
 //------------------------------------------------------------------------------
