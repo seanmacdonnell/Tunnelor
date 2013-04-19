@@ -31,7 +31,7 @@ Middleground_Controller::Middleground_Controller() : Controller() {
   m_game_settings = 0;
   m_has_init_middleground_been_generated = false;
   m_has_init_tunnel_been_generated = false;
-  m_tunnel_x_size = 256;
+  m_tunnel_x_size = (128+64);
   m_camera = 0;
 }
 
@@ -50,16 +50,152 @@ void Middleground_Controller::Run() {
   Tunnelour::Middleground_Controller_Mutator mutator;
   m_model->Apply(&mutator);
   if (mutator.FoundGameSettings() && mutator.FoundCamera() )  {
-    m_game_settings = mutator.GetGameSettings();
-    m_camera = mutator.GetCamera();
+    if (!m_has_init_tunnel_been_generated || !m_has_init_middleground_been_generated) {
+      m_game_settings = mutator.GetGameSettings();
+      m_camera = mutator.GetCamera();
     
-    Load_Tilset_Metadata();
+      Load_Tilset_Metadata();
 
-    Tile_Tunnel();
+      Tile_Tunnel();
 
-    Tile_Middleground();
+      Tile_Middleground();
+    } else {
+    // If Camera is over an area with no tiles
+    int m_camera_top, m_camera_bottom, m_camera_left, m_camera_right;
+    m_camera_top = m_camera->GetPosition().y + (m_game_settings->GetResolution().y / 2);
+    m_camera_bottom = m_camera->GetPosition().y - (m_game_settings->GetResolution().y / 2);
+    m_camera_left = m_camera->GetPosition().x - (m_game_settings->GetResolution().x / 2);
+    m_camera_right = m_camera->GetPosition().x + (m_game_settings->GetResolution().x / 2);
+    /*
+    if (m_camera_top > m_middleground_top) {
+       throw Tunnelour::Exceptions::unfinished_error("Up Generation not finished!");
+    }
 
-    m_is_finished = true;
+    if (m_camera_bottom < m_middleground_bottom) {
+      throw Tunnelour::Exceptions::unfinished_error("Up Generation not finished!");
+    }
+    */
+    if (m_camera_right > m_middleground_right) {
+      //Fill right
+      std::vector<Tunnelour::Tile_Bitmap*> new_tunnel_tiles;
+      while (m_camera_right > m_middleground_right) {
+        for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tunnel_edge_tile = m_right_edge_tiles.begin(); tunnel_edge_tile !=  m_right_edge_tiles.end(); tunnel_edge_tile++) {
+          int current_tile_right = (*tunnel_edge_tile)->GetPosition().x  + ((*tunnel_edge_tile)->GetSize()->x / 2);
+          while (m_camera_right > current_tile_right) {
+            Tunnelour::Tile_Bitmap* tile = Create_Tile((*tunnel_edge_tile)->GetSize()->x);
+            D3DXVECTOR3 position = D3DXVECTOR3((*tunnel_edge_tile)->GetPosition().x + tile->GetSize()->x,
+                                               (*tunnel_edge_tile)->GetPosition().y,
+                                               (*tunnel_edge_tile)->GetPosition().z);
+            tile->GetTexture()->transparency = 0.5f; //TUNNEL
+            tile->SetPosition(position);
+            m_model->Add(tile);
+            m_tunnel_tiles.push_back(tile);
+            new_tunnel_tiles.push_back(tile);
+            *tunnel_edge_tile = tile;
+            current_tile_right += (tile->GetSize()->x / 2);
+            if (tunnel_edge_tile == m_right_edge_tiles.begin()) {
+              tile->Set_Is_Top_Edge(true);
+            } else if ((tunnel_edge_tile + 1) == m_right_edge_tiles.end()) {
+              tile->Set_Is_Bottom_Edge(true);
+            }
+          }
+        }
+        Tunnelour::Tile_Bitmap* smallest_tile = 0;
+        for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tunnel_edge_tile = m_right_edge_tiles.begin(); tunnel_edge_tile !=  m_right_edge_tiles.end(); tunnel_edge_tile++) {
+          // store the smallest number as the new middleground right.
+          if (smallest_tile == 0) {
+            smallest_tile = *tunnel_edge_tile;
+          } else if (smallest_tile->GetSize()->x > (*tunnel_edge_tile)->GetSize()->x) {
+            smallest_tile = (*tunnel_edge_tile);
+          }
+        }
+        m_middleground_right += smallest_tile->GetSize()->x;
+
+        std::vector<Tunnelour::Tile_Bitmap*> new_middleground_tiles;
+
+        for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tunnel_tile = new_tunnel_tiles.begin(); tunnel_tile != new_tunnel_tiles.end(); tunnel_tile++) {
+          std::vector<Tunnelour::Tile_Bitmap*> tiles;
+          if ((*tunnel_tile)->Is_Top_Edge()) {
+            // produce tiles upwards of the same size until out of camera view
+            tiles = GenerateTilesUpwards(*tunnel_tile);
+          } else if ((*tunnel_tile)->Is_Bottom_Edge()) {
+            // produce tiles upwards of the same size until out of camera view
+            tiles = GenerateTilesDownwards(*tunnel_tile);
+          } 
+
+          for (std::vector<Tunnelour::Tile_Bitmap*>::iterator middleground_tile = tiles.begin(); middleground_tile != tiles.end(); ++middleground_tile) {
+            new_middleground_tiles.push_back(*middleground_tile);
+          }
+        }
+
+        // Add tiles to Model
+        for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tile = new_middleground_tiles.begin(); tile != new_middleground_tiles.end(); ++tile) {
+          m_model->Add(*tile);
+        }
+      }
+    }
+
+    if (m_camera_left < m_middleground_left) {
+      //Fill left
+      std::vector<Tunnelour::Tile_Bitmap*> new_tunnel_tiles;
+      while (m_camera_left < m_middleground_left) {
+        for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tunnel_edge_tile = m_left_edge_tiles.begin(); tunnel_edge_tile !=  m_left_edge_tiles.end(); tunnel_edge_tile++) {
+          int current_tile_left = (*tunnel_edge_tile)->GetPosition().x  - ((*tunnel_edge_tile)->GetSize()->x / 2);
+          while (m_camera_left < current_tile_left) {
+            Tunnelour::Tile_Bitmap* tile = Create_Tile((*tunnel_edge_tile)->GetSize()->x);
+            D3DXVECTOR3 position = D3DXVECTOR3((*tunnel_edge_tile)->GetPosition().x - tile->GetSize()->x,
+                                               (*tunnel_edge_tile)->GetPosition().y,
+                                               (*tunnel_edge_tile)->GetPosition().z);
+            tile->GetTexture()->transparency = 0.5f; //TUNNEL
+            tile->SetPosition(position);
+            m_model->Add(tile);
+            m_tunnel_tiles.push_back(tile);
+            new_tunnel_tiles.push_back(tile);
+            *tunnel_edge_tile = tile;
+            current_tile_left -= (tile->GetSize()->x / 2);
+            if (tunnel_edge_tile == m_left_edge_tiles.begin()) {
+              tile->Set_Is_Top_Edge(true);
+            } else if ((tunnel_edge_tile + 1) == m_left_edge_tiles.end()) {
+              tile->Set_Is_Bottom_Edge(true);
+            }
+          }
+        }
+        Tunnelour::Tile_Bitmap* smallest_tile = 0;
+        for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tunnel_edge_tile = m_left_edge_tiles.begin(); tunnel_edge_tile !=  m_left_edge_tiles.end(); tunnel_edge_tile++) {
+          // store the smallest number as the new middleground right.
+          if (smallest_tile == 0) {
+            smallest_tile = *tunnel_edge_tile;
+          } else if (smallest_tile->GetSize()->x > (*tunnel_edge_tile)->GetSize()->x) {
+            smallest_tile = (*tunnel_edge_tile);
+          }
+        }
+        m_middleground_left -= smallest_tile->GetSize()->x;
+
+        std::vector<Tunnelour::Tile_Bitmap*> new_middleground_tiles;
+
+        for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tunnel_tile = new_tunnel_tiles.begin(); tunnel_tile != new_tunnel_tiles.end(); tunnel_tile++) {
+          std::vector<Tunnelour::Tile_Bitmap*> tiles;
+          if ((*tunnel_tile)->Is_Top_Edge()) {
+            // produce tiles upwards of the same size until out of camera view
+            tiles = GenerateTilesUpwards(*tunnel_tile);
+          } else if ((*tunnel_tile)->Is_Bottom_Edge()) {
+            // produce tiles upwards of the same size until out of camera view
+            tiles = GenerateTilesDownwards(*tunnel_tile);
+          } 
+
+          for (std::vector<Tunnelour::Tile_Bitmap*>::iterator middleground_tile = tiles.begin(); middleground_tile != tiles.end(); ++middleground_tile) {
+            new_middleground_tiles.push_back(*middleground_tile);
+          }
+        }
+
+        // Add tiles to Model
+        for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tile = new_middleground_tiles.begin(); tile != new_middleground_tiles.end(); ++tile) {
+          m_model->Add(*tile);
+        }
+      }
+    }
+
+    }
   }
 }
 
@@ -87,6 +223,8 @@ void Middleground_Controller::Tile_Tunnel() {
 
     int tunnel_start_x = static_cast<int>((m_game_settings->GetResolution().x/2) * -1);
     int tunnel_start_y = 128;
+    m_middleground_left = tunnel_start_x;
+    m_middleground_top = m_middleground_top;
     int current_x = tunnel_start_x;
     int current_y = tunnel_start_y;
     Tunnelour::Tile_Bitmap* tile;
@@ -147,10 +285,10 @@ void Middleground_Controller::Tile_Tunnel() {
       int base_tile_size = 0;
       if (number_of_128x128_y_tiles != 0) {
         base_tile_size = 128;
-        number_of_32x32_y_tiles--;
+        number_of_128x128_y_tiles--;
       } else if (number_of_64x64_y_tiles != 0) {
         base_tile_size = 64;
-        number_of_32x32_y_tiles--;
+        number_of_64x64_y_tiles--;
       } else if (number_of_32x32_y_tiles != 0) {
         base_tile_size = 32;
         number_of_32x32_y_tiles--;
@@ -193,9 +331,17 @@ void Middleground_Controller::Tile_Tunnel() {
          tile->SetPosition(D3DXVECTOR3(current_x + (tile->GetSize()->x/2),
                                            current_y - (tile->GetSize()->y/2),
                                            -1)); // Middleground Z Space is -1
-         tile->GetTexture()->transparency = 0.0f;
+         tile->GetTexture()->transparency = 0.5f; //TUNNEL
          current_x += static_cast<int>(tile->GetSize()->x);
          m_tunnel_tiles.push_back(tile);
+         if (x == 0) {
+           m_left_edge_tiles.push_back(tile);
+           m_middleground_left = tile->GetPosition().x - (tile->GetSize()->x / 2);
+         }
+         if (x == (number_of_x_tiles - 1)) {
+           m_right_edge_tiles.push_back(tile);
+           m_middleground_right = tile->GetPosition().x + (tile->GetSize()->x / 2);
+         }
       }
       current_y -= static_cast<int>(tile->GetSize()->y);
       current_x = static_cast<int>(tunnel_start_x);
@@ -246,14 +392,16 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateTilesUpwar
 
   int y_boundary_top = m_camera->GetPosition().y + (m_game_settings->GetResolution().y / 2);
   int y_current = (from_tile->GetPosition().y + (from_tile->GetSize()->y / 2));
+  Tunnelour::Tile_Bitmap* tile = 0;
   while (y_current < y_boundary_top) {
-    Tunnelour::Tile_Bitmap* tile = Create_Tile(static_cast<int>(from_tile->GetSize()->y));
+    tile = Create_Tile(static_cast<int>(from_tile->GetSize()->y));
     D3DXVECTOR3 position = from_tile->GetPosition();
     position.y = y_current + (tile->GetSize()->y / 2);
     tile->SetPosition(position);
     y_current = (tile->GetPosition().y + (tile->GetSize()->y / 2));
     new_tiles.push_back(tile);
   }
+  m_middleground_top = tile->GetPosition().x;
 
   return new_tiles;
 }
@@ -265,8 +413,9 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateTilesDownw
   int y_boundary_top = m_camera->GetPosition().y - (m_game_settings->GetResolution().y / 2);
   int y_current = (from_tile->GetPosition().y - (from_tile->GetSize()->y / 2));
   bool is_platform = true;
+  Tunnelour::Tile_Bitmap* tile = 0;
   while (y_current > y_boundary_top) {
-    Tunnelour::Tile_Bitmap* tile = Create_Tile(static_cast<int>(from_tile->GetSize()->y));
+    tile = Create_Tile(static_cast<int>(from_tile->GetSize()->y));
     D3DXVECTOR3 position = from_tile->GetPosition();
     position.y = y_current - (tile->GetSize()->y / 2);
     tile->SetPosition(position);
@@ -275,6 +424,7 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateTilesDownw
     new_tiles.push_back(tile);
     is_platform = false;
   }
+  m_middleground_bottom = tile->GetPosition().x;
 
   return new_tiles;
 }

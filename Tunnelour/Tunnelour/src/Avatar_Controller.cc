@@ -462,6 +462,7 @@ bool Avatar_Controller::Init_Timer() {
 //------------------------------------------------------------------------------
 void Avatar_Controller::Update_Timer() {
  //avatar is 16 fps one frame every 62.5 milliseond
+ // Avatar 24 fps is 1000/24 = 41.66666666666667
 
 	INT64 currentTime;
 	float timeDifference;
@@ -472,9 +473,9 @@ void Avatar_Controller::Update_Timer() {
 
 	m_frameTime = timeDifference / m_ticksPerMs;
 
- if (m_frameTime >= 62.5) {
+ if (m_frameTime >= 41.6) {
    m_startTime = currentTime;
-   m_frameTime = static_cast<float>(m_frameTime - 62.5);
+   m_frameTime = static_cast<float>(m_frameTime - 41.6);
    m_animation_tick = true;
  }
 }
