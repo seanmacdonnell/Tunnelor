@@ -97,8 +97,16 @@ void Direct3D11_View_TransparentShader::Init(ID3D11Device *d3d11device, HWND *hw
   LPCSTR pProfile;
   if (d3d11device->GetFeatureLevel() == D3D_FEATURE_LEVEL_11_0) {
     pProfile = "vs_5_0";
+  } else if (d3d11device->GetFeatureLevel() == D3D_FEATURE_LEVEL_10_1) {
+    pProfile = "vs_4_1";
   } else if (d3d11device->GetFeatureLevel() == D3D_FEATURE_LEVEL_10_0) {
     pProfile = "vs_4_0";
+  } else if (d3d11device->GetFeatureLevel() == D3D_FEATURE_LEVEL_9_3 || 
+             d3d11device->GetFeatureLevel() == D3D_FEATURE_LEVEL_9_2 ||
+             d3d11device->GetFeatureLevel() == D3D_FEATURE_LEVEL_9_1){
+    pProfile = "vs_3_0";
+  } else {
+    pProfile = "vs_2_0";
   }
 
   // Compile the vertex shader code.
@@ -133,8 +141,16 @@ void Direct3D11_View_TransparentShader::Init(ID3D11Device *d3d11device, HWND *hw
 
   if (d3d11device->GetFeatureLevel() == D3D_FEATURE_LEVEL_11_0) {
     pProfile = "ps_5_0";
+  } else if (d3d11device->GetFeatureLevel() == D3D_FEATURE_LEVEL_10_1) {
+    pProfile = "ps_4_1";
   } else if (d3d11device->GetFeatureLevel() == D3D_FEATURE_LEVEL_10_0) {
     pProfile = "ps_4_0";
+  } else if (d3d11device->GetFeatureLevel() == D3D_FEATURE_LEVEL_9_3 || 
+             d3d11device->GetFeatureLevel() == D3D_FEATURE_LEVEL_9_2 ||
+             d3d11device->GetFeatureLevel() == D3D_FEATURE_LEVEL_9_1){
+    pProfile = "ps_3_0";
+  } else {
+    pProfile = "ps_2_0";
   }
 
   // Compile the pixel shader code.

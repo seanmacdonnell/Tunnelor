@@ -86,7 +86,7 @@ void Middleground_Controller::Run() {
             D3DXVECTOR3 position = D3DXVECTOR3((*tunnel_edge_tile)->GetPosition().x + tile->GetSize()->x,
                                                (*tunnel_edge_tile)->GetPosition().y,
                                                (*tunnel_edge_tile)->GetPosition().z);
-            tile->GetTexture()->transparency = 0.5f; //TUNNEL
+            tile->GetTexture()->transparency = 0.0f; //TUNNEL
             tile->SetPosition(position);
             m_model->Add(tile);
             m_tunnel_tiles.push_back(tile);
@@ -146,7 +146,7 @@ void Middleground_Controller::Run() {
             D3DXVECTOR3 position = D3DXVECTOR3((*tunnel_edge_tile)->GetPosition().x - tile->GetSize()->x,
                                                (*tunnel_edge_tile)->GetPosition().y,
                                                (*tunnel_edge_tile)->GetPosition().z);
-            tile->GetTexture()->transparency = 0.5f; //TUNNEL
+            tile->GetTexture()->transparency = 0.0f; //TUNNEL
             tile->SetPosition(position);
             m_model->Add(tile);
             m_tunnel_tiles.push_back(tile);
@@ -331,7 +331,7 @@ void Middleground_Controller::Tile_Tunnel() {
          tile->SetPosition(D3DXVECTOR3(current_x + (tile->GetSize()->x/2),
                                            current_y - (tile->GetSize()->y/2),
                                            -1)); // Middleground Z Space is -1
-         tile->GetTexture()->transparency = 0.5f; //TUNNEL
+         tile->GetTexture()->transparency = 0.0f; //TUNNEL
          current_x += static_cast<int>(tile->GetSize()->x);
          m_tunnel_tiles.push_back(tile);
          if (x == 0) {
@@ -476,8 +476,8 @@ void Middleground_Controller::Load_Tilset_Metadata() {
   int lSize;
 
   std::wstring wtileset_path = m_game_settings->GetTilesetPath();
-  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Debug_Tileset_0_4.txt");
-  //m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Dirt_Tileset_5.txt");
+  //m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Debug_Tileset_0_4.txt");
+  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Dirt_Tileset_5.txt");
 
   // Open Font File as a text file
   if (fopen_s(&pFile, m_metadata_file_path.c_str(), "r") != 0) {
