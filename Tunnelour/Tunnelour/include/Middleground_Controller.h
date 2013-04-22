@@ -99,7 +99,7 @@ class Middleground_Controller: public Tunnelour::Controller {
   void Load_Tilset_Metadata();
 
   Tileset_Metadata m_metadata;
-  std::vector<std::vector<Tunnelour::Tile_Bitmap*>> m_middleground_tiles;
+  std::vector<Tunnelour::Tile_Bitmap*> m_middleground_tiles;
   std::vector<Tunnelour::Tile_Bitmap*> m_tunnel_tiles;
   std::vector<Tunnelour::Tile_Bitmap*> m_left_edge_tiles;
   std::vector<Tunnelour::Tile_Bitmap*> m_right_edge_tiles;
@@ -110,6 +110,7 @@ class Middleground_Controller: public Tunnelour::Controller {
   std::string m_metadata_file_path;
   int m_tunnel_x_size;
   Tunnelour::Camera_Component *m_camera;
+  std::wstring m_tileset_filename;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_MIDDLEGROUND_CONTROLLER_H_

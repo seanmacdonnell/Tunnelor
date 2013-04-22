@@ -95,7 +95,9 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Controller_Composite.cc" />
     <ClCompile Include="src\Controller.cc" />
     <ClCompile Include="src\Debug_Data_Display_Controller.cc" />
+    <ClCompile Include="src\Debug_Data_Display_Controller_Mutator.cc" />
     <ClCompile Include="src\Direct3D11_View.cc" />
+    <ClCompile Include="src\Direct3D11_View_DebugShader.cpp" />
     <ClCompile Include="src\Direct3D11_View_FontShader.cpp" />
     <ClCompile Include="src\Direct3D11_View_Mutator.cc" />
     <ClCompile Include="src\Direct3D11_View_TextureShader.cpp" />
@@ -133,7 +135,9 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Controller_Composite.h" />
     <ClInclude Include="include\Controller.h" />
     <ClInclude Include="include\Debug_Data_Display_Controller.h" />
+    <ClInclude Include="include\Debug_Data_Display_Controller_Mutator.h" />
     <ClInclude Include="include\Direct3D11_View.h" />
+    <ClInclude Include="include\Direct3D11_View_DebugShader.h" />
     <ClInclude Include="include\Direct3D11_View_FontShader.h" />
     <ClInclude Include="include\Direct3D11_View_Mutator.h" />
     <ClInclude Include="include\Direct3D11_View_TextureShader.h" />
@@ -160,6 +164,8 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\View_Composite.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="resource\Direct3D11_View_DebugPixelShader.ps" />
+    <None Include="resource\Direct3D11_View_DebugVertexShader.vs" />
     <None Include="resource\Direct3D11_View_FontPixelShader.ps" />
     <None Include="resource\Direct3D11_View_FontVertexShader.vs" />
     <None Include="resource\Direct3D11_View_TransparentPixelShader.ps" />

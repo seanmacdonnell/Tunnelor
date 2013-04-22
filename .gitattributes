@@ -21,9 +21,11 @@ Tunnelour/Tunnelour/include/Controller.h -text
 Tunnelour/Tunnelour/include/Controller_Composite.h -text
 Tunnelour/Tunnelour/include/Debug_Bitmap.h -text
 Tunnelour/Tunnelour/include/Debug_Data_Display_Controller.h -text
+Tunnelour/Tunnelour/include/Debug_Data_Display_Controller_Mutator.h -text
 Tunnelour/Tunnelour/include/Debug_Init_Controller.h -text
 Tunnelour/Tunnelour/include/Debug_Text.h -text
 Tunnelour/Tunnelour/include/Direct3D11_View.h -text
+Tunnelour/Tunnelour/include/Direct3D11_View_DebugShader.h -text
 Tunnelour/Tunnelour/include/Direct3D11_View_FontShader.h -text
 Tunnelour/Tunnelour/include/Direct3D11_View_Mutator.h -text
 Tunnelour/Tunnelour/include/Direct3D11_View_TextureShader.h -text
@@ -48,6 +50,8 @@ Tunnelour/Tunnelour/include/Tunnelour_Launcher.h -text
 Tunnelour/Tunnelour/include/Tunnelour_View.h -text
 Tunnelour/Tunnelour/include/View.h -text
 Tunnelour/Tunnelour/include/View_Composite.h -text
+Tunnelour/Tunnelour/resource/Direct3D11_View_DebugPixelShader.ps -text
+Tunnelour/Tunnelour/resource/Direct3D11_View_DebugVertexShader.vs -text
 Tunnelour/Tunnelour/resource/Direct3D11_View_FontPixelShader.ps -text
 Tunnelour/Tunnelour/resource/Direct3D11_View_FontVertexShader.vs -text
 Tunnelour/Tunnelour/resource/Direct3D11_View_TransparentPixelShader.ps -text
@@ -77,9 +81,11 @@ Tunnelour/Tunnelour/src/Controller.cc -text
 Tunnelour/Tunnelour/src/Controller_Composite.cc -text
 Tunnelour/Tunnelour/src/Debug_Bitmap.cc -text
 Tunnelour/Tunnelour/src/Debug_Data_Display_Controller.cc -text
+Tunnelour/Tunnelour/src/Debug_Data_Display_Controller_Mutator.cc -text
 Tunnelour/Tunnelour/src/Debug_Init_Controller.cc -text
 Tunnelour/Tunnelour/src/Debug_Text.cc -text
 Tunnelour/Tunnelour/src/Direct3D11_View.cc -text
+Tunnelour/Tunnelour/src/Direct3D11_View_DebugShader.cpp -text
 Tunnelour/Tunnelour/src/Direct3D11_View_FontShader.cpp -text
 Tunnelour/Tunnelour/src/Direct3D11_View_Mutator.cc -text
 Tunnelour/Tunnelour/src/Direct3D11_View_TextureShader.cpp -text

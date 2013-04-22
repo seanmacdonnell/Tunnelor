@@ -22,6 +22,7 @@
 #include "Game_Settings_Component.h"
 #include "Game_Metrics_Component.h"
 #include "Camera_Component.h"
+#include "Debug_Data_Display_Controller_Mutator.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -59,11 +60,12 @@ class Debug_Data_Display_Controller: public Tunnelour::Controller {
   Tunnelour::Game_Metrics_Component* m_game_metrics; 
   Tunnelour::Text_Component *m_debug_data_text_title;
   Tunnelour::Text_Component *m_debug_data_fps;
-  Tunnelour::Text_Component *m_debug_position;
-  Tunnelour::Text_Component *m_debug_last_position;
+  Tunnelour::Text_Component *m_debug_avatar_position;
   Tunnelour::Camera_Component *m_camera;
+  Tunnelour::Avatar_Component *m_avatar;
 
   long double m_fps;
+  bool m_is_debug_mode;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_DEBUG_DATA_DISPLAY_CONTROLLER_H_

@@ -43,6 +43,7 @@
 #include "Text_Component.h"
 #include "Game_Settings_Component.h"
 #include "Game_Metrics_Component.h"
+#include "Direct3D11_View_DebugShader.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -153,6 +154,7 @@ class Direct3D11_View : public Tunnelour::View {
   //---------------------------------------------------------------------------
   Tunnelour::Direct3D11_View_FontShader* m_font_shader;
   Tunnelour::Direct3D11_View_TransparentShader* m_transparent_shader;
+  Tunnelour::Direct3D11_View_DebugShader* m_debug_shader;
 
   //---------------------------------------------------------------------------
   // Description : Model Components

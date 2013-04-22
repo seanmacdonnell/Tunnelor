@@ -151,6 +151,16 @@ class Game_Settings_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   void SetHWnd(HWND hwnd);
 
+  //---------------------------------------------------------------------------
+  // Description : Accessor for the debug mode flag
+  //---------------------------------------------------------------------------
+  bool IsDebugMode();
+
+  //---------------------------------------------------------------------------
+  // Description : Mutator for the debug mode flag
+  //---------------------------------------------------------------------------
+  void SetIsDebugMode(bool is_debug_mode);
+
  protected:
 
  private:
@@ -167,6 +177,7 @@ class Game_Settings_Component: public Tunnelour::Component {
   float m_tile_size_multiplication_factor;
   HINSTANCE m_hinstance;
   HWND m_hwnd;
+  bool m_is_debug_mode;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_COLOR_COMPONENT_H_

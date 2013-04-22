@@ -86,6 +86,8 @@ class Input_Controller: public Tunnelour::Controller {
  bool m_has_direct_input_been_init;
 
  Tunnelour::Avatar_Component* m_avatar_component;
+
+ bool m_dik_grave_pressed;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_INPUT_CONTROLLER_H_

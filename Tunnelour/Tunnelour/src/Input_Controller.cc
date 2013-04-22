@@ -28,6 +28,7 @@ Input_Controller::Input_Controller() : Controller() {
   m_game_settings = 0;
   m_avatar_component = 0;
   m_has_direct_input_been_init = false;
+  m_dik_grave_pressed = false;
 }
 
 //------------------------------------------------------------------------------
@@ -231,12 +232,22 @@ void Input_Controller::ProcessInput() {
     if (m_avatar_component != 0) { m_avatar_component->SetNextCommand("DIK_RIGHT"); }
 	}
 
- if(m_keyboardState[DIK_LEFT] & 0x80)	{
+  if(m_keyboardState[DIK_LEFT] & 0x80)	{
    if (m_avatar_component != 0) { m_avatar_component->SetNextCommand("DIK_LEFT"); }
 	}
 
+  if(m_keyboardState[DIK_GRAVE] & 0x80)	{
+    m_dik_grave_pressed = true;
+	} else {
+   if (m_dik_grave_pressed) {
+     m_game_settings->SetIsDebugMode(!m_game_settings->IsDebugMode());
+     m_dik_grave_pressed = false;
+   }
+  }
+
 	return;
 }
+
 
 //------------------------------------------------------------------------------
 // protected:

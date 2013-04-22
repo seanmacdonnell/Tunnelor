@@ -43,6 +43,7 @@ Direct3D11_View::Direct3D11_View() {
 
   m_font_shader = NULL;
   m_transparent_shader = NULL;
+  m_debug_shader = 0;
   m_game_settings = 0;
   m_game_metrics = 0;
 }
@@ -124,6 +125,11 @@ Direct3D11_View::~Direct3D11_View() {
       m_transparent_shader = NULL;
     }
 
+    if (m_debug_shader) {
+      delete m_debug_shader;
+      m_debug_shader = NULL;
+    }
+    
     if (m_depthDisabledStencilState) {
       m_depthDisabledStencilState->Release();
       m_depthDisabledStencilState = NULL;
@@ -185,6 +191,11 @@ void Direct3D11_View::Run() {
     m_transparent_shader = new Tunnelour::Direct3D11_View_TransparentShader();
     m_transparent_shader->Init(m_device, &(m_game_settings->GetHWnd()));
   }
+  if (!m_debug_shader) {
+    m_debug_shader = new Tunnelour::Direct3D11_View_DebugShader();
+    m_debug_shader->Init(m_device, &(m_game_settings->GetHWnd()));
+  }
+
 
   // <BeginScene>
   D3DXMATRIX *viewmatrix = new D3DXMATRIX();
@@ -791,7 +802,9 @@ void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX 
           bitmap->GetTexture()->texture = (*stored_texture).second;
         }
       }
-      Render_Bitmap(bitmap, viewmatrix);
+      if (bitmap->GetTexture()->transparency != 0.0) {
+        Render_Bitmap(bitmap, viewmatrix);
+      }
     }
     if ((*iterator)->GetType().compare("Text_Component") == 0) {
       Tunnelour::Text_Component *text = static_cast<Tunnelour::Text_Component*>(*iterator);
@@ -861,7 +874,9 @@ void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX 
           text->GetTexture()->texture = (*stored_texture).second;
         }
       }
-      Render_Text(text, viewmatrix);
+      if (text->GetTexture()->transparency != 0.0) {
+        Render_Text(text, viewmatrix);
+      }
     }
   }
 }
@@ -948,14 +963,25 @@ void Direct3D11_View::Render_Bitmap(Tunnelour::Bitmap_Component* bitmap,
   // this vertex buffer, in this case triangles.
   m_device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-  // Render the model using the color shader.
-  m_transparent_shader->Render(m_device_context,
+  if (m_game_settings->IsDebugMode()) {
+    // Render the model using the color shader.
+    m_debug_shader->Render(m_device_context,
                            bitmap->GetFrame()->index_count,
                            m_world,
                            *viewmatrix,
                            m_ortho,
                            bitmap->GetTexture()->texture,
                            bitmap->GetTexture()->transparency);
+  } else {
+    // Render the model using the color shader.
+    m_transparent_shader->Render(m_device_context,
+                             bitmap->GetFrame()->index_count,
+                             m_world,
+                             *viewmatrix,
+                             m_ortho,
+                             bitmap->GetTexture()->texture,
+                             bitmap->GetTexture()->transparency);
+  }
 }
 
 //------------------------------------------------------------------------------

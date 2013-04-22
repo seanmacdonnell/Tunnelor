@@ -49,6 +49,7 @@ void Game_Settings_Component::Init() {
   m_screen_near = 0.1f;
   m_tileset_path = L"resource\\tilesets\\";
   m_tile_size_multiplication_factor = 1;
+  m_is_debug_mode = false;
 }
 
 //------------------------------------------------------------------------------
@@ -155,6 +156,16 @@ HWND& Game_Settings_Component::GetHWnd() {
 //------------------------------------------------------------------------------
 void Game_Settings_Component::SetHWnd(HWND hwnd) {
   m_hwnd = hwnd;
+}
+
+//------------------------------------------------------------------------------
+bool Game_Settings_Component::IsDebugMode() {
+  return m_is_debug_mode;
+}
+
+//------------------------------------------------------------------------------
+void Game_Settings_Component::SetIsDebugMode(bool is_debug_mode) {
+  m_is_debug_mode = is_debug_mode;
 }
 
 //------------------------------------------------------------------------------

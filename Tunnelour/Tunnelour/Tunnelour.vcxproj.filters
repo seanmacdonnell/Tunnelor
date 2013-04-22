@@ -156,6 +156,12 @@
     <ClCompile Include="src\Camera_Controller.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
+    <ClCompile Include="src\Direct3D11_View_DebugShader.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Debug_Data_Display_Controller_Mutator.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Init_Controller.h">
@@ -272,6 +278,12 @@
     <ClInclude Include="include\Camera_Controller.h">
       <Filter>Include Files\Controllers</Filter>
     </ClInclude>
+    <ClInclude Include="include\Direct3D11_View_DebugShader.h">
+      <Filter>Include Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Debug_Data_Display_Controller_Mutator.h">
+      <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resource\Direct3D11_View_FontPixelShader.ps">
@@ -318,6 +330,12 @@
     </None>
     <None Include="resource\tilesets\Charlie_Walking_Animation_Tileset_1_0.txt">
       <Filter>Resource Files\TileSets</Filter>
+    </None>
+    <None Include="resource\Direct3D11_View_DebugPixelShader.ps">
+      <Filter>Resource Files\PixelShaders</Filter>
+    </None>
+    <None Include="resource\Direct3D11_View_DebugVertexShader.vs">
+      <Filter>Resource Files\VertexShaders</Filter>
     </None>
   </ItemGroup>
 </Project>

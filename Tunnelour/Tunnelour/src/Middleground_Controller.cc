@@ -33,6 +33,7 @@ Middleground_Controller::Middleground_Controller() : Controller() {
   m_has_init_tunnel_been_generated = false;
   m_tunnel_x_size = (128+64);
   m_camera = 0;
+  m_tileset_filename = L"";
 }
 
 //------------------------------------------------------------------------------
@@ -53,7 +54,12 @@ void Middleground_Controller::Run() {
     if (!m_has_init_tunnel_been_generated || !m_has_init_middleground_been_generated) {
       m_game_settings = mutator.GetGameSettings();
       m_camera = mutator.GetCamera();
-    
+      
+      if (m_game_settings->IsDebugMode()) {
+        m_tileset_filename = L"Debug_Tileset_0_4.txt";
+      } else {
+        m_tileset_filename = L"Dirt_Tileset_5.txt";
+      }
       Load_Tilset_Metadata();
 
       Tile_Tunnel();
@@ -131,6 +137,7 @@ void Middleground_Controller::Run() {
         // Add tiles to Model
         for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tile = new_middleground_tiles.begin(); tile != new_middleground_tiles.end(); ++tile) {
           m_model->Add(*tile);
+          m_middleground_tiles.push_back(*tile);
         }
       }
     }
@@ -191,6 +198,7 @@ void Middleground_Controller::Run() {
         // Add tiles to Model
         for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tile = new_middleground_tiles.begin(); tile != new_middleground_tiles.end(); ++tile) {
           m_model->Add(*tile);
+          m_middleground_tiles.push_back(*tile);
         }
       }
     }
@@ -380,6 +388,7 @@ void Middleground_Controller::Tile_Middleground() {
     // Add tiles to Model
     for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tile = middleground_tiles.begin(); tile != middleground_tiles.end(); ++tile) {
       m_model->Add(*tile);
+      m_middleground_tiles.push_back(*tile);
     }
 
     m_has_init_middleground_been_generated = true;
@@ -476,8 +485,7 @@ void Middleground_Controller::Load_Tilset_Metadata() {
   int lSize;
 
   std::wstring wtileset_path = m_game_settings->GetTilesetPath();
-  //m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Debug_Tileset_0_4.txt");
-  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Dirt_Tileset_5.txt");
+  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + m_tileset_filename);
 
   // Open Font File as a text file
   if (fopen_s(&pFile, m_metadata_file_path.c_str(), "r") != 0) {
