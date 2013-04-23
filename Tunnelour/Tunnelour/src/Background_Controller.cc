@@ -240,7 +240,12 @@ void Background_Controller::Run() {
         (*tile)->GetTexture()->texture_size = D3DXVECTOR2(static_cast<float>(m_metadata.size_x),
                                                         static_cast<float>(m_metadata.size_y));
 
-        int random_variable = rand() % middleground_line.number_of_tiles;
+        int random_variable = 0;
+        if (m_is_debug_mode) {
+          random_variable = 0;
+        } else {
+          int random_variable = rand() % middleground_line.number_of_tiles;
+        }
 
         (*tile)->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(random_variable*(middleground_line.tile_size_x) + static_cast<float>(middleground_line.top_left_x)),
                                                             static_cast<float>(middleground_line.top_left_y));
@@ -521,7 +526,12 @@ Tunnelour::Tile_Bitmap* Background_Controller::Create_Tile(int base_tile_size) {
   tile->GetTexture()->tile_size = D3DXVECTOR2(static_cast<float>(middleground_line.tile_size_x),
                                               static_cast<float>(middleground_line.tile_size_y));
 
-  int random_variable = rand() % middleground_line.number_of_tiles;
+  int random_variable = 0;
+  if (m_is_debug_mode) {
+    random_variable = 0;
+  } else {
+    int random_variable = rand() % middleground_line.number_of_tiles;
+  }
 
   tile->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(random_variable*(middleground_line.tile_size_x) + static_cast<float>(middleground_line.top_left_x)),
                                                       static_cast<float>(middleground_line.top_left_y));

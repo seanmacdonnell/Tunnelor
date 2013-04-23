@@ -94,7 +94,7 @@ class Middleground_Controller: public Tunnelour::Controller {
   void Tile_Middleground();
   std::vector<Tunnelour::Tile_Bitmap*> GenerateTilesUpwards(Tunnelour::Tile_Bitmap* from_tile);
   std::vector<Tunnelour::Tile_Bitmap*> GenerateTilesDownwards(Tunnelour::Tile_Bitmap* from_tile);
-  Tunnelour::Tile_Bitmap* Create_Tile(int base_tile_size);
+  Tunnelour::Tile_Bitmap* Create_Tile(int base_tile_size, bool is_platform);
 
   void Load_Tilset_Metadata();
 

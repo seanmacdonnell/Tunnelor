@@ -90,7 +90,7 @@ void Middleground_Controller::Run() {
           for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tunnel_edge_tile = m_right_edge_tiles.begin(); tunnel_edge_tile !=  m_right_edge_tiles.end(); tunnel_edge_tile++) {
             int current_tile_right = (*tunnel_edge_tile)->GetPosition().x  + ((*tunnel_edge_tile)->GetSize()->x / 2);
             while (m_camera_right > current_tile_right) {
-              Tunnelour::Tile_Bitmap* tile = Create_Tile((*tunnel_edge_tile)->GetSize()->x);
+              Tunnelour::Tile_Bitmap* tile = Create_Tile((*tunnel_edge_tile)->GetSize()->x, false);
               D3DXVECTOR3 position = D3DXVECTOR3((*tunnel_edge_tile)->GetPosition().x + tile->GetSize()->x,
                                                  (*tunnel_edge_tile)->GetPosition().y,
                                                  (*tunnel_edge_tile)->GetPosition().z);
@@ -151,7 +151,7 @@ void Middleground_Controller::Run() {
           for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tunnel_edge_tile = m_left_edge_tiles.begin(); tunnel_edge_tile !=  m_left_edge_tiles.end(); tunnel_edge_tile++) {
             int current_tile_left = (*tunnel_edge_tile)->GetPosition().x  - ((*tunnel_edge_tile)->GetSize()->x / 2);
             while (m_camera_left < current_tile_left) {
-              Tunnelour::Tile_Bitmap* tile = Create_Tile((*tunnel_edge_tile)->GetSize()->x);
+              Tunnelour::Tile_Bitmap* tile = Create_Tile((*tunnel_edge_tile)->GetSize()->x, false);
               D3DXVECTOR3 position = D3DXVECTOR3((*tunnel_edge_tile)->GetPosition().x - tile->GetSize()->x,
                                                  (*tunnel_edge_tile)->GetPosition().y,
                                                  (*tunnel_edge_tile)->GetPosition().z);
@@ -240,7 +240,15 @@ void Middleground_Controller::Run() {
           (*tile)->GetTexture()->texture_size = D3DXVECTOR2(static_cast<float>(m_metadata.size_x),
                                                           static_cast<float>(m_metadata.size_y));
 
-          int random_variable = rand() % middleground_line.number_of_tiles;
+          int random_variable = 0;
+          if (m_is_debug_mode) {
+            random_variable = 0;
+            if ((*tile)->Is_Platform()) {
+              random_variable = 1;
+            }
+          } else {
+            int random_variable = rand() % middleground_line.number_of_tiles;
+          }
 
           (*tile)->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(random_variable*(middleground_line.tile_size_x) + static_cast<float>(middleground_line.top_left_x)),
                                                               static_cast<float>(middleground_line.top_left_y));
@@ -379,7 +387,7 @@ void Middleground_Controller::Tile_Tunnel() {
 
       std::vector<Tunnelour::Tile_Bitmap*> tile_line;
       for (int x = 0; x < number_of_x_tiles ; x++) {
-         tile = Create_Tile(base_tile_size);
+         tile = Create_Tile(base_tile_size, false);
          if (y == 0) {
            tile->Set_Is_Top_Edge(true);
          } else if (y == (number_of_y_tiles - 1)) {
@@ -452,7 +460,7 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateTilesUpwar
   int y_current = (from_tile->GetPosition().y + (from_tile->GetSize()->y / 2));
   Tunnelour::Tile_Bitmap* tile = 0;
   while (y_current < y_boundary_top) {
-    tile = Create_Tile(static_cast<int>(from_tile->GetSize()->y));
+    tile = Create_Tile(static_cast<int>(from_tile->GetSize()->y), from_tile->Is_Platform());
     D3DXVECTOR3 position = from_tile->GetPosition();
     position.y = y_current + (tile->GetSize()->y / 2);
     tile->SetPosition(position);
@@ -470,14 +478,13 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateTilesDownw
 
   int y_boundary_top = m_camera->GetPosition().y - (m_game_settings->GetResolution().y / 2);
   int y_current = (from_tile->GetPosition().y - (from_tile->GetSize()->y / 2));
-  bool is_platform = true;
   Tunnelour::Tile_Bitmap* tile = 0;
+  bool is_platform = true;
   while (y_current > y_boundary_top) {
-    tile = Create_Tile(static_cast<int>(from_tile->GetSize()->y));
+    tile = Create_Tile(static_cast<int>(from_tile->GetSize()->y), is_platform);
     D3DXVECTOR3 position = from_tile->GetPosition();
     position.y = y_current - (tile->GetSize()->y / 2);
     tile->SetPosition(position);
-    tile->Set_Is_Platform(is_platform);
     y_current = (tile->GetPosition().y - (tile->GetSize()->y / 2));
     new_tiles.push_back(tile);
     is_platform = false;
@@ -488,7 +495,7 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateTilesDownw
 }
 
 //------------------------------------------------------------------------------
-Tunnelour::Tile_Bitmap* Middleground_Controller::Create_Tile(int base_tile_size) {
+Tunnelour::Tile_Bitmap* Middleground_Controller::Create_Tile(int base_tile_size, bool is_platform) {
   Tileset middleground_tileset;
   std::list<Tileset>::iterator tileset;
 
@@ -507,7 +514,7 @@ Tunnelour::Tile_Bitmap* Middleground_Controller::Create_Tile(int base_tile_size)
   }
 
   Tunnelour::Tile_Bitmap* tile = new Tunnelour::Tile_Bitmap();
-  tile->SetPosition(D3DXVECTOR3(0, 0, 0));
+  tile->SetPosition(D3DXVECTOR3(0, 0, -1));
   tile->GetTexture()->transparency = 1.0f;
 
   std::wstring texture_path = m_game_settings->GetTilesetPath();
@@ -518,7 +525,16 @@ Tunnelour::Tile_Bitmap* Middleground_Controller::Create_Tile(int base_tile_size)
   tile->GetTexture()->tile_size = D3DXVECTOR2(static_cast<float>(middleground_line.tile_size_x),
                                               static_cast<float>(middleground_line.tile_size_y));
 
-  int random_variable = rand() % middleground_line.number_of_tiles;
+  tile->Set_Is_Platform(is_platform);
+  int random_variable = 0;
+  if (m_is_debug_mode) {
+    random_variable = 0;
+    if (is_platform) {
+      random_variable = 1;
+    }
+  } else {
+    int random_variable = rand() % middleground_line.number_of_tiles;
+  }
 
   tile->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(random_variable*(middleground_line.tile_size_x) + static_cast<float>(middleground_line.top_left_x)),
                                                       static_cast<float>(middleground_line.top_left_y));
