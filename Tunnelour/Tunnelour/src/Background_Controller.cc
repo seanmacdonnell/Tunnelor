@@ -32,6 +32,8 @@ Background_Controller::Background_Controller() : Controller() {
   m_game_settings = 0;
   m_camera = 0;
   m_has_init_background_been_generated = false;
+  m_is_debug_mode = false;
+  m_tileset_filename = L"";
 }
 
 //------------------------------------------------------------------------------
@@ -52,6 +54,13 @@ void Background_Controller::Run() {
     m_model->Apply(&mutator);
     if (mutator.FoundGameSettings() && mutator.FoundCamera())  {
       m_game_settings = mutator.GetGameSettings();
+      m_is_debug_mode = m_game_settings->IsDebugMode(); 
+      if (m_is_debug_mode) {
+        m_tileset_filename = L"Debug_Tileset_0_4.txt";
+      } else {
+        m_tileset_filename = L"Dirt_Tileset_5.txt";
+      }
+
       m_camera = mutator.GetCamera();
 
       // Load the Tileset Data
@@ -94,22 +103,20 @@ void Background_Controller::Run() {
                                              0)); // Background Z Space is 0
            current_x += static_cast<int>(tile->GetSize()->x);
            tile_line.push_back(tile);
+           m_background_tiles.push_back(tile);
         }
         current_y -= static_cast<int>(tile->GetSize()->y);
         current_x = static_cast<int>(top_left_window_x);
-        m_background_tiles.push_back(tile_line);
       }
 
       // Add tiles to the model
-      for (std::vector<std::vector<Tunnelour::Tile_Bitmap*>>::iterator row = m_background_tiles.begin(); row != m_background_tiles.end(); ++row) {
-        for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tile = row->begin() ; tile != row->end(); ++tile) {
-          if (row + 1 == m_background_tiles.end() && tile + 1 == row->end()) {
+      for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tile = m_background_tiles.begin(); tile != m_background_tiles.end(); ++tile) {
+          if (tile + 1 == m_background_tiles.end()) {
             //this is the last tile in the background model
             m_background_bottom = (*tile)->GetPosition().y + ((*tile)->GetSize()->y /2);
             m_background_right = (*tile)->GetPosition().x + ((*tile)->GetSize()->x /2);
           }
           m_model->Add(*tile);
-        }
       }
 
       m_has_init_background_been_generated = true;
@@ -144,6 +151,7 @@ void Background_Controller::Run() {
                                             0);
           tile->SetPosition(position);
           m_model->Add(tile);
+          m_background_tiles.push_back(tile);
         }
         m_background_bottom -= 128;
       }
@@ -167,6 +175,7 @@ void Background_Controller::Run() {
                                              0);
           tile->SetPosition(position);
           m_model->Add(tile);
+          m_background_tiles.push_back(tile);
         }
         m_background_right += 128;
       }
@@ -190,8 +199,56 @@ void Background_Controller::Run() {
                                              0);
           tile->SetPosition(position);
           m_model->Add(tile);
+          m_background_tiles.push_back(tile);
         }
         m_background_left -= 128;
+      }
+    }
+
+    if (m_is_debug_mode != m_game_settings->IsDebugMode()) {
+      // Debug Mode has been activated or Deactivated
+      m_is_debug_mode = m_game_settings->IsDebugMode();
+      if (m_is_debug_mode) {
+        m_tileset_filename = L"Debug_Tileset_0_4.txt";
+        Load_Tilset_Metadata();
+      } else {
+        m_tileset_filename = L"Dirt_Tileset_5.txt";
+        Load_Tilset_Metadata();
+      }
+
+      for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tile = m_background_tiles.begin(); tile != m_background_tiles.end(); ++tile) {
+        Tileset middleground_tileset;
+        std::list<Tileset>::iterator tileset;
+
+        for (tileset = m_metadata.tilesets.begin(); tileset != m_metadata.tilesets.end(); tileset++) {
+          if (tileset->type.compare("Background") == 0) {
+            middleground_tileset = *tileset;
+          }
+        }
+
+        Line middleground_line;
+        std::list<Line>::iterator line;
+        for (line = middleground_tileset.lines.begin(); line != middleground_tileset.lines.end(); line++) {
+          if (line->tile_size_x == (*tile)->GetSize()->x && line->tile_size_y == (*tile)->GetSize()->y) {
+            middleground_line = *line;
+          }
+        }
+
+        std::wstring texture_path = m_game_settings->GetTilesetPath();
+        texture_path += String_Helper::StringToWString(m_metadata.filename);
+        (*tile)->GetTexture()->texture_path = texture_path;
+        (*tile)->GetTexture()->texture_size = D3DXVECTOR2(static_cast<float>(m_metadata.size_x),
+                                                        static_cast<float>(m_metadata.size_y));
+
+        int random_variable = rand() % middleground_line.number_of_tiles;
+
+        (*tile)->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(random_variable*(middleground_line.tile_size_x) + static_cast<float>(middleground_line.top_left_x)),
+                                                            static_cast<float>(middleground_line.top_left_y));
+
+          
+        (*tile)->GetTexture()->texture = 0;
+        (*tile)->GetFrame()->vertex_buffer = 0;
+        (*tile)->Init();
       }
     }
 
@@ -215,8 +272,7 @@ void Background_Controller::Load_Tilset_Metadata() {
   int lSize;
 
   std::wstring wtileset_path = m_game_settings->GetTilesetPath();
-  //m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Debug_Tileset_0_4.txt");
-  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Dirt_Tileset_5.txt");
+  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + m_tileset_filename);
 
   // Open Font File as a text file
   if (fopen_s(&pFile, m_metadata_file_path.c_str(), "r") != 0) {
@@ -470,7 +526,6 @@ Tunnelour::Tile_Bitmap* Background_Controller::Create_Tile(int base_tile_size) {
   tile->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(random_variable*(middleground_line.tile_size_x) + static_cast<float>(middleground_line.top_left_x)),
                                                       static_cast<float>(middleground_line.top_left_y));
 
-  //tile->SetSize(new D3DXVECTOR2(middleground_line.tile_size_x * 4, middleground_line.tile_size_x * 4));
   tile->SetSize(new D3DXVECTOR2(base_tile_size, base_tile_size));
   return tile;
 }

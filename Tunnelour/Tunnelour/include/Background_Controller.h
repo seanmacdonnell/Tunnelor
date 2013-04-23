@@ -86,7 +86,7 @@ class Background_Controller: public Tunnelour::Controller {
 
   Tunnelour::Tile_Bitmap *m_bitmap;
   Tileset_Metadata m_metadata;
-  std::vector<std::vector<Tunnelour::Tile_Bitmap*>> m_background_tiles;
+  std::vector<Tunnelour::Tile_Bitmap*> m_background_tiles;
 
   Tunnelour::Game_Settings_Component* m_game_settings;
   Tunnelour::Camera_Component* m_camera;
@@ -94,6 +94,8 @@ class Background_Controller: public Tunnelour::Controller {
 
   std::string m_metadata_file_path;
   int m_background_top, m_background_bottom, m_background_left, m_background_right;
+  std::wstring m_tileset_filename;
+  bool m_is_debug_mode;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_CONTROLLER_H_

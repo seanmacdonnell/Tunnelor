@@ -111,6 +111,7 @@ class Middleground_Controller: public Tunnelour::Controller {
   int m_tunnel_x_size;
   Tunnelour::Camera_Component *m_camera;
   std::wstring m_tileset_filename;
+  bool m_is_debug_mode;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_MIDDLEGROUND_CONTROLLER_H_
