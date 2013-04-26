@@ -39,6 +39,14 @@ Text_Component::Text_Component(): Bitmap_Component() {
 
 //------------------------------------------------------------------------------
 Text_Component::~Text_Component()  {
+  m_text.text = "";
+  m_text.font_csv_file = "";
+  m_font.image_width = 0;
+  m_font.image_height = 0;
+  m_font.font_color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+  m_texture->texture_path = L"";
+  m_type = "";
+  m_has_font_been_loaded = false;
 }
 
 //------------------------------------------------------------------------------

@@ -34,12 +34,13 @@ Bitmap_Component::Bitmap_Component(): Frame_Component() {
 
 //------------------------------------------------------------------------------
 Bitmap_Component::~Bitmap_Component()  {
-  // Release the texture resource.
-  if (m_texture->texture)  {
-    m_texture->texture->Release();
-    m_texture->texture = 0;
-    delete m_texture;
-  }
+  m_texture = new Tunnelour::Bitmap_Component::Texture();
+  m_texture->texture = 0;
+  m_texture->texture_path;
+  m_texture->transparency = 1.0f;
+  m_texture->top_left_position = D3DXVECTOR2(0, 0);
+  m_texture->tile_size = D3DXVECTOR2(0, 0);
+  m_texture->texture_size = D3DXVECTOR2(0, 0);
 }
 
 //------------------------------------------------------------------------------

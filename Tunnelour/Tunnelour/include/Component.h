@@ -112,7 +112,7 @@ class Component {
   //---------------------------------------------------------------------------
   std::string m_type;
 
- private:
+protected:
   //---------------------------------------------------------------------------
   // Description : The unqiue identifier for this specifc component
   //---------------------------------------------------------------------------
@@ -125,6 +125,9 @@ class Component {
   //               this.
   //---------------------------------------------------------------------------
   std::list<Component_Observer* const> m_observers;
+
+ private:
+
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_COMPONENT_H_

@@ -69,20 +69,23 @@ void Debug_Data_Display_Controller::Run() {
 	  int top_left_window_x = static_cast<int>((m_game_settings->GetResolution().x/2) * -1);
 	  int top_left_window_y = static_cast<int>(m_game_settings->GetResolution().y/2);
 	  if (m_debug_data_text_title == 0) {
-		  m_debug_data_text_title = new Tunnelour::Text_Component();
+      m_debug_data_text_title = new Tunnelour::Text_Component();
 		  m_debug_data_text_title->GetText()->font_csv_file = "resource\\tilesets\\Ariel.fnt";
 		  m_debug_data_text_title->GetText()->text = "~Debug data";
       m_debug_data_text_title->GetTexture()->transparency = 0.0f;
+      m_model->Add(m_debug_data_text_title);
 	  }
 	  if (m_debug_data_fps == 0) {
 		  m_debug_data_fps = new Tunnelour::Text_Component();
 		  m_debug_data_fps->GetText()->font_csv_file = "resource\\tilesets\\Ariel.fnt";
       m_debug_data_fps->GetTexture()->transparency = 0.0f;
+      m_model->Add(m_debug_data_fps);
 	  }
 	  if (m_debug_avatar_position == 0) {
 		  m_debug_avatar_position = new Tunnelour::Text_Component();
 		  m_debug_avatar_position->GetText()->font_csv_file = "resource\\tilesets\\Ariel.fnt";
       m_debug_avatar_position->GetTexture()->transparency = 0.0f;
+      m_model->Add(m_debug_avatar_position);
 	  }
 
 		m_debug_data_text_title->SetPosition(D3DXVECTOR3(static_cast<int>((m_camera->GetPosition().x + top_left_window_x) + (m_debug_data_text_title->GetSize()->x/2)),
@@ -128,10 +131,6 @@ void Debug_Data_Display_Controller::Run() {
     m_debug_data_text_title->Init();
     m_debug_data_fps->Init();
     m_debug_avatar_position->Init();
-
-    m_model->Add(m_debug_data_text_title);
-    m_model->Add(m_debug_data_fps);
-    m_model->Add(m_debug_avatar_position);
   }
 
 
