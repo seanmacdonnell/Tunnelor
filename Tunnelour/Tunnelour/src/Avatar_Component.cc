@@ -25,16 +25,25 @@ Avatar_Component::Avatar_Component(): Bitmap_Component() {
   m_position = D3DXVECTOR3(0, 0, 0);
   m_size = D3DXVECTOR2(0, 0);
   m_texture->texture_path = L"";
-  m_state = "";
-  m_state_index = 0;
-  m_last_command = "";
-  m_current_command = "";
-  m_next_command = "";
-  m_direction = "RIGHT";
+
+  m_state.state = "";
+  m_state.direction = "";
+  m_state.state_index = 0;
+
+  m_command.state = "";
+  m_command.direction = "";
+  m_command.state_index = 0;
 }
 
 //------------------------------------------------------------------------------
 Avatar_Component::~Avatar_Component() {
+  m_state.state = "";
+  m_state.direction = "";
+  m_state.state_index = 0;
+
+  m_command.state = "";
+  m_command.direction = "";
+  m_command.state_index = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -45,63 +54,23 @@ void Avatar_Component::Init() {
 }
 
 //---------------------------------------------------------------------------
-std::string Avatar_Component::GetState() {
+Avatar_Component::Avatar_State Avatar_Component::GetState() {
   return m_state;
 }
 
 //---------------------------------------------------------------------------
-void Avatar_Component::SetState(std::string state) {
+void Avatar_Component::SetState(Avatar_Component::Avatar_State state) {
   m_state = state;
 }
 
 //---------------------------------------------------------------------------
-unsigned int Avatar_Component::GetStateIndex() {
-  return m_state_index;
+Avatar_Component::Avatar_State Avatar_Component::GetCommand() {
+  return m_command;
 }
 
 //---------------------------------------------------------------------------
-void Avatar_Component::SetStateIndex(unsigned int state_index) {
-  m_state_index = state_index;
-}
-
-//---------------------------------------------------------------------------
-std::string Avatar_Component::GetLastCommand() {
-  return m_last_command;
-}
-
-//---------------------------------------------------------------------------
-void Avatar_Component::SetLastCommand(std::string last_command) {
-  m_last_command = last_command;
-}
-
-//---------------------------------------------------------------------------
-std::string Avatar_Component::GetCurrentCommand() {
-  return m_current_command;
-}
-
-//---------------------------------------------------------------------------
-void Avatar_Component::SetCurrentCommand(std::string current_command) {
-  m_current_command = current_command;
-}
-
-//---------------------------------------------------------------------------
-std::string Avatar_Component::GetNextCommand() {
-  return m_next_command;
-}
-
-//---------------------------------------------------------------------------
-void Avatar_Component::SetNextCommand(std::string next_command) {
-  m_next_command = next_command;
-}
-
-//---------------------------------------------------------------------------
-std::string Avatar_Component::GetDirection() {
-  return m_direction;
-}
-
-//---------------------------------------------------------------------------
-void Avatar_Component::SetDirection(std::string direction) {
-  m_direction = direction;
+void Avatar_Component::SetCommand(Avatar_Component::Avatar_State command) {
+  m_command = command;
 }
 
 //------------------------------------------------------------------------------
@@ -155,35 +124,39 @@ void Avatar_Component::Init_Frame() {
   // Load the vertex array with data
   // First triangle
 
+  if (m_state.direction != "Right" && m_state.direction != "Left") {
+    throw Tunnelour::Exceptions::init_error("No Direction State!");
+  }
+
   // Top left
   m_frame->vertices[0].position = D3DXVECTOR3(left, top, 0.0f);
-  if (m_direction.compare("RIGHT") == 0) {
+  if (m_state.direction.compare("Right") == 0) {
     m_frame->vertices[0].texture =  D3DXVECTOR2(m_texture->top_left_position.x / m_texture->texture_size.x,
                                                 m_texture->top_left_position.y / m_texture->texture_size.y);
   } else {
-    //TOP LEFT NOW TOP RIGHT
+    //TOP Left NOW TOP Right
     m_frame->vertices[0].texture = D3DXVECTOR2((m_texture->tile_size.x + m_texture->top_left_position.x) / m_texture->texture_size.x,
                                                 m_texture->top_left_position.y / m_texture->texture_size.y);
   }
 
   // Bottom right
   m_frame->vertices[1].position = D3DXVECTOR3(right, bottom, 0.0f);
-  if (m_direction.compare("RIGHT") == 0) {
+  if (m_state.direction.compare("Right") == 0) {
     m_frame->vertices[1].texture = D3DXVECTOR2((m_texture->tile_size.x + m_texture->top_left_position.x) / m_texture->texture_size.x,
                                                (m_texture->tile_size.y + m_texture->top_left_position.y) / m_texture->texture_size.y);
   } else {
-    // BOTTOM RIGHT NOW BOTTOM LEFT
+    // BOTTOM Right NOW BOTTOM Left
     m_frame->vertices[1].texture = D3DXVECTOR2(m_texture->top_left_position.x / m_texture->texture_size.x,
                                               (m_texture->tile_size.y + m_texture->top_left_position.y) / m_texture->texture_size.y);
   }
 
   // Bottom left
   m_frame->vertices[2].position = D3DXVECTOR3(left, bottom, 0.0f);
-  if (m_direction.compare("RIGHT") == 0) {
+  if (m_state.direction.compare("Right") == 0) {
     m_frame->vertices[2].texture = D3DXVECTOR2(m_texture->top_left_position.x / m_texture->texture_size.x,
                                               (m_texture->tile_size.y + m_texture->top_left_position.y) / m_texture->texture_size.y);
   } else {
-    // BOTTOM LEFT NOW BOTTOM RIGHT
+    // BOTTOM Left NOW BOTTOM Right
     m_frame->vertices[2].texture = D3DXVECTOR2((m_texture->tile_size.x + m_texture->top_left_position.x) / m_texture->texture_size.x,
                                                (m_texture->tile_size.y + m_texture->top_left_position.y) / m_texture->texture_size.y);
   }
@@ -194,11 +167,11 @@ void Avatar_Component::Init_Frame() {
   m_frame->vertices[3].texture = m_frame->vertices[0].texture;
   // Top right
   m_frame->vertices[4].position = D3DXVECTOR3(right, top, 0.0f);
-  if (m_direction.compare("RIGHT") == 0) {
+  if (m_state.direction.compare("Right") == 0) {
     m_frame->vertices[4].texture = D3DXVECTOR2((m_texture->tile_size.x + m_texture->top_left_position.x) / m_texture->texture_size.x,
                                                 m_texture->top_left_position.y / m_texture->texture_size.y);
   } else {
-    // TOP RIGHT NOW TOP LEFT
+    // TOP Right NOW TOP Left
     m_frame->vertices[4].texture =  D3DXVECTOR2(m_texture->top_left_position.x / m_texture->texture_size.x,
                                                 m_texture->top_left_position.y / m_texture->texture_size.y);
   }

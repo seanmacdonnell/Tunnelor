@@ -88,31 +88,31 @@ void Debug_Data_Display_Controller::Run() {
       m_model->Add(m_debug_avatar_position);
 	  }
 
-		m_debug_data_text_title->SetPosition(D3DXVECTOR3(static_cast<int>((m_camera->GetPosition().x + top_left_window_x) + (m_debug_data_text_title->GetSize()->x/2)),
+		m_debug_data_text_title->SetPosition(D3DXVECTOR3(static_cast<int>((m_camera->GetPosition().x + top_left_window_x) + (m_debug_data_text_title->GetSize()->x/2) + 10),
 														                         static_cast<int>((m_camera->GetPosition().y + top_left_window_y) - (m_debug_data_text_title->GetSize()->y/2)),
 														                          -2));
 
 	  Game_Metrics_Component::FPS_Data fps_data = m_game_metrics->GetFPSData();
 
-	  m_debug_data_fps->GetText()->text = "fps: " + std::to_string(static_cast<long double>(fps_data.fps));
+	  m_debug_data_fps->GetText()->text = "FPS: " + std::to_string(static_cast<long double>(fps_data.fps));
 	  m_debug_data_fps->GetFrame()->index_buffer = 0;
 	  m_debug_data_fps->GetTexture()->texture = 0;
 	  m_debug_data_fps->GetFrame()->vertex_buffer = 0;
 	  
-	  m_debug_data_fps->SetPosition(D3DXVECTOR3(static_cast<int>((m_camera->GetPosition().x + top_left_window_x) + (m_debug_data_fps->GetSize()->x/2)),
+	  m_debug_data_fps->SetPosition(D3DXVECTOR3(static_cast<int>((m_camera->GetPosition().x + top_left_window_x) + (m_debug_data_fps->GetSize()->x/2) + 10),
 												                      static_cast<int>((m_camera->GetPosition().y + top_left_window_y) - (m_debug_data_fps->GetSize()->y/2) - (m_debug_data_text_title->GetSize()->y)),
 												                      -2));
 
-	  m_debug_avatar_position->GetText()->text = "Avatar Pos: x:" + std::to_string(static_cast<long double>(m_avatar->GetPosition().x)) 
-                                          + " y:" + std::to_string(static_cast<long double>(m_avatar->GetPosition().y));
+	  m_debug_avatar_position->GetText()->text = "x:" + std::to_string(static_cast<long double>(m_avatar->GetPosition().x)) 
+                                             + ",y:" + std::to_string(static_cast<long double>(m_avatar->GetPosition().y));
 	  m_debug_avatar_position->GetFrame()->index_buffer = 0;
 	  m_debug_avatar_position->GetTexture()->texture = 0;
 	  m_debug_avatar_position->GetFrame()->vertex_buffer = 0;
 
 
-	  m_debug_avatar_position->SetPosition(D3DXVECTOR3(static_cast<int>((m_camera->GetPosition().x + top_left_window_x) + (m_debug_avatar_position->GetSize()->x/2)),
-												                      static_cast<int>((m_camera->GetPosition().y + top_left_window_y) - (m_debug_avatar_position->GetSize()->y/2) - (m_debug_data_text_title->GetSize()->y + m_debug_data_fps->GetSize()->y)),
-												                      -2));
+	  m_debug_avatar_position->SetPosition(D3DXVECTOR3(static_cast<int>(m_avatar->GetPosition().x),
+												                             static_cast<int>(m_avatar->GetPosition().y),
+												                             -3));
 
     if (m_is_debug_mode !=  m_game_settings->IsDebugMode()) {
       if (!m_game_settings->IsDebugMode()) {

@@ -58,6 +58,8 @@ Tunnelour/Tunnelour/resource/Direct3D11_View_TransparentPixelShader.ps -text
 Tunnelour/Tunnelour/resource/Direct3D11_View_TransparentVertexShader.vs -text
 Tunnelour/Tunnelour/resource/tilesets/Ariel.fnt -text
 Tunnelour/Tunnelour/resource/tilesets/Ariel_0.dds -text
+Tunnelour/Tunnelour/resource/tilesets/Charlie_Running_Animation_Tileset_1_0.dds -text
+Tunnelour/Tunnelour/resource/tilesets/Charlie_Running_Animation_Tileset_1_0.txt -text
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Standing_Animation_Tileset_0_3.dds -text
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Standing_Animation_Tileset_0_3.txt -text
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Walking_Animation_Tileset_1_0.dds -text

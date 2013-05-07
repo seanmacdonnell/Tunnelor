@@ -87,7 +87,8 @@ class Avatar_Controller: public Tunnelour::Controller {
  private:
   void Generate_Avatar_Tile();
   void Place_Avatar_Tile(Avatar_Controller_Mutator *mutator);
-  void Load_Tilset_Metadata(std::wstring metadata_file);
+  void Load_Tilesets(std::wstring wtileset_path);
+  void Load_Tileset_Metadata(std::string metadata_file_path, Avatar_Controller::Animation_Tileset_Metadata &out_metadata);
 
   Tunnelour::Avatar_Component *m_avatar;
   
@@ -95,8 +96,13 @@ class Avatar_Controller: public Tunnelour::Controller {
 
   bool m_has_avatar_been_generated;
 
-  std::string m_metadata_file_path;
-  Animation_Tileset_Metadata m_metadata;
+  std::string m_running_metadata_file_path;
+  std::string m_walking_metadata_file_path;
+  std::string m_standing_metadata_file_path;
+
+  Animation_Tileset_Metadata m_running_metadata;
+  Animation_Tileset_Metadata m_walking_metadata;
+  Animation_Tileset_Metadata m_standing_metadata;
 
   bool Init_Timer();
   void Update_Timer();

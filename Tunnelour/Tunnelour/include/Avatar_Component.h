@@ -29,6 +29,11 @@ namespace Tunnelour {
 //-----------------------------------------------------------------------------
 class Avatar_Component: public Tunnelour::Bitmap_Component {
  public:
+  struct Avatar_State {
+    std::string state;
+    unsigned int state_index;
+    std::string direction;
+  };
   //---------------------------------------------------------------------------
   // Description : Constructor
   //---------------------------------------------------------------------------
@@ -44,23 +49,11 @@ class Avatar_Component: public Tunnelour::Bitmap_Component {
   //---------------------------------------------------------------------------
   virtual void Init();
 
-  std::string GetState();
-  void SetState(std::string state);
+  Avatar_State GetState();
+  void SetState(Avatar_State state);
 
-  unsigned int GetStateIndex();
-  void SetStateIndex(unsigned int state_index);
-
-  std::string GetLastCommand();
-  void SetLastCommand(std::string last_command);
-
-  std::string GetCurrentCommand();
-  void SetCurrentCommand(std::string current_command);
-
-  std::string GetNextCommand();
-  void SetNextCommand(std::string next_command);
-
-  std::string GetDirection();
-  void SetDirection(std::string direction);
+  Avatar_State GetCommand();
+  void SetCommand(Avatar_State current_command);
 
  protected:
 
@@ -70,12 +63,8 @@ class Avatar_Component: public Tunnelour::Bitmap_Component {
   //---------------------------------------------------------------------------
   void Init_Frame();
 
-  std::string m_state;
-  unsigned int m_state_index;
-  std::string m_last_command;
-  std::string m_current_command;
-  std::string m_next_command;
-  std::string m_direction;
+  Avatar_State m_state;
+  Avatar_State m_command;
 };  // class Avatar_Component
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_COMPONENT_H_

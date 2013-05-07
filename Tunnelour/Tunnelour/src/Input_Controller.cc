@@ -228,12 +228,22 @@ void Input_Controller::ProcessInput() {
 	if(m_mouseX > m_screenWidth)  { m_mouseX = m_screenWidth; }
 	if(m_mouseY > m_screenHeight) { m_mouseY = m_screenHeight; }
 	
+  Avatar_Component::Avatar_State command;
+
 	if(m_keyboardState[DIK_RIGHT] & 0x80)	{
-    if (m_avatar_component != 0) { m_avatar_component->SetNextCommand("DIK_RIGHT"); }
+    command.direction = "Right";
+    command.state = "Walking";
+    if(m_keyboardState[DIK_LSHIFT] & 0x80)	{
+      command.state = "Running";
+    }
 	}
 
   if(m_keyboardState[DIK_LEFT] & 0x80)	{
-   if (m_avatar_component != 0) { m_avatar_component->SetNextCommand("DIK_LEFT"); }
+    command.direction = "Left";
+    command.state = "Walking";
+    if(m_keyboardState[DIK_LSHIFT] & 0x80)	{
+      command.state = "Running";
+    }
 	}
 
   if(m_keyboardState[DIK_GRAVE] & 0x80)	{
@@ -243,6 +253,10 @@ void Input_Controller::ProcessInput() {
      m_game_settings->SetIsDebugMode(!m_game_settings->IsDebugMode());
      m_dik_grave_pressed = false;
    }
+  }
+
+  if (m_avatar_component != 0) {
+    m_avatar_component->SetCommand(command);
   }
 
 	return;
