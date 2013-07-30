@@ -56,12 +56,14 @@ void Camera_Controller::Run() {
     }
   }
 
-  D3DXVECTOR3 avatar_position = m_avatar->GetPosition();
-  D3DXVECTOR3 camera_position = m_camera->GetPosition();
-  camera_position.x = avatar_position.x;
-  camera_position.y = avatar_position.y;
+  if (m_game_settings->IsCameraFollowing()) {
+    D3DXVECTOR3 avatar_position = m_avatar->GetPosition();
+    D3DXVECTOR3 camera_position = m_camera->GetPosition();
+    camera_position.x = avatar_position.x;
+    camera_position.y = avatar_position.y;
 
-  m_camera->SetPosition(camera_position);
+    m_camera->SetPosition(camera_position);
+  }
 }
 
 //------------------------------------------------------------------------------

@@ -31,8 +31,6 @@ Avatar_Controller::Avatar_Controller() : Controller() {
   m_game_settings = 0;
   m_has_avatar_been_generated = false;
   m_animation_tick = false;
-
-
 }
 
 //------------------------------------------------------------------------------
@@ -48,9 +46,9 @@ void Avatar_Controller::Init(Tunnelour::Component_Composite * const model) {
 
 //------------------------------------------------------------------------------
 void Avatar_Controller::Run() {
+  Avatar_Controller_Mutator mutator;
+  m_model->Apply(&mutator);
   if (!m_has_avatar_been_generated) {
-    Avatar_Controller_Mutator mutator;
-    m_model->Apply(&mutator);
     if (mutator.FoundGameSettings() && mutator.FoundBorderTiles())  {
       m_game_settings = mutator.GetGameSettings();
       Load_Tilesets(m_game_settings->GetTilesetPath());
@@ -103,6 +101,7 @@ void Avatar_Controller::Run() {
                                                               static_cast<float>(new_animation_subset.top_left_y));
       m_avatar->SetSize(new D3DXVECTOR2(static_cast<float>(new_animation_subset.tile_size_x), static_cast<float>(new_animation_subset.tile_size_y)));
       m_avatar->SetState(new_state);
+      m_current_animation_fps = new_animation_subset.frames_per_second;
     } else {
       // Continue Same State if its time
       // Increment Index
@@ -112,7 +111,7 @@ void Avatar_Controller::Run() {
         // Change State
         unsigned int state_index = current_state.state_index;
         state_index++;
-        if (state_index > (new_animation_subset.number_of_tiles - 1)) { state_index = 0; }
+        if (state_index > (new_animation_subset.number_of_frames - 1)) { state_index = 0; }
         new_state.state_index = state_index;
         m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(new_animation_subset.top_left_x + (state_index * new_animation_subset.tile_size_x)),
                                                                 static_cast<float>(new_animation_subset.top_left_y));
@@ -132,6 +131,7 @@ void Avatar_Controller::Run() {
         }
 
         m_avatar->SetPosition(position);
+        Place_Avatar_Tile(&mutator);
         m_animation_tick = false;
         m_avatar->SetState(new_state);
       }
@@ -183,13 +183,36 @@ void Avatar_Controller::Generate_Avatar_Tile() {
   state.state = standing_animation_subset.name;
   state.direction = "Right";
   state.state_index = 1;
+
+  for (std::list<Frame_Metadata>::iterator frames = standing_animation_subset.frames.begin(); frames != standing_animation_subset.frames.end(); frames++) {
+    if (frames->id == 1) {
+      Avatar_Component::Avatar_Foot_State left;
+      left.size_x = frames->left_foot_size_x;
+      left.size_y = frames->left_foot_size_y;
+      left.top_left_x = frames->left_foot_top_left_x;
+      left.top_left_y = frames->left_foot_top_left_y;
+      left.state = frames->left_foot_state;
+
+      Avatar_Component::Avatar_Foot_State right;
+      right.size_x = frames->right_foot_size_x;
+      right.size_y = frames->right_foot_size_y;
+      right.top_left_x = frames->right_foot_top_left_x;
+      right.top_left_y = frames->right_foot_top_left_y;
+      right.state = frames->right_foot_state;
+
+      state.left_foot = left;
+      state.right_foot = right;
+    }
+  }
+
+
   m_avatar->SetState(state);
   m_avatar->Init();
 }
 
 //------------------------------------------------------------------------------
 void Avatar_Controller::Place_Avatar_Tile(Avatar_Controller_Mutator *mutator) {
-  m_avatar->SetPosition(D3DXVECTOR3(0, 0, -2)); // Middleground Z Space is -1
+  m_avatar->SetPosition(D3DXVECTOR3(0, 20, -2)); // Middleground Z Space is -1
   if (mutator->FoundBorderTiles()) {
     // Cull the border tiles which are not within the x range of the avatar square
     std::list<Tunnelour::Bitmap_Component*> horizontal_collision_border_tiles;
@@ -208,9 +231,39 @@ void Avatar_Controller::Place_Avatar_Tile(Avatar_Controller_Mutator *mutator) {
     int avatar_bottom = static_cast<int>(m_avatar->GetPosition().y - m_avatar->GetSize()->y / 2);
     if (tile_top != avatar_bottom) {
       // if not
-      // Move the avatar down so he is on the floor
-      avatar_bottom = static_cast<int>(tile_top + m_avatar->GetSize()->y / 2);
-      m_avatar->SetPosition(D3DXVECTOR3(0.0, static_cast<float>(avatar_bottom), -2.0)); // Middleground Z Space is -1
+      // Move the frame down that the avatars feet touch the floor
+
+      int frame_offset = 0;
+
+      Avatar_Component::Avatar_State current_state = m_avatar->GetState();
+      // Find the lowest food which is contacting the floor
+      if (current_state.left_foot.state.compare("Contact") == 0 || current_state.right_foot.state.compare("Contact") == 0) {
+        Avatar_Component::Avatar_Foot_State lowest_foot;
+        if (current_state.left_foot.state.compare("Contact") == 0) {
+          lowest_foot = current_state.left_foot;
+          if (current_state.right_foot.state.compare("Contact") == 0) {
+            if ((current_state.left_foot.top_left_y - current_state.left_foot.size_y) < current_state.right_foot.top_left_y - current_state.right_foot.size_y) {
+              // Right foot is lower!
+              lowest_foot = current_state.right_foot;
+            }
+          }
+        } else if (current_state.right_foot.state.compare("Contact") == 0) {
+          lowest_foot = current_state.right_foot;
+        }
+
+        // Determine the distance between the foot and the bottom of the tile
+        int foot_bottom = lowest_foot.top_left_y + lowest_foot.size_y;
+        int frame_bottom = 128;
+        frame_offset = frame_bottom - foot_bottom;
+
+        // Move the frame down that amount of pixels
+        
+        // Move the avatar tile down so the frame touches the floor
+        avatar_bottom = static_cast<int>(tile_top + m_avatar->GetSize()->y / 2);
+        m_avatar->SetPosition(D3DXVECTOR3(0.0, static_cast<float>(avatar_bottom - frame_offset), -2.0)); // Middleground Z Space is -1
+      } else {
+        // No foot on floor!
+      }
     }
   }
 }
@@ -221,11 +274,11 @@ void Avatar_Controller::Load_Tilesets(std::wstring wtileset_path) {
   Load_Tileset_Metadata(m_running_metadata_file_path, m_running_metadata);
 
   // Walking
-  m_walking_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Walking_Animation_Tileset_1_0.txt");
+  m_walking_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Walking_Animation_Tileset_1_4.txt");
   Load_Tileset_Metadata(m_walking_metadata_file_path, m_walking_metadata);
 
   // Standing
-  m_standing_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Standing_Animation_Tileset_0_3.txt");
+  m_standing_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Standing_Animation_Tileset_1_0.txt");
   Load_Tileset_Metadata(m_standing_metadata_file_path, m_standing_metadata);
 }
 
@@ -399,12 +452,139 @@ void Avatar_Controller::Load_Tileset_Metadata(std::string metadata_file, Avatar_
       fgets(line, 225, pFile);
       if (line != NULL) {
         token = strtok_s(line, " ", &next_token);
-        if (strcmp(token, "SubSet_NumOfTiles") == 0)   {
+        if (strcmp(token, "SubSet_NumOfFrames") == 0)   {
           token = strtok_s(NULL, " =\"", &next_token);
-          temp_subset.number_of_tiles = atoi(token);
+          temp_subset.number_of_frames = atoi(token);
         }
       }
 
+      fgets(line, 225, pFile);
+      if (line != NULL) {
+        token = strtok_s(line, " ", &next_token);
+        if (strcmp(token, "SubSet_FramesPerSecond") == 0)   {
+          token = strtok_s(NULL, " =\"", &next_token);
+          temp_subset.frames_per_second = atoi(token);
+        }
+      }
+
+      fgets(line, 225, pFile);
+      if (line != NULL) {
+        token = strtok_s(line, " ", &next_token);
+        if (strcmp(token, "SubSet_Repeating") == 0)   {
+          token = strtok_s(NULL, " =\"", &next_token);
+          if (token == "Y") {
+            temp_subset.is_repeatable = true;
+          } else {
+            temp_subset.is_repeatable = false;
+          }
+        }
+      }
+
+      for (int i = 0; i <  temp_subset.number_of_frames; i++) {
+        Frame_Metadata temp_frame_metadata;
+
+        fgets(line, 225, pFile);
+        if (line != NULL) {
+          token = strtok_s(line, " ", &next_token);
+          if (strcmp(token, "Frame_ID") == 0)   {
+            token = strtok_s(NULL, " =\"", &next_token);
+            temp_frame_metadata.id = atoi(token);
+          }
+        }
+
+        fgets(line, 225, pFile);
+        if (line != NULL) {
+          token = strtok_s(line, " ", &next_token);
+          if (strcmp(token, "Frame_Right_Foot_TopLeftX") == 0)   {
+            token = strtok_s(NULL, " =\"", &next_token);
+            temp_frame_metadata.right_foot_top_left_x = atoi(token);
+          }
+        }
+
+        fgets(line, 225, pFile);
+        if (line != NULL) {
+          token = strtok_s(line, " ", &next_token);
+          if (strcmp(token, "Frame_Right_Foot_TopLeftY") == 0)   {
+            token = strtok_s(NULL, " =\"", &next_token);
+            temp_frame_metadata.right_foot_top_left_y = atoi(token);
+          }
+        }
+
+        fgets(line, 225, pFile);
+        if (line != NULL) {
+          token = strtok_s(line, " ", &next_token);
+          if (strcmp(token, "Frame_Right_Foot_SizeX") == 0)   {
+            token = strtok_s(NULL, " =\"", &next_token);
+            temp_frame_metadata.right_foot_size_x = atoi(token);
+          }
+        }
+
+        fgets(line, 225, pFile);
+        if (line != NULL) {
+          token = strtok_s(line, " ", &next_token);
+          if (strcmp(token, "Frame_Right_Foot_SizeY") == 0)   {
+            token = strtok_s(NULL, " =\"", &next_token);
+            temp_frame_metadata.right_foot_size_y = atoi(token);
+          }
+        }
+
+        fgets(line, 225, pFile);
+        if (line != NULL) {
+          token = strtok_s(line, " ", &next_token);
+          if (strcmp(token, "Frame_Right_Foot_State") == 0)   {
+            token = strtok_s(NULL, " =\"", &next_token);
+            temp_frame_metadata.right_foot_state = token;
+          }
+        }
+
+        fgets(line, 225, pFile);
+        if (line != NULL) {
+          token = strtok_s(line, " ", &next_token);
+          if (strcmp(token, "Frame_Left_Foot_TopLeftX") == 0)   {
+            token = strtok_s(NULL, " =\"", &next_token);
+            temp_frame_metadata.left_foot_top_left_x = atoi(token);
+          }
+        }
+
+        fgets(line, 225, pFile);
+        if (line != NULL) {
+          token = strtok_s(line, " ", &next_token);
+          if (strcmp(token, "Frame_Left_Foot_TopLeftY") == 0)   {
+            token = strtok_s(NULL, " =\"", &next_token);
+            temp_frame_metadata.left_foot_top_left_y = atoi(token);
+          }
+        }
+
+        fgets(line, 225, pFile);
+        if (line != NULL) {
+          token = strtok_s(line, " ", &next_token);
+          if (strcmp(token, "Frame_Left_Foot_SizeX") == 0)   {
+            token = strtok_s(NULL, " =\"", &next_token);
+            temp_frame_metadata.left_foot_size_x = atoi(token);
+          }
+        }
+
+        fgets(line, 225, pFile);
+        if (line != NULL) {
+          token = strtok_s(line, " ", &next_token);
+          if (strcmp(token, "Frame_Left_Foot_SizeY") == 0)   {
+            token = strtok_s(NULL, " =\"", &next_token);
+            temp_frame_metadata.left_foot_size_y = atoi(token);
+          }
+        }
+
+        fgets(line, 225, pFile);
+        if (line != NULL) {
+          token = strtok_s(line, " ", &next_token);
+          if (strcmp(token, "Frame_Left_Foot_State") == 0)   {
+            token = strtok_s(NULL, " =\"", &next_token);
+            temp_frame_metadata.left_foot_state = token;
+          }
+        }
+
+        temp_subset.frames.push_back(temp_frame_metadata);
+      }
+    
       out_metadata.subsets.push_back(temp_subset);
     }
   }
@@ -431,6 +611,7 @@ bool Avatar_Controller::Init_Timer() {
 void Avatar_Controller::Update_Timer() {
  //avatar is 16 fps one frame every 62.5 milliseond
  // Avatar 24 fps is 1000/24 = 41.66666666666667
+  int frames_per_millisecond = static_cast<int>(1000/m_current_animation_fps);
 
 	INT64 currentTime;
 	float timeDifference;
@@ -441,9 +622,9 @@ void Avatar_Controller::Update_Timer() {
 
 	m_frameTime = timeDifference / m_ticksPerMs;
 
- if (m_frameTime >= 41.6) {
+ if (m_frameTime >= frames_per_millisecond) {
    m_startTime = currentTime;
-   m_frameTime = static_cast<float>(m_frameTime - 41.6);
+   m_frameTime = static_cast<float>(m_frameTime - frames_per_millisecond);
    m_animation_tick = true;
  }
 }

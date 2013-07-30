@@ -35,13 +35,26 @@ namespace Tunnelour {
 //-----------------------------------------------------------------------------
 class Avatar_Controller: public Tunnelour::Controller {
  public:
+  struct Frame_Metadata {
+    unsigned int id;
+    int right_foot_top_left_x, right_foot_top_left_y;
+    int right_foot_size_x, right_foot_size_y;
+    std::string right_foot_state;
+    int left_foot_top_left_x, left_foot_top_left_y;
+    int left_foot_size_x, left_foot_size_y;
+    std::string left_foot_state;
+  };
+
   struct Animation_Subset {
     std::string name;
     std::string type;
     int top_left_x, top_left_y;
     int size_x, size_y;
     int tile_size_x, tile_size_y;
-    unsigned int number_of_tiles;
+    unsigned int number_of_frames;
+    unsigned int frames_per_second;
+    bool is_repeatable;
+    std::list<Frame_Metadata> frames;
   };
 
   struct Animation_Tileset_Metadata {
@@ -112,6 +125,7 @@ class Avatar_Controller: public Tunnelour::Controller {
   INT64 m_startTime;
   float m_frameTime;
   bool m_animation_tick;
+  int m_current_animation_fps;
 
   bool DoTheseTilesXCollide(Tunnelour::Bitmap_Component* TileA, Tunnelour::Bitmap_Component* TileB);
 };

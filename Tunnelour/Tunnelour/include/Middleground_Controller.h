@@ -92,6 +92,9 @@ class Middleground_Controller: public Tunnelour::Controller {
  private:
   void Tile_Tunnel();
   void Tile_Middleground();
+  void Extend_Tunnel_Right();
+  void Extend_Tunnel_Left();
+  void Switch_Tileset();
   std::vector<Tunnelour::Tile_Bitmap*> GenerateTilesUpwards(Tunnelour::Tile_Bitmap* from_tile);
   std::vector<Tunnelour::Tile_Bitmap*> GenerateTilesDownwards(Tunnelour::Tile_Bitmap* from_tile);
   Tunnelour::Tile_Bitmap* Create_Tile(int base_tile_size, bool is_platform);
@@ -112,6 +115,7 @@ class Middleground_Controller: public Tunnelour::Controller {
   Tunnelour::Camera_Component *m_camera;
   std::wstring m_tileset_filename;
   bool m_is_debug_mode;
+  int m_camera_top, m_camera_bottom, m_camera_left, m_camera_right;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_MIDDLEGROUND_CONTROLLER_H_

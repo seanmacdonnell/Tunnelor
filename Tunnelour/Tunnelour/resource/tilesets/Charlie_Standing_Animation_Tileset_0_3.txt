@@ -14,4 +14,7 @@ Tileset_NumOfSubSets "1"
   SubSet_SizeY "128"
   SubSet_Tile_SizeX "128"
   SubSet_Tile_SizeY "128"
-  SubSet_NumOfTiles "1"
+  SubSet_NumOfFrames "1"
+  SubSet_FramesPerSecond "6"  
+  SubSet_Repeating "Y"
+

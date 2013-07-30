@@ -63,9 +63,6 @@
     <ClCompile Include="src\Game_Settings_Component.cc">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
-    <ClCompile Include="src\Background_Controller_Mutator.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
     <ClCompile Include="src\Bitmap_Component.cc">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
@@ -160,6 +157,9 @@
       <Filter>Source Files\View</Filter>
     </ClCompile>
     <ClCompile Include="src\Debug_Data_Display_Controller_Mutator.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Background_Controller_Mutator.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
   </ItemGroup>

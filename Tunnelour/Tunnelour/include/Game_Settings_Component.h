@@ -161,6 +161,16 @@ class Game_Settings_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   void SetIsDebugMode(bool is_debug_mode);
 
+  //---------------------------------------------------------------------------
+  // Description : Accessor for the debug mode flag
+  //---------------------------------------------------------------------------
+  bool IsCameraFollowing();
+
+  //---------------------------------------------------------------------------
+  // Description : Mutator for the debug mode flag
+  //---------------------------------------------------------------------------
+  void SetIsCameraFollowing(bool is_camera_following);
+
  protected:
 
  private:
@@ -178,6 +188,7 @@ class Game_Settings_Component: public Tunnelour::Component {
   HINSTANCE m_hinstance;
   HWND m_hwnd;
   bool m_is_debug_mode;
+  bool m_is_camera_following;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_COLOR_COMPONENT_H_

@@ -33,6 +33,7 @@ Game_Settings_Component::Game_Settings_Component(): Component() {
   m_tile_size_multiplication_factor = 0;
   m_hinstance = NULL;
   m_hwnd = NULL;
+  m_is_camera_following = true;
 }
 
 //------------------------------------------------------------------------------
@@ -166,6 +167,16 @@ bool Game_Settings_Component::IsDebugMode() {
 //------------------------------------------------------------------------------
 void Game_Settings_Component::SetIsDebugMode(bool is_debug_mode) {
   m_is_debug_mode = is_debug_mode;
+}
+
+//------------------------------------------------------------------------------
+bool Game_Settings_Component::IsCameraFollowing() {
+  return m_is_camera_following;
+}
+
+//------------------------------------------------------------------------------
+void Game_Settings_Component::SetIsCameraFollowing(bool is_camera_following) {
+  m_is_camera_following = is_camera_following;
 }
 
 //------------------------------------------------------------------------------
