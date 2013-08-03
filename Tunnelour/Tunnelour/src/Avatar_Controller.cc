@@ -100,6 +100,28 @@ void Avatar_Controller::Run() {
       m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(new_animation_subset.top_left_x),
                                                               static_cast<float>(new_animation_subset.top_left_y));
       m_avatar->SetSize(new D3DXVECTOR2(static_cast<float>(new_animation_subset.tile_size_x), static_cast<float>(new_animation_subset.tile_size_y)));
+
+
+      for (std::list<Frame_Metadata>::iterator frames = new_animation_subset.frames.begin(); frames != new_animation_subset.frames.end(); frames++) {
+        if (frames->id == 1) {
+          Avatar_Component::Avatar_Foot_State left;
+          left.size_x = frames->left_foot_size_x;
+          left.size_y = frames->left_foot_size_y;
+          left.top_left_x = frames->left_foot_top_left_x;
+          left.top_left_y = frames->left_foot_top_left_y;
+          left.state = frames->left_foot_state;
+
+          Avatar_Component::Avatar_Foot_State right;
+          right.size_x = frames->right_foot_size_x;
+          right.size_y = frames->right_foot_size_y;
+          right.top_left_x = frames->right_foot_top_left_x;
+          right.top_left_y = frames->right_foot_top_left_y;
+          right.state = frames->right_foot_state;
+
+          new_state.left_foot = left;
+          new_state.right_foot = right;
+        }
+      }
       m_avatar->SetState(new_state);
       m_current_animation_fps = new_animation_subset.frames_per_second;
     } else {
@@ -130,10 +152,31 @@ void Avatar_Controller::Run() {
           } 
         }
 
+        for (std::list<Frame_Metadata>::iterator frames = new_animation_subset.frames.begin(); frames != new_animation_subset.frames.end(); frames++) {
+          if (frames->id == (state_index + 1)) {
+            Avatar_Component::Avatar_Foot_State left;
+            left.size_x = frames->left_foot_size_x;
+            left.size_y = frames->left_foot_size_y;
+            left.top_left_x = frames->left_foot_top_left_x;
+            left.top_left_y = frames->left_foot_top_left_y;
+            left.state = frames->left_foot_state;
+
+            Avatar_Component::Avatar_Foot_State right;
+            right.size_x = frames->right_foot_size_x;
+            right.size_y = frames->right_foot_size_y;
+            right.top_left_x = frames->right_foot_top_left_x;
+            right.top_left_y = frames->right_foot_top_left_y;
+            right.state = frames->right_foot_state;
+
+            new_state.left_foot = left;
+            new_state.right_foot = right;
+          }
+        }
+
         m_avatar->SetPosition(position);
-        Place_Avatar_Tile(&mutator);
         m_animation_tick = false;
         m_avatar->SetState(new_state);
+        Place_Avatar_Tile(&mutator);
       }
     }
 
@@ -182,7 +225,7 @@ void Avatar_Controller::Generate_Avatar_Tile() {
   Avatar_Component::Avatar_State state;
   state.state = standing_animation_subset.name;
   state.direction = "Right";
-  state.state_index = 1;
+  state.state_index = 0;
 
   for (std::list<Frame_Metadata>::iterator frames = standing_animation_subset.frames.begin(); frames != standing_animation_subset.frames.end(); frames++) {
     if (frames->id == 1) {
@@ -212,58 +255,108 @@ void Avatar_Controller::Generate_Avatar_Tile() {
 
 //------------------------------------------------------------------------------
 void Avatar_Controller::Place_Avatar_Tile(Avatar_Controller_Mutator *mutator) {
-  m_avatar->SetPosition(D3DXVECTOR3(0, 20, -2)); // Middleground Z Space is -1
+  //m_avatar->SetPosition(D3DXVECTOR3(0, 20, -2)); // Middleground Z Space is -1
   if (mutator->FoundBorderTiles()) {
+    Avatar_Component::Avatar_State current_state = m_avatar->GetState();
+    Avatar_Component::Avatar_Foot_State lowest_foot;
+    int lowest_foot_bottom_left_y = 0;
+    // Find the lowest foot which is contacting the floor
+    if (current_state.left_foot.state.compare("Contact") == 0 || current_state.right_foot.state.compare("Contact") == 0) {
+      if (current_state.left_foot.state.compare("Contact") == 0) {
+        lowest_foot = current_state.left_foot;
+        lowest_foot_bottom_left_y = current_state.left_foot.top_left_y - current_state.left_foot.size_y;
+        if (current_state.right_foot.state.compare("Contact") == 0) {
+          if ((current_state.left_foot.top_left_y - current_state.left_foot.size_y) < current_state.right_foot.top_left_y - current_state.right_foot.size_y) {
+            // Right foot is lower!
+            lowest_foot = current_state.right_foot;
+            lowest_foot_bottom_left_y = current_state.right_foot.top_left_y - current_state.right_foot.size_y;
+          }
+        }
+      } else if (current_state.right_foot.state.compare("Contact") == 0) {
+        lowest_foot = current_state.right_foot;
+        lowest_foot_bottom_left_y = current_state.right_foot.top_left_y - current_state.right_foot.size_y;
+      } 
+    } else {
+      // No foot on floor!
+      // Change State to falling
+      // Move Avatar down
+      int avatar_y = static_cast<int>(m_avatar->GetPosition().y - 2);
+      m_avatar->SetPosition(D3DXVECTOR3(m_avatar->GetPosition().x, static_cast<float>(avatar_y), -2)); // Middleground Z Space is -1
+      return;
+    }
+
     // Cull the border tiles which are not within the x range of the avatar square
     std::list<Tunnelour::Bitmap_Component*> horizontal_collision_border_tiles;
     std::list<Tunnelour::Bitmap_Component*> border_tiles = mutator->GetBorderTiles();
     std::list<Tunnelour::Bitmap_Component*>::iterator it;
+
+    //Create a frame for the avatar foot
+    Frame_Component avatar_contact_foot;
+    D3DXVECTOR3 lowest_foot_centre_position;
+    lowest_foot_centre_position.x = lowest_foot.top_left_x + (lowest_foot.size_x /2);
+    lowest_foot_centre_position.y = lowest_foot.top_left_y - (lowest_foot.size_y /2);
+    lowest_foot_centre_position.z = -2;
+
+    // account for different positions in the frame and the avatar
+
+    // Work out the centre of the frame
+    // frame is 128x128 so get the frame # and times it by 128/2 for y
+    D3DXVECTOR3 animation_frame_centre;
+    animation_frame_centre.x = ((current_state.state_index + 1) * 128) - (128 / 2);
+    // and 128/2 for x
+    animation_frame_centre.y = (128 / 2) * -1;
+    animation_frame_centre.z = -2;
+
+    // store the distance from x and y to the centre of the animation frame
+    D3DXVECTOR3 animation_frame_offset;
+    animation_frame_offset.x = lowest_foot_centre_position.x - animation_frame_centre.x;
+    animation_frame_offset.y = lowest_foot_centre_position.y - animation_frame_centre.y;
+    animation_frame_offset.z = -2;
+
+    // Untranslate
+    D3DXVECTOR3 avatar_lowest_foot_centre_position;
+    avatar_lowest_foot_centre_position = animation_frame_offset;
+    avatar_lowest_foot_centre_position.x = avatar_lowest_foot_centre_position.x + m_avatar->GetPosition().x;
+    avatar_lowest_foot_centre_position.y = avatar_lowest_foot_centre_position.y - m_avatar->GetPosition().y;
+    avatar_lowest_foot_centre_position.z = m_avatar->GetPosition().z;
+     
+    avatar_contact_foot.SetPosition(avatar_lowest_foot_centre_position);
+    avatar_contact_foot.SetSize(lowest_foot.size_x, lowest_foot.size_y);
+
     for (it = border_tiles.begin(); it != border_tiles.end(); it++) {
-      if (DoTheseTilesXCollide(*it, m_avatar)) {
+      if (DoTheseTilesXCollide(*it, &avatar_contact_foot)) {
         horizontal_collision_border_tiles.push_back(*it);
       }
     }
 
-    if (horizontal_collision_border_tiles.empty()) { return; }
+    if (horizontal_collision_border_tiles.empty()) {
+      // No foot on floor!
+      // Change State to falling
+      // Move Avatar down
+      int avatar_y = static_cast<int>(m_avatar->GetPosition().y - 2);
+      m_avatar->SetPosition(D3DXVECTOR3(m_avatar->GetPosition().x, static_cast<float>(avatar_y), -2)); // Middleground Z Space is -1
+      return;
+    }
+
     // Check to see if the avatar is on a border
     Tunnelour::Bitmap_Component* tile = horizontal_collision_border_tiles.front();
     int tile_top = static_cast<int>(tile->GetPosition().y + tile->GetSize()->y / 2);
-    int avatar_bottom = static_cast<int>(m_avatar->GetPosition().y - m_avatar->GetSize()->y / 2);
-    if (tile_top != avatar_bottom) {
+    int avatar_bottom = static_cast<int>(m_avatar->GetPosition().y - (m_avatar->GetSize()->y / 2));
+    int avatar_foot_bottom  = static_cast<int>((m_avatar->GetPosition().y + animation_frame_offset.y) - (lowest_foot.size_y /2));
+
+    int foot_to_tile_bottom_offset;
+    foot_to_tile_bottom_offset =  avatar_foot_bottom - avatar_bottom;
+    int avatar_y;
+
+    avatar_y = tile_top - avatar_foot_bottom;
+
+    if (tile_top != avatar_foot_bottom) {
       // if not
       // Move the frame down that the avatars feet touch the floor
-
-      int frame_offset = 0;
-
-      Avatar_Component::Avatar_State current_state = m_avatar->GetState();
-      // Find the lowest food which is contacting the floor
-      if (current_state.left_foot.state.compare("Contact") == 0 || current_state.right_foot.state.compare("Contact") == 0) {
-        Avatar_Component::Avatar_Foot_State lowest_foot;
-        if (current_state.left_foot.state.compare("Contact") == 0) {
-          lowest_foot = current_state.left_foot;
-          if (current_state.right_foot.state.compare("Contact") == 0) {
-            if ((current_state.left_foot.top_left_y - current_state.left_foot.size_y) < current_state.right_foot.top_left_y - current_state.right_foot.size_y) {
-              // Right foot is lower!
-              lowest_foot = current_state.right_foot;
-            }
-          }
-        } else if (current_state.right_foot.state.compare("Contact") == 0) {
-          lowest_foot = current_state.right_foot;
-        }
-
-        // Determine the distance between the foot and the bottom of the tile
-        int foot_bottom = lowest_foot.top_left_y + lowest_foot.size_y;
-        int frame_bottom = 128;
-        frame_offset = frame_bottom - foot_bottom;
-
-        // Move the frame down that amount of pixels
-        
-        // Move the avatar tile down so the frame touches the floor
-        avatar_bottom = static_cast<int>(tile_top + m_avatar->GetSize()->y / 2);
-        m_avatar->SetPosition(D3DXVECTOR3(0.0, static_cast<float>(avatar_bottom - frame_offset), -2.0)); // Middleground Z Space is -1
-      } else {
-        // No foot on floor!
-      }
+      // Determine the distance between the foot and the bottom of the tile
+      // Move the frame down that amount of pixels
+      // Move the avatar tile down so the frame touches the floor
+      m_avatar->SetPosition(D3DXVECTOR3(0, static_cast<float>(avatar_y), -2)); // Middleground Z Space is -1
     }
   }
 }
@@ -630,8 +723,58 @@ void Avatar_Controller::Update_Timer() {
 }
 
 //------------------------------------------------------------------------------
-bool Avatar_Controller::DoTheseTilesXCollide(Tunnelour::Bitmap_Component* TileA, Tunnelour::Bitmap_Component* TileB) {
+bool Avatar_Controller::DoTheseTilesXCollide(Tunnelour::Frame_Component* TileA, Tunnelour::Frame_Component* TileB) {
   // At least one vertex in TileA is contained in the TileB.
+
+  bool stop = false;
+  if (TileB->GetPosition().x == 14) {
+    stop = true;
+      if (TileA->GetPosition().x == 32) {
+        stop = false;
+      }
+  }
+
+  float a_tile_left, a_tile_right;
+  a_tile_left = TileA->GetPosition().x - static_cast<float>(TileA->GetSize()->x / 2);
+  a_tile_right = TileA->GetPosition().x + static_cast<float>(TileA->GetSize()->x / 2);
+
+  float b_tile_left, b_tile_right;
+  b_tile_left = TileB->GetPosition().x - static_cast<float>(TileB->GetSize()->x / 2);
+  b_tile_right = TileB->GetPosition().x + static_cast<float>(TileB->GetSize()->x / 2);
+
+  if (b_tile_left == a_tile_left  || b_tile_left == a_tile_right) {
+    return true;
+  }
+    
+  if (b_tile_right == a_tile_left  || b_tile_right == a_tile_right) {
+    return true;
+  }
+
+  if (b_tile_left > a_tile_left && b_tile_left < a_tile_right) {
+    return true;
+  }
+
+  if (b_tile_right > a_tile_left && b_tile_right < a_tile_right) {
+    return true;
+  }
+
+  return false;
+}
+
+/* BACKUP
+
+//------------------------------------------------------------------------------
+bool Avatar_Controller::DoTheseTilesXCollide(Tunnelour::Frame_Component* TileA, Tunnelour::Frame_Component* TileB) {
+  // At least one vertex in TileA is contained in the TileB.
+
+  bool stop = false;
+  if (TileB->GetPosition().x == 14) {
+    stop = true;
+      if (TileA->GetPosition().x == 32) {
+        stop = false;
+      }
+  }
+
   float a_tile_left, a_tile_right;
   a_tile_left = TileA->GetPosition().x - static_cast<float>(TileA->GetSize()->x / 2);
   a_tile_right = TileA->GetPosition().x + static_cast<float>(TileA->GetSize()->x / 2);
@@ -652,5 +795,7 @@ bool Avatar_Controller::DoTheseTilesXCollide(Tunnelour::Bitmap_Component* TileA,
 
   return false;
 }
+
+*/
 
 } // Tunnelour

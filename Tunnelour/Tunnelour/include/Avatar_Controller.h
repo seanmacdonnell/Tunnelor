@@ -127,7 +127,7 @@ class Avatar_Controller: public Tunnelour::Controller {
   bool m_animation_tick;
   int m_current_animation_fps;
 
-  bool DoTheseTilesXCollide(Tunnelour::Bitmap_Component* TileA, Tunnelour::Bitmap_Component* TileB);
+  bool DoTheseTilesXCollide(Tunnelour::Frame_Component* TileA, Tunnelour::Frame_Component* TileB);
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_H_
