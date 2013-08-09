@@ -72,12 +72,17 @@ void Avatar_Controller::Run() {
       new_state_metadata = &m_running_metadata;
       new_state.direction = current_command.direction;
       new_state.state = current_command.state;
+    } else if (current_command.state.compare("Falling") == 0) {
+      new_state_metadata = &m_standing_metadata;
+      new_state.direction = current_state.direction;
+      new_state.state = current_command.state;
     } else {
       // Standing;
       new_state_metadata = &m_standing_metadata;
       new_state.direction = current_state.direction;
       new_state.state = "Standing";
     }
+
 
     Animation_Subset new_animation_subset;
     for (std::list<Animation_Subset>::iterator tileset = new_state_metadata->subsets.begin(); tileset != new_state_metadata->subsets.end(); tileset++) {
@@ -86,74 +91,24 @@ void Avatar_Controller::Run() {
       }
     }
 
-    // If State does not equal Command
-    if (current_state.state.compare(current_command.state) != 0) {
-      new_state.state_index = 0;
-      std::wstring texture_path = m_game_settings->GetTilesetPath();
-      texture_path += String_Helper::StringToWString(new_state_metadata->filename);
+    if (current_state.state.compare("Falling") != 0) {
+      // If State does not equal Command
+      if (current_state.state.compare(current_command.state) != 0) {
+        new_state.state_index = 0;
+        std::wstring texture_path = m_game_settings->GetTilesetPath();
+        texture_path += String_Helper::StringToWString(new_state_metadata->filename);
 
-      m_avatar->GetTexture()->texture_path = texture_path;
-      m_avatar->GetTexture()->texture_size = D3DXVECTOR2(static_cast<float>(new_state_metadata->size_x),
-                                                          static_cast<float>(new_state_metadata->size_y));
-      m_avatar->GetTexture()->tile_size = D3DXVECTOR2(static_cast<float>(new_animation_subset.tile_size_x),
-                                                      static_cast<float>(new_animation_subset.tile_size_y));
-      m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(new_animation_subset.top_left_x),
-                                                              static_cast<float>(new_animation_subset.top_left_y));
-      m_avatar->SetSize(new D3DXVECTOR2(static_cast<float>(new_animation_subset.tile_size_x), static_cast<float>(new_animation_subset.tile_size_y)));
-
-
-      for (std::list<Frame_Metadata>::iterator frames = new_animation_subset.frames.begin(); frames != new_animation_subset.frames.end(); frames++) {
-        if (frames->id == 1) {
-          Avatar_Component::Avatar_Foot_State left;
-          left.size_x = frames->left_foot_size_x;
-          left.size_y = frames->left_foot_size_y;
-          left.top_left_x = frames->left_foot_top_left_x;
-          left.top_left_y = frames->left_foot_top_left_y;
-          left.state = frames->left_foot_state;
-
-          Avatar_Component::Avatar_Foot_State right;
-          right.size_x = frames->right_foot_size_x;
-          right.size_y = frames->right_foot_size_y;
-          right.top_left_x = frames->right_foot_top_left_x;
-          right.top_left_y = frames->right_foot_top_left_y;
-          right.state = frames->right_foot_state;
-
-          new_state.left_foot = left;
-          new_state.right_foot = right;
-        }
-      }
-      m_avatar->SetState(new_state);
-      m_current_animation_fps = new_animation_subset.frames_per_second;
-    } else {
-      // Continue Same State if its time
-      // Increment Index
-      Update_Timer();
-      if (m_animation_tick) {
-        // Increment the animation
-        // Change State
-        unsigned int state_index = current_state.state_index;
-        state_index++;
-        if (state_index > (new_animation_subset.number_of_frames - 1)) { state_index = 0; }
-        new_state.state_index = state_index;
-        m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(new_animation_subset.top_left_x + (state_index * new_animation_subset.tile_size_x)),
+        m_avatar->GetTexture()->texture_path = texture_path;
+        m_avatar->GetTexture()->texture_size = D3DXVECTOR2(static_cast<float>(new_state_metadata->size_x),
+                                                            static_cast<float>(new_state_metadata->size_y));
+        m_avatar->GetTexture()->tile_size = D3DXVECTOR2(static_cast<float>(new_animation_subset.tile_size_x),
+                                                        static_cast<float>(new_animation_subset.tile_size_y));
+        m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(new_animation_subset.top_left_x),
                                                                 static_cast<float>(new_animation_subset.top_left_y));
-        D3DXVECTOR3 position = m_avatar->GetPosition();
-        if (new_state.direction.compare("Right") == 0) {
-          if (new_state.state.compare("Running") == 0) {
-            position.x += 16;
-          } else if (new_state.state.compare("Walking") == 0) {
-            position.x += 8;
-          } 
-        } else {
-          if (new_state.state.compare("Running") == 0) {
-            position.x -= 16;
-          } else if (new_state.state.compare("Walking") == 0) {
-            position.x -= 8;
-          } 
-        }
+        m_avatar->SetSize(new D3DXVECTOR2(static_cast<float>(new_animation_subset.tile_size_x), static_cast<float>(new_animation_subset.tile_size_y)));
 
         for (std::list<Frame_Metadata>::iterator frames = new_animation_subset.frames.begin(); frames != new_animation_subset.frames.end(); frames++) {
-          if (frames->id == (state_index + 1)) {
+          if (frames->id == 1) {
             Avatar_Component::Avatar_Foot_State left;
             left.size_x = frames->left_foot_size_x;
             left.size_y = frames->left_foot_size_y;
@@ -172,14 +127,73 @@ void Avatar_Controller::Run() {
             new_state.right_foot = right;
           }
         }
-
-        m_avatar->SetPosition(position);
-        m_animation_tick = false;
         m_avatar->SetState(new_state);
-        Place_Avatar_Tile(&mutator);
-      }
-    }
+        m_current_animation_fps = new_animation_subset.frames_per_second;
+      } else {
+        // Continue Same State if its time
+        // Increment Index
+        Update_Timer();
+        if (m_animation_tick) {
+          // Increment the animation
+          // Change State
+          unsigned int state_index = current_state.state_index;
+          state_index++;
+          if (state_index > (new_animation_subset.number_of_frames - 1)) { state_index = 0; }
+          new_state.state_index = state_index;
+          m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(new_animation_subset.top_left_x + (state_index * new_animation_subset.tile_size_x)),
+                                                                  static_cast<float>(new_animation_subset.top_left_y));
+          D3DXVECTOR3 position = m_avatar->GetPosition();
+          if (new_state.direction.compare("Right") == 0) {
+            if (new_state.state.compare("Running") == 0) {
+              position.x += 16;
+            } else if (new_state.state.compare("Walking") == 0) {
+              position.x += 8;
+            } else if (new_state.state.compare("Falling") == 0) {
+              position.y -= 16;
+            } 
+          } else {
+            if (new_state.state.compare("Running") == 0) {
+              position.x -= 16;
+            } else if (new_state.state.compare("Walking") == 0) {
+              position.x -= 8;
+            } else if (new_state.state.compare("Falling") == 0) {
+              position.y -= 16;
+            } 
+          }
 
+          for (std::list<Frame_Metadata>::iterator frames = new_animation_subset.frames.begin(); frames != new_animation_subset.frames.end(); frames++) {
+            if (frames->id == (state_index + 1)) {
+              Avatar_Component::Avatar_Foot_State left;
+              left.size_x = frames->left_foot_size_x;
+              left.size_y = frames->left_foot_size_y;
+              left.top_left_x = frames->left_foot_top_left_x;
+              left.top_left_y = frames->left_foot_top_left_y;
+              left.state = frames->left_foot_state;
+
+              Avatar_Component::Avatar_Foot_State right;
+              right.size_x = frames->right_foot_size_x;
+              right.size_y = frames->right_foot_size_y;
+              right.top_left_x = frames->right_foot_top_left_x;
+              right.top_left_y = frames->right_foot_top_left_y;
+              right.state = frames->right_foot_state;
+
+              new_state.left_foot = left;
+              new_state.right_foot = right;
+            }
+          }
+
+          m_avatar->SetPosition(position);
+          m_animation_tick = false;
+          m_avatar->SetState(new_state);
+          Place_Avatar_Tile(&mutator);
+        }
+      }
+    } else {
+      // Current state is falling, uncontrolable.
+      D3DXVECTOR3 position = m_avatar->GetPosition();
+      position.y -= 16;
+      m_avatar->SetPosition(position);
+    }
     Avatar_Component::Avatar_State cleared_state;
     cleared_state.state = "";
     cleared_state.direction = "";
@@ -279,9 +293,11 @@ void Avatar_Controller::Place_Avatar_Tile(Avatar_Controller_Mutator *mutator) {
     } else {
       // No foot on floor!
       // Change State to falling
-      // Move Avatar down
-      int avatar_y = static_cast<int>(m_avatar->GetPosition().y - 2);
-      m_avatar->SetPosition(D3DXVECTOR3(m_avatar->GetPosition().x, static_cast<float>(avatar_y), -2)); // Middleground Z Space is -1
+      Avatar_Component::Avatar_State falling_state;
+      falling_state.direction = current_state.direction;
+      falling_state.state = "Falling";
+      falling_state.state_index = 0;
+      m_avatar->SetState(falling_state);
       return;
     }
 
@@ -333,8 +349,50 @@ void Avatar_Controller::Place_Avatar_Tile(Avatar_Controller_Mutator *mutator) {
       // No foot on floor!
       // Change State to falling
       // Move Avatar down
-      int avatar_y = static_cast<int>(m_avatar->GetPosition().y - 2);
-      m_avatar->SetPosition(D3DXVECTOR3(m_avatar->GetPosition().x, static_cast<float>(avatar_y), -2)); // Middleground Z Space is -1
+      Animation_Subset standing_animation_subset;
+      for (std::list<Animation_Subset>::iterator tileset = m_standing_metadata.subsets.begin(); tileset != m_standing_metadata.subsets.end(); tileset++) {
+        if (tileset->name.compare("Standing") == 0) {
+          standing_animation_subset = *tileset;
+        }
+      }
+
+      Avatar_Component::Avatar_State new_state;
+      new_state.state_index = 0;
+      std::wstring texture_path = m_game_settings->GetTilesetPath();
+      texture_path += String_Helper::StringToWString(m_standing_metadata.filename);
+      m_avatar->GetTexture()->texture_path = texture_path;
+      m_avatar->GetTexture()->texture_size = D3DXVECTOR2(static_cast<float>(m_standing_metadata.size_x),
+                                                          static_cast<float>(m_standing_metadata.size_y));
+      m_avatar->GetTexture()->tile_size = D3DXVECTOR2(static_cast<float>(standing_animation_subset.tile_size_x),
+                                                      static_cast<float>(standing_animation_subset.tile_size_y));
+      m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(standing_animation_subset.top_left_x),
+                                                              static_cast<float>(standing_animation_subset.top_left_y));
+      m_avatar->SetSize(new D3DXVECTOR2(static_cast<float>(standing_animation_subset.tile_size_x), static_cast<float>(standing_animation_subset.tile_size_y)));
+
+      for (std::list<Frame_Metadata>::iterator frames = standing_animation_subset.frames.begin(); frames != standing_animation_subset.frames.end(); frames++) {
+        if (frames->id == 1) {
+          Avatar_Component::Avatar_Foot_State left;
+          left.size_x = frames->left_foot_size_x;
+          left.size_y = frames->left_foot_size_y;
+          left.top_left_x = frames->left_foot_top_left_x;
+          left.top_left_y = frames->left_foot_top_left_y;
+          left.state = frames->left_foot_state;
+
+          Avatar_Component::Avatar_Foot_State right;
+          right.size_x = frames->right_foot_size_x;
+          right.size_y = frames->right_foot_size_y;
+          right.top_left_x = frames->right_foot_top_left_x;
+          right.top_left_y = frames->right_foot_top_left_y;
+          right.state = frames->right_foot_state;
+
+          new_state.left_foot = left;
+          new_state.right_foot = right;
+        }
+      }
+      new_state.state = "Falling";
+      new_state.direction = m_avatar->GetState().direction;
+      m_avatar->SetState(new_state);
+      m_current_animation_fps = standing_animation_subset.frames_per_second;
       return;
     }
 
