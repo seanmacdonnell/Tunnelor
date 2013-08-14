@@ -32,7 +32,7 @@ class Avatar_Component: public Tunnelour::Bitmap_Component {
   struct Avatar_Foot_State {
     int top_left_x, top_left_y;
     int size_x, size_y;
-    std::string state;
+    bool is_contacting;
   };
 
   struct Avatar_State {

@@ -61,7 +61,7 @@ void Avatar_Controller::Run() {
     Avatar_Component::Avatar_State current_state = m_avatar->GetState();
     Avatar_Component::Avatar_State current_command = m_avatar->GetCommand();
 
-    Animation_Tileset_Metadata *new_state_metadata = 0;
+    Tileset_Helper::Animation_Tileset_Metadata *new_state_metadata = 0;
     Avatar_Component::Avatar_State new_state;
     // Change State
     if (current_command.state.compare("Walking") == 0) {
@@ -83,9 +83,8 @@ void Avatar_Controller::Run() {
       new_state.state = "Standing";
     }
 
-
-    Animation_Subset new_animation_subset;
-    for (std::list<Animation_Subset>::iterator tileset = new_state_metadata->subsets.begin(); tileset != new_state_metadata->subsets.end(); tileset++) {
+    Tileset_Helper::Animation_Subset new_animation_subset;
+    for (std::list<Tileset_Helper::Animation_Subset>::iterator tileset = new_state_metadata->subsets.begin(); tileset != new_state_metadata->subsets.end(); tileset++) {
       if (tileset->name.compare(new_state.state) == 0) {
         new_animation_subset = *tileset;
       }
@@ -107,24 +106,28 @@ void Avatar_Controller::Run() {
                                                                 static_cast<float>(new_animation_subset.top_left_y));
         m_avatar->SetSize(new D3DXVECTOR2(static_cast<float>(new_animation_subset.tile_size_x), static_cast<float>(new_animation_subset.tile_size_y)));
 
-        for (std::list<Frame_Metadata>::iterator frames = new_animation_subset.frames.begin(); frames != new_animation_subset.frames.end(); frames++) {
+        for (std::list<Tileset_Helper::Frame_Metadata>::iterator frames = new_animation_subset.frames.begin(); frames != new_animation_subset.frames.end(); frames++) {
           if (frames->id == 1) {
-            Avatar_Component::Avatar_Foot_State left;
-            left.size_x = frames->left_foot_size_x;
-            left.size_y = frames->left_foot_size_y;
-            left.top_left_x = frames->left_foot_top_left_x;
-            left.top_left_y = frames->left_foot_top_left_y;
-            left.state = frames->left_foot_state;
-
-            Avatar_Component::Avatar_Foot_State right;
-            right.size_x = frames->right_foot_size_x;
-            right.size_y = frames->right_foot_size_y;
-            right.top_left_x = frames->right_foot_top_left_x;
-            right.top_left_y = frames->right_foot_top_left_y;
-            right.state = frames->right_foot_state;
-
-            new_state.left_foot = left;
-            new_state.right_foot = right;
+            for (std::list<Tileset_Helper::Collision_Block>::iterator collision_block = frames->collision_blocks.begin(); collision_block != frames->collision_blocks.end(); collision_block++) {
+              if (collision_block->id.compare("Left_Foot") == 0) {
+                Avatar_Component::Avatar_Foot_State left;
+                left.size_x = collision_block->size_x;
+                left.size_y = collision_block->size_y;
+                left.top_left_x = collision_block->top_left_x;
+                left.top_left_y = collision_block->top_left_y;
+                left.is_contacting = collision_block->is_contacting;
+                new_state.left_foot = left;
+              }
+              if (collision_block->id.compare("Right_Foot") == 0) {
+                Avatar_Component::Avatar_Foot_State left;
+                left.size_x = collision_block->size_x;
+                left.size_y = collision_block->size_y;
+                left.top_left_x = collision_block->top_left_x;
+                left.top_left_y = collision_block->top_left_y;
+                left.is_contacting = collision_block->is_contacting;
+                new_state.left_foot = left;
+              }
+            }
           }
         }
         m_avatar->SetState(new_state);
@@ -161,24 +164,28 @@ void Avatar_Controller::Run() {
             } 
           }
 
-          for (std::list<Frame_Metadata>::iterator frames = new_animation_subset.frames.begin(); frames != new_animation_subset.frames.end(); frames++) {
+          for (std::list<Tileset_Helper::Frame_Metadata>::iterator frames = new_animation_subset.frames.begin(); frames != new_animation_subset.frames.end(); frames++) {
             if (frames->id == (state_index + 1)) {
-              Avatar_Component::Avatar_Foot_State left;
-              left.size_x = frames->left_foot_size_x;
-              left.size_y = frames->left_foot_size_y;
-              left.top_left_x = frames->left_foot_top_left_x;
-              left.top_left_y = frames->left_foot_top_left_y;
-              left.state = frames->left_foot_state;
-
-              Avatar_Component::Avatar_Foot_State right;
-              right.size_x = frames->right_foot_size_x;
-              right.size_y = frames->right_foot_size_y;
-              right.top_left_x = frames->right_foot_top_left_x;
-              right.top_left_y = frames->right_foot_top_left_y;
-              right.state = frames->right_foot_state;
-
-              new_state.left_foot = left;
-              new_state.right_foot = right;
+              for (std::list<Tileset_Helper::Collision_Block>::iterator collision_block = frames->collision_blocks.begin(); collision_block != frames->collision_blocks.end(); collision_block++) {
+                if (collision_block->id.compare("Left_Foot") == 0) {
+                  Avatar_Component::Avatar_Foot_State left;
+                  left.size_x = collision_block->size_x;
+                  left.size_y = collision_block->size_y;
+                  left.top_left_x = collision_block->top_left_x;
+                  left.top_left_y = collision_block->top_left_y;
+                  left.is_contacting = collision_block->is_contacting;
+                  new_state.left_foot = left;
+                }
+                if (collision_block->id.compare("Right_Foot") == 0) {
+                  Avatar_Component::Avatar_Foot_State left;
+                  left.size_x = collision_block->size_x;
+                  left.size_y = collision_block->size_y;
+                  left.top_left_x = collision_block->top_left_x;
+                  left.top_left_y = collision_block->top_left_y;
+                  left.is_contacting = collision_block->is_contacting;
+                  new_state.left_foot = left;
+                }
+              }
             }
           }
 
@@ -215,8 +222,8 @@ void Avatar_Controller::Run() {
 // private:
 //------------------------------------------------------------------------------
 void Avatar_Controller::Generate_Avatar_Tile() {
-  Animation_Subset standing_animation_subset;
-  for (std::list<Animation_Subset>::iterator tileset = m_standing_metadata.subsets.begin(); tileset != m_standing_metadata.subsets.end(); tileset++) {
+  Tileset_Helper::Animation_Subset standing_animation_subset;
+  for (std::list<Tileset_Helper::Animation_Subset>::iterator tileset = m_standing_metadata.subsets.begin(); tileset != m_standing_metadata.subsets.end(); tileset++) {
     if (tileset->name.compare("Standing") == 0) {
       standing_animation_subset = *tileset;
     }
@@ -241,24 +248,28 @@ void Avatar_Controller::Generate_Avatar_Tile() {
   state.direction = "Right";
   state.state_index = 0;
 
-  for (std::list<Frame_Metadata>::iterator frames = standing_animation_subset.frames.begin(); frames != standing_animation_subset.frames.end(); frames++) {
+  for (std::list<Tileset_Helper::Frame_Metadata>::iterator frames = standing_animation_subset.frames.begin(); frames != standing_animation_subset.frames.end(); frames++) {
     if (frames->id == 1) {
-      Avatar_Component::Avatar_Foot_State left;
-      left.size_x = frames->left_foot_size_x;
-      left.size_y = frames->left_foot_size_y;
-      left.top_left_x = frames->left_foot_top_left_x;
-      left.top_left_y = frames->left_foot_top_left_y;
-      left.state = frames->left_foot_state;
-
-      Avatar_Component::Avatar_Foot_State right;
-      right.size_x = frames->right_foot_size_x;
-      right.size_y = frames->right_foot_size_y;
-      right.top_left_x = frames->right_foot_top_left_x;
-      right.top_left_y = frames->right_foot_top_left_y;
-      right.state = frames->right_foot_state;
-
-      state.left_foot = left;
-      state.right_foot = right;
+      for (std::list<Tileset_Helper::Collision_Block>::iterator collision_block = frames->collision_blocks.begin(); collision_block != frames->collision_blocks.end(); collision_block++) {
+        if (collision_block->id.compare("Left_Foot") == 0) {
+          Avatar_Component::Avatar_Foot_State left;
+          left.size_x = collision_block->size_x;
+          left.size_y = collision_block->size_y;
+          left.top_left_x = collision_block->top_left_x;
+          left.top_left_y = collision_block->top_left_y;
+          left.is_contacting = collision_block->is_contacting;
+          state.left_foot = left;
+        }
+        if (collision_block->id.compare("Right_Foot") == 0) {
+          Avatar_Component::Avatar_Foot_State left;
+          left.size_x = collision_block->size_x;
+          left.size_y = collision_block->size_y;
+          left.top_left_x = collision_block->top_left_x;
+          left.top_left_y = collision_block->top_left_y;
+          left.is_contacting = collision_block->is_contacting;
+          state.left_foot = left;
+        }
+      }
     }
   }
 
@@ -275,18 +286,18 @@ void Avatar_Controller::Place_Avatar_Tile(Avatar_Controller_Mutator *mutator) {
     Avatar_Component::Avatar_Foot_State lowest_foot;
     int lowest_foot_bottom_left_y = 0;
     // Find the lowest foot which is contacting the floor
-    if (current_state.left_foot.state.compare("Contact") == 0 || current_state.right_foot.state.compare("Contact") == 0) {
-      if (current_state.left_foot.state.compare("Contact") == 0) {
+    if (current_state.left_foot.is_contacting || current_state.right_foot.is_contacting) {
+      if (current_state.left_foot.is_contacting) {
         lowest_foot = current_state.left_foot;
         lowest_foot_bottom_left_y = current_state.left_foot.top_left_y - current_state.left_foot.size_y;
-        if (current_state.right_foot.state.compare("Contact") == 0) {
+        if (current_state.right_foot.is_contacting) {
           if ((current_state.left_foot.top_left_y - current_state.left_foot.size_y) < current_state.right_foot.top_left_y - current_state.right_foot.size_y) {
             // Right foot is lower!
             lowest_foot = current_state.right_foot;
             lowest_foot_bottom_left_y = current_state.right_foot.top_left_y - current_state.right_foot.size_y;
           }
         }
-      } else if (current_state.right_foot.state.compare("Contact") == 0) {
+      } else if (current_state.right_foot.is_contacting) {
         lowest_foot = current_state.right_foot;
         lowest_foot_bottom_left_y = current_state.right_foot.top_left_y - current_state.right_foot.size_y;
       } 
@@ -349,8 +360,8 @@ void Avatar_Controller::Place_Avatar_Tile(Avatar_Controller_Mutator *mutator) {
       // No foot on floor!
       // Change State to falling
       // Move Avatar down
-      Animation_Subset standing_animation_subset;
-      for (std::list<Animation_Subset>::iterator tileset = m_standing_metadata.subsets.begin(); tileset != m_standing_metadata.subsets.end(); tileset++) {
+      Tileset_Helper::Animation_Subset standing_animation_subset;
+      for (std::list<Tileset_Helper::Animation_Subset>::iterator tileset = m_standing_metadata.subsets.begin(); tileset != m_standing_metadata.subsets.end(); tileset++) {
         if (tileset->name.compare("Standing") == 0) {
           standing_animation_subset = *tileset;
         }
@@ -369,24 +380,28 @@ void Avatar_Controller::Place_Avatar_Tile(Avatar_Controller_Mutator *mutator) {
                                                               static_cast<float>(standing_animation_subset.top_left_y));
       m_avatar->SetSize(new D3DXVECTOR2(static_cast<float>(standing_animation_subset.tile_size_x), static_cast<float>(standing_animation_subset.tile_size_y)));
 
-      for (std::list<Frame_Metadata>::iterator frames = standing_animation_subset.frames.begin(); frames != standing_animation_subset.frames.end(); frames++) {
+      for (std::list<Tileset_Helper::Frame_Metadata>::iterator frames = standing_animation_subset.frames.begin(); frames != standing_animation_subset.frames.end(); frames++) {
         if (frames->id == 1) {
-          Avatar_Component::Avatar_Foot_State left;
-          left.size_x = frames->left_foot_size_x;
-          left.size_y = frames->left_foot_size_y;
-          left.top_left_x = frames->left_foot_top_left_x;
-          left.top_left_y = frames->left_foot_top_left_y;
-          left.state = frames->left_foot_state;
-
-          Avatar_Component::Avatar_Foot_State right;
-          right.size_x = frames->right_foot_size_x;
-          right.size_y = frames->right_foot_size_y;
-          right.top_left_x = frames->right_foot_top_left_x;
-          right.top_left_y = frames->right_foot_top_left_y;
-          right.state = frames->right_foot_state;
-
-          new_state.left_foot = left;
-          new_state.right_foot = right;
+          for (std::list<Tileset_Helper::Collision_Block>::iterator collision_block = frames->collision_blocks.begin(); collision_block != frames->collision_blocks.end(); collision_block++) {
+            if (collision_block->id.compare("Left_Foot") == 0) {
+              Avatar_Component::Avatar_Foot_State left;
+              left.size_x = collision_block->size_x;
+              left.size_y = collision_block->size_y;
+              left.top_left_x = collision_block->top_left_x;
+              left.top_left_y = collision_block->top_left_y;
+              left.is_contacting = collision_block->is_contacting;
+              new_state.left_foot = left;
+            }
+            if (collision_block->id.compare("Right_Foot") == 0) {
+              Avatar_Component::Avatar_Foot_State left;
+              left.size_x = collision_block->size_x;
+              left.size_y = collision_block->size_y;
+              left.top_left_x = collision_block->top_left_x;
+              left.top_left_y = collision_block->top_left_y;
+              left.is_contacting = collision_block->is_contacting;
+              new_state.left_foot = left;
+            }
+          }
         }
       }
       new_state.state = "Falling";
@@ -421,324 +436,16 @@ void Avatar_Controller::Place_Avatar_Tile(Avatar_Controller_Mutator *mutator) {
 
 void Avatar_Controller::Load_Tilesets(std::wstring wtileset_path) {
   // Running
-  m_running_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Running_Animation_Tileset_1_0.txt");
-  Load_Tileset_Metadata(m_running_metadata_file_path, m_running_metadata);
+  m_running_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Running_Animation_Tileset_1_1.txt");
+  Tileset_Helper::Load_Tileset_Metadata_Into_Struct(m_running_metadata_file_path, m_running_metadata);
 
   // Walking
-  m_walking_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Walking_Animation_Tileset_1_4.txt");
-  Load_Tileset_Metadata(m_walking_metadata_file_path, m_walking_metadata);
+  m_walking_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Walking_Animation_Tileset_1_5.txt");
+  Tileset_Helper::Load_Tileset_Metadata_Into_Struct(m_walking_metadata_file_path, m_walking_metadata);
 
   // Standing
-  m_standing_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Standing_Animation_Tileset_1_0.txt");
-  Load_Tileset_Metadata(m_standing_metadata_file_path, m_standing_metadata);
-}
-
-//------------------------------------------------------------------------------
-void Avatar_Controller::Load_Tileset_Metadata(std::string metadata_file, Avatar_Controller::Animation_Tileset_Metadata &out_metadata) {
-  FILE * pFile;
-  int lSize;
-
-  // Open Font File as a text file
-  if (fopen_s(&pFile, metadata_file.c_str(), "r") != 0) {
-    throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed!");
-  }
-
-  // obtain file size:
-  fseek(pFile, 0, SEEK_END);
-  lSize = ftell(pFile);
-  rewind(pFile);
-
-  char * token;
-  char * next_token;
-
-  char line[255];
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Tileset_Name") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata.name = token;
-    }
-  }
-
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Tileset_Type") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata.type = token;
-    }
-  }
-
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Tileset_FileName") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata.filename = token;
-    }
-  }
-
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Tileset_TopLeftX") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata.top_left_x = atoi(token);
-    }
-  }
-
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Tileset_TopLeftY") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata.top_left_y = atoi(token);
-    }
-  }
-
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Tileset_SizeX") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata.size_x = atoi(token);
-    }
-  }
-
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Tileset_SizeY") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata.size_y = atoi(token);
-    }
-  }
-
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Tileset_NumOfSubSets") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata.number_of_subsets = atoi(token);
-    }
-  }
-
-  if (out_metadata.number_of_subsets != 0) {
-    for (int i = 0; i <  out_metadata.number_of_subsets; i++) {
-      Animation_Subset temp_subset;
-
-      fgets(line, 225, pFile);
-      if (line != NULL) {
-        token = strtok_s(line, " ", &next_token);
-        if (strcmp(token, "SubSet_Name") == 0)   {
-          token = strtok_s(NULL, " =\"", &next_token);
-          temp_subset.name = token;
-        }
-      }
-
-      fgets(line, 225, pFile);
-      if (line != NULL) {
-        token = strtok_s(line, " ", &next_token);
-        if (strcmp(token, "SubSet_Type") == 0)   {
-          token = strtok_s(NULL, " =\"", &next_token);
-          temp_subset.type = token;
-        }
-      }
-
-      fgets(line, 225, pFile);
-      if (line != NULL) {
-        token = strtok_s(line, " ", &next_token);
-        if (strcmp(token, "SubSet_TopLeftX") == 0)   {
-          token = strtok_s(NULL, " =\"", &next_token);
-          temp_subset.top_left_x = atoi(token);
-        }
-      }
-
-      fgets(line, 225, pFile);
-      if (line != NULL) {
-        token = strtok_s(line, " ", &next_token);
-        if (strcmp(token, "SubSet_TopLeftY") == 0)   {
-          token = strtok_s(NULL, " =\"", &next_token);
-          temp_subset.top_left_y = atoi(token);
-        }
-      }
-
-      fgets(line, 225, pFile);
-      if (line != NULL) {
-        token = strtok_s(line, " ", &next_token);
-        if (strcmp(token, "SubSet_SizeX") == 0)   {
-          token = strtok_s(NULL, " =\"", &next_token);
-          temp_subset.size_x = atoi(token);
-        }
-      }
-
-      fgets(line, 225, pFile);
-      if (line != NULL) {
-        token = strtok_s(line, " ", &next_token);
-        if (strcmp(token, "SubSet_SizeY") == 0)   {
-          token = strtok_s(NULL, " =\"", &next_token);
-          temp_subset.size_y = atoi(token);
-        }
-      }
-
-      fgets(line, 225, pFile);
-      if (line != NULL) {
-        token = strtok_s(line, " ", &next_token);
-        if (strcmp(token, "SubSet_Tile_SizeX") == 0)   {
-          token = strtok_s(NULL, " =\"", &next_token);
-          temp_subset.tile_size_x = atoi(token);
-        }
-      }
-
-      fgets(line, 225, pFile);
-      if (line != NULL) {
-        token = strtok_s(line, " ", &next_token);
-        if (strcmp(token, "SubSet_Tile_SizeY") == 0)   {
-          token = strtok_s(NULL, " =\"", &next_token);
-          temp_subset.tile_size_y = atoi(token);
-        }
-      }
-
-      fgets(line, 225, pFile);
-      if (line != NULL) {
-        token = strtok_s(line, " ", &next_token);
-        if (strcmp(token, "SubSet_NumOfFrames") == 0)   {
-          token = strtok_s(NULL, " =\"", &next_token);
-          temp_subset.number_of_frames = atoi(token);
-        }
-      }
-
-      fgets(line, 225, pFile);
-      if (line != NULL) {
-        token = strtok_s(line, " ", &next_token);
-        if (strcmp(token, "SubSet_FramesPerSecond") == 0)   {
-          token = strtok_s(NULL, " =\"", &next_token);
-          temp_subset.frames_per_second = atoi(token);
-        }
-      }
-
-      fgets(line, 225, pFile);
-      if (line != NULL) {
-        token = strtok_s(line, " ", &next_token);
-        if (strcmp(token, "SubSet_Repeating") == 0)   {
-          token = strtok_s(NULL, " =\"", &next_token);
-          if (token == "Y") {
-            temp_subset.is_repeatable = true;
-          } else {
-            temp_subset.is_repeatable = false;
-          }
-        }
-      }
-
-      for (int i = 0; i <  temp_subset.number_of_frames; i++) {
-        Frame_Metadata temp_frame_metadata;
-
-        fgets(line, 225, pFile);
-        if (line != NULL) {
-          token = strtok_s(line, " ", &next_token);
-          if (strcmp(token, "Frame_ID") == 0)   {
-            token = strtok_s(NULL, " =\"", &next_token);
-            temp_frame_metadata.id = atoi(token);
-          }
-        }
-
-        fgets(line, 225, pFile);
-        if (line != NULL) {
-          token = strtok_s(line, " ", &next_token);
-          if (strcmp(token, "Frame_Right_Foot_TopLeftX") == 0)   {
-            token = strtok_s(NULL, " =\"", &next_token);
-            temp_frame_metadata.right_foot_top_left_x = atoi(token);
-          }
-        }
-
-        fgets(line, 225, pFile);
-        if (line != NULL) {
-          token = strtok_s(line, " ", &next_token);
-          if (strcmp(token, "Frame_Right_Foot_TopLeftY") == 0)   {
-            token = strtok_s(NULL, " =\"", &next_token);
-            temp_frame_metadata.right_foot_top_left_y = atoi(token);
-          }
-        }
-
-        fgets(line, 225, pFile);
-        if (line != NULL) {
-          token = strtok_s(line, " ", &next_token);
-          if (strcmp(token, "Frame_Right_Foot_SizeX") == 0)   {
-            token = strtok_s(NULL, " =\"", &next_token);
-            temp_frame_metadata.right_foot_size_x = atoi(token);
-          }
-        }
-
-        fgets(line, 225, pFile);
-        if (line != NULL) {
-          token = strtok_s(line, " ", &next_token);
-          if (strcmp(token, "Frame_Right_Foot_SizeY") == 0)   {
-            token = strtok_s(NULL, " =\"", &next_token);
-            temp_frame_metadata.right_foot_size_y = atoi(token);
-          }
-        }
-
-        fgets(line, 225, pFile);
-        if (line != NULL) {
-          token = strtok_s(line, " ", &next_token);
-          if (strcmp(token, "Frame_Right_Foot_State") == 0)   {
-            token = strtok_s(NULL, " =\"", &next_token);
-            temp_frame_metadata.right_foot_state = token;
-          }
-        }
-
-        fgets(line, 225, pFile);
-        if (line != NULL) {
-          token = strtok_s(line, " ", &next_token);
-          if (strcmp(token, "Frame_Left_Foot_TopLeftX") == 0)   {
-            token = strtok_s(NULL, " =\"", &next_token);
-            temp_frame_metadata.left_foot_top_left_x = atoi(token);
-          }
-        }
-
-        fgets(line, 225, pFile);
-        if (line != NULL) {
-          token = strtok_s(line, " ", &next_token);
-          if (strcmp(token, "Frame_Left_Foot_TopLeftY") == 0)   {
-            token = strtok_s(NULL, " =\"", &next_token);
-            temp_frame_metadata.left_foot_top_left_y = atoi(token);
-          }
-        }
-
-        fgets(line, 225, pFile);
-        if (line != NULL) {
-          token = strtok_s(line, " ", &next_token);
-          if (strcmp(token, "Frame_Left_Foot_SizeX") == 0)   {
-            token = strtok_s(NULL, " =\"", &next_token);
-            temp_frame_metadata.left_foot_size_x = atoi(token);
-          }
-        }
-
-        fgets(line, 225, pFile);
-        if (line != NULL) {
-          token = strtok_s(line, " ", &next_token);
-          if (strcmp(token, "Frame_Left_Foot_SizeY") == 0)   {
-            token = strtok_s(NULL, " =\"", &next_token);
-            temp_frame_metadata.left_foot_size_y = atoi(token);
-          }
-        }
-
-        fgets(line, 225, pFile);
-        if (line != NULL) {
-          token = strtok_s(line, " ", &next_token);
-          if (strcmp(token, "Frame_Left_Foot_State") == 0)   {
-            token = strtok_s(NULL, " =\"", &next_token);
-            temp_frame_metadata.left_foot_state = token;
-          }
-        }
-
-        temp_subset.frames.push_back(temp_frame_metadata);
-      }
-    
-      out_metadata.subsets.push_back(temp_subset);
-    }
-  }
+  m_standing_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Standing_Animation_Tileset_1_1.txt");
+  Tileset_Helper::Load_Tileset_Metadata_Into_Struct(m_standing_metadata_file_path, m_standing_metadata);
 }
 
 //------------------------------------------------------------------------------
@@ -818,42 +525,5 @@ bool Avatar_Controller::DoTheseTilesXCollide(Tunnelour::Frame_Component* TileA, 
 
   return false;
 }
-
-/* BACKUP
-
-//------------------------------------------------------------------------------
-bool Avatar_Controller::DoTheseTilesXCollide(Tunnelour::Frame_Component* TileA, Tunnelour::Frame_Component* TileB) {
-  // At least one vertex in TileA is contained in the TileB.
-
-  bool stop = false;
-  if (TileB->GetPosition().x == 14) {
-    stop = true;
-      if (TileA->GetPosition().x == 32) {
-        stop = false;
-      }
-  }
-
-  float a_tile_left, a_tile_right;
-  a_tile_left = TileA->GetPosition().x - static_cast<float>(TileA->GetSize()->x / 2);
-  a_tile_right = TileA->GetPosition().x + static_cast<float>(TileA->GetSize()->x / 2);
-
-  float b_tile_left, b_tile_right;
-  b_tile_left = TileB->GetPosition().x - static_cast<float>(TileB->GetSize()->x / 2);
-  b_tile_right = TileB->GetPosition().x + static_cast<float>(TileB->GetSize()->x / 2);
-
-  if ((a_tile_left == b_tile_left) || (a_tile_left > b_tile_left && a_tile_left < b_tile_right)) {
-    // Horrizontal Collision
-    return true;
-  }
-
-  if ((a_tile_right == b_tile_right) || (a_tile_right > b_tile_left && a_tile_right < b_tile_right)) {
-    // Horrizontal Collision
-    return true;
-  }
-
-  return false;
-}
-
-*/
 
 } // Tunnelour

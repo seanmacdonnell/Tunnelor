@@ -116,6 +116,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Middleground_Controller.cc" />
     <ClCompile Include="src\Middleground_Controller_Mutator.cc" />
     <ClCompile Include="src\Text_Component.cc" />
+    <ClCompile Include="src\Tileset_Helper.cc" />
     <ClCompile Include="src\Tile_Bitmap.cc" />
     <ClCompile Include="src\Tunnelour_Controller.cc" />
     <ClCompile Include="src\Tunnelour_Launcher.cc" />
@@ -158,6 +159,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Middleground_Controller_Mutator.h" />
     <ClInclude Include="include\String_Helper.h" />
     <ClInclude Include="include\Text_Component.h" />
+    <ClInclude Include="include\Tileset_Helper.h" />
     <ClInclude Include="include\Tile_Bitmap.h" />
     <ClInclude Include="include\Tunnelour_Controller.h" />
     <ClInclude Include="include\Tunnelour_Launcher.h" />

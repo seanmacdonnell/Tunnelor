@@ -26,6 +26,7 @@
 #include "Avatar_Controller_Mutator.h"
 #include "Avatar_Component.h"
 #include <windows.h>
+#include "Tileset_Helper.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -35,38 +36,6 @@ namespace Tunnelour {
 //-----------------------------------------------------------------------------
 class Avatar_Controller: public Tunnelour::Controller {
  public:
-  struct Frame_Metadata {
-    unsigned int id;
-    int right_foot_top_left_x, right_foot_top_left_y;
-    int right_foot_size_x, right_foot_size_y;
-    std::string right_foot_state;
-    int left_foot_top_left_x, left_foot_top_left_y;
-    int left_foot_size_x, left_foot_size_y;
-    std::string left_foot_state;
-  };
-
-  struct Animation_Subset {
-    std::string name;
-    std::string type;
-    int top_left_x, top_left_y;
-    int size_x, size_y;
-    int tile_size_x, tile_size_y;
-    unsigned int number_of_frames;
-    unsigned int frames_per_second;
-    bool is_repeatable;
-    std::list<Frame_Metadata> frames;
-  };
-
-  struct Animation_Tileset_Metadata {
-    std::string name;
-    std::string type;
-    std::string filename;
-    int top_left_x, top_left_y;
-    int size_x, size_y;
-    int number_of_subsets;
-    std::list<Animation_Subset> subsets;
-  };
-
   struct Collision {
     Tunnelour::Tile_Bitmap* a_tile;
     Tunnelour::Tile_Bitmap* b_tile;
@@ -101,7 +70,6 @@ class Avatar_Controller: public Tunnelour::Controller {
   void Generate_Avatar_Tile();
   void Place_Avatar_Tile(Avatar_Controller_Mutator *mutator);
   void Load_Tilesets(std::wstring wtileset_path);
-  void Load_Tileset_Metadata(std::string metadata_file_path, Avatar_Controller::Animation_Tileset_Metadata &out_metadata);
 
   Tunnelour::Avatar_Component *m_avatar;
   
@@ -113,9 +81,9 @@ class Avatar_Controller: public Tunnelour::Controller {
   std::string m_walking_metadata_file_path;
   std::string m_standing_metadata_file_path;
 
-  Animation_Tileset_Metadata m_running_metadata;
-  Animation_Tileset_Metadata m_walking_metadata;
-  Animation_Tileset_Metadata m_standing_metadata;
+  Tileset_Helper::Animation_Tileset_Metadata m_running_metadata;
+  Tileset_Helper::Animation_Tileset_Metadata m_walking_metadata;
+  Tileset_Helper::Animation_Tileset_Metadata m_standing_metadata;
 
   bool Init_Timer();
   void Update_Timer();

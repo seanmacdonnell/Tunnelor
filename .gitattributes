@@ -1,4 +1,5 @@
 * text=auto !eol
+Tunnelour/Tunnelour.opensdf -text
 Tunnelour/Tunnelour.sdf -text
 Tunnelour/Tunnelour.sln -text
 Tunnelour/Tunnelour.suo -text
@@ -44,6 +45,7 @@ Tunnelour/Tunnelour/include/SeaFloorSquare.h -text
 Tunnelour/Tunnelour/include/String_Helper.h -text
 Tunnelour/Tunnelour/include/Text_Component.h -text
 Tunnelour/Tunnelour/include/Tile_Bitmap.h -text
+Tunnelour/Tunnelour/include/Tileset_Helper.h -text
 Tunnelour/Tunnelour/include/Tunnelour_Controller.h -text
 Tunnelour/Tunnelour/include/Tunnelour_Launcher.h -text
 Tunnelour/Tunnelour/include/Tunnelour_View.h -text
@@ -58,20 +60,11 @@ Tunnelour/Tunnelour/resource/Direct3D11_View_TransparentVertexShader.vs -text
 Tunnelour/Tunnelour/resource/tilesets/Ariel.fnt -text
 Tunnelour/Tunnelour/resource/tilesets/Ariel_0.dds -text
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Running_Animation_Tileset_1_0.dds -text
-Tunnelour/Tunnelour/resource/tilesets/Charlie_Running_Animation_Tileset_1_0.txt -text
-Tunnelour/Tunnelour/resource/tilesets/Charlie_Standing_Animation_Tileset_0_3.dds -text
-Tunnelour/Tunnelour/resource/tilesets/Charlie_Standing_Animation_Tileset_0_3.txt -text
+Tunnelour/Tunnelour/resource/tilesets/Charlie_Running_Animation_Tileset_1_1.txt -text
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Standing_Animation_Tileset_1_0.dds -text
-Tunnelour/Tunnelour/resource/tilesets/Charlie_Standing_Animation_Tileset_1_0.txt -text
-Tunnelour/Tunnelour/resource/tilesets/Charlie_Standing_Animation_Tileset_1_0.xcf -text
-Tunnelour/Tunnelour/resource/tilesets/Charlie_Walk_Animation_Tileset_1_0.png -text
-Tunnelour/Tunnelour/resource/tilesets/Charlie_Walk_Animation_Tileset_1_0@4x.png -text
-Tunnelour/Tunnelour/resource/tilesets/Charlie_Walking_Animation_Tileset_1_0_DEFUNT.dds -text
-Tunnelour/Tunnelour/resource/tilesets/Charlie_Walking_Animation_Tileset_1_0_DEFUNT.txt -text
-Tunnelour/Tunnelour/resource/tilesets/Charlie_Walking_Animation_Tileset_1_3.dds -text
-Tunnelour/Tunnelour/resource/tilesets/Charlie_Walking_Animation_Tileset_1_3.txt -text
+Tunnelour/Tunnelour/resource/tilesets/Charlie_Standing_Animation_Tileset_1_1.txt -text
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Walking_Animation_Tileset_1_4.dds -text
-Tunnelour/Tunnelour/resource/tilesets/Charlie_Walking_Animation_Tileset_1_4.txt -text
+Tunnelour/Tunnelour/resource/tilesets/Charlie_Walking_Animation_Tileset_1_5.txt -text
 Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_4.dds -text
 Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_4.txt -text
 Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_5.dds -text
@@ -113,6 +106,7 @@ Tunnelour/Tunnelour/src/Middleground_Controller_Mutator.cc -text
 Tunnelour/Tunnelour/src/SeaFloorSquare.cc -text
 Tunnelour/Tunnelour/src/Text_Component.cc -text
 Tunnelour/Tunnelour/src/Tile_Bitmap.cc -text
+Tunnelour/Tunnelour/src/Tileset_Helper.cc -text
 Tunnelour/Tunnelour/src/Tunnelour_Controller.cc -text
 Tunnelour/Tunnelour/src/Tunnelour_Launcher.cc -text
 Tunnelour/Tunnelour/src/Tunnelour_View.cc -text

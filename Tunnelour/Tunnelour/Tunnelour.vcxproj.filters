@@ -46,6 +46,12 @@
     <Filter Include="Source Files\Engine">
       <UniqueIdentifier>{030236ff-5a35-4455-935d-8d8d1a4c0b14}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\Utility">
+      <UniqueIdentifier>{656b61ee-5e60-47d6-a811-19d1e5601dcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utility">
+      <UniqueIdentifier>{89600886-6da9-477b-aba7-c53b12a7606f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Direct3D11_View.cc">
@@ -161,6 +167,9 @@
     </ClCompile>
     <ClCompile Include="src\Background_Controller_Mutator.cc">
       <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tileset_Helper.cc">
+      <Filter>Source Files\Utility</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -283,6 +292,9 @@
     </ClInclude>
     <ClInclude Include="include\Debug_Data_Display_Controller_Mutator.h">
       <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Tileset_Helper.h">
+      <Filter>Include Files\Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
