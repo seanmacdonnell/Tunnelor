@@ -68,7 +68,7 @@ class Avatar_Controller: public Tunnelour::Controller {
 
  private:
   void Generate_Avatar_Tile();
-  void Place_Avatar_Tile(Avatar_Controller_Mutator *mutator);
+  bool Is_Avatar_Falling(Avatar_Controller_Mutator *mutator);
   void Load_Tilesets(std::wstring wtileset_path);
 
   Tunnelour::Avatar_Component *m_avatar;
@@ -96,6 +96,7 @@ class Avatar_Controller: public Tunnelour::Controller {
   int m_current_animation_fps;
 
   bool DoTheseTilesXCollide(Tunnelour::Frame_Component* TileA, Tunnelour::Frame_Component* TileB);
+  bool DoTheseTilesYCollide(Tunnelour::Frame_Component* TileA, Tunnelour::Frame_Component* TileB);
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_H_

@@ -29,18 +29,18 @@ namespace Tunnelour {
 //-----------------------------------------------------------------------------
 class Avatar_Component: public Tunnelour::Bitmap_Component {
  public:
-  struct Avatar_Foot_State {
-    int top_left_x, top_left_y;
-    int size_x, size_y;
-    bool is_contacting;
-  };
+   struct Collision_Block {
+     std::string id;
+     bool is_contacting;
+     int avatar_centre_offset_centre_x, avatar_centre_offset_centre_y;
+     int size_x, size_y;
+   };
 
   struct Avatar_State {
     std::string state;
     unsigned int state_index;
     std::string direction;
-    Avatar_Foot_State right_foot;
-    Avatar_Foot_State left_foot;
+    std::list<Collision_Block> collision_blocks;
   };
 
   //---------------------------------------------------------------------------

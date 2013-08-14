@@ -53,7 +53,7 @@ void Avatar_Controller::Run() {
       m_game_settings = mutator.GetGameSettings();
       Load_Tilesets(m_game_settings->GetTilesetPath());
       Generate_Avatar_Tile();
-      Place_Avatar_Tile(&mutator);
+      m_avatar->SetPosition(D3DXVECTOR3(0, 0, -2)); // Middleground Z Space is -1
       m_model->Add(m_avatar);
       m_has_avatar_been_generated = true;   
     }
@@ -109,24 +109,33 @@ void Avatar_Controller::Run() {
         for (std::list<Tileset_Helper::Frame_Metadata>::iterator frames = new_animation_subset.frames.begin(); frames != new_animation_subset.frames.end(); frames++) {
           if (frames->id == 1) {
             for (std::list<Tileset_Helper::Collision_Block>::iterator collision_block = frames->collision_blocks.begin(); collision_block != frames->collision_blocks.end(); collision_block++) {
-              if (collision_block->id.compare("Left_Foot") == 0) {
-                Avatar_Component::Avatar_Foot_State left;
-                left.size_x = collision_block->size_x;
-                left.size_y = collision_block->size_y;
-                left.top_left_x = collision_block->top_left_x;
-                left.top_left_y = collision_block->top_left_y;
-                left.is_contacting = collision_block->is_contacting;
-                new_state.left_foot = left;
-              }
-              if (collision_block->id.compare("Right_Foot") == 0) {
-                Avatar_Component::Avatar_Foot_State left;
-                left.size_x = collision_block->size_x;
-                left.size_y = collision_block->size_y;
-                left.top_left_x = collision_block->top_left_x;
-                left.top_left_y = collision_block->top_left_y;
-                left.is_contacting = collision_block->is_contacting;
-                new_state.left_foot = left;
-              }
+              Avatar_Component::Collision_Block new_collision_block;
+              new_collision_block.id = collision_block->id;
+              new_collision_block.is_contacting = collision_block->is_contacting;
+              new_collision_block.size_x = collision_block->size_x;
+              new_collision_block.size_y = collision_block->size_y;
+
+              //Need to change the coordinate information from the "animation sheet" to the coordinate system in the game world.
+              //Create a frame for the avatar foot
+              Frame_Component avatar_contact_foot;
+              D3DXVECTOR3 collision_block_tilesheet_centre;
+              collision_block_tilesheet_centre.x = collision_block->top_left_x + (collision_block->size_x /2);
+              collision_block_tilesheet_centre.y = collision_block->top_left_y - (collision_block->size_y /2);
+
+              // account for different positions in the frame and the avatar
+              // Work out the centre of the avatar frame (128x128 block) int the tileset
+              // frame is 128x128 so get the frame # and times it by 128/2 for y
+              D3DXVECTOR3 animation_frame_centre;
+              animation_frame_centre.x = ((current_state.state_index + 1) * 128) - (128 / 2);
+              // and 128/2 for x
+              animation_frame_centre.y = (128 / 2) * -1;
+              animation_frame_centre.z = -2;
+
+              // store the distance from x and y to the centre of the animation frame
+              new_collision_block.avatar_centre_offset_centre_x = collision_block_tilesheet_centre.x - animation_frame_centre.x;
+              new_collision_block.avatar_centre_offset_centre_y = collision_block_tilesheet_centre.y - animation_frame_centre.y;
+
+              new_state.collision_blocks.push_back(new_collision_block);
             }
           }
         }
@@ -167,24 +176,33 @@ void Avatar_Controller::Run() {
           for (std::list<Tileset_Helper::Frame_Metadata>::iterator frames = new_animation_subset.frames.begin(); frames != new_animation_subset.frames.end(); frames++) {
             if (frames->id == (state_index + 1)) {
               for (std::list<Tileset_Helper::Collision_Block>::iterator collision_block = frames->collision_blocks.begin(); collision_block != frames->collision_blocks.end(); collision_block++) {
-                if (collision_block->id.compare("Left_Foot") == 0) {
-                  Avatar_Component::Avatar_Foot_State left;
-                  left.size_x = collision_block->size_x;
-                  left.size_y = collision_block->size_y;
-                  left.top_left_x = collision_block->top_left_x;
-                  left.top_left_y = collision_block->top_left_y;
-                  left.is_contacting = collision_block->is_contacting;
-                  new_state.left_foot = left;
-                }
-                if (collision_block->id.compare("Right_Foot") == 0) {
-                  Avatar_Component::Avatar_Foot_State left;
-                  left.size_x = collision_block->size_x;
-                  left.size_y = collision_block->size_y;
-                  left.top_left_x = collision_block->top_left_x;
-                  left.top_left_y = collision_block->top_left_y;
-                  left.is_contacting = collision_block->is_contacting;
-                  new_state.left_foot = left;
-                }
+                Avatar_Component::Collision_Block new_collision_block;
+                new_collision_block.id = collision_block->id;
+                new_collision_block.is_contacting = collision_block->is_contacting;
+                new_collision_block.size_x = collision_block->size_x;
+                new_collision_block.size_y = collision_block->size_y;
+
+                //Need to change the coordinate information from the "animation sheet" to the coordinate system in the game world.
+                //Create a frame for the avatar foot
+                Frame_Component avatar_contact_foot;
+                D3DXVECTOR3 collision_block_tilesheet_centre;
+                collision_block_tilesheet_centre.x = collision_block->top_left_x + (collision_block->size_x /2);
+                collision_block_tilesheet_centre.y = collision_block->top_left_y - (collision_block->size_y /2);
+
+                // account for different positions in the frame and the avatar
+                // Work out the centre of the avatar frame (128x128 block) int the tileset
+                // frame is 128x128 so get the frame # and times it by 128/2 for y
+                D3DXVECTOR3 animation_frame_centre;
+                animation_frame_centre.x = ((current_state.state_index + 1) * 128) - (128 / 2);
+                // and 128/2 for x
+                animation_frame_centre.y = (128 / 2) * -1;
+                animation_frame_centre.z = -2;
+
+                // store the distance from x and y to the centre of the animation frame
+                new_collision_block.avatar_centre_offset_centre_x = collision_block_tilesheet_centre.x - animation_frame_centre.x;
+                new_collision_block.avatar_centre_offset_centre_y = collision_block_tilesheet_centre.y - animation_frame_centre.y;
+
+                new_state.collision_blocks.push_back(new_collision_block);
               }
             }
           }
@@ -192,7 +210,7 @@ void Avatar_Controller::Run() {
           m_avatar->SetPosition(position);
           m_animation_tick = false;
           m_avatar->SetState(new_state);
-          Place_Avatar_Tile(&mutator);
+          Is_Avatar_Falling(&mutator);
         }
       }
     } else {
@@ -251,24 +269,33 @@ void Avatar_Controller::Generate_Avatar_Tile() {
   for (std::list<Tileset_Helper::Frame_Metadata>::iterator frames = standing_animation_subset.frames.begin(); frames != standing_animation_subset.frames.end(); frames++) {
     if (frames->id == 1) {
       for (std::list<Tileset_Helper::Collision_Block>::iterator collision_block = frames->collision_blocks.begin(); collision_block != frames->collision_blocks.end(); collision_block++) {
-        if (collision_block->id.compare("Left_Foot") == 0) {
-          Avatar_Component::Avatar_Foot_State left;
-          left.size_x = collision_block->size_x;
-          left.size_y = collision_block->size_y;
-          left.top_left_x = collision_block->top_left_x;
-          left.top_left_y = collision_block->top_left_y;
-          left.is_contacting = collision_block->is_contacting;
-          state.left_foot = left;
-        }
-        if (collision_block->id.compare("Right_Foot") == 0) {
-          Avatar_Component::Avatar_Foot_State left;
-          left.size_x = collision_block->size_x;
-          left.size_y = collision_block->size_y;
-          left.top_left_x = collision_block->top_left_x;
-          left.top_left_y = collision_block->top_left_y;
-          left.is_contacting = collision_block->is_contacting;
-          state.left_foot = left;
-        }
+        Avatar_Component::Collision_Block new_collision_block;
+        new_collision_block.id = collision_block->id;
+        new_collision_block.is_contacting = collision_block->is_contacting;
+        new_collision_block.size_x = collision_block->size_x;
+        new_collision_block.size_y = collision_block->size_y;
+
+        //Need to change the coordinate information from the "animation sheet" to the coordinate system in the game world.
+        //Create a frame for the avatar foot
+        Frame_Component avatar_contact_foot;
+        D3DXVECTOR3 collision_block_tilesheet_centre;
+        collision_block_tilesheet_centre.x = collision_block->top_left_x + (collision_block->size_x /2);
+        collision_block_tilesheet_centre.y = collision_block->top_left_y - (collision_block->size_y /2);
+
+        // account for different positions in the frame and the avatar
+        // Work out the centre of the avatar frame (128x128 block) int the tileset
+        // frame is 128x128 so get the frame # and times it by 128/2 for y
+        D3DXVECTOR3 animation_frame_centre;
+        animation_frame_centre.x = ((m_avatar->GetState().state_index + 1) * 128) - (128 / 2);
+        // and 128/2 for x
+        animation_frame_centre.y = (128 / 2) * -1;
+        animation_frame_centre.z = -2;
+
+        // store the distance from x and y to the centre of the animation frame
+        new_collision_block.avatar_centre_offset_centre_x = collision_block_tilesheet_centre.x - animation_frame_centre.x;
+        new_collision_block.avatar_centre_offset_centre_y = collision_block_tilesheet_centre.y - animation_frame_centre.y;
+
+        state.collision_blocks.push_back(new_collision_block);
       }
     }
   }
@@ -279,8 +306,92 @@ void Avatar_Controller::Generate_Avatar_Tile() {
 }
 
 //------------------------------------------------------------------------------
-void Avatar_Controller::Place_Avatar_Tile(Avatar_Controller_Mutator *mutator) {
-  //m_avatar->SetPosition(D3DXVECTOR3(0, 20, -2)); // Middleground Z Space is -1
+bool Avatar_Controller::Is_Avatar_Falling(Avatar_Controller_Mutator *mutator) {
+  // if avatar is currently falling, no problems.
+  if (m_avatar->GetState().state.compare("Falling")) { return true; }
+
+  // Going to deal only with gravity only right now
+  // Also only dealing with the lowest foot, if they have the same Y I do not do any special calculations.
+  // If there are no border tiles, the avatar is in freefall
+  if (mutator->FoundBorderTiles()) {
+    // Go through the contact blocks and find the lowest contact block
+    Avatar_Component::Collision_Block* lowest_collision_block = 0;
+    for (std::list<Avatar_Component::Collision_Block>::iterator collision_block = m_avatar->GetState().collision_blocks.begin(); collision_block != m_avatar->GetState().collision_blocks.end(); collision_block++) {
+      if (lowest_collision_block == 0) {
+        lowest_collision_block = &(*(collision_block));
+      }
+      if ((collision_block->avatar_centre_offset_centre_y - collision_block->size_y) < (lowest_collision_block->avatar_centre_offset_centre_y - lowest_collision_block->size_y)) {
+        lowest_collision_block = &(*(collision_block));
+      }
+    }
+
+    // Make a frame for the lowest avatar collision block
+    Frame_Component lowest_collision_block_frame;
+    D3DXVECTOR3 lowest_collision_block_frame_centre_position;
+    lowest_collision_block_frame_centre_position.x = m_avatar->GetPosition().x + lowest_collision_block->avatar_centre_offset_centre_x;
+    lowest_collision_block_frame_centre_position.y = m_avatar->GetPosition().y + lowest_collision_block->avatar_centre_offset_centre_y;
+    lowest_collision_block_frame_centre_position.z = -2;
+
+    lowest_collision_block_frame.SetPosition(lowest_collision_block_frame_centre_position);
+    lowest_collision_block_frame.SetSize(lowest_collision_block->size_x, lowest_collision_block->size_y);
+
+    // Cull the border tiles which are not within the x range of the lowest avatar collision block
+    std::list<Tunnelour::Bitmap_Component*> colliding_border_tiles;
+    for (std::list<Tunnelour::Bitmap_Component*>::iterator it = mutator->GetBorderTiles().begin(); it != mutator->GetBorderTiles().end(); it++) {
+      if (DoTheseTilesXCollide(*it, &lowest_collision_block_frame)) {
+        if (DoTheseTilesYCollide(*it, &lowest_collision_block_frame)) {
+          colliding_border_tiles.push_back(*it);
+        }
+      }
+    }
+
+    // If that block is not intersecting with the ground put the avatar into a falling state
+    if (colliding_border_tiles.empty()) {
+      // Avatar is falling.
+      Avatar_Component::Avatar_State falling_state;
+      falling_state.direction = m_avatar->GetState().direction;
+      falling_state.state = "Falling";
+      falling_state.state_index = 0;
+      m_avatar->SetState(falling_state);
+      return true;
+    } else {
+      // Check to see if the lowest bottom line is tangent with any tiles which are colliding
+
+      bool is_tangent = false;
+      for (std::list<Tunnelour::Bitmap_Component*>::iterator it = colliding_border_tiles.begin(); it != colliding_border_tiles.end(); it++) {
+         int tile_top = static_cast<int>((*it)->GetPosition().y + (*it)->GetSize()->y / 2);
+         int collision_block_bottom = static_cast<int>(lowest_collision_block_frame_centre_position.y - (lowest_collision_block->size_y /2));
+
+         if (tile_top == collision_block_bottom) {
+           is_tangent = true;
+         }
+      }
+
+      if (!is_tangent) {
+        // Avatar is falling.
+        Avatar_Component::Avatar_State falling_state;
+        falling_state.direction = m_avatar->GetState().direction;
+        falling_state.state = "Falling";
+        falling_state.state_index = 0;
+        m_avatar->SetState(falling_state);
+        return true;
+      }
+    }
+  } else {
+    // Avatar is falling.
+    Avatar_Component::Avatar_State falling_state;
+    falling_state.direction = m_avatar->GetState().direction;
+    falling_state.state = "Falling";
+    falling_state.state_index = 0;
+    m_avatar->SetState(falling_state);
+    return true;
+  }
+
+
+  /*
+
+
+
   if (mutator->FoundBorderTiles()) {
     Avatar_Component::Avatar_State current_state = m_avatar->GetState();
     Avatar_Component::Avatar_Foot_State lowest_foot;
@@ -432,6 +543,7 @@ void Avatar_Controller::Place_Avatar_Tile(Avatar_Controller_Mutator *mutator) {
       m_avatar->SetPosition(D3DXVECTOR3(0, static_cast<float>(avatar_y), -2)); // Middleground Z Space is -1
     }
   }
+  */
 }
 
 void Avatar_Controller::Load_Tilesets(std::wstring wtileset_path) {
@@ -491,14 +603,6 @@ void Avatar_Controller::Update_Timer() {
 bool Avatar_Controller::DoTheseTilesXCollide(Tunnelour::Frame_Component* TileA, Tunnelour::Frame_Component* TileB) {
   // At least one vertex in TileA is contained in the TileB.
 
-  bool stop = false;
-  if (TileB->GetPosition().x == 14) {
-    stop = true;
-      if (TileA->GetPosition().x == 32) {
-        stop = false;
-      }
-  }
-
   float a_tile_left, a_tile_right;
   a_tile_left = TileA->GetPosition().x - static_cast<float>(TileA->GetSize()->x / 2);
   a_tile_right = TileA->GetPosition().x + static_cast<float>(TileA->GetSize()->x / 2);
@@ -520,6 +624,36 @@ bool Avatar_Controller::DoTheseTilesXCollide(Tunnelour::Frame_Component* TileA, 
   }
 
   if (b_tile_right > a_tile_left && b_tile_right < a_tile_right) {
+    return true;
+  }
+
+  return true;
+}
+
+bool Avatar_Controller::DoTheseTilesYCollide(Tunnelour::Frame_Component* TileA, Tunnelour::Frame_Component* TileB) {
+  // At least one vertex in TileA is contained in the TileB.
+
+  float a_tile_top, a_tile_bottom;
+  a_tile_top = TileA->GetPosition().y + static_cast<float>(TileA->GetSize()->y / 2);
+  a_tile_bottom = TileA->GetPosition().y - static_cast<float>(TileA->GetSize()->y / 2);
+
+  float b_tile_top, b_tile_bottom;
+  b_tile_top = TileA->GetPosition().y + static_cast<float>(TileA->GetSize()->y / 2);
+  b_tile_bottom = TileA->GetPosition().y - static_cast<float>(TileA->GetSize()->y / 2);
+
+  if (b_tile_top == a_tile_top  || b_tile_top == a_tile_bottom) {
+    return true;
+  }
+    
+  if (b_tile_bottom == a_tile_top  || b_tile_bottom == a_tile_bottom) {
+    return true;
+  }
+
+  if (b_tile_top < a_tile_top && b_tile_top > a_tile_bottom) {
+    return true;
+  }
+
+  if (b_tile_bottom < a_tile_top && b_tile_bottom > a_tile_bottom) {
     return true;
   }
 

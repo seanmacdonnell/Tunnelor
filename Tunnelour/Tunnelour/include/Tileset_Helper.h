@@ -37,7 +37,7 @@ class Tileset_Helper {
    struct Frame_Metadata {
     unsigned int id;
     unsigned int number_of_collision_blocks;
-    std::list<Collision_Block> collision_blocks;
+      std::list<Collision_Block> collision_blocks;
   };
 
   struct Animation_Subset {
