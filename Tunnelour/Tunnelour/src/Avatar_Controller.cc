@@ -56,79 +56,105 @@ void Avatar_Controller::Run() {
       m_model->Add(m_avatar);
       m_has_avatar_been_generated = true;   
       if (Is_Avatar_Falling(&mutator)) {
-        ChangeAvatarState("Falling");
+        ChangeAvatarState("Falling", m_avatar->GetState().direction);
       }
     }
   } else {
-    Avatar_Component::Avatar_State current_state = m_avatar->GetState();
-    Avatar_Component::Avatar_State current_command = m_avatar->GetCommand();
-
-    // If State is not the same as command, we need to change the state.
-    if (current_state.state.compare(current_command.state) != 0 && current_command.state.compare("") != 0) {
-      // if the current state is "falling" then the charater is uncontrolable
-      if (current_state.state.compare("Falling") != 0) {
-         ChangeAvatarState(current_command.state);
-      }
-    } 
-
-    if (current_state.state.compare("Falling") == 0) {
-      if (!Is_Avatar_Falling(&mutator)) {
-        ChangeAvatarState("Standing");
-      }
-    } else {
-      if (Is_Avatar_Falling(&mutator)) {
-        ChangeAvatarState("Falling");
-      }
-    }
-
-    // Continue the animation if the current state is the same as the current command.
-    // Increment Index
+    // Is the avatar currenly not contacting the ground
     Update_Timer();
     if (m_animation_tick) {
-      // Increment the animation
-      unsigned int state_index = current_state.state_index;
-      state_index++;
-      if (state_index > (m_current_animation_subset.number_of_frames - 1)) {
-        if (m_current_animation_subset.is_repeatable) {
-          state_index = 0; 
+      Avatar_Component::Avatar_State current_state = m_avatar->GetState();
+      Avatar_Component::Avatar_State current_command = m_avatar->GetCommand();
+
+      if (Is_Avatar_Falling(&mutator)) {
+        // Is the avatar currently in a falling state
+        if (current_state.state.compare("Falling") == 0) {
+          // Contunue the falling animation
+          unsigned int state_index = current_state.state_index;
+          state_index++;
+          if (state_index > (m_current_animation_subset.number_of_frames - 1)) {
+            if (m_current_animation_subset.is_repeatable) {
+              state_index = 0; 
+            } else {
+              throw Tunnelour::Exceptions::init_error("No handling for non-repeating animtions yet");
+            }
+          }
+
+          UpdateAvatarState(state_index);
+
+          D3DXVECTOR3 position = m_avatar->GetPosition();
+          position.y -= 4;
+
+          m_avatar->SetPosition(position);
         } else {
-          throw Tunnelour::Exceptions::init_error("No handling for non-repeating animtions yet");
+          // start the falling animation
+          ChangeAvatarState("Falling", m_avatar->GetState().direction);
+        }
+      } else if (current_command.state.compare("") != 0) { // There is a command
+        //  Is the command different from the current state?
+        if (current_state.state.compare(current_command.state) != 0 || current_state.direction != current_command.direction) {
+          // New State
+          ChangeAvatarState(current_command.state, current_command.direction);
+        } else {
+          // Continue State
+          // Contunue the falling animation
+          unsigned int state_index = current_state.state_index;
+          state_index++;
+          if (state_index > (m_current_animation_subset.number_of_frames - 1)) {
+            if (m_current_animation_subset.is_repeatable) {
+              state_index = 0; 
+            } else {
+              throw Tunnelour::Exceptions::init_error("No handling for non-repeating animtions yet");
+            }
+          }
+
+          UpdateAvatarState(state_index);
+
+          D3DXVECTOR3 position = m_avatar->GetPosition();
+          if (current_state.direction.compare("Right") == 0) {
+            if (current_state.state.compare("Running") == 0) {
+              position.x += 16;
+            } else if (current_state.state.compare("Walking") == 0) {
+              position.x += 8;
+            }
+          } else { // Left
+            if (current_state.state.compare("Running") == 0) {
+              position.x -= 16;
+            } else if (current_state.state.compare("Walking") == 0) {
+              position.x -= 8;
+            }
+          }
+
+          m_avatar->SetPosition(position);
+        }
+      } else {
+        // Is the avatar currently in a standing state
+        if (current_state.state.compare("Standing") == 0) {
+          // Contunue the falling animation
+          unsigned int state_index = current_state.state_index;
+          state_index++;
+          if (state_index > (m_current_animation_subset.number_of_frames - 1)) {
+            if (m_current_animation_subset.is_repeatable) {
+              state_index = 0; 
+            } else {
+              throw Tunnelour::Exceptions::init_error("No handling for non-repeating animtions yet");
+            }
+          }
+
+          UpdateAvatarState(state_index);
+        } else {
+          // start the standing animation
+          ChangeAvatarState("Standing", m_avatar->GetState().direction);
         }
       }
-
-      UpdateAvatarState(state_index);
-
-      Avatar_Component::Avatar_State incremented_state = m_avatar->GetState();
-      D3DXVECTOR3 position = m_avatar->GetPosition();
-      if (incremented_state.direction.compare("Right") == 0) {
-        if (incremented_state.state.compare("Running") == 0) {
-          position.x += 16;
-        } else if (incremented_state.state.compare("Walking") == 0) {
-          position.x += 8;
-        } else if (incremented_state.state.compare("Falling") == 0) {
-          position.y -= 4;
-        } 
-      } else { // Left
-        if (incremented_state.state.compare("Running") == 0) {
-          position.x -= 16;
-        } else if (incremented_state.state.compare("Walking") == 0) {
-          position.x -= 8;
-        } else if (incremented_state.state.compare("Falling") == 0) {
-          position.y -= 4;
-        } 
-      }
-
-      m_avatar->SetPosition(position);
       m_animation_tick = false;
-
-      Avatar_Component::Avatar_State cleared_state;
-      cleared_state.state = "";
-      cleared_state.direction = "";
-      cleared_state.state_index = 0;
-      m_avatar->SetCommand(cleared_state);
     }
 
-
+    Avatar_Component::Avatar_State cleared_state;
+    cleared_state.state = "";
+    cleared_state.direction = "";
+    cleared_state.state_index = 0;
+    m_avatar->SetCommand(cleared_state);
   }
 }
 
@@ -146,7 +172,7 @@ void Avatar_Controller::Generate_Avatar_Tile() {
   initial_state.direction = "Right";
   m_avatar->SetState(initial_state);
   m_avatar->SetPosition(D3DXVECTOR3(0, 0, -2)); // Middleground Z Space is -1
-  ChangeAvatarState("Standing");
+  ChangeAvatarState("Standing", initial_state.direction);
 }
 
 //------------------------------------------------------------------------------
@@ -349,7 +375,7 @@ bool Avatar_Controller::DoTheseTilesYCollide(Tunnelour::Frame_Component* TileA, 
 }
 
 //------------------------------------------------------------------------------
-void Avatar_Controller::ChangeAvatarState(std::string new_state_name) {
+void Avatar_Controller::ChangeAvatarState(std::string new_state_name, std::string direction) {
   Tileset_Helper::Animation_Tileset_Metadata *new_state_metadata = 0;
   Avatar_Component::Avatar_State new_state;
 
@@ -358,20 +384,20 @@ void Avatar_Controller::ChangeAvatarState(std::string new_state_name) {
   // Change State
   if (new_state_name.compare("Walking") == 0) {
     new_state_metadata = &m_walking_metadata;
-    new_state.direction = current_state.direction;
+    new_state.direction = direction;
     new_state.state = new_state_name;
   } else if (new_state_name.compare("Running") == 0) {
     new_state_metadata = &m_running_metadata;
-    new_state.direction = current_state.direction;
+    new_state.direction = direction;
     new_state.state = new_state_name;
   } else if (new_state_name.compare("Falling") == 0) {
     new_state_metadata = &m_falling_metadata;
-    new_state.direction = current_state.direction;
+    new_state.direction = direction;
     new_state.state = new_state_name;
   } else {
     // Standing;
     new_state_metadata = &m_standing_metadata;
-    new_state.direction = current_state.direction;
+    new_state.direction = direction;
     new_state.state = new_state_name;
   }
 

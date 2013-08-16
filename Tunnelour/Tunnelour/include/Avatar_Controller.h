@@ -104,7 +104,7 @@ class Avatar_Controller: public Tunnelour::Controller {
   bool DoTheseTilesXCollide(Tunnelour::Frame_Component* TileA, Tunnelour::Frame_Component* TileB);
   bool DoTheseTilesYCollide(Tunnelour::Frame_Component* TileA, Tunnelour::Frame_Component* TileB);
 
-  void ChangeAvatarState(std::string new_state_name);
+  void ChangeAvatarState(std::string new_state_name, std::string direction);
   void UpdateAvatarState(int new_state_index);
 };
 }  // namespace Tunnelour
