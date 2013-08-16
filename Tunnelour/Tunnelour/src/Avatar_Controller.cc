@@ -335,7 +335,7 @@ bool Avatar_Controller::DoTheseTilesXCollide(Tunnelour::Frame_Component* TileA, 
     return true;
   }
 
-  return true;
+  return false;
 }
 
 //------------------------------------------------------------------------------
