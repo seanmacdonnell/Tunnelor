@@ -80,11 +80,17 @@ class Avatar_Controller: public Tunnelour::Controller {
   std::string m_running_metadata_file_path;
   std::string m_walking_metadata_file_path;
   std::string m_standing_metadata_file_path;
+  std::string m_falling_metadata_file_path;
+  std::string m_current_metadata_file_path;
 
   Tileset_Helper::Animation_Tileset_Metadata m_running_metadata;
   Tileset_Helper::Animation_Tileset_Metadata m_walking_metadata;
   Tileset_Helper::Animation_Tileset_Metadata m_standing_metadata;
+  Tileset_Helper::Animation_Tileset_Metadata m_falling_metadata;
+  Tileset_Helper::Animation_Tileset_Metadata m_current_metadata;
 
+  Tileset_Helper::Animation_Subset m_current_animation_subset;
+ 
   bool Init_Timer();
   void Update_Timer();
 
@@ -97,6 +103,9 @@ class Avatar_Controller: public Tunnelour::Controller {
 
   bool DoTheseTilesXCollide(Tunnelour::Frame_Component* TileA, Tunnelour::Frame_Component* TileB);
   bool DoTheseTilesYCollide(Tunnelour::Frame_Component* TileA, Tunnelour::Frame_Component* TileB);
+
+  void ChangeAvatarState(std::string new_state_name);
+  void UpdateAvatarState(int new_state_index);
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_H_
