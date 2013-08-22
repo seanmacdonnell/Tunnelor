@@ -31,6 +31,15 @@ Avatar_Controller::Avatar_Controller() : Controller() {
   m_game_settings = 0;
   m_has_avatar_been_generated = false;
   m_animation_tick = false;
+
+  init_x_pos = 0;
+  init_y_pos = 0;
+  angle = 0; //IN RADIANS
+  init_velocity = 10;
+  // compute velocities in x,y
+  current_x_velocity = init_velocity*cos(angle);
+  current_y_velocity = init_velocity*sin(angle);
+  gravity = 8;
 }
 
 //------------------------------------------------------------------------------
@@ -41,7 +50,6 @@ Avatar_Controller::~Avatar_Controller() {
 void Avatar_Controller::Init(Tunnelour::Component_Composite * const model) {
     Tunnelour::Controller::Init(model);
     Init_Timer();
-
 }
 
 //------------------------------------------------------------------------------
@@ -56,7 +64,7 @@ void Avatar_Controller::Run() {
       m_model->Add(m_avatar);
       m_has_avatar_been_generated = true;   
       if (Is_Avatar_Falling(&mutator)) {
-        ChangeAvatarState("Falling", m_avatar->GetState().direction);
+        ChangeAvatarState("Falling_To_Standing", m_avatar->GetState().direction);
       }
     }
   } else {
@@ -68,7 +76,7 @@ void Avatar_Controller::Run() {
 
       if (Is_Avatar_Falling(&mutator)) {
         // Is the avatar currently in a falling state
-        if (current_state.state.compare("Falling") == 0) {
+        if (current_state.state.compare("Walking_To_Falling") == 0 || current_state.state.compare("Falling") == 0 || current_state.state.compare("Falling_To_Death") == 0  || current_state.state.compare("Death") == 0  || current_state.state.compare("Falling_To_Standing") == 0 ) {
           // Contunue the falling animation
           unsigned int state_index = current_state.state_index;
           state_index++;
@@ -76,19 +84,30 @@ void Avatar_Controller::Run() {
             if (m_current_animation_subset.is_repeatable) {
               state_index = 0; 
             } else {
-              throw Tunnelour::Exceptions::init_error("No handling for non-repeating animtions yet");
+              if (current_state.state.compare("Walking_To_Falling") == 0) {
+                ChangeAvatarState("Falling", m_avatar->GetState().direction);
+                state_index = 0;
+              } else {
+                throw Tunnelour::Exceptions::init_error("No handling for non-repeating animtions yet");
+              }
             }
           }
 
           UpdateAvatarState(state_index);
 
           D3DXVECTOR3 position = m_avatar->GetPosition();
-          position.y -= 4;
+          if (current_state.state.compare("Falling_To_Standing") == 0) {
+            position.y -= 32;
+          } else {
+            position = CalculateArc();
+            //position.y -= 32;
+            //position.x += 2;
+          }
 
           m_avatar->SetPosition(position);
         } else {
           // start the falling animation
-          ChangeAvatarState("Falling", m_avatar->GetState().direction);
+          ChangeAvatarState("Walking_To_Falling", m_avatar->GetState().direction);
         }
       } else if (current_command.state.compare("") != 0) { // There is a command
         //  Is the command different from the current state?
@@ -119,9 +138,9 @@ void Avatar_Controller::Run() {
             }
           } else { // Left
             if (current_state.state.compare("Running") == 0) {
-              position.x -= 16;
+              position.x -= 24;
             } else if (current_state.state.compare("Walking") == 0) {
-              position.x -= 8;
+              position.x -= 16;
             }
           }
 
@@ -231,16 +250,11 @@ bool Avatar_Controller::Is_Avatar_Falling(Avatar_Controller_Mutator *mutator) {
          }
       }
 
-      if (!is_tangent) {
-        // Avatar is falling
-        return true;
-      } else {
-        // Move the avatar to the top of the tile
-        D3DXVECTOR3 avatar_position = m_avatar->GetPosition();
-        avatar_position.y = tile_top - (lowest_collision_block->avatar_centre_offset_centre_y - (lowest_collision_block->size_y / 2));
-        m_avatar->SetPosition(avatar_position);
-        return false;
-      }
+      // Move the avatar to the top of the tile
+      D3DXVECTOR3 avatar_position = m_avatar->GetPosition();
+      avatar_position.y = tile_top - (lowest_collision_block->avatar_centre_offset_centre_y - (lowest_collision_block->size_y / 2));
+      m_avatar->SetPosition(avatar_position);
+      return false;
     }
   } else {
     // Avatar is falling
@@ -254,18 +268,22 @@ void Avatar_Controller::Load_Tilesets(std::wstring wtileset_path) {
   // Running
   m_running_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Running_Animation_Tileset_1_1.txt");
   Tileset_Helper::Load_Tileset_Metadata_Into_Struct(m_running_metadata_file_path, m_running_metadata);
+  m_animation_metadata.push_back(m_running_metadata);
 
   // Walking
   m_walking_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Walking_Animation_Tileset_1_5.txt");
   Tileset_Helper::Load_Tileset_Metadata_Into_Struct(m_walking_metadata_file_path, m_walking_metadata);
+  m_animation_metadata.push_back(m_walking_metadata);
 
   // Standing
   m_standing_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Standing_Animation_Tileset_1_1.txt");
   Tileset_Helper::Load_Tileset_Metadata_Into_Struct(m_standing_metadata_file_path, m_standing_metadata);
+  m_animation_metadata.push_back(m_standing_metadata);
  
   // Falling
-  m_falling_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Falling_Animation_Tileset_0_1.txt");
+  m_falling_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Falling_Animation_Tileset_1_0.txt");
   Tileset_Helper::Load_Tileset_Metadata_Into_Struct(m_falling_metadata_file_path, m_falling_metadata);
+  m_animation_metadata.push_back(m_falling_metadata);
 }
 
 //------------------------------------------------------------------------------
@@ -381,31 +399,20 @@ void Avatar_Controller::ChangeAvatarState(std::string new_state_name, std::strin
 
   Avatar_Component::Avatar_State current_state = m_avatar->GetState();
 
-  // Change State
-  if (new_state_name.compare("Walking") == 0) {
-    new_state_metadata = &m_walking_metadata;
-    new_state.direction = direction;
-    new_state.state = new_state_name;
-  } else if (new_state_name.compare("Running") == 0) {
-    new_state_metadata = &m_running_metadata;
-    new_state.direction = direction;
-    new_state.state = new_state_name;
-  } else if (new_state_name.compare("Falling") == 0) {
-    new_state_metadata = &m_falling_metadata;
-    new_state.direction = direction;
-    new_state.state = new_state_name;
-  } else {
-    // Standing;
-    new_state_metadata = &m_standing_metadata;
-    new_state.direction = direction;
-    new_state.state = new_state_name;
+  Tileset_Helper::Animation_Subset new_animation_subset;
+  for (std::list<Tileset_Helper::Animation_Tileset_Metadata>::iterator metadata = m_animation_metadata.begin(); metadata != m_animation_metadata.end(); metadata++) {
+    for (std::list<Tileset_Helper::Animation_Subset>::iterator tileset = (*metadata).subsets.begin(); tileset != (*metadata).subsets.end(); tileset++) {
+      if (tileset->name.compare(new_state_name) == 0) {
+        new_animation_subset = *tileset;
+        new_state_metadata = &(*metadata);
+        new_state.direction = direction;
+        new_state.state = new_state_name;
+      }
+    }
   }
 
-  Tileset_Helper::Animation_Subset new_animation_subset;
-  for (std::list<Tileset_Helper::Animation_Subset>::iterator tileset = new_state_metadata->subsets.begin(); tileset != new_state_metadata->subsets.end(); tileset++) {
-    if (tileset->name.compare(new_state.state) == 0) {
-      new_animation_subset = *tileset;
-    }
+  if (new_state_metadata == 0) {
+    throw Tunnelour::Exceptions::init_error("Animation not found in metadata list!" + new_state_name);  
   }
 
   new_state.state_index = 0;
@@ -418,7 +425,7 @@ void Avatar_Controller::ChangeAvatarState(std::string new_state_name, std::strin
   m_avatar->GetTexture()->tile_size = D3DXVECTOR2(static_cast<float>(new_animation_subset.tile_size_x),
                                                   static_cast<float>(new_animation_subset.tile_size_y));
   m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(new_animation_subset.top_left_x),
-                                                          static_cast<float>(new_animation_subset.top_left_y));
+                                                          static_cast<float>((new_animation_subset.top_left_y) * -1));
   m_avatar->SetSize(new D3DXVECTOR2(static_cast<float>(new_animation_subset.tile_size_x), static_cast<float>(new_animation_subset.tile_size_y)));
 
   for (std::list<Tileset_Helper::Frame_Metadata>::iterator frames = new_animation_subset.frames.begin(); frames != new_animation_subset.frames.end(); frames++) {
@@ -441,9 +448,9 @@ void Avatar_Controller::ChangeAvatarState(std::string new_state_name, std::strin
         // Work out the centre of the avatar frame (128x128 block) int the tileset
         // frame is 128x128 so get the frame # and times it by 128/2 for y
         D3DXVECTOR3 animation_frame_centre;
-        animation_frame_centre.x = ((current_state.state_index + 1) * 128) - (128 / 2);
+        animation_frame_centre.x = ((new_state.state_index + 1) * 128) - (128 / 2);
         // and 128/2 for x
-        animation_frame_centre.y = (128 / 2) * -1;
+        animation_frame_centre.y = ((new_animation_subset.top_left_y) - (128 / 2));
         animation_frame_centre.z = -2;
 
         // store the distance from x and y to the centre of the animation frame
@@ -472,19 +479,11 @@ void Avatar_Controller::ChangeAvatarState(std::string new_state_name, std::strin
 void Avatar_Controller::UpdateAvatarState(int new_state_index) {
   Avatar_Component::Avatar_State incremented_state;
 
-  if (new_state_index > (m_current_animation_subset.number_of_frames - 1)) {
-    if (m_current_animation_subset.is_repeatable) {
-      new_state_index = 0; 
-    } else {
-      throw Tunnelour::Exceptions::init_error("No handling for non-repeating animtions yet");
-    }
-  }
-
   incremented_state.state = m_avatar->GetState().state;
   incremented_state.direction = m_avatar->GetState().direction;
   incremented_state.state_index = new_state_index;
   m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(m_current_animation_subset.top_left_x + (new_state_index * m_current_animation_subset.tile_size_x)),
-                                                          static_cast<float>(m_current_animation_subset.top_left_y));
+                                                          static_cast<float>(m_current_animation_subset.top_left_y * -1));
 
   bool stop = false;
   if (new_state_index != 0) {
@@ -513,7 +512,7 @@ void Avatar_Controller::UpdateAvatarState(int new_state_index) {
         D3DXVECTOR3 animation_frame_centre;
         animation_frame_centre.x = ((new_state_index + 1) * 128) - (128 / 2);
         // and 128/2 for x
-        animation_frame_centre.y = (128 / 2) * -1;
+        animation_frame_centre.y = ((m_current_animation_subset.top_left_y) - (128 / 2));
         animation_frame_centre.z = -2;
 
         // store the distance from x and y to the centre of the animation frame
@@ -531,6 +530,21 @@ void Avatar_Controller::UpdateAvatarState(int new_state_index) {
   m_avatar->GetFrame()->vertex_buffer = 0;
   m_avatar->GetFrame()->index_buffer = 0;
   m_avatar->Init();
+}
+
+
+//------------------------------------------------------------------------------
+D3DXVECTOR3 Avatar_Controller::CalculateArc() {
+  D3DXVECTOR3 new_position = m_avatar->GetPosition();
+
+  // update position
+  new_position.x = new_position.x + static_cast<int>(current_x_velocity);
+  new_position.y = new_position.y - static_cast<int>(current_y_velocity);
+
+  // update velocity
+  current_y_velocity = current_y_velocity + gravity;
+
+  return new_position;
 }
 
 } // Tunnelour

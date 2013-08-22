@@ -91,6 +91,8 @@ class Avatar_Controller: public Tunnelour::Controller {
 
   Tileset_Helper::Animation_Subset m_current_animation_subset;
  
+  std::list<Tileset_Helper::Animation_Tileset_Metadata> m_animation_metadata;
+
   bool Init_Timer();
   void Update_Timer();
 
@@ -106,6 +108,17 @@ class Avatar_Controller: public Tunnelour::Controller {
 
   void ChangeAvatarState(std::string new_state_name, std::string direction);
   void UpdateAvatarState(int new_state_index);
+
+  
+  float init_x_pos;
+  float init_y_pos;
+  float current_y_velocity;
+  float current_x_velocity;
+  float gravity;
+  float init_velocity;
+  float angle; //RADIANS
+
+  D3DXVECTOR3 CalculateArc();
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_H_
