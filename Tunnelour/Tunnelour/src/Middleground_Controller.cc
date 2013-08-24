@@ -240,12 +240,12 @@ void Middleground_Controller::Tile_Tunnel() {
          m_tunnel_tiles.push_back(tile);
          if (x == 0) {
            tile->Set_Is_Left_Edge(true);
-           m_left_edge_tiles.push_back(tile);
+           m_left_edge_tunnel_tiles.push_back(tile);
            m_middleground_left = tile->GetPosition().x - (tile->GetSize()->x / 2);
          }
          if (x == (number_of_x_tiles - 1)) {
            tile->Set_Is_Right_Edge(true);
-           m_right_edge_tiles.push_back(tile);
+           m_right_edge_tunnel_tiles.push_back(tile);
            m_middleground_right = tile->GetPosition().x + (tile->GetSize()->x / 2);
          }
       }
@@ -281,8 +281,10 @@ void Middleground_Controller::Tile_Middleground() {
       for (std::vector<Tunnelour::Tile_Bitmap*>::iterator middleground_tile = tiles.begin(); middleground_tile != tiles.end(); ++middleground_tile) {
         if ((*tunnel_tile)->Is_Left_Edge()) {
           (*middleground_tile)->Set_Is_Left_Edge(true);
+          m_left_edge_middleground_tiles.push_back(*middleground_tile);
         } else if  ((*tunnel_tile)->Is_Right_Edge()) {
           (*middleground_tile)->Set_Is_Right_Edge(true);
+          m_right_edge_middleground_tiles.push_back(*middleground_tile);
         }
         middleground_tiles.push_back(*middleground_tile);
       }
@@ -301,7 +303,7 @@ void Middleground_Controller::Tile_Middleground() {
 void Middleground_Controller::Extend_Tunnel_Right() {
   std::vector<Tunnelour::Tile_Bitmap*> new_tunnel_tiles;
   while (m_camera_right > m_middleground_right) {
-    for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tunnel_edge_tile = m_right_edge_tiles.begin(); tunnel_edge_tile !=  m_right_edge_tiles.end(); tunnel_edge_tile++) {
+    for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tunnel_edge_tile = m_right_edge_tunnel_tiles.begin(); tunnel_edge_tile !=  m_right_edge_tunnel_tiles.end(); tunnel_edge_tile++) {
       int current_tile_right = (*tunnel_edge_tile)->GetPosition().x  + ((*tunnel_edge_tile)->GetSize()->x / 2);
       while (m_camera_right > current_tile_right) {
         Tunnelour::Tile_Bitmap* tile = Create_Tile((*tunnel_edge_tile)->GetSize()->x, false);
@@ -315,15 +317,15 @@ void Middleground_Controller::Extend_Tunnel_Right() {
         new_tunnel_tiles.push_back(tile);
         *tunnel_edge_tile = tile;
         current_tile_right += (tile->GetSize()->x / 2);
-        if (tunnel_edge_tile == m_right_edge_tiles.begin()) {
+        if (tunnel_edge_tile == m_right_edge_tunnel_tiles.begin()) {
           tile->Set_Is_Top_Edge(true);
-        } else if ((tunnel_edge_tile + 1) == m_right_edge_tiles.end()) {
+        } else if ((tunnel_edge_tile + 1) == m_right_edge_tunnel_tiles.end()) {
           tile->Set_Is_Bottom_Edge(true);
         }
       }
     }
     Tunnelour::Tile_Bitmap* smallest_tile = 0;
-    for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tunnel_edge_tile = m_right_edge_tiles.begin(); tunnel_edge_tile !=  m_right_edge_tiles.end(); tunnel_edge_tile++) {
+    for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tunnel_edge_tile = m_right_edge_tunnel_tiles.begin(); tunnel_edge_tile !=  m_right_edge_tunnel_tiles.end(); tunnel_edge_tile++) {
       // store the smallest number as the new middleground right.
       if (smallest_tile == 0) {
         smallest_tile = *tunnel_edge_tile;
@@ -361,7 +363,7 @@ void Middleground_Controller::Extend_Tunnel_Right() {
 void Middleground_Controller::Extend_Tunnel_Left() {
   std::vector<Tunnelour::Tile_Bitmap*> new_tunnel_tiles;
   while (m_camera_left < m_middleground_left) {
-    for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tunnel_edge_tile = m_left_edge_tiles.begin(); tunnel_edge_tile !=  m_left_edge_tiles.end(); tunnel_edge_tile++) {
+    for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tunnel_edge_tile = m_left_edge_tunnel_tiles.begin(); tunnel_edge_tile !=  m_left_edge_tunnel_tiles.end(); tunnel_edge_tile++) {
       int current_tile_left = (*tunnel_edge_tile)->GetPosition().x  - ((*tunnel_edge_tile)->GetSize()->x / 2);
       while (m_camera_left < current_tile_left) {
         Tunnelour::Tile_Bitmap* tile = Create_Tile((*tunnel_edge_tile)->GetSize()->x, false);
@@ -375,15 +377,17 @@ void Middleground_Controller::Extend_Tunnel_Left() {
         new_tunnel_tiles.push_back(tile);
         *tunnel_edge_tile = tile;
         current_tile_left -= (tile->GetSize()->x / 2);
-        if (tunnel_edge_tile == m_left_edge_tiles.begin()) {
+        if (tunnel_edge_tile == m_left_edge_tunnel_tiles.begin()) {
           tile->Set_Is_Top_Edge(true);
-        } else if ((tunnel_edge_tile + 1) == m_left_edge_tiles.end()) {
+        } else if ((tunnel_edge_tile + 1) == m_left_edge_tunnel_tiles.end()) {
           tile->Set_Is_Bottom_Edge(true);
         }
+
+        tile->Set_Is_Left_Edge(true);
       }
     }
     Tunnelour::Tile_Bitmap* smallest_tile = 0;
-    for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tunnel_edge_tile = m_left_edge_tiles.begin(); tunnel_edge_tile !=  m_left_edge_tiles.end(); tunnel_edge_tile++) {
+    for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tunnel_edge_tile = m_left_edge_tunnel_tiles.begin(); tunnel_edge_tile !=  m_left_edge_tunnel_tiles.end(); tunnel_edge_tile++) {
       // store the smallest number as the new middleground right.
       if (smallest_tile == 0) {
         smallest_tile = *tunnel_edge_tile;
@@ -410,10 +414,17 @@ void Middleground_Controller::Extend_Tunnel_Left() {
       }
     }
 
+    for (std::vector<Tunnelour::Tile_Bitmap*>::iterator old_edge_tile = m_left_edge_middleground_tiles.begin(); old_edge_tile != m_left_edge_middleground_tiles.end(); old_edge_tile++) {
+      (*old_edge_tile)->Set_Is_Left_Edge(false);
+    }
+    m_left_edge_middleground_tiles.clear();
+
     // Add tiles to Model
     for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tile = new_middleground_tiles.begin(); tile != new_middleground_tiles.end(); ++tile) {
+      (*tile)->Set_Is_Left_Edge(true);
       m_model->Add(*tile);
       m_middleground_tiles.push_back(*tile);
+      m_left_edge_middleground_tiles.push_back(*tile);
     }
   }
 }

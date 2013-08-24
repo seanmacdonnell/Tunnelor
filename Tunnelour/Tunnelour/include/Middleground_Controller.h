@@ -103,9 +103,11 @@ class Middleground_Controller: public Tunnelour::Controller {
 
   Tileset_Metadata m_metadata;
   std::vector<Tunnelour::Tile_Bitmap*> m_middleground_tiles;
+  std::vector<Tunnelour::Tile_Bitmap*> m_left_edge_middleground_tiles;
+  std::vector<Tunnelour::Tile_Bitmap*> m_right_edge_middleground_tiles;
   std::vector<Tunnelour::Tile_Bitmap*> m_tunnel_tiles;
-  std::vector<Tunnelour::Tile_Bitmap*> m_left_edge_tiles;
-  std::vector<Tunnelour::Tile_Bitmap*> m_right_edge_tiles;
+  std::vector<Tunnelour::Tile_Bitmap*> m_left_edge_tunnel_tiles;
+  std::vector<Tunnelour::Tile_Bitmap*> m_right_edge_tunnel_tiles;
 
   Tunnelour::Game_Settings_Component* m_game_settings;
   bool m_has_init_middleground_been_generated, m_has_init_tunnel_been_generated;

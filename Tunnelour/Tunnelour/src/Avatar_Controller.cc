@@ -39,7 +39,7 @@ Avatar_Controller::Avatar_Controller() : Controller() {
   // compute velocities in x,y
   current_x_velocity = init_velocity*cos(angle);
   current_y_velocity = init_velocity*sin(angle);
-  gravity = 8;
+  gravity = 7;
 }
 
 //------------------------------------------------------------------------------
