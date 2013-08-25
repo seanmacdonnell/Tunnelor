@@ -113,8 +113,8 @@ void Background_Controller::Run() {
       for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tile = m_background_tiles.begin(); tile != m_background_tiles.end(); ++tile) {
           if (tile + 1 == m_background_tiles.end()) {
             //this is the last tile in the background model
-            m_background_bottom = (*tile)->GetPosition().y + ((*tile)->GetSize()->y /2);
-            m_background_right = (*tile)->GetPosition().x + ((*tile)->GetSize()->x /2);
+            m_background_bottom = static_cast<int>((*tile)->GetPosition().y + ((*tile)->GetSize()->y /2));
+            m_background_right = static_cast<int>((*tile)->GetPosition().x + ((*tile)->GetSize()->x /2));
           }
           m_model->Add(*tile);
       }
@@ -124,10 +124,10 @@ void Background_Controller::Run() {
   } else {
     // If Camera is over an area with no tiles
     int m_camera_top, m_camera_bottom, m_camera_left, m_camera_right;
-    m_camera_top = m_camera->GetPosition().y + (m_game_settings->GetResolution().y / 2);
-    m_camera_bottom = m_camera->GetPosition().y - (m_game_settings->GetResolution().y / 2);
-    m_camera_left = m_camera->GetPosition().x - (m_game_settings->GetResolution().x / 2);
-    m_camera_right = m_camera->GetPosition().x + (m_game_settings->GetResolution().x / 2);
+    m_camera_top = static_cast<int>(m_camera->GetPosition().y + (m_game_settings->GetResolution().y / 2));
+    m_camera_bottom = static_cast<int>(m_camera->GetPosition().y - (m_game_settings->GetResolution().y / 2));
+    m_camera_left = static_cast<int>(m_camera->GetPosition().x - (m_game_settings->GetResolution().x / 2));
+    m_camera_right = static_cast<int>(m_camera->GetPosition().x + (m_game_settings->GetResolution().x / 2));
 
     if (m_camera_top > m_background_top) {
      throw Tunnelour::Exceptions::unfinished_error("Up Generation not finished!");
@@ -144,11 +144,11 @@ void Background_Controller::Run() {
       }
 
       while (m_camera_bottom < m_background_bottom) {
-        for (int x = 0; x < number_of_x_tiles; x++) {
+        for (unsigned int x = 0; x < number_of_x_tiles; x++) {
           Tunnelour::Tile_Bitmap* tile = Create_Tile(128);
-          D3DXVECTOR3 position = D3DXVECTOR3(m_background_left + (x * 128) + (128 / 2),
-                                            m_background_bottom - (tile->GetSize()->y / 2),
-                                            0);
+          D3DXVECTOR3 position = D3DXVECTOR3(static_cast<float>(m_background_left + (x * 128) + (128 / 2)),
+                                            static_cast<float>(m_background_bottom - (tile->GetSize()->y / 2)),
+                                            static_cast<float>(0));
           tile->SetPosition(position);
           m_model->Add(tile);
           m_background_tiles.push_back(tile);
@@ -170,9 +170,9 @@ void Background_Controller::Run() {
       while (m_camera_right > m_background_right) {
         for (int x = 0; x < number_of_y_tiles; x++) {
           Tunnelour::Tile_Bitmap* tile = Create_Tile(128);
-          D3DXVECTOR3 position = D3DXVECTOR3(m_background_right + (tile->GetSize()->y / 2),
-                                             m_background_top - (x * 128) - (128 / 2),
-                                             0);
+          D3DXVECTOR3 position = D3DXVECTOR3(static_cast<float>(m_background_right + (tile->GetSize()->y / 2)),
+                                             static_cast<float>(m_background_top - (x * 128) - (128 / 2)),
+                                             static_cast<float>(0));
           tile->SetPosition(position);
           m_model->Add(tile);
           m_background_tiles.push_back(tile);
@@ -194,9 +194,9 @@ void Background_Controller::Run() {
       while (m_camera_left < m_background_left) {
         for (int x = 0; x < number_of_y_tiles; x++) {
           Tunnelour::Tile_Bitmap* tile = Create_Tile(128);
-          D3DXVECTOR3 position = D3DXVECTOR3(m_background_left - (tile->GetSize()->y / 2),
-                                             m_background_top - (x * 128) - (128 / 2),
-                                             0);
+          D3DXVECTOR3 position = D3DXVECTOR3(static_cast<float>(m_background_left - (tile->GetSize()->y / 2)),
+                                             static_cast<float>(m_background_top - (x * 128) - (128 / 2)),
+                                             static_cast<float>(0));
           tile->SetPosition(position);
           m_model->Add(tile);
           m_background_tiles.push_back(tile);
@@ -536,7 +536,7 @@ Tunnelour::Tile_Bitmap* Background_Controller::Create_Tile(int base_tile_size) {
   tile->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(random_variable*(middleground_line.tile_size_x) + static_cast<float>(middleground_line.top_left_x)),
                                                       static_cast<float>(middleground_line.top_left_y));
 
-  tile->SetSize(new D3DXVECTOR2(base_tile_size, base_tile_size));
+  tile->SetSize(new D3DXVECTOR2(static_cast<float>(base_tile_size), static_cast<float>(base_tile_size)));
   return tile;
 }
 

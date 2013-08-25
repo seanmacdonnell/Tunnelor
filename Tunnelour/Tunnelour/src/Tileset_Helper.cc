@@ -232,7 +232,7 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
         }
       }
 
-      for (int i = 0; i <  temp_subset.number_of_frames; i++) {
+      for (unsigned int i = 0; i <  temp_subset.number_of_frames; i++) {
         Frame_Metadata temp_frame_metadata;
 
         fgets(line, 225, pFile);
@@ -253,7 +253,7 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
           }
         }
 
-        for (int i = 0; i <  temp_frame_metadata.number_of_collision_blocks; i++) {
+        for (unsigned int i = 0; i <  temp_frame_metadata.number_of_collision_blocks; i++) {
           Collision_Block temp_collision_block;
 
           fgets(line, 225, pFile);

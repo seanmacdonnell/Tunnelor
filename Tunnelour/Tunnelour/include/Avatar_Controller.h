@@ -109,14 +109,11 @@ class Avatar_Controller: public Tunnelour::Controller {
   void ChangeAvatarState(std::string new_state_name, std::string direction);
   void UpdateAvatarState(int new_state_index);
 
-  
-  float init_x_pos;
-  float init_y_pos;
-  float current_y_velocity;
-  float current_x_velocity;
-  float gravity;
-  float init_velocity;
-  float angle; //RADIANS
+  float m_current_y_velocity;
+  float m_current_x_velocity;
+  float m_gravity;
+  float m_init_velocity;
+  float m_angle; //RADIANS
 
   D3DXVECTOR3 CalculateArc();
 };

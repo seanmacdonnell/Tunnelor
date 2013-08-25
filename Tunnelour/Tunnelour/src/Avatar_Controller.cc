@@ -32,14 +32,12 @@ Avatar_Controller::Avatar_Controller() : Controller() {
   m_has_avatar_been_generated = false;
   m_animation_tick = false;
 
-  init_x_pos = 0;
-  init_y_pos = 0;
-  angle = 0; //IN RADIANS
-  init_velocity = 10;
+  m_angle = 0; //IN RADIANS
+  m_init_velocity = 8;
   // compute velocities in x,y
-  current_x_velocity = init_velocity*cos(angle);
-  current_y_velocity = init_velocity*sin(angle);
-  gravity = 7;
+  m_current_x_velocity = m_init_velocity*cos(m_angle);
+  m_current_y_velocity = m_init_velocity*sin(m_angle);
+  m_gravity = 7;
 }
 
 //------------------------------------------------------------------------------
@@ -138,9 +136,9 @@ void Avatar_Controller::Run() {
             }
           } else { // Left
             if (current_state.state.compare("Running") == 0) {
-              position.x -= 24;
-            } else if (current_state.state.compare("Walking") == 0) {
               position.x -= 16;
+            } else if (current_state.state.compare("Walking") == 0) {
+              position.x -= 8;
             }
           }
 
@@ -215,12 +213,12 @@ bool Avatar_Controller::Is_Avatar_Falling(Avatar_Controller_Mutator *mutator) {
     // Make a frame for the lowest avatar collision block
     Frame_Component lowest_collision_block_frame;
     D3DXVECTOR3 lowest_collision_block_frame_centre_position;
-    lowest_collision_block_frame_centre_position.x = m_avatar->GetPosition().x + lowest_collision_block->avatar_centre_offset_centre_x;
-    lowest_collision_block_frame_centre_position.y = m_avatar->GetPosition().y + lowest_collision_block->avatar_centre_offset_centre_y;
-    lowest_collision_block_frame_centre_position.z = -2;
+    lowest_collision_block_frame_centre_position.x = static_cast<float>(m_avatar->GetPosition().x + lowest_collision_block->avatar_centre_offset_centre_x);
+    lowest_collision_block_frame_centre_position.y = static_cast<float>(m_avatar->GetPosition().y + lowest_collision_block->avatar_centre_offset_centre_y);
+    lowest_collision_block_frame_centre_position.z = static_cast<float>(-2);
 
     lowest_collision_block_frame.SetPosition(lowest_collision_block_frame_centre_position);
-    lowest_collision_block_frame.SetSize(lowest_collision_block->size_x, lowest_collision_block->size_y);
+    lowest_collision_block_frame.SetSize(static_cast<float>(lowest_collision_block->size_x), static_cast<float>(lowest_collision_block->size_y));
 
     // Cull the border tiles which are not within the x range of the lowest avatar collision block
     std::list<Tunnelour::Bitmap_Component*> colliding_border_tiles;
@@ -252,7 +250,7 @@ bool Avatar_Controller::Is_Avatar_Falling(Avatar_Controller_Mutator *mutator) {
 
       // Move the avatar to the top of the tile
       D3DXVECTOR3 avatar_position = m_avatar->GetPosition();
-      avatar_position.y = tile_top - (lowest_collision_block->avatar_centre_offset_centre_y - (lowest_collision_block->size_y / 2));
+      avatar_position.y = static_cast<float>(tile_top - (lowest_collision_block->avatar_centre_offset_centre_y - (lowest_collision_block->size_y / 2)));
       m_avatar->SetPosition(avatar_position);
       return false;
     }
@@ -441,21 +439,21 @@ void Avatar_Controller::ChangeAvatarState(std::string new_state_name, std::strin
         //Create a frame for the avatar foot
         Frame_Component avatar_contact_foot;
         D3DXVECTOR3 collision_block_tilesheet_centre;
-        collision_block_tilesheet_centre.x = collision_block->top_left_x + (collision_block->size_x /2);
-        collision_block_tilesheet_centre.y = collision_block->top_left_y - (collision_block->size_y /2);
+        collision_block_tilesheet_centre.x = static_cast<float>(collision_block->top_left_x + (collision_block->size_x /2));
+        collision_block_tilesheet_centre.y = static_cast<float>(collision_block->top_left_y - (collision_block->size_y /2));
 
         // account for different positions in the frame and the avatar
         // Work out the centre of the avatar frame (128x128 block) int the tileset
         // frame is 128x128 so get the frame # and times it by 128/2 for y
         D3DXVECTOR3 animation_frame_centre;
-        animation_frame_centre.x = ((new_state.state_index + 1) * 128) - (128 / 2);
+        animation_frame_centre.x = static_cast<float>(((new_state.state_index + 1) * 128) - (128 / 2));
         // and 128/2 for x
-        animation_frame_centre.y = ((new_animation_subset.top_left_y) - (128 / 2));
-        animation_frame_centre.z = -2;
+        animation_frame_centre.y = static_cast<float>(((new_animation_subset.top_left_y) - (128 / 2)));
+        animation_frame_centre.z = static_cast<float>(-2);
 
         // store the distance from x and y to the centre of the animation frame
-        new_collision_block.avatar_centre_offset_centre_x = collision_block_tilesheet_centre.x - animation_frame_centre.x;
-        new_collision_block.avatar_centre_offset_centre_y = collision_block_tilesheet_centre.y - animation_frame_centre.y;
+        new_collision_block.avatar_centre_offset_centre_x = static_cast<int>(collision_block_tilesheet_centre.x - animation_frame_centre.x);
+        new_collision_block.avatar_centre_offset_centre_y = static_cast<int>(collision_block_tilesheet_centre.y - animation_frame_centre.y);
 
         new_state.collision_blocks.push_back(new_collision_block);
       }
@@ -503,21 +501,21 @@ void Avatar_Controller::UpdateAvatarState(int new_state_index) {
         //Create a frame for the avatar foot
         Frame_Component avatar_contact_foot;
         D3DXVECTOR3 collision_block_tilesheet_centre;
-        collision_block_tilesheet_centre.x = collision_block->top_left_x + (collision_block->size_x /2);
-        collision_block_tilesheet_centre.y = collision_block->top_left_y - (collision_block->size_y /2);
+        collision_block_tilesheet_centre.x = static_cast<float>(collision_block->top_left_x + (collision_block->size_x /2));
+        collision_block_tilesheet_centre.y = static_cast<float>(collision_block->top_left_y - (collision_block->size_y /2));
 
         // account for different positions in the frame and the avatar
         // Work out the centre of the avatar frame (128x128 block) int the tileset
         // frame is 128x128 so get the frame # and times it by 128/2 for y
         D3DXVECTOR3 animation_frame_centre;
-        animation_frame_centre.x = ((new_state_index + 1) * 128) - (128 / 2);
+        animation_frame_centre.x = static_cast<float>(((new_state_index + 1) * 128) - (128 / 2));
         // and 128/2 for x
-        animation_frame_centre.y = ((m_current_animation_subset.top_left_y) - (128 / 2));
-        animation_frame_centre.z = -2;
+        animation_frame_centre.y = static_cast<float>(((m_current_animation_subset.top_left_y) - (128 / 2)));
+        animation_frame_centre.z = static_cast<float>(-2);
 
         // store the distance from x and y to the centre of the animation frame
-        new_collision_block.avatar_centre_offset_centre_x = collision_block_tilesheet_centre.x - animation_frame_centre.x;
-        new_collision_block.avatar_centre_offset_centre_y = collision_block_tilesheet_centre.y - animation_frame_centre.y;
+        new_collision_block.avatar_centre_offset_centre_x = static_cast<int>(collision_block_tilesheet_centre.x - animation_frame_centre.x);
+        new_collision_block.avatar_centre_offset_centre_y = static_cast<int>(collision_block_tilesheet_centre.y - animation_frame_centre.y);
 
         incremented_state.collision_blocks.push_back(new_collision_block);
       }
@@ -538,11 +536,11 @@ D3DXVECTOR3 Avatar_Controller::CalculateArc() {
   D3DXVECTOR3 new_position = m_avatar->GetPosition();
 
   // update position
-  new_position.x = new_position.x + static_cast<int>(current_x_velocity);
-  new_position.y = new_position.y - static_cast<int>(current_y_velocity);
+  new_position.x = new_position.x + static_cast<int>(m_current_x_velocity);
+  new_position.y = new_position.y - static_cast<int>(m_current_y_velocity);
 
   // update velocity
-  current_y_velocity = current_y_velocity + gravity;
+  m_current_y_velocity = m_current_y_velocity + m_gravity;
 
   return new_position;
 }
