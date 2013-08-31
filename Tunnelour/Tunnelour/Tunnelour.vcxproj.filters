@@ -171,6 +171,9 @@
     <ClCompile Include="src\Tileset_Helper.cc">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="src\Bitmap_Helper.cc">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Init_Controller.h">
@@ -294,6 +297,9 @@
       <Filter>Include Files\Controllers</Filter>
     </ClInclude>
     <ClInclude Include="include\Tileset_Helper.h">
+      <Filter>Include Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Bitmap_Helper.h">
       <Filter>Include Files\Utility</Filter>
     </ClInclude>
   </ItemGroup>

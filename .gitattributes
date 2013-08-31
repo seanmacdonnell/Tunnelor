@@ -12,6 +12,7 @@ Tunnelour/Tunnelour/include/Avatar_Controller_Mutator.h -text
 Tunnelour/Tunnelour/include/Background_Controller.h -text
 Tunnelour/Tunnelour/include/Background_Controller_Mutator.h -text
 Tunnelour/Tunnelour/include/Bitmap_Component.h -text
+Tunnelour/Tunnelour/include/Bitmap_Helper.h -text
 Tunnelour/Tunnelour/include/Camera_Component.h -text
 Tunnelour/Tunnelour/include/Camera_Controller.h -text
 Tunnelour/Tunnelour/include/Component.h -text
@@ -66,6 +67,8 @@ Tunnelour/Tunnelour/resource/tilesets/Charlie_Running_Animation_Tileset_1_1.txt 
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Standing_Animation_Tileset_1_0.dds -text
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Standing_Animation_Tileset_1_1.txt -text
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Walking_Animation_Tileset_1_4.dds -text
+Tunnelour/Tunnelour/resource/tilesets/Charlie_Walking_Animation_Tileset_1_4.xcf -text
+Tunnelour/Tunnelour/resource/tilesets/Charlie_Walking_Animation_Tileset_1_5.dds -text
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Walking_Animation_Tileset_1_5.txt -text
 Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_4.dds -text
 Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_4.txt -text
@@ -77,6 +80,7 @@ Tunnelour/Tunnelour/src/Avatar_Controller_Mutator.cc -text
 Tunnelour/Tunnelour/src/Background_Controller.cc -text
 Tunnelour/Tunnelour/src/Background_Controller_Mutator.cc -text
 Tunnelour/Tunnelour/src/Bitmap_Component.cc -text
+Tunnelour/Tunnelour/src/Bitmap_Helper.cc -text
 Tunnelour/Tunnelour/src/Camera_Component.cc -text
 Tunnelour/Tunnelour/src/Camera_Controller.cc -text
 Tunnelour/Tunnelour/src/Component.cc -text

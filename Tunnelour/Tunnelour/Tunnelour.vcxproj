@@ -89,6 +89,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Avatar_Controller_Mutator.cc" />
     <ClCompile Include="src\Background_Controller.cc" />
     <ClCompile Include="src\Background_Controller_Mutator.cc" />
+    <ClCompile Include="src\Bitmap_Helper.cc" />
     <ClCompile Include="src\Camera_Component.cc" />
     <ClCompile Include="src\Camera_Controller.cc" />
     <ClCompile Include="src\Component.cc" />
@@ -130,6 +131,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Avatar_Controller_Mutator.h" />
     <ClInclude Include="include\Background_Controller.h" />
     <ClInclude Include="include\Background_Controller_Mutator.h" />
+    <ClInclude Include="include\Bitmap_Helper.h" />
     <ClInclude Include="include\Camera_Component.h" />
     <ClInclude Include="include\Camera_Controller.h" />
     <ClInclude Include="include\Component.h" />

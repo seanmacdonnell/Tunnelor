@@ -30,6 +30,10 @@ Avatar_Component::Avatar_Component(): Bitmap_Component() {
   m_state.direction = "";
   m_state.state_index = 0;
 
+  m_last_state.state = "";
+  m_last_state.direction = "";
+  m_last_state.state_index = 0;
+
   m_command.state = "";
   m_command.direction = "";
   m_command.state_index = 0;
@@ -40,6 +44,10 @@ Avatar_Component::~Avatar_Component() {
   m_state.state = "";
   m_state.direction = "";
   m_state.state_index = 0;
+
+  m_last_state.state = "";
+  m_last_state.direction = "";
+  m_last_state.state_index = 0;  
 
   m_command.state = "";
   m_command.direction = "";
@@ -59,7 +67,13 @@ Avatar_Component::Avatar_State Avatar_Component::GetState() {
 }
 
 //---------------------------------------------------------------------------
+Avatar_Component::Avatar_State Avatar_Component::GetLastState() {
+  return m_last_state;
+}
+
+//---------------------------------------------------------------------------
 void Avatar_Component::SetState(Avatar_Component::Avatar_State state) {
+  m_last_state = m_state;
   m_state = state;
 }
 

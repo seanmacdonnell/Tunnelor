@@ -63,13 +63,23 @@ class Avatar_Controller: public Tunnelour::Controller {
   //---------------------------------------------------------------------------
   virtual void Run();
 
-
  protected:
 
  private:
   void Generate_Avatar_Tile();
-  bool Is_Avatar_Falling(Avatar_Controller_Mutator *mutator);
+
+  void Generate_Avatar();
+
+  void Run_Avatar_State(Avatar_Controller_Mutator *mutator);
+  void Run_Standing_State(Avatar_Controller_Mutator *mutator);
+  void Run_Walking_State(Avatar_Controller_Mutator *mutator);
+  void Run_Falling_State(Avatar_Controller_Mutator *mutator);
+
+  bool Is_Avatar_Platform_Adjacent(Avatar_Controller_Mutator *mutator);
+  bool Is_Avatar_Platform_Colliding(Avatar_Controller_Mutator *mutator, std::list<Tunnelour::Bitmap_Component*> *out_colliding_border_tiles, Tunnelour::Bitmap_Component *out_collision_block);
   void Load_Tilesets(std::wstring wtileset_path);
+
+  D3DXVECTOR3 Align_Avatar_On_Right_Foot(Avatar_Controller_Mutator *mutator);
 
   Tunnelour::Avatar_Component *m_avatar;
   
@@ -102,9 +112,6 @@ class Avatar_Controller: public Tunnelour::Controller {
   float m_frameTime;
   bool m_animation_tick;
   int m_current_animation_fps;
-
-  bool DoTheseTilesXCollide(Tunnelour::Frame_Component* TileA, Tunnelour::Frame_Component* TileB);
-  bool DoTheseTilesYCollide(Tunnelour::Frame_Component* TileA, Tunnelour::Frame_Component* TileB);
 
   void ChangeAvatarState(std::string new_state_name, std::string direction);
   void UpdateAvatarState(int new_state_index);

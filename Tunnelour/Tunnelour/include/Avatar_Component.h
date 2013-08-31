@@ -61,6 +61,8 @@ class Avatar_Component: public Tunnelour::Bitmap_Component {
   Avatar_State GetState();
   void SetState(Avatar_State state);
 
+  Avatar_State GetLastState();
+
   Avatar_State GetCommand();
   void SetCommand(Avatar_State current_command);
 
@@ -73,6 +75,7 @@ class Avatar_Component: public Tunnelour::Bitmap_Component {
   void Init_Frame();
 
   Avatar_State m_state;
+  Avatar_State m_last_state;
   Avatar_State m_command;
 };  // class Avatar_Component
 }  // namespace Tunnelour
