@@ -52,6 +52,7 @@ Tunnelour/Tunnelour/include/Tunnelour_Launcher.h -text
 Tunnelour/Tunnelour/include/Tunnelour_View.h -text
 Tunnelour/Tunnelour/include/View.h -text
 Tunnelour/Tunnelour/include/View_Composite.h -text
+Tunnelour/Tunnelour/include/World_Settings_Component.h -text
 Tunnelour/Tunnelour/resource/Direct3D11_View_DebugPixelShader.ps -text
 Tunnelour/Tunnelour/resource/Direct3D11_View_DebugVertexShader.vs -text
 Tunnelour/Tunnelour/resource/Direct3D11_View_FontPixelShader.ps -text
@@ -118,3 +119,4 @@ Tunnelour/Tunnelour/src/Tunnelour_Launcher.cc -text
 Tunnelour/Tunnelour/src/Tunnelour_View.cc -text
 Tunnelour/Tunnelour/src/View.cc -text
 Tunnelour/Tunnelour/src/View_Composite.cc -text
+Tunnelour/Tunnelour/src/World_Settings_Component.cc -text

@@ -19,13 +19,14 @@
 #include <vector>
 #include <string>
 #include <list>
+#include <windows.h>
+
+#include "Avatar_Component.h"
+#include "Avatar_Controller_Mutator.h"
 #include "Component_Composite.h"
 #include "Controller.h"
-#include "Tile_Bitmap.h"
 #include "Game_Settings_Component.h"
-#include "Avatar_Controller_Mutator.h"
-#include "Avatar_Component.h"
-#include <windows.h>
+#include "Tile_Bitmap.h"
 #include "Tileset_Helper.h"
 
 namespace Tunnelour {
@@ -66,63 +67,104 @@ class Avatar_Controller: public Tunnelour::Controller {
  protected:
 
  private:
+  //---------------------------------------------------------------------------
+  // Description : Generates the Avatar_Component tile
+  //---------------------------------------------------------------------------
   void Generate_Avatar_Tile();
 
+  //---------------------------------------------------------------------------
+  // Description : Creates the Avatar_Component and adds it to the model
+  //---------------------------------------------------------------------------
   void Generate_Avatar();
 
+  //---------------------------------------------------------------------------
+  // Description : Changes and maintains the state of the avatar
+  //---------------------------------------------------------------------------
   void Run_Avatar_State(Avatar_Controller_Mutator *mutator);
+
+  //---------------------------------------------------------------------------
+  // Description : Changes and maintains the standing state of the avatar
+  //---------------------------------------------------------------------------
   void Run_Standing_State(Avatar_Controller_Mutator *mutator);
+
+  //---------------------------------------------------------------------------
+  // Description : Changes and maintains the walking state of the avatar
+  //---------------------------------------------------------------------------
   void Run_Walking_State(Avatar_Controller_Mutator *mutator);
+
+  //---------------------------------------------------------------------------
+  // Description : Changes and maintains the falling state of the avatar
+  //---------------------------------------------------------------------------
   void Run_Falling_State(Avatar_Controller_Mutator *mutator);
 
+  //---------------------------------------------------------------------------
+  // Description : Returns true if the avatar is standing on a plaform
+  //---------------------------------------------------------------------------
   bool Is_Avatar_Platform_Adjacent(Avatar_Controller_Mutator *mutator);
-  bool Is_Avatar_Platform_Colliding(Avatar_Controller_Mutator *mutator, std::list<Tunnelour::Bitmap_Component*> *out_colliding_border_tiles, Tunnelour::Bitmap_Component *out_collision_block);
+
+  //---------------------------------------------------------------------------
+  // Description : Returns true if the avatar is colliding with a plaform
+  //---------------------------------------------------------------------------
+  bool Is_Avatar_Platform_Colliding(Avatar_Controller_Mutator *mutator,
+                                    std::list<Tunnelour::Bitmap_Component*> *out_colliding_border_tiles,
+                                    Tunnelour::Bitmap_Component *out_collision_block);
+
+  //---------------------------------------------------------------------------
+  // Description : Loads all the tile animations into the controller
+  //---------------------------------------------------------------------------
   void Load_Tilesets(std::wstring wtileset_path);
 
+  //---------------------------------------------------------------------------
+  // Description : Syncs the avatar tile position with the right foot position
+  //             : of the last avatar animation frame.
+  //---------------------------------------------------------------------------
   D3DXVECTOR3 Align_Avatar_On_Right_Foot(Avatar_Controller_Mutator *mutator);
 
+  //---------------------------------------------------------------------------
+  // Description : Initialises the timer used for the animation ticks
+  //---------------------------------------------------------------------------
+  bool Init_Timer();
+
+  //---------------------------------------------------------------------------
+  // Description : Updates and determines if the animation needs to update
+  //---------------------------------------------------------------------------
+  void Update_Timer();
+
+  //---------------------------------------------------------------------------
+  // Description : Changes the avatar animation and state and/or direction
+  //---------------------------------------------------------------------------
+  void ChangeAvatarState(std::string new_state_name, std::string direction);
+
+  //---------------------------------------------------------------------------
+  // Description : Updates the avatar state animation
+  //---------------------------------------------------------------------------
+  void UpdateAvatarState(int new_state_index);
+
+  //---------------------------------------------------------------------------
+  // Member Variables
+  //---------------------------------------------------------------------------
   Tunnelour::Avatar_Component *m_avatar;
-  
   Tunnelour::Game_Settings_Component* m_game_settings;
-
   bool m_has_avatar_been_generated;
-
   std::string m_running_metadata_file_path;
   std::string m_walking_metadata_file_path;
   std::string m_standing_metadata_file_path;
   std::string m_falling_metadata_file_path;
   std::string m_current_metadata_file_path;
-
   Tileset_Helper::Animation_Tileset_Metadata m_running_metadata;
   Tileset_Helper::Animation_Tileset_Metadata m_walking_metadata;
   Tileset_Helper::Animation_Tileset_Metadata m_standing_metadata;
   Tileset_Helper::Animation_Tileset_Metadata m_falling_metadata;
   Tileset_Helper::Animation_Tileset_Metadata m_current_metadata;
-
   Tileset_Helper::Animation_Subset m_current_animation_subset;
- 
   std::list<Tileset_Helper::Animation_Tileset_Metadata> m_animation_metadata;
-
-  bool Init_Timer();
-  void Update_Timer();
-
   INT64 m_frequency;
   float m_ticksPerMs;
   INT64 m_startTime;
   float m_frameTime;
   bool m_animation_tick;
   int m_current_animation_fps;
-
-  void ChangeAvatarState(std::string new_state_name, std::string direction);
-  void UpdateAvatarState(int new_state_index);
-
-  float m_current_y_velocity;
-  float m_current_x_velocity;
-  float m_gravity;
-  float m_init_velocity;
-  float m_angle; //RADIANS
-
-  D3DXVECTOR3 CalculateArc();
+  Tunnelour::World_Settings_Component *m_world_settings;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_H_

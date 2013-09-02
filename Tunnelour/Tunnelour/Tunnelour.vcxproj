@@ -124,6 +124,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Tunnelour_View.cc" />
     <ClCompile Include="src\View.cc" />
     <ClCompile Include="src\View_Composite.cc" />
+    <ClCompile Include="src\World_Settings_Component.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Avatar_Component.h" />
@@ -168,6 +169,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Tunnelour_View.h" />
     <ClInclude Include="include\View.h" />
     <ClInclude Include="include\View_Composite.h" />
+    <ClInclude Include="include\World_Settings_Component.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resource\Direct3D11_View_DebugPixelShader.ps" />

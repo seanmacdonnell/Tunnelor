@@ -20,6 +20,7 @@
 #include "Game_Settings_Component.h"
 #include "Avatar_Component.h"
 #include "Tile_Bitmap.h"
+#include "World_Settings_Component.h"
 
 namespace Tunnelour {
 class Avatar_Controller_Mutator: public Tunnelour::Component::Component_Mutator  {
@@ -40,7 +41,7 @@ class Avatar_Controller_Mutator: public Tunnelour::Component::Component_Mutator 
   virtual ~Avatar_Controller_Mutator();
 
   //-------------------------------------------------------------------------
-  // Description : Mutator function, pass it a component to mutate.
+  // Description : Mutator function, pass it a component to modify.
   //-------------------------------------------------------------------------
   void Mutate(Tunnelour::Component * const component);
 
@@ -60,18 +61,36 @@ class Avatar_Controller_Mutator: public Tunnelour::Component::Component_Mutator 
   bool FoundAvatarComponent();
 
   //-------------------------------------------------------------------------
-  // Description : Accessors for the Game_Settings_Component
+  // Description : Accessor for the Game_Settings_Component
   //-------------------------------------------------------------------------
   Tunnelour::Avatar_Component* const GetAvatarComponent();
 
+  //-------------------------------------------------------------------------
+  // Description : Has this component been found in the model?
+  //-------------------------------------------------------------------------
   bool FoundBorderTiles();
+
+  //-------------------------------------------------------------------------
+  // Description : Accessor for the Border Tiles
+  //-------------------------------------------------------------------------
   std::list<Tunnelour::Bitmap_Component*> GetBorderTiles();
 
+  //-------------------------------------------------------------------------
+  // Description : Has this component been found in the model?
+  //-------------------------------------------------------------------------
+  bool FoundWorldSettings();
+
+  //-------------------------------------------------------------------------
+  // Description : Accessor for the World_Settings_Component
+  //-------------------------------------------------------------------------
+  Tunnelour::World_Settings_Component* GetWorldSettings();
+
  private:
-  bool m_found_game_settings, m_found_avatar_component, m_found_border_tiles;
+  bool m_found_game_settings, m_found_avatar_component, m_found_border_tiles, m_found_world_settings;;
   Tunnelour::Game_Settings_Component *m_game_settings;
   Avatar_Component *m_avatar_component;
   std::list<Tunnelour::Bitmap_Component*> m_border_tiles;
+  Tunnelour::World_Settings_Component *m_world_settings;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_MUTATOR_H_

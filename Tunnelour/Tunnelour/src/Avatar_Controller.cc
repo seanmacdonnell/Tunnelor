@@ -14,10 +14,12 @@
 //
 
 #include "Avatar_Controller.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctime>
 #include <string>
+
 #include "Exceptions.h"
 #include "String_Helper.h"
 #include "Bitmap_Helper.h"
@@ -33,12 +35,7 @@ Avatar_Controller::Avatar_Controller() : Controller() {
   m_has_avatar_been_generated = false;
   m_animation_tick = false;
 
-  m_angle = 0.7; //IN RADIANS
-  m_init_velocity = 16;
-  // compute velocities in x,y
-  m_current_x_velocity = m_init_velocity*cos(m_angle);
-  m_current_y_velocity = m_init_velocity*sin(m_angle);
-  m_gravity = 32;
+  m_world_settings = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -56,12 +53,13 @@ void Avatar_Controller::Run() {
   Avatar_Controller_Mutator mutator;
   m_model->Apply(&mutator);
   if (!m_has_avatar_been_generated) {
-    if (mutator.FoundGameSettings() && mutator.FoundBorderTiles())  {
+    if (mutator.FoundGameSettings() && mutator.FoundBorderTiles() && mutator.FoundWorldSettings())  {
       m_game_settings = mutator.GetGameSettings();
       Load_Tilesets(m_game_settings->GetTilesetPath());
+      m_world_settings = mutator.GetWorldSettings();
       Generate_Avatar_Tile();
       m_model->Add(m_avatar);
-      m_has_avatar_been_generated = true;   
+      m_has_avatar_been_generated = true;
     }
   } else {
     // Is the avatar currenly not contacting the ground
@@ -110,6 +108,9 @@ void Avatar_Controller::Run_Avatar_State(Avatar_Controller_Mutator *mutator) {
 
 //------------------------------------------------------------------------------
 void Avatar_Controller::Run_Standing_State(Avatar_Controller_Mutator *mutator) {
+  m_avatar->SetAngle(static_cast<float>(0.0)); // in radians
+  m_avatar->SetVelocity(D3DXVECTOR3(8, 0 ,0));
+
   Avatar_Component::Avatar_State current_state = m_avatar->GetState();
   Avatar_Component::Avatar_State current_command = m_avatar->GetCommand();
 
@@ -142,6 +143,9 @@ void Avatar_Controller::Run_Standing_State(Avatar_Controller_Mutator *mutator) {
 
 //------------------------------------------------------------------------------
 void Avatar_Controller::Run_Walking_State(Avatar_Controller_Mutator *mutator) {
+  m_avatar->SetAngle(static_cast<float>(0.0)); // in radians
+  m_avatar->SetVelocity(D3DXVECTOR3(8, 0 , 0));
+
   Avatar_Component::Avatar_State current_state = m_avatar->GetState();
   Avatar_Component::Avatar_State current_command = m_avatar->GetCommand();
   if (current_command.state.compare("") != 0) { 
@@ -150,7 +154,6 @@ void Avatar_Controller::Run_Walking_State(Avatar_Controller_Mutator *mutator) {
     if (current_state.state.compare(current_command.state) != 0 || current_state.direction != current_command.direction) {
       // New State
       ChangeAvatarState(current_command.state, current_command.direction);
-
     } else {
       // Continue State
       // Contunue the falling animation
@@ -168,7 +171,7 @@ void Avatar_Controller::Run_Walking_State(Avatar_Controller_Mutator *mutator) {
 
       D3DXVECTOR3 position = m_avatar->GetPosition();
       if (current_state.direction.compare("Right") == 0) {
-        position =Align_Avatar_On_Right_Foot(mutator);
+        position = Align_Avatar_On_Right_Foot(mutator);
         //position.x += 8;
       } else { // Left
         //position.x -= 8;
@@ -191,6 +194,11 @@ void Avatar_Controller::Run_Walking_State(Avatar_Controller_Mutator *mutator) {
   // Detect if the avatar is overbalancing from walking
   if (!Is_Avatar_Platform_Adjacent(mutator)) {
     ChangeAvatarState("Walking_To_Falling", m_avatar->GetState().direction);
+    D3DXVECTOR3 new_velocity;
+    new_velocity.x = m_avatar->GetVelocity().x * cos(m_avatar->GetAngle());
+    new_velocity.y = m_avatar->GetVelocity().y * sin(m_avatar->GetAngle());
+    new_velocity.z = 0;
+    m_avatar->SetVelocity(new_velocity);
   }
 }
 
@@ -217,8 +225,8 @@ void Avatar_Controller::Run_Falling_State(Avatar_Controller_Mutator *mutator) {
 
       // Move the avatar to the top of the tile
       D3DXVECTOR3 avatar_position = m_avatar->GetPosition();
-      int foot_bottom = out_collision_block->GetPosition().y - (out_collision_block->GetSize()->y / 2);
-      int foot_bottom_centre_offset = foot_bottom - avatar_position.y;
+      int foot_bottom = static_cast<int>(out_collision_block->GetPosition().y - (out_collision_block->GetSize()->y / 2));
+      int foot_bottom_centre_offset = foot_bottom - static_cast<int>(avatar_position.y);
 
       avatar_position.y = static_cast<float>(tile_top - foot_bottom_centre_offset);
       m_avatar->SetPosition(avatar_position);
@@ -250,13 +258,16 @@ void Avatar_Controller::Run_Falling_State(Avatar_Controller_Mutator *mutator) {
     D3DXVECTOR3 position = m_avatar->GetPosition();
   
     if (current_state.state.compare("Walking_To_Falling") == 0) {
-      if (state_index < 6) {
-        position = Align_Avatar_On_Right_Foot(mutator);
-      } else {
-        position = CalculateArc();
-      }
+      position = Align_Avatar_On_Right_Foot(mutator);
     } else {
-      position = CalculateArc();
+      position.x = position.x + m_avatar->GetVelocity().x;
+      position.y = position.y - m_avatar->GetVelocity().y;
+
+      D3DXVECTOR3 new_velocity = D3DXVECTOR3(0, 0 , 0);
+      new_velocity.y = m_avatar->GetVelocity().y + m_world_settings->GetGravity();
+      new_velocity.x = m_avatar->GetVelocity().x;
+
+      m_avatar->SetVelocity(new_velocity);
     }
 
     m_avatar->SetPosition(position);
@@ -407,7 +418,7 @@ D3DXVECTOR3 Avatar_Controller::Align_Avatar_On_Right_Foot(Avatar_Controller_Muta
   }
 
   D3DXVECTOR3 right_foot_offset;
-  right_foot_offset.x = last_right_foot_collision_block->avatar_centre_offset_centre_x - current_right_foot_collision_block->avatar_centre_offset_centre_x;
+  right_foot_offset.x = static_cast<float>(last_right_foot_collision_block->avatar_centre_offset_centre_x - current_right_foot_collision_block->avatar_centre_offset_centre_x);
   right_foot_offset.y = 0;//last_right_foot_collision_block->avatar_centre_offset_centre_y - current_right_foot_collision_block->avatar_centre_offset_centre_y;
   right_foot_offset.z = 0;
   
@@ -621,21 +632,6 @@ void Avatar_Controller::UpdateAvatarState(int new_state_index) {
   m_avatar->GetFrame()->vertex_buffer = 0;
   m_avatar->GetFrame()->index_buffer = 0;
   m_avatar->Init();
-}
-
-
-//------------------------------------------------------------------------------
-D3DXVECTOR3 Avatar_Controller::CalculateArc() {
-  D3DXVECTOR3 new_position = m_avatar->GetPosition();
-
-  // update position
-  new_position.x = new_position.x + static_cast<int>(m_current_x_velocity);
-  new_position.y = new_position.y - static_cast<int>(m_current_y_velocity);
-
-  // update velocity
-  m_current_y_velocity = m_current_y_velocity + m_gravity;
-
-  return new_position;
 }
 
 } // Tunnelour

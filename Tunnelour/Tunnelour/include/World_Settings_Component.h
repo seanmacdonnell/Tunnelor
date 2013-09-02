@@ -1,4 +1,4 @@
-//  Copyright 2012 Sean MacDonnell
+//  Copyright 2013 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -13,39 +13,28 @@
 //  limitations under the License.
 //
 
-#ifndef TUNNELOUR_BITMAP_COMPONENT_H_
-#define TUNNELOUR_BITMAP_COMPONENT_H_
+#ifndef TUNNELOUR_WORLD_SETTINGS_COMPONENT_H_
+#define TUNNELOUR_WORLD_SETTINGS_COMPONENT_H_
 
-#include <d3d11.h>
-#include <d3dx10math.h>
-#include <d3dx11tex.h>
-#include "Frame_Component.h"
+#include "Component.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
-//  Description : Bitmap_Component is a component for a renderable 2D Sprite
+//  Description : World_Settings_Component contains all the information
+//                for setting the game up.
 //-----------------------------------------------------------------------------
-class Bitmap_Component: public Tunnelour::Frame_Component {
+class World_Settings_Component: public Tunnelour::Component {
  public:
-  struct Texture {
-    ID3D11ShaderResourceView * texture;
-    std::wstring texture_path;
-    float transparency;
-    D3DXVECTOR2 top_left_position;
-    D3DXVECTOR2 tile_size;
-    D3DXVECTOR2 texture_size;
-  };
-
   //---------------------------------------------------------------------------
   // Description : Constructor
   //---------------------------------------------------------------------------
-  Bitmap_Component();
+  World_Settings_Component();
 
   //---------------------------------------------------------------------------
   // Description : Deconstructor
   //---------------------------------------------------------------------------
-  virtual ~Bitmap_Component();
+  virtual ~World_Settings_Component();
 
   //---------------------------------------------------------------------------
   // Description : Initialise this Component
@@ -53,44 +42,22 @@ class Bitmap_Component: public Tunnelour::Frame_Component {
   virtual void Init();
 
   //---------------------------------------------------------------------------
-  // Description : Accessor for the Texture
+  // Description : Accessor for the gravity
   //---------------------------------------------------------------------------
-  Texture * const GetTexture();
+  int GetGravity();
 
   //---------------------------------------------------------------------------
-  // Description : Mutator for the Texture
+  // Description : Mutator for the gravity
   //---------------------------------------------------------------------------
-  void SetTexture(Texture texture);
-
-  //---------------------------------------------------------------------------
-  // Description : Accessor for the Velocity
-  //---------------------------------------------------------------------------
-  D3DXVECTOR3 GetVelocity();
-
-  //---------------------------------------------------------------------------
-  // Description : Mutator for the Velocity
-  //---------------------------------------------------------------------------
-  void SetVelocity(D3DXVECTOR3 velocity);
-
-  //---------------------------------------------------------------------------
-  // Description : Accessor for the Angle in radians!
-  //---------------------------------------------------------------------------
-  float GetAngle();
-
-  //---------------------------------------------------------------------------
-  // Description : Mutator for the Angle
-  //---------------------------------------------------------------------------
-  void SetAngle(float angle);
+  void SetGravity(int gravity);
 
  protected:
+
+ private:
   //---------------------------------------------------------------------------
   // Description : Class variables
   //---------------------------------------------------------------------------
-  Texture * m_texture;
-  D3DXVECTOR3 m_velocity;
-  float m_angle;
-
- private:
-};  // class Bitmap_Component
+  int m_gravity;
+};
 }  // namespace Tunnelour
-#endif  // TUNNELOUR_BITMAP_COMPONENT_H_
+#endif  // TUNNELOUR_BACKGROUND_COLOR_COMPONENT_H_

@@ -30,6 +30,8 @@ Bitmap_Component::Bitmap_Component(): Frame_Component() {
   m_texture->tile_size = D3DXVECTOR2(0, 0);
   m_texture->texture_size = D3DXVECTOR2(0, 0);
   m_type = "Bitmap_Component";
+  m_velocity = D3DXVECTOR3(0.0, 0.0 , 0.0);
+  m_angle = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -41,6 +43,8 @@ Bitmap_Component::~Bitmap_Component()  {
   m_texture->top_left_position = D3DXVECTOR2(0, 0);
   m_texture->tile_size = D3DXVECTOR2(0, 0);
   m_texture->texture_size = D3DXVECTOR2(0, 0);
+  m_velocity = D3DXVECTOR3(0, 0 ,0);
+  m_angle = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -57,6 +61,26 @@ Tunnelour::Bitmap_Component::Texture * const Bitmap_Component::GetTexture() {
 void Bitmap_Component::SetTexture(Tunnelour::Bitmap_Component::Texture texture) {
   delete m_texture;
   *m_texture = texture;
+}
+
+//---------------------------------------------------------------------------
+D3DXVECTOR3 Bitmap_Component::GetVelocity() {
+  return m_velocity;
+}
+
+//---------------------------------------------------------------------------
+void Bitmap_Component::SetVelocity(D3DXVECTOR3 velocity) {
+  m_velocity = velocity;
+}
+
+//---------------------------------------------------------------------------
+float Bitmap_Component::GetAngle() {
+  return m_angle;
+}
+
+//---------------------------------------------------------------------------
+void Bitmap_Component::SetAngle(float angle) {
+  m_angle = angle;
 }
 
 //------------------------------------------------------------------------------

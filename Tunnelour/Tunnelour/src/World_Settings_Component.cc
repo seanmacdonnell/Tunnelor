@@ -1,4 +1,4 @@
-//  Copyright 2012 Sean MacDonnell
+//  Copyright 2013 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -13,9 +13,6 @@
 //  limitations under the License.
 //
 
-#include "Init_Controller.h"
-#include "Camera_Component.h"
-#include "Game_Settings_Component.h"
 #include "World_Settings_Component.h"
 
 namespace Tunnelour {
@@ -23,30 +20,29 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 // public:
 //------------------------------------------------------------------------------
-Init_Controller::Init_Controller() : Controller() {
+World_Settings_Component::World_Settings_Component(): Component() {
+  m_type = "World_Settings_Component";
+  m_gravity = 0;
 }
 
 //------------------------------------------------------------------------------
-Init_Controller::~Init_Controller() {
+World_Settings_Component::~World_Settings_Component() {
 }
 
 //------------------------------------------------------------------------------
-void Init_Controller::Init(Tunnelour::Component_Composite * const model) {
-  Tunnelour::Controller::Init(model);
+void World_Settings_Component::Init() {
+  //Default Values
+  m_gravity = 10;
 }
 
 //------------------------------------------------------------------------------
-void Init_Controller::Run() {
-  // DO NOT DELETE THESE. PASSING DELETE CONTROL TO THE MODEL FOR THESE.
-  Tunnelour::Component * game_settings = 0;
-  game_settings = m_model->Add(new Tunnelour::Game_Settings_Component());
-  game_settings->Init();
+int World_Settings_Component::GetGravity() {
+  return m_gravity;
+}
 
-  Tunnelour::Component * world_settings = 0;
-  world_settings = m_model->Add(new Tunnelour::World_Settings_Component());
-  world_settings->Init();
-
-  m_is_finished = true;
+//------------------------------------------------------------------------------
+void World_Settings_Component::SetGravity(int gravity) {
+  m_gravity = gravity;
 }
 
 //------------------------------------------------------------------------------
