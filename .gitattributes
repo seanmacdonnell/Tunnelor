@@ -1,4 +1,5 @@
 * text=auto !eol
+Tunnelour/Tunnelour.opensdf -text
 Tunnelour/Tunnelour.sln -text
 Tunnelour/Tunnelour.suo -text
 Tunnelour/Tunnelour/Tunnelour.vcxproj -text
@@ -58,18 +59,18 @@ Tunnelour/Tunnelour/resource/Direct3D11_View_FontVertexShader.vs -text
 Tunnelour/Tunnelour/resource/Direct3D11_View_TransparentPixelShader.ps -text
 Tunnelour/Tunnelour/resource/Direct3D11_View_TransparentVertexShader.vs -text
 Tunnelour/Tunnelour/resource/tilesets/Ariel.fnt -text
-Tunnelour/Tunnelour/resource/tilesets/Ariel_0.dds -text
-Tunnelour/Tunnelour/resource/tilesets/Charlie_Falling_Animation_Tileset_1_0.dds -text
-Tunnelour/Tunnelour/resource/tilesets/Charlie_Falling_Animation_Tileset_1_0.txt -text
-Tunnelour/Tunnelour/resource/tilesets/Charlie_Running_Animation_Tileset_1_0.dds -text
+Tunnelour/Tunnelour/resource/tilesets/Ariel_0.png -text
+Tunnelour/Tunnelour/resource/tilesets/Charlie_Falling_Animation_Tileset_1_1.png -text
+Tunnelour/Tunnelour/resource/tilesets/Charlie_Falling_Animation_Tileset_1_1.txt -text
+Tunnelour/Tunnelour/resource/tilesets/Charlie_Running_Animation_Tileset_1_1.png -text
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Running_Animation_Tileset_1_1.txt -text
-Tunnelour/Tunnelour/resource/tilesets/Charlie_Standing_Animation_Tileset_1_0.dds -text
+Tunnelour/Tunnelour/resource/tilesets/Charlie_Standing_Animation_Tileset_1_1.png -text
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Standing_Animation_Tileset_1_1.txt -text
-Tunnelour/Tunnelour/resource/tilesets/Charlie_Walking_Animation_Tileset_1_5.dds -text
+Tunnelour/Tunnelour/resource/tilesets/Charlie_Walking_Animation_Tileset_1_5.png -text
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Walking_Animation_Tileset_1_5.txt -text
-Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_4.dds -text
+Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_4.png -text
 Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_4.txt -text
-Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_5.dds -text
+Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_5.png -text
 Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_5.txt -text
 Tunnelour/Tunnelour/src/Avatar_Component.cc -text
 Tunnelour/Tunnelour/src/Avatar_Controller.cc -text

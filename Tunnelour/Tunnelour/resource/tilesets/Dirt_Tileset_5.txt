@@ -1,6 +1,6 @@
 Tileset_Name "Dirt"
 Tileset_Type "Tileset"
-Tileset_FileName "Dirt_Tileset_5.dds"
+Tileset_FileName "Dirt_Tileset_5.png"
 Tileset_TopLeftX "0"
 Tileset_TopLeftY "0"
 Tileset_SizeX "1280"

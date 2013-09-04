@@ -99,7 +99,7 @@ void Avatar_Controller::Run_Avatar_State(Avatar_Controller_Mutator *mutator) {
     Run_Standing_State(mutator);
   } else if (current_state.compare("Walking") == 0) {
     Run_Walking_State(mutator);
-  } else if (current_state.compare("Falling") == 0 || current_state.compare("Walking_To_Falling") == 0 || current_state.compare("Falling_To_Standing") == 0 ) {
+  } else if (current_state.compare("Falling_Flip") == 0  || current_state.compare("Falling") == 0 || current_state.compare("Walking_To_Falling") == 0 || current_state.compare("Falling_To_Standing") == 0 ) {
     Run_Falling_State(mutator);
   }
 
@@ -171,13 +171,10 @@ void Avatar_Controller::Run_Walking_State(Avatar_Controller_Mutator *mutator) {
 
       D3DXVECTOR3 position = m_avatar->GetPosition();
       if (current_state.direction.compare("Right") == 0) {
-        position = Align_Avatar_On_Right_Foot(mutator);
-        //position.x += 8;
+        position += m_avatar->GetVelocity();
       } else { // Left
-        //position.x -= 8;
-        position = Align_Avatar_On_Right_Foot(mutator);
+        position -= m_avatar->GetVelocity();
       }
-
       m_avatar->SetPosition(position);
     }
 
@@ -238,6 +235,8 @@ void Avatar_Controller::Run_Falling_State(Avatar_Controller_Mutator *mutator) {
       m_avatar->SetPosition(position);
     }
   } else {
+    D3DXVECTOR3 position = m_avatar->GetPosition();
+
     unsigned int state_index = current_state.state_index;
     state_index++;
     if (state_index > (m_current_animation_subset.number_of_frames - 1)) {
@@ -245,29 +244,35 @@ void Avatar_Controller::Run_Falling_State(Avatar_Controller_Mutator *mutator) {
         state_index = 0; 
       } else {
         if (current_state.state.compare("Walking_To_Falling") == 0) {
+          ChangeAvatarState("Falling_Flip", m_avatar->GetState().direction);
+          state_index = 0;
+          current_state = m_avatar->GetState();
+        } else if (current_state.state.compare("Falling_Flip") == 0) {
           ChangeAvatarState("Falling", m_avatar->GetState().direction);
           state_index = 0;
+          current_state = m_avatar->GetState();
         } else {
           throw Tunnelour::Exceptions::init_error("No handling for non-repeating falling animtions yet");
         }
       }
+    } else {
+      UpdateAvatarState(state_index);
     }
 
-    UpdateAvatarState(state_index);
-
-    D3DXVECTOR3 position = m_avatar->GetPosition();
-  
     if (current_state.state.compare("Walking_To_Falling") == 0) {
       position = Align_Avatar_On_Right_Foot(mutator);
     } else {
-      position.x = position.x + m_avatar->GetVelocity().x;
-      position.y = position.y - m_avatar->GetVelocity().y;
+      if (state_index == 0) {
+        position = Align_Avatar_On_Right_Foot(mutator);
+      }
 
       D3DXVECTOR3 new_velocity = D3DXVECTOR3(0, 0 , 0);
       new_velocity.y = m_avatar->GetVelocity().y + m_world_settings->GetGravity();
       new_velocity.x = m_avatar->GetVelocity().x;
 
       m_avatar->SetVelocity(new_velocity);
+      position.x = position.x + m_avatar->GetVelocity().x;
+      position.y = position.y - m_avatar->GetVelocity().y;
     }
 
     m_avatar->SetPosition(position);
@@ -391,7 +396,7 @@ void Avatar_Controller::Load_Tilesets(std::wstring wtileset_path) {
   m_animation_metadata.push_back(m_standing_metadata);
  
   // Falling
-  m_falling_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Falling_Animation_Tileset_1_0.txt");
+  m_falling_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Falling_Animation_Tileset_1_1.txt");
   Tileset_Helper::Load_Tileset_Metadata_Into_Struct(m_falling_metadata_file_path, m_falling_metadata);
   m_animation_metadata.push_back(m_falling_metadata);
 }
@@ -400,7 +405,6 @@ void Avatar_Controller::Load_Tilesets(std::wstring wtileset_path) {
 D3DXVECTOR3 Avatar_Controller::Align_Avatar_On_Right_Foot(Avatar_Controller_Mutator *mutator) {
   D3DXVECTOR3 new_avatar_position;
 
-  // Go through the contact blocks and find the lowest contact block
   Avatar_Component::Collision_Block* current_right_foot_collision_block = 0;
   std::list<Avatar_Component::Collision_Block> current_collision_blocks = m_avatar->GetState().collision_blocks;
   for (std::list<Avatar_Component::Collision_Block>::iterator collision_block = current_collision_blocks.begin(); collision_block != current_collision_blocks.end(); collision_block++) {
@@ -419,13 +423,8 @@ D3DXVECTOR3 Avatar_Controller::Align_Avatar_On_Right_Foot(Avatar_Controller_Muta
 
   D3DXVECTOR3 right_foot_offset;
   right_foot_offset.x = static_cast<float>(last_right_foot_collision_block->avatar_centre_offset_centre_x - current_right_foot_collision_block->avatar_centre_offset_centre_x);
-  right_foot_offset.y = 0;//last_right_foot_collision_block->avatar_centre_offset_centre_y - current_right_foot_collision_block->avatar_centre_offset_centre_y;
+  right_foot_offset.y = static_cast<float>(last_right_foot_collision_block->avatar_centre_offset_centre_y - current_right_foot_collision_block->avatar_centre_offset_centre_y);
   right_foot_offset.z = 0;
-  
-
-  // TODO: This experement was a failure, just move the avatar 6 pixels untill I fix
-  //       the walking animation to be more natural.
-  right_foot_offset.x = 8;
 
   if (m_avatar->GetState().direction.compare("Right") == 0 && right_foot_offset.x < 0) {
     right_foot_offset.x = right_foot_offset.x * -1;
@@ -434,22 +433,8 @@ D3DXVECTOR3 Avatar_Controller::Align_Avatar_On_Right_Foot(Avatar_Controller_Muta
   if (m_avatar->GetState().direction.compare("Left") == 0 && right_foot_offset.x > 0) {
     right_foot_offset.x = right_foot_offset.x * -1;
   }
-  
-  /*
-  if (m_avatar->GetState().direction.compare("Right") == 0 && right_foot_offset.x < 8) {
-    right_foot_offset.x = 4;
-  }
-
-  if (m_avatar->GetState().direction.compare("Left") == 0 && right_foot_offset.x > -8) {
-    right_foot_offset.x = -4;
-  }
-  */
 
   D3DXVECTOR3 current_avatar_position = m_avatar->GetPosition();
-  //new_avatar_position.x = static_cast<float>(m_avatar->GetPosition().x + right_foot_collision_block->avatar_centre_offset_centre_x);
-  //new_avatar_position.y = static_cast<float>(m_avatar->GetPosition().y + right_foot_collision_block->avatar_centre_offset_centre_y);
-  //new_avatar_position.z = static_cast<float>(-2);
-
   new_avatar_position = current_avatar_position + right_foot_offset;
 
   return new_avatar_position;
@@ -586,11 +571,6 @@ void Avatar_Controller::UpdateAvatarState(int new_state_index) {
   incremented_state.state_index = new_state_index;
   m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(m_current_animation_subset.top_left_x + (new_state_index * m_current_animation_subset.tile_size_x)),
                                                           static_cast<float>(m_current_animation_subset.top_left_y * -1));
-
-  bool stop = false;
-  if (new_state_index != 0) {
-    bool stop = true;
-  }
 
   for (std::list<Tileset_Helper::Frame_Metadata>::iterator frames = m_current_animation_subset.frames.begin(); frames != m_current_animation_subset.frames.end(); frames++) {
     if (frames->id == (new_state_index + 1)) {

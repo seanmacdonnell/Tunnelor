@@ -1,6 +1,6 @@
 Tileset_Name "Charlie_Standing"
 Tileset_Type "Animation"
-Tileset_FileName "Charlie_Standing_Animation_Tileset_1_0.dds"
+Tileset_FileName "Charlie_Standing_Animation_Tileset_1_1.png"
 Tileset_TopLeftX "0"
 Tileset_TopLeftY "0"
 Tileset_SizeX "2048"

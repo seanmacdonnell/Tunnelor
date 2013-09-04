@@ -1,6 +1,6 @@
 Tileset_Name "Debug Tilset"
 Tileset_Type "Tileset"
-Tileset_FileName "Debug_Tileset_0_4.dds"
+Tileset_FileName "Debug_Tileset_0_4.png"
 Tileset_TopLeftX "0"
 Tileset_TopLeftY "0"
 Tileset_SizeX "512"
