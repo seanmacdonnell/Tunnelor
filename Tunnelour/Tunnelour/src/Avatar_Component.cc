@@ -47,7 +47,7 @@ Avatar_Component::~Avatar_Component() {
 
   m_last_state.state = "";
   m_last_state.direction = "";
-  m_last_state.state_index = 0;  
+  m_last_state.state_index = 0;
 
   m_command.state = "";
   m_command.direction = "";
@@ -128,7 +128,7 @@ void Avatar_Component::Init_Frame() {
 
   // Calculate the screen coordinates of the right side of the bitmap.
   right = m_position.x + static_cast<float>(m_size.x / 2);
-  
+
   // Calculate the screen coordinates of the top of the bitmap.
   top = m_position.y + static_cast<float>(m_size.x / 2);
 
@@ -148,7 +148,7 @@ void Avatar_Component::Init_Frame() {
     m_frame->vertices[0].texture =  D3DXVECTOR2(m_texture->top_left_position.x / m_texture->texture_size.x,
                                                 m_texture->top_left_position.y / m_texture->texture_size.y);
   } else {
-    //TOP Left NOW TOP Right
+    // TOP Left NOW TOP Right
     m_frame->vertices[0].texture = D3DXVECTOR2((m_texture->tile_size.x + m_texture->top_left_position.x) / m_texture->texture_size.x,
                                                 m_texture->top_left_position.y / m_texture->texture_size.y);
   }

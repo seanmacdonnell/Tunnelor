@@ -32,11 +32,12 @@ class Avatar_Component: public Tunnelour::Bitmap_Component {
    struct Collision_Block {
      std::string id;
      bool is_contacting;
-     int avatar_centre_offset_centre_x, avatar_centre_offset_centre_y;
-     int size_x, size_y;
+     D3DXVECTOR3 offset_from_avatar_centre;
+     D3DXVECTOR2 size;
    };
 
   struct Avatar_State {
+    std::string parent_state;
     std::string state;
     unsigned int state_index;
     std::string direction;

@@ -141,6 +141,16 @@ class Avatar_Controller: public Tunnelour::Controller {
   void UpdateAvatarState(int new_state_index);
 
   //---------------------------------------------------------------------------
+  // Description : Returns the lowest collision block on the avatar
+  //---------------------------------------------------------------------------
+  Avatar_Component::Collision_Block* GetLowestCollisionBlock();
+
+  //---------------------------------------------------------------------------
+  // Description : Creates a Bitmap Component using the given collision block
+  //---------------------------------------------------------------------------
+  Tunnelour::Bitmap_Component Collision_Block_To_Bitmap_Component(Avatar_Component::Collision_Block* collision_block);
+
+  //---------------------------------------------------------------------------
   // Member Variables
   //---------------------------------------------------------------------------
   Tunnelour::Avatar_Component *m_avatar;

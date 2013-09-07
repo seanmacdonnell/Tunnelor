@@ -94,22 +94,33 @@ class Frame_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   // Description : Mutator for the Size
   //---------------------------------------------------------------------------
-  D3DXVECTOR2 * const GetSize();
+  D3DXVECTOR2 GetSize();
 
   //---------------------------------------------------------------------------
   // Description : Mutator for the Size
   //---------------------------------------------------------------------------
-  void SetSize(D3DXVECTOR2 * const size);
+  void SetSize(D3DXVECTOR2 size);
 
   //---------------------------------------------------------------------------
   // Description : Mutator for the Size
   //---------------------------------------------------------------------------
-  void SetSize(const float size_x, const float size_y);
+  void SetSize(float size_x, float size_y);
 
   //---------------------------------------------------------------------------
   // Description : Returns the calculated centre point of the frame
   //---------------------------------------------------------------------------
   D3DXVECTOR3 const GetFrameCentre();
+
+  //---------------------------------------------------------------------------
+  // Description : Returns the calculated Top Left Position of the frame
+  //---------------------------------------------------------------------------
+  D3DXVECTOR3 GetTopLeftPostion();
+
+  //---------------------------------------------------------------------------
+  // Description : Returns the calculated Bottom Right Position of the frame
+  //---------------------------------------------------------------------------
+  D3DXVECTOR3 GetBottomRightPostion();
+
 
  protected:
   //---------------------------------------------------------------------------
@@ -118,6 +129,7 @@ class Frame_Component: public Tunnelour::Component {
   D3DXVECTOR3 m_position;
   D3DXVECTOR3 m_scale;
   D3DXVECTOR2 m_size;
+
   Frame  * m_frame;
 
  private:

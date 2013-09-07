@@ -53,13 +53,20 @@ void Avatar_Controller::Run() {
   Avatar_Controller_Mutator mutator;
   m_model->Apply(&mutator);
   if (!m_has_avatar_been_generated) {
-    if (mutator.FoundGameSettings() && mutator.FoundBorderTiles() && mutator.FoundWorldSettings())  {
+    m_has_avatar_been_generated = true;
+    if (mutator.FoundGameSettings())  {
       m_game_settings = mutator.GetGameSettings();
-      Load_Tilesets(m_game_settings->GetTilesetPath());
+      if (m_game_settings == 0) { m_has_avatar_been_generated = false; }
+    }
+    if (mutator.FoundWorldSettings()) {
       m_world_settings = mutator.GetWorldSettings();
+      if (m_world_settings == 0) { m_has_avatar_been_generated = false; }
+    }
+    if (m_avatar == 0) {
+      Load_Tilesets(m_game_settings->GetTilesetPath());
       Generate_Avatar_Tile();
       m_model->Add(m_avatar);
-      m_has_avatar_been_generated = true;
+      if (m_avatar == 0) { m_has_avatar_been_generated = false; }
     }
   } else {
     // Is the avatar currenly not contacting the ground
@@ -86,20 +93,20 @@ void Avatar_Controller::Generate_Avatar_Tile() {
   Avatar_Component::Avatar_State initial_state;
   initial_state.direction = "Right";
   m_avatar->SetState(initial_state);
-  m_avatar->SetPosition(D3DXVECTOR3(0, 0, -2)); // Middleground Z Space is -1
+  m_avatar->SetPosition(D3DXVECTOR3(0, 0, -2));  // Middleground Z Space is -1
   ChangeAvatarState("Standing", initial_state.direction);
 }
 
 //------------------------------------------------------------------------------
 void Avatar_Controller::Run_Avatar_State(Avatar_Controller_Mutator *mutator) {
-  std::string current_state = m_avatar->GetState().state;
+  std::string current_state = m_avatar->GetState().parent_state;
 
   // Is the avatar currently in a standing state
-  if (current_state.compare("Standing") == 0) {
+  if (current_state.compare("Charlie_Standing") == 0) {
     Run_Standing_State(mutator);
-  } else if (current_state.compare("Walking") == 0) {
+  } else if (current_state.compare("Charlie_Walking") == 0) {
     Run_Walking_State(mutator);
-  } else if (current_state.compare("Falling_Flip") == 0  || current_state.compare("Falling") == 0 || current_state.compare("Walking_To_Falling") == 0 || current_state.compare("Falling_To_Standing") == 0 ) {
+  } else if (current_state.compare("Charlie_Falling") == 0) {
     Run_Falling_State(mutator);
   }
 
@@ -108,8 +115,8 @@ void Avatar_Controller::Run_Avatar_State(Avatar_Controller_Mutator *mutator) {
 
 //------------------------------------------------------------------------------
 void Avatar_Controller::Run_Standing_State(Avatar_Controller_Mutator *mutator) {
-  m_avatar->SetAngle(static_cast<float>(0.0)); // in radians
-  m_avatar->SetVelocity(D3DXVECTOR3(8, 0 ,0));
+  m_avatar->SetAngle(static_cast<float>(0.0));  // in radians
+  m_avatar->SetVelocity(D3DXVECTOR3(8, 0, 0));
 
   Avatar_Component::Avatar_State current_state = m_avatar->GetState();
   Avatar_Component::Avatar_State current_command = m_avatar->GetCommand();
@@ -126,9 +133,11 @@ void Avatar_Controller::Run_Standing_State(Avatar_Controller_Mutator *mutator) {
     state_index++;
     if (state_index > (m_current_animation_subset.number_of_frames - 1)) {
       if (m_current_animation_subset.is_repeatable) {
-        state_index = 0; 
+        state_index = 0;
       } else {
-        throw Tunnelour::Exceptions::init_error("No handling for non-repeating standing animtions yet");
+        std::string error;
+        error = "No handling for the non-repeating animation: " + current_command.state;
+        throw Tunnelour::Exceptions::init_error(error);
       }
     }
 
@@ -143,15 +152,16 @@ void Avatar_Controller::Run_Standing_State(Avatar_Controller_Mutator *mutator) {
 
 //------------------------------------------------------------------------------
 void Avatar_Controller::Run_Walking_State(Avatar_Controller_Mutator *mutator) {
-  m_avatar->SetAngle(static_cast<float>(0.0)); // in radians
+  m_avatar->SetAngle(static_cast<float>(0.0));  // in radians
   m_avatar->SetVelocity(D3DXVECTOR3(8, 0 , 0));
 
   Avatar_Component::Avatar_State current_state = m_avatar->GetState();
   Avatar_Component::Avatar_State current_command = m_avatar->GetCommand();
-  if (current_command.state.compare("") != 0) { 
+  if (current_command.state.compare("") != 0) {
     // There is a command
     //  Is the command different from the current state?
-    if (current_state.state.compare(current_command.state) != 0 || current_state.direction != current_command.direction) {
+    if (current_state.state.compare(current_command.state) != 0 ||
+        current_state.direction != current_command.direction) {
       // New State
       ChangeAvatarState(current_command.state, current_command.direction);
     } else {
@@ -161,9 +171,11 @@ void Avatar_Controller::Run_Walking_State(Avatar_Controller_Mutator *mutator) {
       state_index++;
       if (state_index > (m_current_animation_subset.number_of_frames - 1)) {
         if (m_current_animation_subset.is_repeatable) {
-          state_index = 0; 
+          state_index = 0;
         } else {
-          throw Tunnelour::Exceptions::init_error("No handling for non-repeating walking animtions yet");
+          std::string error;
+          error = "No handling for the non-repeating animation: " + current_command.state;
+          throw Tunnelour::Exceptions::init_error(error);
         }
       }
 
@@ -172,7 +184,7 @@ void Avatar_Controller::Run_Walking_State(Avatar_Controller_Mutator *mutator) {
       D3DXVECTOR3 position = m_avatar->GetPosition();
       if (current_state.direction.compare("Right") == 0) {
         position += m_avatar->GetVelocity();
-      } else { // Left
+      } else {  // Left
         position -= m_avatar->GetVelocity();
       }
       m_avatar->SetPosition(position);
@@ -203,29 +215,32 @@ void Avatar_Controller::Run_Walking_State(Avatar_Controller_Mutator *mutator) {
 void Avatar_Controller::Run_Falling_State(Avatar_Controller_Mutator *mutator) {
   Avatar_Component::Avatar_State current_state = m_avatar->GetState();
 
-  // If the avatar is currently intersecting with a tile, move him to the top of the tile
   std::list<Tunnelour::Bitmap_Component*> out_colliding_border_tiles;
   Tunnelour::Bitmap_Component* out_collision_block = new Tunnelour::Bitmap_Component();
   if (current_state.state.compare("Falling_To_Standing") == 0) {
-    if (Is_Avatar_Platform_Colliding(mutator, &out_colliding_border_tiles, out_collision_block)) {
-      //Move to the top of the tile
+    bool is_colliding = Is_Avatar_Platform_Colliding(mutator,
+                                                    &out_colliding_border_tiles,
+                                                     out_collision_block);
+    if (is_colliding) {
+      // Avatar has landed, move the avatar to the top of the tile
       bool is_tangent = false;
-      int tile_top;
-      for (std::list<Tunnelour::Bitmap_Component*>::iterator it = out_colliding_border_tiles.begin(); it != out_colliding_border_tiles.end(); it++) {
-        tile_top = static_cast<int>((*it)->GetPosition().y + (*it)->GetSize()->y / 2);
-        int collision_block_bottom = static_cast<int>(out_collision_block->GetPosition().y - (out_collision_block->GetSize()->y /2));
+      float tile_top = 0;
 
-        if (tile_top == collision_block_bottom) {
+      std::list<Tunnelour::Bitmap_Component*>::iterator it;
+      it = out_colliding_border_tiles.begin();
+      for (; it != out_colliding_border_tiles.end(); it++) {
+        tile_top = (*it)->GetTopLeftPostion().y;
+        float block_bottom = out_collision_block->GetBottomRightPostion().y;
+        if (tile_top == block_bottom) {
           is_tangent = true;
         }
       }
 
-      // Move the avatar to the top of the tile
       D3DXVECTOR3 avatar_position = m_avatar->GetPosition();
-      int foot_bottom = static_cast<int>(out_collision_block->GetPosition().y - (out_collision_block->GetSize()->y / 2));
-      int foot_bottom_centre_offset = foot_bottom - static_cast<int>(avatar_position.y);
+      float foot_bottom = out_collision_block->GetBottomRightPostion().y;
+      float foot_bottom_centre_offset = foot_bottom - avatar_position.y;
 
-      avatar_position.y = static_cast<float>(tile_top - foot_bottom_centre_offset);
+      avatar_position.y = tile_top - foot_bottom_centre_offset;
       m_avatar->SetPosition(avatar_position);
 
       ChangeAvatarState("Standing", m_avatar->GetState().direction);
@@ -241,7 +256,7 @@ void Avatar_Controller::Run_Falling_State(Avatar_Controller_Mutator *mutator) {
     state_index++;
     if (state_index > (m_current_animation_subset.number_of_frames - 1)) {
       if (m_current_animation_subset.is_repeatable) {
-        state_index = 0; 
+        state_index = 0;
       } else {
         if (current_state.state.compare("Walking_To_Falling") == 0) {
           ChangeAvatarState("Falling_Flip", m_avatar->GetState().direction);
@@ -252,7 +267,9 @@ void Avatar_Controller::Run_Falling_State(Avatar_Controller_Mutator *mutator) {
           state_index = 0;
           current_state = m_avatar->GetState();
         } else {
-          throw Tunnelour::Exceptions::init_error("No handling for non-repeating falling animtions yet");
+          std::string error;
+          error = "No handling for the non-repeating animation: " + current_state.state;
+          throw Tunnelour::Exceptions::init_error(error);
         }
       }
     } else {
@@ -296,7 +313,7 @@ bool Avatar_Controller::Is_Avatar_Platform_Adjacent(Avatar_Controller_Mutator *m
       if (lowest_collision_block == 0) {
         lowest_collision_block = &(*(collision_block));
       }
-      if ((collision_block->avatar_centre_offset_centre_y - collision_block->size_y) < (lowest_collision_block->avatar_centre_offset_centre_y - lowest_collision_block->size_y)) {
+      if ((collision_block->offset_from_avatar_centre.y - collision_block->size.y) < (lowest_collision_block->offset_from_avatar_centre.y - lowest_collision_block->size.y)) {
         lowest_collision_block = &(*(collision_block));
       }
     }
@@ -304,12 +321,12 @@ bool Avatar_Controller::Is_Avatar_Platform_Adjacent(Avatar_Controller_Mutator *m
     // Make a frame for the lowest avatar collision block
     Bitmap_Component lowest_collision_block_frame;
     D3DXVECTOR3 lowest_collision_block_frame_centre_position;
-    lowest_collision_block_frame_centre_position.x = static_cast<float>(m_avatar->GetPosition().x + lowest_collision_block->avatar_centre_offset_centre_x);
-    lowest_collision_block_frame_centre_position.y = static_cast<float>(m_avatar->GetPosition().y + lowest_collision_block->avatar_centre_offset_centre_y);
+    lowest_collision_block_frame_centre_position.x = static_cast<float>(m_avatar->GetPosition().x + lowest_collision_block->offset_from_avatar_centre.x);
+    lowest_collision_block_frame_centre_position.y = static_cast<float>(m_avatar->GetPosition().y + lowest_collision_block->offset_from_avatar_centre.y);
     lowest_collision_block_frame_centre_position.z = static_cast<float>(-2);
 
     lowest_collision_block_frame.SetPosition(lowest_collision_block_frame_centre_position);
-    lowest_collision_block_frame.SetSize(static_cast<float>(lowest_collision_block->size_x), static_cast<float>(lowest_collision_block->size_y));
+    lowest_collision_block_frame.SetSize(static_cast<float>(lowest_collision_block->size.x), static_cast<float>(lowest_collision_block->size.y));
 
     // Cull the border tiles which are not within the x range of the lowest avatar collision block
     std::list<Tunnelour::Bitmap_Component*> colliding_border_tiles;
@@ -340,24 +357,16 @@ bool Avatar_Controller::Is_Avatar_Platform_Colliding(Avatar_Controller_Mutator *
   if (mutator->FoundBorderTiles()) {
     // Go through the contact blocks and find the lowest contact block
     Avatar_Component::Collision_Block* lowest_collision_block = 0;
-    std::list<Avatar_Component::Collision_Block> collision_blocks = m_avatar->GetState().collision_blocks;
-    for (std::list<Avatar_Component::Collision_Block>::iterator collision_block = collision_blocks.begin(); collision_block != collision_blocks.end(); collision_block++) {
-      if (lowest_collision_block == 0) {
-        lowest_collision_block = &(*(collision_block));
-      }
-      if ((collision_block->avatar_centre_offset_centre_y - collision_block->size_y) < (lowest_collision_block->avatar_centre_offset_centre_y - lowest_collision_block->size_y)) {
-        lowest_collision_block = &(*(collision_block));
-      }
-    }
+    lowest_collision_block = GetLowestCollisionBlock();
 
     // Make a frame for the lowest avatar collision block
     D3DXVECTOR3 lowest_collision_block_frame_centre_position;
-    lowest_collision_block_frame_centre_position.x = static_cast<float>(m_avatar->GetPosition().x + lowest_collision_block->avatar_centre_offset_centre_x);
-    lowest_collision_block_frame_centre_position.y = static_cast<float>(m_avatar->GetPosition().y + lowest_collision_block->avatar_centre_offset_centre_y);
+    lowest_collision_block_frame_centre_position.x = static_cast<float>(m_avatar->GetPosition().x + lowest_collision_block->offset_from_avatar_centre.x);
+    lowest_collision_block_frame_centre_position.y = static_cast<float>(m_avatar->GetPosition().y + lowest_collision_block->offset_from_avatar_centre.y);
     lowest_collision_block_frame_centre_position.z = static_cast<float>(-2);
 
     out_collision_block->SetPosition(lowest_collision_block_frame_centre_position);
-    out_collision_block->SetSize(static_cast<float>(lowest_collision_block->size_x), static_cast<float>(lowest_collision_block->size_y));
+    out_collision_block->SetSize(static_cast<float>(lowest_collision_block->size.x), static_cast<float>(lowest_collision_block->size.y));
 
     // Cull the border tiles which are not within the x range of the lowest avatar collision block
     std::list<Tunnelour::Bitmap_Component*> border_tiles = mutator->GetBorderTiles();
@@ -394,7 +403,7 @@ void Avatar_Controller::Load_Tilesets(std::wstring wtileset_path) {
   m_standing_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Standing_Animation_Tileset_1_1.txt");
   Tileset_Helper::Load_Tileset_Metadata_Into_Struct(m_standing_metadata_file_path, m_standing_metadata);
   m_animation_metadata.push_back(m_standing_metadata);
- 
+
   // Falling
   m_falling_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Falling_Animation_Tileset_1_1.txt");
   Tileset_Helper::Load_Tileset_Metadata_Into_Struct(m_falling_metadata_file_path, m_falling_metadata);
@@ -422,8 +431,8 @@ D3DXVECTOR3 Avatar_Controller::Align_Avatar_On_Right_Foot(Avatar_Controller_Muta
   }
 
   D3DXVECTOR3 right_foot_offset;
-  right_foot_offset.x = static_cast<float>(last_right_foot_collision_block->avatar_centre_offset_centre_x - current_right_foot_collision_block->avatar_centre_offset_centre_x);
-  right_foot_offset.y = static_cast<float>(last_right_foot_collision_block->avatar_centre_offset_centre_y - current_right_foot_collision_block->avatar_centre_offset_centre_y);
+  right_foot_offset.x = static_cast<float>(last_right_foot_collision_block->offset_from_avatar_centre.x - current_right_foot_collision_block->offset_from_avatar_centre.x);
+  right_foot_offset.y = static_cast<float>(last_right_foot_collision_block->offset_from_avatar_centre.y - current_right_foot_collision_block->offset_from_avatar_centre.y);
   right_foot_offset.z = 0;
 
   if (m_avatar->GetState().direction.compare("Right") == 0 && right_foot_offset.x < 0) {
@@ -442,41 +451,39 @@ D3DXVECTOR3 Avatar_Controller::Align_Avatar_On_Right_Foot(Avatar_Controller_Muta
 
 //------------------------------------------------------------------------------
 bool Avatar_Controller::Init_Timer() {
-	// Check to see if this system supports high performance timers.
-	QueryPerformanceFrequency((LARGE_INTEGER*)&m_frequency);
-	if(m_frequency == 0)
-	{
-		return false;
-	}
+  // Check to see if this system supports high performance timers.
+  QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&m_frequency));
 
-	// Find out how many times the frequency counter ticks every millisecond.
-	m_ticksPerMs = (float)(m_frequency / 1000);
+  if (m_frequency == 0) {
+    return false;
+  }
 
-	QueryPerformanceCounter((LARGE_INTEGER*)&m_startTime);
+  // Find out how many times the frequency counter ticks every millisecond.
+  m_ticksPerMs = static_cast<float>(m_frequency / 1000);
 
-	return true;
+  QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&m_startTime));
+
+  return true;
 }
 
 //------------------------------------------------------------------------------
 void Avatar_Controller::Update_Timer() {
- //avatar is 16 fps one frame every 62.5 milliseond
- // Avatar 24 fps is 1000/24 = 41.66666666666667
   int frames_per_millisecond = static_cast<int>(1000/m_current_animation_fps);
 
-	INT64 currentTime;
-	float timeDifference;
+  INT64 currentTime;
+  float timeDifference;
 
-	QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
+  QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&currentTime));
 
-	timeDifference = (float)(currentTime - m_startTime);
+  timeDifference = static_cast<float>(currentTime - m_startTime);
 
-	m_frameTime = timeDifference / m_ticksPerMs;
+  m_frameTime = timeDifference / m_ticksPerMs;
 
- if (m_frameTime >= frames_per_millisecond) {
-   m_startTime = currentTime;
-   m_frameTime = static_cast<float>(m_frameTime - frames_per_millisecond);
-   m_animation_tick = true;
- }
+  if (m_frameTime >= frames_per_millisecond) {
+    m_startTime = currentTime;
+    m_frameTime = static_cast<float>(m_frameTime - frames_per_millisecond);
+    m_animation_tick = true;
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -494,13 +501,16 @@ void Avatar_Controller::ChangeAvatarState(std::string new_state_name, std::strin
         new_state_metadata = &(*metadata);
         new_state.direction = direction;
         new_state.state = new_state_name;
+        new_state.parent_state = metadata->name;
       }
     }
   }
 
   if (new_state_metadata == 0) {
-    throw Tunnelour::Exceptions::init_error("Animation not found in metadata list!" + new_state_name);  
+    throw Tunnelour::Exceptions::init_error("Animation not found in metadata list!" + new_state_name);
   }
+
+  
 
   new_state.state_index = 0;
   std::wstring texture_path = m_game_settings->GetTilesetPath();
@@ -513,7 +523,7 @@ void Avatar_Controller::ChangeAvatarState(std::string new_state_name, std::strin
                                                   static_cast<float>(new_animation_subset.tile_size_y));
   m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(new_animation_subset.top_left_x),
                                                           static_cast<float>((new_animation_subset.top_left_y) * -1));
-  m_avatar->SetSize(new D3DXVECTOR2(static_cast<float>(new_animation_subset.tile_size_x), static_cast<float>(new_animation_subset.tile_size_y)));
+  m_avatar->SetSize(D3DXVECTOR2(static_cast<float>(new_animation_subset.tile_size_x), static_cast<float>(new_animation_subset.tile_size_y)));
 
   for (std::list<Tileset_Helper::Frame_Metadata>::iterator frames = new_animation_subset.frames.begin(); frames != new_animation_subset.frames.end(); frames++) {
     if (frames->id == 1) {
@@ -521,11 +531,11 @@ void Avatar_Controller::ChangeAvatarState(std::string new_state_name, std::strin
         Avatar_Component::Collision_Block new_collision_block;
         new_collision_block.id = collision_block->id;
         new_collision_block.is_contacting = collision_block->is_contacting;
-        new_collision_block.size_x = collision_block->size_x;
-        new_collision_block.size_y = collision_block->size_y;
+        new_collision_block.size.x = static_cast<float>(collision_block->size_x);
+        new_collision_block.size.y = static_cast<float>(collision_block->size_y);
 
-        //Need to change the coordinate information from the "animation sheet" to the coordinate system in the game world.
-        //Create a frame for the avatar foot
+        // Need to change the coordinate information from the "animation sheet" to the coordinate system in the game world.
+        // Create a frame for the avatar foot
         Frame_Component avatar_contact_foot;
         D3DXVECTOR3 collision_block_tilesheet_centre;
         collision_block_tilesheet_centre.x = static_cast<float>(collision_block->top_left_x + (collision_block->size_x /2));
@@ -541,8 +551,8 @@ void Avatar_Controller::ChangeAvatarState(std::string new_state_name, std::strin
         animation_frame_centre.z = static_cast<float>(-2);
 
         // store the distance from x and y to the centre of the animation frame
-        new_collision_block.avatar_centre_offset_centre_x = static_cast<int>(collision_block_tilesheet_centre.x - animation_frame_centre.x);
-        new_collision_block.avatar_centre_offset_centre_y = static_cast<int>(collision_block_tilesheet_centre.y - animation_frame_centre.y);
+        new_collision_block.offset_from_avatar_centre.x = collision_block_tilesheet_centre.x - animation_frame_centre.x;
+        new_collision_block.offset_from_avatar_centre.y = collision_block_tilesheet_centre.y - animation_frame_centre.y;
 
         new_state.collision_blocks.push_back(new_collision_block);
       }
@@ -568,7 +578,9 @@ void Avatar_Controller::UpdateAvatarState(int new_state_index) {
 
   incremented_state.state = m_avatar->GetState().state;
   incremented_state.direction = m_avatar->GetState().direction;
-  incremented_state.state_index = new_state_index;
+  incremented_state.state_index = new_state_index; 
+  incremented_state.parent_state = m_avatar->GetState().parent_state;
+
   m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(m_current_animation_subset.top_left_x + (new_state_index * m_current_animation_subset.tile_size_x)),
                                                           static_cast<float>(m_current_animation_subset.top_left_y * -1));
 
@@ -578,17 +590,17 @@ void Avatar_Controller::UpdateAvatarState(int new_state_index) {
         Avatar_Component::Collision_Block new_collision_block;
         new_collision_block.id = collision_block->id;
         new_collision_block.is_contacting = collision_block->is_contacting;
-        new_collision_block.size_x = collision_block->size_x;
-        new_collision_block.size_y = collision_block->size_y;
+        new_collision_block.size.x = static_cast<float>(collision_block->size_x);
+        new_collision_block.size.y = static_cast<float>(collision_block->size_y);
 
-        //Need to change the coordinate information from the "animation sheet" to the coordinate system in the game world.
-        //Create a frame for the avatar foot
+        // Need to change the coordinate information from the "animation sheet" to the coordinate system in the game world.
+        // Create a frame for the avatar foot
         Frame_Component avatar_contact_foot;
         D3DXVECTOR3 collision_block_tilesheet_centre;
         collision_block_tilesheet_centre.x = static_cast<float>(collision_block->top_left_x + (collision_block->size_x /2));
         collision_block_tilesheet_centre.y = static_cast<float>(collision_block->top_left_y - (collision_block->size_y /2));
 
-        // account for different positions in the frame and the avatar
+        // Account for different positions in the frame and the avatar
         // Work out the centre of the avatar frame (128x128 block) int the tileset
         // frame is 128x128 so get the frame # and times it by 128/2 for y
         D3DXVECTOR3 animation_frame_centre;
@@ -598,8 +610,8 @@ void Avatar_Controller::UpdateAvatarState(int new_state_index) {
         animation_frame_centre.z = static_cast<float>(-2);
 
         // store the distance from x and y to the centre of the animation frame
-        new_collision_block.avatar_centre_offset_centre_x = static_cast<int>(collision_block_tilesheet_centre.x - animation_frame_centre.x);
-        new_collision_block.avatar_centre_offset_centre_y = static_cast<int>(collision_block_tilesheet_centre.y - animation_frame_centre.y);
+        new_collision_block.offset_from_avatar_centre.x = collision_block_tilesheet_centre.x - animation_frame_centre.x;
+        new_collision_block.offset_from_avatar_centre.y = collision_block_tilesheet_centre.y - animation_frame_centre.y;
 
         incremented_state.collision_blocks.push_back(new_collision_block);
       }
@@ -614,4 +626,39 @@ void Avatar_Controller::UpdateAvatarState(int new_state_index) {
   m_avatar->Init();
 }
 
-} // Tunnelour
+//------------------------------------------------------------------------------
+Avatar_Component::Collision_Block* Avatar_Controller::GetLowestCollisionBlock() {
+  Avatar_Component::Collision_Block* lowest_collision_block = 0;
+
+    std::list<Avatar_Component::Collision_Block> collision_blocks = m_avatar->GetState().collision_blocks;
+    for (std::list<Avatar_Component::Collision_Block>::iterator collision_block = collision_blocks.begin(); collision_block != collision_blocks.end(); collision_block++) {
+      if (lowest_collision_block == 0) {
+        lowest_collision_block = &(*(collision_block));
+      }
+      if ((collision_block->offset_from_avatar_centre.y - collision_block->size.y) < (lowest_collision_block->offset_from_avatar_centre.y - lowest_collision_block->size.y)) {
+        lowest_collision_block = &(*(collision_block));
+      }
+    }
+
+  return lowest_collision_block;
+}
+
+//------------------------------------------------------------------------------
+Tunnelour::Bitmap_Component Avatar_Controller::Collision_Block_To_Bitmap_Component(Avatar_Component::Collision_Block* collision_block) {
+  Tunnelour::Bitmap_Component collision_bitmap;
+
+  D3DXVECTOR3 collision_bitmap_position;
+  collision_bitmap_position.x = m_avatar->GetPosition().x + collision_block->offset_from_avatar_centre.x;
+  collision_bitmap_position.y = m_avatar->GetPosition().y + collision_block->offset_from_avatar_centre.y;
+  collision_bitmap_position.z = m_avatar->GetPosition().z;
+
+  collision_bitmap.SetPosition(collision_bitmap_position);
+
+  D3DXVECTOR2 size = collision_block->size;
+  collision_bitmap.SetSize(size);
+
+  return collision_bitmap;
+}
+
+
+}  // Tunnelour

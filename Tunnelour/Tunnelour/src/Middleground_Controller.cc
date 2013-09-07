@@ -232,24 +232,24 @@ void Middleground_Controller::Tile_Tunnel() {
            tile->Set_Is_Bottom_Edge(true);
          }
 
-         tile->SetPosition(D3DXVECTOR3(current_x + (tile->GetSize()->x/2),
-                                           current_y - (tile->GetSize()->y/2),
+         tile->SetPosition(D3DXVECTOR3(current_x + (tile->GetSize().x/2),
+                                           current_y - (tile->GetSize().y/2),
                                            -1)); // Middleground Z Space is -1
          tile->GetTexture()->transparency = 0.0f; //TUNNEL
-         current_x += static_cast<int>(tile->GetSize()->x);
+         current_x += static_cast<int>(tile->GetSize().x);
          m_tunnel_tiles.push_back(tile);
          if (x == 0) {
            tile->Set_Is_Left_Edge(true);
            m_left_edge_tunnel_tiles.push_back(tile);
-           m_middleground_left = static_cast<int>(tile->GetPosition().x - (tile->GetSize()->x / 2));
+           m_middleground_left = static_cast<int>(tile->GetPosition().x - (tile->GetSize().x / 2));
          }
          if (x == (number_of_x_tiles - 1)) {
            tile->Set_Is_Right_Edge(true);
            m_right_edge_tunnel_tiles.push_back(tile);
-           m_middleground_right = static_cast<int>(tile->GetPosition().x + (tile->GetSize()->x / 2));
+           m_middleground_right = static_cast<int>(tile->GetPosition().x + (tile->GetSize().x / 2));
          }
       }
-      current_y -= static_cast<int>(tile->GetSize()->y);
+      current_y -= static_cast<int>(tile->GetSize().y);
       current_x = static_cast<int>(tunnel_start_x);
     }
 
@@ -304,10 +304,10 @@ void Middleground_Controller::Extend_Tunnel_Right() {
   std::vector<Tunnelour::Tile_Bitmap*> new_tunnel_tiles;
   while (m_camera_right > m_middleground_right) {
     for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tunnel_edge_tile = m_right_edge_tunnel_tiles.begin(); tunnel_edge_tile !=  m_right_edge_tunnel_tiles.end(); tunnel_edge_tile++) {
-      int current_tile_right = static_cast<int>((*tunnel_edge_tile)->GetPosition().x  + ((*tunnel_edge_tile)->GetSize()->x / 2));
+      int current_tile_right = static_cast<int>((*tunnel_edge_tile)->GetPosition().x  + ((*tunnel_edge_tile)->GetSize().x / 2));
       while (m_camera_right > current_tile_right) {
-        Tunnelour::Tile_Bitmap* tile = Create_Tile(static_cast<int>((*tunnel_edge_tile)->GetSize()->x), false);
-        D3DXVECTOR3 position = D3DXVECTOR3((*tunnel_edge_tile)->GetPosition().x + tile->GetSize()->x,
+        Tunnelour::Tile_Bitmap* tile = Create_Tile(static_cast<int>((*tunnel_edge_tile)->GetSize().x), false);
+        D3DXVECTOR3 position = D3DXVECTOR3((*tunnel_edge_tile)->GetPosition().x + tile->GetSize().x,
                                             (*tunnel_edge_tile)->GetPosition().y,
                                             (*tunnel_edge_tile)->GetPosition().z);
         tile->GetTexture()->transparency = 0.0f; //TUNNEL
@@ -316,7 +316,7 @@ void Middleground_Controller::Extend_Tunnel_Right() {
         m_tunnel_tiles.push_back(tile);
         new_tunnel_tiles.push_back(tile);
         *tunnel_edge_tile = tile;
-        current_tile_right += static_cast<int>(tile->GetSize()->x / 2);
+        current_tile_right += static_cast<int>(tile->GetSize().x / 2);
         if (tunnel_edge_tile == m_right_edge_tunnel_tiles.begin()) {
           tile->Set_Is_Top_Edge(true);
         } else if ((tunnel_edge_tile + 1) == m_right_edge_tunnel_tiles.end()) {
@@ -329,11 +329,11 @@ void Middleground_Controller::Extend_Tunnel_Right() {
       // store the smallest number as the new middleground right.
       if (smallest_tile == 0) {
         smallest_tile = *tunnel_edge_tile;
-      } else if (smallest_tile->GetSize()->x > (*tunnel_edge_tile)->GetSize()->x) {
+      } else if (smallest_tile->GetSize().x > (*tunnel_edge_tile)->GetSize().x) {
         smallest_tile = (*tunnel_edge_tile);
       }
     }
-    m_middleground_right += static_cast<int>(smallest_tile->GetSize()->x);
+    m_middleground_right += static_cast<int>(smallest_tile->GetSize().x);
 
     std::vector<Tunnelour::Tile_Bitmap*> new_middleground_tiles;
 
@@ -364,10 +364,10 @@ void Middleground_Controller::Extend_Tunnel_Left() {
   std::vector<Tunnelour::Tile_Bitmap*> new_tunnel_tiles;
   while (m_camera_left < m_middleground_left) {
     for (std::vector<Tunnelour::Tile_Bitmap*>::iterator tunnel_edge_tile = m_left_edge_tunnel_tiles.begin(); tunnel_edge_tile !=  m_left_edge_tunnel_tiles.end(); tunnel_edge_tile++) {
-      int current_tile_left = static_cast<int>((*tunnel_edge_tile)->GetPosition().x  - ((*tunnel_edge_tile)->GetSize()->x / 2));
+      int current_tile_left = static_cast<int>((*tunnel_edge_tile)->GetPosition().x  - ((*tunnel_edge_tile)->GetSize().x / 2));
       while (m_camera_left < current_tile_left) {
-        Tunnelour::Tile_Bitmap* tile = Create_Tile(static_cast<int>((*tunnel_edge_tile)->GetSize()->x), false);
-        D3DXVECTOR3 position = D3DXVECTOR3((*tunnel_edge_tile)->GetPosition().x - tile->GetSize()->x,
+        Tunnelour::Tile_Bitmap* tile = Create_Tile(static_cast<int>((*tunnel_edge_tile)->GetSize().x), false);
+        D3DXVECTOR3 position = D3DXVECTOR3((*tunnel_edge_tile)->GetPosition().x - tile->GetSize().x,
                                             (*tunnel_edge_tile)->GetPosition().y,
                                             (*tunnel_edge_tile)->GetPosition().z);
         tile->GetTexture()->transparency = 0.0f; //TUNNEL
@@ -376,7 +376,7 @@ void Middleground_Controller::Extend_Tunnel_Left() {
         m_tunnel_tiles.push_back(tile);
         new_tunnel_tiles.push_back(tile);
         *tunnel_edge_tile = tile;
-        current_tile_left -= static_cast<int>(tile->GetSize()->x / 2);
+        current_tile_left -= static_cast<int>(tile->GetSize().x / 2);
         if (tunnel_edge_tile == m_left_edge_tunnel_tiles.begin()) {
           tile->Set_Is_Top_Edge(true);
         } else if ((tunnel_edge_tile + 1) == m_left_edge_tunnel_tiles.end()) {
@@ -391,11 +391,11 @@ void Middleground_Controller::Extend_Tunnel_Left() {
       // store the smallest number as the new middleground right.
       if (smallest_tile == 0) {
         smallest_tile = *tunnel_edge_tile;
-      } else if (smallest_tile->GetSize()->x > (*tunnel_edge_tile)->GetSize()->x) {
+      } else if (smallest_tile->GetSize().x > (*tunnel_edge_tile)->GetSize().x) {
         smallest_tile = (*tunnel_edge_tile);
       }
     }
-    m_middleground_left -= static_cast<int>(smallest_tile->GetSize()->x);
+    m_middleground_left -= static_cast<int>(smallest_tile->GetSize().x);
 
     std::vector<Tunnelour::Tile_Bitmap*> new_middleground_tiles;
 
@@ -430,7 +430,7 @@ void Middleground_Controller::Extend_Tunnel_Left() {
         Line middleground_line;
         std::list<Line>::iterator line;
         for (line = middleground_tileset.lines.begin(); line != middleground_tileset.lines.end(); line++) {
-          if (line->tile_size_x == (*old_edge_tile)->GetSize()->x && line->tile_size_y == (*old_edge_tile)->GetSize()->y) {
+          if (line->tile_size_x == (*old_edge_tile)->GetSize().x && line->tile_size_y == (*old_edge_tile)->GetSize().y) {
             middleground_line = *line;
           }
         }
@@ -468,7 +468,7 @@ void Middleground_Controller::Extend_Tunnel_Left() {
         Line middleground_line;
         std::list<Line>::iterator line;
         for (line = middleground_tileset.lines.begin(); line != middleground_tileset.lines.end(); line++) {
-          if (line->tile_size_x == (*tile)->GetSize()->x && line->tile_size_y == (*tile)->GetSize()->y) {
+          if (line->tile_size_x == (*tile)->GetSize().x && line->tile_size_y == (*tile)->GetSize().y) {
             middleground_line = *line;
           }
         }
@@ -511,7 +511,7 @@ void Middleground_Controller::Switch_Tileset() {
     Line middleground_line;
     std::list<Line>::iterator line;
     for (line = middleground_tileset.lines.begin(); line != middleground_tileset.lines.end(); line++) {
-      if (line->tile_size_x == (*tile)->GetSize()->x && line->tile_size_y == (*tile)->GetSize()->y) {
+      if (line->tile_size_x == (*tile)->GetSize().x && line->tile_size_y == (*tile)->GetSize().y) {
         middleground_line = *line;
       }
     }
@@ -544,16 +544,16 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateTilesUpwar
   std::vector<Tunnelour::Tile_Bitmap*> new_tiles;
 
   int y_boundary_top = static_cast<int>(m_camera->GetPosition().y + (m_game_settings->GetResolution().y / 2));
-  int y_current = static_cast<int>(from_tile->GetPosition().y + (from_tile->GetSize()->y / 2));
+  int y_current = static_cast<int>(from_tile->GetPosition().y + (from_tile->GetSize().y / 2));
   Tunnelour::Tile_Bitmap* tile = 0;
   bool is_top_edge = true;
   while (y_current < y_boundary_top) {
-    tile = Create_Tile(static_cast<int>(from_tile->GetSize()->y), from_tile->Is_Platform());
+    tile = Create_Tile(static_cast<int>(from_tile->GetSize().y), from_tile->Is_Platform());
     D3DXVECTOR3 position = from_tile->GetPosition();
-    position.y = y_current + (tile->GetSize()->y / 2);
+    position.y = y_current + (tile->GetSize().y / 2);
     tile->SetPosition(position);
     tile->Set_Is_Top_Edge(is_top_edge);
-    y_current = static_cast<int>(tile->GetPosition().y + (tile->GetSize()->y / 2));
+    y_current = static_cast<int>(tile->GetPosition().y + (tile->GetSize().y / 2));
     new_tiles.push_back(tile);
   }
   m_middleground_top = static_cast<int>(tile->GetPosition().y);
@@ -566,17 +566,17 @@ std::vector<Tunnelour::Tile_Bitmap*> Middleground_Controller::GenerateTilesDownw
   std::vector<Tunnelour::Tile_Bitmap*> new_tiles;
 
   int y_boundary_top = static_cast<int>(m_camera->GetPosition().y - (m_game_settings->GetResolution().y / 2));
-  int y_current = static_cast<int>(from_tile->GetPosition().y - (from_tile->GetSize()->y / 2));
+  int y_current = static_cast<int>(from_tile->GetPosition().y - (from_tile->GetSize().y / 2));
   Tunnelour::Tile_Bitmap* tile = 0;
   bool is_platform = true;
   bool is_bottom_edge = true;
   while (y_current > y_boundary_top) {
-    tile = Create_Tile(static_cast<int>(from_tile->GetSize()->y), is_platform);
+    tile = Create_Tile(static_cast<int>(from_tile->GetSize().y), is_platform);
     D3DXVECTOR3 position = from_tile->GetPosition();
-    position.y = y_current - (tile->GetSize()->y / 2);
+    position.y = y_current - (tile->GetSize().y / 2);
     tile->SetPosition(position);
     tile->Set_Is_Bottom_Edge(is_bottom_edge);
-    y_current = static_cast<int>(tile->GetPosition().y - (tile->GetSize()->y / 2));
+    y_current = static_cast<int>(tile->GetPosition().y - (tile->GetSize().y / 2));
     new_tiles.push_back(tile);
     is_platform = false;
     is_bottom_edge = false;
@@ -624,7 +624,7 @@ Tunnelour::Tile_Bitmap* Middleground_Controller::Create_Tile(int base_tile_size,
   tile->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(random_variable*(middleground_line.tile_size_x) + static_cast<float>(middleground_line.top_left_x)),
                                                       static_cast<float>(middleground_line.top_left_y));
 
-  tile->SetSize(new D3DXVECTOR2(static_cast<float>(base_tile_size), static_cast<float>(base_tile_size)));
+  tile->SetSize(D3DXVECTOR2(static_cast<float>(base_tile_size), static_cast<float>(base_tile_size)));
 
   return tile;
 }
