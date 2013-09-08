@@ -34,6 +34,8 @@ Avatar_Component::Avatar_Component(): Bitmap_Component() {
   m_last_state.direction = "";
   m_last_state.state_index = 0;
 
+  m_type = "Avatar_Component";
+
   m_command.state = "";
   m_command.direction = "";
   m_command.state_index = 0;

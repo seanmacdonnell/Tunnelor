@@ -52,24 +52,20 @@ void Avatar_Controller_Mutator::Mutate(Tunnelour::Component * const component) {
     m_found_game_settings = true;
   } else if (component->GetType().compare("Bitmap_Component") == 0) {
     Tunnelour::Tile_Bitmap *tile = 0;
-    tile = dynamic_cast<Tunnelour::Tile_Bitmap*>(component);
-    if (tile != 0) {
-      if (tile->Is_Platform()) {
-        m_border_tiles.push_back(tile);
-        m_found_border_tiles = true;
-      }
-    } else if (!m_found_avatar_component) {
-      m_avatar_component = dynamic_cast<Avatar_Component*>(component);
-      if (m_avatar_component != 0) {
-        m_found_avatar_component = true;
-      }
+    tile = static_cast<Tunnelour::Tile_Bitmap*>(component);
+    if (tile->Is_Platform()) {
+      m_border_tiles.push_back(tile);
+      m_found_border_tiles = true;
     }
   } else if (!m_found_world_settings) {
     if (component->GetType().compare("World_Settings_Component") == 0) {
-      m_world_settings = dynamic_cast<World_Settings_Component*>(component);
-      if (m_world_settings != 0) {
-        m_found_world_settings = true;
-      }
+      m_world_settings = static_cast<World_Settings_Component*>(component);
+      m_found_world_settings = true;
+    }
+  } else if (!m_found_avatar_component) {
+    if (component->GetType().compare("Avatar_Component") == 0) {
+      m_avatar_component = static_cast<Avatar_Component*>(component);
+      m_found_avatar_component = true;
     }
   }
 }

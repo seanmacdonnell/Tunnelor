@@ -41,10 +41,10 @@ void Input_Controller_Mutator::Mutate(Tunnelour::Component * const component) {
     game_settings = static_cast<Tunnelour::Game_Settings_Component*>(component);
     m_game_settings = game_settings;
     m_found_game_settings = true;
-  } else if (component->GetType().compare("Bitmap_Component") == 0) {
+  } else if (component->GetType().compare("Avatar_Component") == 0) {
     if (!m_found_avatar_component)  {
-      m_avatar_controller = dynamic_cast<Tunnelour::Avatar_Component*>(component);
-      if (m_avatar_controller != 0) { m_found_avatar_component = true; } 
+      m_avatar_controller = static_cast<Tunnelour::Avatar_Component*>(component);
+      m_found_avatar_component = true;
     }
   }
 }

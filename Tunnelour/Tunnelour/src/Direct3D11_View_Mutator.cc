@@ -62,6 +62,22 @@ void Direct3D11_View_Mutator::Mutate(Tunnelour::Component * const component) {
     m_found_renderables = true;
   }
 
+  if (component->GetType().compare("Avatar_Component") == 0) {
+    // Found Bitmap_Component
+    Tunnelour::Bitmap_Component *bitmap = 0;
+    bitmap = static_cast<Tunnelour::Bitmap_Component*>(component);
+    if (bitmap->GetPosition().z > -1) {
+      m_renderables.Layer_00.push_back(bitmap);
+    }
+    if (bitmap->GetPosition().z <= -1 && bitmap->GetPosition().z > -2) {
+      m_renderables.Layer_01.push_back(bitmap);
+    }
+    if (bitmap->GetPosition().z <= -2) {
+      m_renderables.Layer_02.push_back(bitmap);
+    }
+    m_found_renderables = true;
+  }
+
   if (component->GetType().compare("Text_Component") == 0) {
     // Found Text_Component
     Tunnelour::Text_Component *text = 0;

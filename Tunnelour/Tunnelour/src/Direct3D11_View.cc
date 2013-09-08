@@ -718,7 +718,7 @@ void Direct3D11_View::Init_D3D11() {
 void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX *viewmatrix) {
   if (layer.empty()) { return; }
   for (std::list<Tunnelour::Component*>::const_iterator iterator = layer.begin(), end = layer.end(); iterator != end; ++iterator) {
-    if ((*iterator)->GetType().compare("Bitmap_Component") == 0) {
+    if ((*iterator)->GetType().compare("Bitmap_Component") == 0 || (*iterator)->GetType().compare("Avatar_Component") == 0) {
       Tunnelour::Bitmap_Component *bitmap = static_cast<Tunnelour::Bitmap_Component*>(*iterator);
       if (!bitmap->IsInitialised()) {  bitmap->Init(); }
       if (bitmap->GetFrame()->vertex_buffer == 0) {

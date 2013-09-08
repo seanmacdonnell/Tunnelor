@@ -16,6 +16,8 @@
 #ifndef TUNNELOUR_AVATAR_CONTROLLER_MUTATOR_H_
 #define TUNNELOUR_AVATAR_CONTROLLER_MUTATOR_H_
 
+#include <list>
+
 #include "Component.h"
 #include "Game_Settings_Component.h"
 #include "Avatar_Component.h"
@@ -86,7 +88,7 @@ class Avatar_Controller_Mutator: public Tunnelour::Component::Component_Mutator 
   Tunnelour::World_Settings_Component* GetWorldSettings();
 
  private:
-  bool m_found_game_settings, m_found_avatar_component, m_found_border_tiles, m_found_world_settings;;
+  bool m_found_game_settings, m_found_avatar_component, m_found_border_tiles, m_found_world_settings;
   Tunnelour::Game_Settings_Component *m_game_settings;
   Avatar_Component *m_avatar_component;
   std::list<Tunnelour::Bitmap_Component*> m_border_tiles;
