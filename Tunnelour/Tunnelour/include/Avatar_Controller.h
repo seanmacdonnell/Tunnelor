@@ -16,10 +16,10 @@
 #ifndef TUNNELOUR_AVATAR_CONTROLLER_H_
 #define TUNNELOUR_AVATAR_CONTROLLER_H_
 
+#include <windows.h>
 #include <vector>
 #include <string>
 #include <list>
-#include <windows.h>
 
 #include "Avatar_Component.h"
 #include "Avatar_Controller_Mutator.h"
@@ -155,6 +155,14 @@ class Avatar_Controller: public Tunnelour::Controller {
   // Description : Creates a Bitmap Component using the given collision block
   //---------------------------------------------------------------------------
   Avatar_Component::Collision_Block GetNamedCollisionBlock(std::string id, std::list<Avatar_Component::Collision_Block> collision_blocks);
+
+  //---------------------------------------------------------------------------
+  // Description : Creates an Avatar_Component::Collision_Block from a
+  //             : Tileset_Helper::Collision_Block
+  //---------------------------------------------------------------------------
+  Avatar_Component::Collision_Block TilesetCollisionBlockToAvatarCollisionBlock(Tileset_Helper::Collision_Block tileset_collision_block,
+                                                                                int tileset_animation_top_left_y,
+                                                                                int state_index);
 
   //---------------------------------------------------------------------------
   // Member Variables

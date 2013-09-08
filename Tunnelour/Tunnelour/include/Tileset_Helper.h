@@ -22,8 +22,8 @@
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
-//  Description : This controller is responsible for the generation of the
-//                middleground (Layer 0)
+//  Description : This is a helper class for accessing parsing tilesets and
+//              : modifying tileset objects.
 //-----------------------------------------------------------------------------
 class Tileset_Helper {
  public:
@@ -34,10 +34,10 @@ class Tileset_Helper {
      int size_x, size_y;
    };
 
-   struct Frame_Metadata {
+  struct Frame_Metadata {
     unsigned int id;
     unsigned int number_of_collision_blocks;
-      std::list<Collision_Block> collision_blocks;
+    std::list<Collision_Block> collision_blocks;
   };
 
   struct Animation_Subset {

@@ -310,7 +310,7 @@ bool Avatar_Controller::IsAvatarPlatformAdjacent(Avatar_Controller_Mutator *muta
     // Make a bitmap for the lowest avatar collision block
     Tunnelour::Bitmap_Component lowest_collision_block_bitmap;
     lowest_collision_block_bitmap = CollisionBlockToBitmapComponent(lowest_collision_block);
-    
+
     // Create a list of platform tiles which are adjacent with the collision block
     std::list<Tunnelour::Bitmap_Component*> colliding_border_tiles;
     std::list<Tunnelour::Bitmap_Component*> border_tiles = mutator->GetBorderTiles();
@@ -463,17 +463,20 @@ void Avatar_Controller::UpdateTimer() {
 }
 
 //------------------------------------------------------------------------------
-void Avatar_Controller::ChangeAvatarState(std::string new_state_name, std::string direction) {  Tileset_Helper::Animation_Tileset_Metadata *new_state_metadata = 0;
+void Avatar_Controller::ChangeAvatarState(std::string new_state_name, std::string direction) {
   Avatar_Component::Avatar_State new_state;
+  Tileset_Helper::Animation_Tileset_Metadata new_state_metadata;
+  Tileset_Helper::Animation_Subset new_animation_subset;
 
   Avatar_Component::Avatar_State current_state = m_avatar->GetState();
 
-  Tileset_Helper::Animation_Subset new_animation_subset;
-  for (std::list<Tileset_Helper::Animation_Tileset_Metadata>::iterator metadata = m_animation_metadata.begin(); metadata != m_animation_metadata.end(); metadata++) {
-    for (std::list<Tileset_Helper::Animation_Subset>::iterator tileset = (*metadata).subsets.begin(); tileset != (*metadata).subsets.end(); tileset++) {
+  std::list<Tileset_Helper::Animation_Tileset_Metadata>::iterator metadata;
+  for (metadata = m_animation_metadata.begin(); metadata != m_animation_metadata.end(); metadata++) {
+    std::list<Tileset_Helper::Animation_Subset>::iterator tileset;
+    for (tileset = (*metadata).subsets.begin(); tileset != (*metadata).subsets.end(); tileset++) {
       if (tileset->name.compare(new_state_name) == 0) {
         new_animation_subset = *tileset;
-        new_state_metadata = &(*metadata);
+        new_state_metadata = (*metadata);
         new_state.direction = direction;
         new_state.state = new_state_name;
         new_state.parent_state = metadata->name;
@@ -481,57 +484,43 @@ void Avatar_Controller::ChangeAvatarState(std::string new_state_name, std::strin
     }
   }
 
-  if (new_state_metadata == 0) {
-    throw Tunnelour::Exceptions::init_error("Animation not found in metadata list!" + new_state_name);
+  if (new_state_metadata.name.compare("") == 0) {
+    std::string error;
+    error = "Animation not found in metadata list!" + new_state_name;
+    throw Tunnelour::Exceptions::init_error(error);
   }
-
-  
 
   new_state.state_index = 0;
   std::wstring texture_path = m_game_settings->GetTilesetPath();
-  texture_path += String_Helper::StringToWString(new_state_metadata->filename);
+  texture_path += String_Helper::StringToWString(new_state_metadata.filename);
 
   m_avatar->GetTexture()->texture_path = texture_path;
-  m_avatar->GetTexture()->texture_size = D3DXVECTOR2(static_cast<float>(new_state_metadata->size_x),
-                                                      static_cast<float>(new_state_metadata->size_y));
+  m_avatar->GetTexture()->texture_size = D3DXVECTOR2(static_cast<float>(new_state_metadata.size_x),
+                                                     static_cast<float>(new_state_metadata.size_y));
   m_avatar->GetTexture()->tile_size = D3DXVECTOR2(static_cast<float>(new_animation_subset.tile_size_x),
                                                   static_cast<float>(new_animation_subset.tile_size_y));
   m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(new_animation_subset.top_left_x),
                                                           static_cast<float>((new_animation_subset.top_left_y) * -1));
-  m_avatar->SetSize(D3DXVECTOR2(static_cast<float>(new_animation_subset.tile_size_x), static_cast<float>(new_animation_subset.tile_size_y)));
+  m_avatar->SetSize(D3DXVECTOR2(static_cast<float>(new_animation_subset.tile_size_x),
+                                static_cast<float>(new_animation_subset.tile_size_y)));
 
-  for (std::list<Tileset_Helper::Frame_Metadata>::iterator frames = new_animation_subset.frames.begin(); frames != new_animation_subset.frames.end(); frames++) {
-    if (frames->id == 1) {
-      for (std::list<Tileset_Helper::Collision_Block>::iterator collision_block = frames->collision_blocks.begin(); collision_block != frames->collision_blocks.end(); collision_block++) {
-        Avatar_Component::Collision_Block new_collision_block;
-        new_collision_block.id = collision_block->id;
-        new_collision_block.is_contacting = collision_block->is_contacting;
-        new_collision_block.size.x = static_cast<float>(collision_block->size_x);
-        new_collision_block.size.y = static_cast<float>(collision_block->size_y);
-
-        // Need to change the coordinate information from the "animation sheet" to the coordinate system in the game world.
-        // Create a frame for the avatar foot
-        Frame_Component avatar_contact_foot;
-        D3DXVECTOR3 collision_block_tilesheet_centre;
-        collision_block_tilesheet_centre.x = static_cast<float>(collision_block->top_left_x + (collision_block->size_x /2));
-        collision_block_tilesheet_centre.y = static_cast<float>(collision_block->top_left_y - (collision_block->size_y /2));
-
-        // account for different positions in the frame and the avatar
-        // Work out the centre of the avatar frame (128x128 block) int the tileset
-        // frame is 128x128 so get the frame # and times it by 128/2 for y
-        D3DXVECTOR3 animation_frame_centre;
-        animation_frame_centre.x = static_cast<float>(((new_state.state_index + 1) * 128) - (128 / 2));
-        // and 128/2 for x
-        animation_frame_centre.y = static_cast<float>(((new_animation_subset.top_left_y) - (128 / 2)));
-        animation_frame_centre.z = static_cast<float>(-2);
-
-        // store the distance from x and y to the centre of the animation frame
-        new_collision_block.offset_from_avatar_centre.x = collision_block_tilesheet_centre.x - animation_frame_centre.x;
-        new_collision_block.offset_from_avatar_centre.y = collision_block_tilesheet_centre.y - animation_frame_centre.y;
-
-        new_state.collision_blocks.push_back(new_collision_block);
-      }
+  // Find the initial frame of the new tileset state
+  Tileset_Helper::Frame_Metadata initial_frame;
+  std::list<Tileset_Helper::Frame_Metadata>::iterator frame;
+  for (frame = new_animation_subset.frames.begin(); frame != new_animation_subset.frames.end(); frame++) {
+    if (frame->id == 1) {
+      initial_frame = (*frame);
     }
+  }
+
+    // Create new collision block from the inital frame collision block
+  std::list<Tileset_Helper::Collision_Block>::iterator collision_block;
+  for (collision_block = initial_frame.collision_blocks.begin(); collision_block != initial_frame.collision_blocks.end(); collision_block++) {
+    Avatar_Component::Collision_Block new_collision_block;
+    new_collision_block = TilesetCollisionBlockToAvatarCollisionBlock((*collision_block),
+                                                                      new_animation_subset.top_left_y,
+                                                                      new_state.state_index);
+    new_state.collision_blocks.push_back(new_collision_block);
   }
 
   m_avatar->SetState(new_state);
@@ -542,10 +531,9 @@ void Avatar_Controller::ChangeAvatarState(std::string new_state_name, std::strin
   m_avatar->GetFrame()->index_buffer = 0;
   m_avatar->Init();
 
-  m_current_metadata_file_path = new_state_metadata->filename;
-  m_current_metadata = (*new_state_metadata);
+  m_current_metadata_file_path = new_state_metadata.filename;
+  m_current_metadata = new_state_metadata;
   m_current_animation_subset = new_animation_subset;
-
 }
 
 //------------------------------------------------------------------------------
@@ -557,41 +545,27 @@ void Avatar_Controller::UpdateAvatarState(int new_state_index) {
   incremented_state.state_index = new_state_index; 
   incremented_state.parent_state = m_avatar->GetState().parent_state;
 
+  // Set new bitmap frame location on the tileset
   m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(m_current_animation_subset.top_left_x + (new_state_index * m_current_animation_subset.tile_size_x)),
                                                           static_cast<float>(m_current_animation_subset.top_left_y * -1));
 
-  for (std::list<Tileset_Helper::Frame_Metadata>::iterator frames = m_current_animation_subset.frames.begin(); frames != m_current_animation_subset.frames.end(); frames++) {
-    if (frames->id == (new_state_index + 1)) {
-      for (std::list<Tileset_Helper::Collision_Block>::iterator collision_block = frames->collision_blocks.begin(); collision_block != frames->collision_blocks.end(); collision_block++) {
-        Avatar_Component::Collision_Block new_collision_block;
-        new_collision_block.id = collision_block->id;
-        new_collision_block.is_contacting = collision_block->is_contacting;
-        new_collision_block.size.x = static_cast<float>(collision_block->size_x);
-        new_collision_block.size.y = static_cast<float>(collision_block->size_y);
-
-        // Need to change the coordinate information from the "animation sheet" to the coordinate system in the game world.
-        // Create a frame for the avatar foot
-        Frame_Component avatar_contact_foot;
-        D3DXVECTOR3 collision_block_tilesheet_centre;
-        collision_block_tilesheet_centre.x = static_cast<float>(collision_block->top_left_x + (collision_block->size_x /2));
-        collision_block_tilesheet_centre.y = static_cast<float>(collision_block->top_left_y - (collision_block->size_y /2));
-
-        // Account for different positions in the frame and the avatar
-        // Work out the centre of the avatar frame (128x128 block) int the tileset
-        // frame is 128x128 so get the frame # and times it by 128/2 for y
-        D3DXVECTOR3 animation_frame_centre;
-        animation_frame_centre.x = static_cast<float>(((new_state_index + 1) * 128) - (128 / 2));
-        // and 128/2 for x
-        animation_frame_centre.y = static_cast<float>(((m_current_animation_subset.top_left_y) - (128 / 2)));
-        animation_frame_centre.z = static_cast<float>(-2);
-
-        // store the distance from x and y to the centre of the animation frame
-        new_collision_block.offset_from_avatar_centre.x = collision_block_tilesheet_centre.x - animation_frame_centre.x;
-        new_collision_block.offset_from_avatar_centre.y = collision_block_tilesheet_centre.y - animation_frame_centre.y;
-
-        incremented_state.collision_blocks.push_back(new_collision_block);
-      }
+  // Find the new frame of the current tileset
+  Tileset_Helper::Frame_Metadata new_frame;
+  std::list<Tileset_Helper::Frame_Metadata>::iterator frame;
+  for (frame = m_current_animation_subset.frames.begin(); frame != m_current_animation_subset.frames.end(); frame++) {
+    if (frame->id == (new_state_index + 1)) {
+      new_frame = (*frame);
     }
+  }
+
+  // Create new collision block from the inital frame collision block
+  std::list<Tileset_Helper::Collision_Block>::iterator collision_block;
+  for (collision_block = new_frame.collision_blocks.begin(); collision_block != new_frame.collision_blocks.end(); collision_block++) {
+    Avatar_Component::Collision_Block new_collision_block;
+    new_collision_block = TilesetCollisionBlockToAvatarCollisionBlock((*collision_block),
+                                                                      m_current_animation_subset.top_left_y,
+                                                                      new_state_index);
+    incremented_state.collision_blocks.push_back(new_collision_block);
   }
 
   m_avatar->SetState(incremented_state);
@@ -606,12 +580,16 @@ void Avatar_Controller::UpdateAvatarState(int new_state_index) {
 Avatar_Component::Collision_Block Avatar_Controller::GetLowestCollisionBlock() {
   Avatar_Component::Collision_Block lowest_collision_block;
 
-  std::list<Avatar_Component::Collision_Block> collision_blocks = m_avatar->GetState().collision_blocks;
-  for (std::list<Avatar_Component::Collision_Block>::iterator collision_block = collision_blocks.begin(); collision_block != collision_blocks.end(); collision_block++) {
-    if (collision_block == collision_blocks.begin()) {
-      lowest_collision_block = (*collision_block);
-    }
-    if ((collision_block->offset_from_avatar_centre.y - collision_block->size.y) < (lowest_collision_block.offset_from_avatar_centre.y - lowest_collision_block.size.y)) {
+  std::list<Avatar_Component::Collision_Block> collision_blocks;
+  collision_blocks = m_avatar->GetState().collision_blocks;
+
+  lowest_collision_block = (*collision_blocks.begin());
+
+  std::list<Avatar_Component::Collision_Block>::iterator collision_block;
+  for (collision_block = collision_blocks.begin(); collision_block != collision_blocks.end(); collision_block++) {
+    float collision_block_bottom = collision_block->offset_from_avatar_centre.y - collision_block->size.y;
+    float lowest_collision_block_bottom = lowest_collision_block.offset_from_avatar_centre.y - lowest_collision_block.size.y;
+    if (collision_block_bottom < lowest_collision_block_bottom) {
       lowest_collision_block = (*collision_block);
     }
   }
@@ -641,12 +619,50 @@ Avatar_Component::Collision_Block Avatar_Controller::GetNamedCollisionBlock(std:
   Avatar_Component::Collision_Block found_collision_block;
 
   Avatar_Component::Collision_Block* current_right_foot_collision_block = 0;
-  for (std::list<Avatar_Component::Collision_Block>::iterator collision_block = collision_blocks.begin(); collision_block != collision_blocks.end(); collision_block++) {
+
+  std::list<Avatar_Component::Collision_Block>::iterator collision_block;
+  for (collision_block = collision_blocks.begin(); collision_block != collision_blocks.end(); collision_block++) {
     if (collision_block->id.compare(id) == 0) {
       found_collision_block = (*collision_block);
     }
   }
 
   return found_collision_block;
+}
+
+//---------------------------------------------------------------------------
+Avatar_Component::Collision_Block Avatar_Controller::TilesetCollisionBlockToAvatarCollisionBlock(Tileset_Helper::Collision_Block tileset_collision_block, 
+                                                                                                 int tileset_animation_top_left_y,
+                                                                                                 int state_index) {
+  Avatar_Component::Collision_Block new_collision_block;
+
+  // Create new collision block from the inital frame collision block
+  new_collision_block.id = tileset_collision_block.id;
+  new_collision_block.is_contacting = tileset_collision_block.is_contacting;
+  new_collision_block.size.x = static_cast<float>(tileset_collision_block.size_x);
+  new_collision_block.size.y = static_cast<float>(tileset_collision_block.size_y);
+
+  // Need to change the coordinate information from the "animation sheet" to
+  // the coordinate system in the game world.
+  // Create a frame for the avatar foot
+  Frame_Component avatar_contact_foot;
+  D3DXVECTOR3 collision_block_tilesheet_centre;
+  collision_block_tilesheet_centre.x = static_cast<float>(tileset_collision_block.top_left_x + (tileset_collision_block.size_x /2));
+  collision_block_tilesheet_centre.y = static_cast<float>(tileset_collision_block.top_left_y - (tileset_collision_block.size_y /2));
+
+  // Need to account for different positions in the frame and the avatar
+  // Work out the centre of the avatar frame (128x128 block) int the tileset
+  // frame is 128x128 so get the frame # and times it by 128/2 for y
+  D3DXVECTOR3 animation_frame_centre;
+  animation_frame_centre.x = static_cast<float>(((state_index + 1) * 128) - (128 / 2));
+  // and 128/2 for x
+  animation_frame_centre.y = static_cast<float>(((tileset_animation_top_left_y) - (128 / 2)));
+  animation_frame_centre.z = static_cast<float>(-2);
+
+  // store the distance from x and y to the centre of the animation frame
+  new_collision_block.offset_from_avatar_centre.x = collision_block_tilesheet_centre.x - animation_frame_centre.x;
+  new_collision_block.offset_from_avatar_centre.y = collision_block_tilesheet_centre.y - animation_frame_centre.y;
+
+  return new_collision_block;
 }
 }  // Tunnelour
