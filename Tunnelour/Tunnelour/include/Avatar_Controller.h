@@ -70,65 +70,65 @@ class Avatar_Controller: public Tunnelour::Controller {
   //---------------------------------------------------------------------------
   // Description : Generates the Avatar_Component tile
   //---------------------------------------------------------------------------
-  void Generate_Avatar_Tile();
+  void GenerateAvatarTile();
 
   //---------------------------------------------------------------------------
   // Description : Creates the Avatar_Component and adds it to the model
   //---------------------------------------------------------------------------
-  void Generate_Avatar();
+  void GenerateAvatar();
 
   //---------------------------------------------------------------------------
   // Description : Changes and maintains the state of the avatar
   //---------------------------------------------------------------------------
-  void Run_Avatar_State(Avatar_Controller_Mutator *mutator);
+  void RunAvatarState(Avatar_Controller_Mutator *mutator);
 
   //---------------------------------------------------------------------------
   // Description : Changes and maintains the standing state of the avatar
   //---------------------------------------------------------------------------
-  void Run_Standing_State(Avatar_Controller_Mutator *mutator);
+  void RunStandingState(Avatar_Controller_Mutator *mutator);
 
   //---------------------------------------------------------------------------
   // Description : Changes and maintains the walking state of the avatar
   //---------------------------------------------------------------------------
-  void Run_Walking_State(Avatar_Controller_Mutator *mutator);
+  void RunWalkingState(Avatar_Controller_Mutator *mutator);
 
   //---------------------------------------------------------------------------
   // Description : Changes and maintains the falling state of the avatar
   //---------------------------------------------------------------------------
-  void Run_Falling_State(Avatar_Controller_Mutator *mutator);
+  void RunFallingState(Avatar_Controller_Mutator *mutator);
 
   //---------------------------------------------------------------------------
   // Description : Returns true if the avatar is standing on a plaform
   //---------------------------------------------------------------------------
-  bool Is_Avatar_Platform_Adjacent(Avatar_Controller_Mutator *mutator);
+  bool IsAvatarPlatformAdjacent(Avatar_Controller_Mutator *mutator);
 
   //---------------------------------------------------------------------------
   // Description : Returns true if the avatar is colliding with a plaform
   //---------------------------------------------------------------------------
-  bool Is_Avatar_Platform_Colliding(Avatar_Controller_Mutator *mutator,
-                                    std::list<Tunnelour::Bitmap_Component*> *out_colliding_border_tiles,
-                                    Tunnelour::Bitmap_Component *out_collision_block);
+  bool IsAvatarPlatformColliding(Avatar_Controller_Mutator *mutator,
+                                 std::list<Tunnelour::Bitmap_Component*> *out_colliding_border_tiles,
+                                 Tunnelour::Bitmap_Component *out_collision_block);
 
   //---------------------------------------------------------------------------
   // Description : Loads all the tile animations into the controller
   //---------------------------------------------------------------------------
-  void Load_Tilesets(std::wstring wtileset_path);
+  void LoadTilesets(std::wstring wtileset_path);
 
   //---------------------------------------------------------------------------
   // Description : Syncs the avatar tile position with the right foot position
   //             : of the last avatar animation frame.
   //---------------------------------------------------------------------------
-  D3DXVECTOR3 Align_Avatar_On_Right_Foot(Avatar_Controller_Mutator *mutator);
+  D3DXVECTOR3 AlignAvatarOnRightFoot(Avatar_Controller_Mutator *mutator);
 
   //---------------------------------------------------------------------------
   // Description : Initialises the timer used for the animation ticks
   //---------------------------------------------------------------------------
-  bool Init_Timer();
+  bool InitTimer();
 
   //---------------------------------------------------------------------------
   // Description : Updates and determines if the animation needs to update
   //---------------------------------------------------------------------------
-  void Update_Timer();
+  void UpdateTimer();
 
   //---------------------------------------------------------------------------
   // Description : Changes the avatar animation and state and/or direction
@@ -143,12 +143,18 @@ class Avatar_Controller: public Tunnelour::Controller {
   //---------------------------------------------------------------------------
   // Description : Returns the lowest collision block on the avatar
   //---------------------------------------------------------------------------
-  Avatar_Component::Collision_Block* GetLowestCollisionBlock();
+  Avatar_Component::Collision_Block GetLowestCollisionBlock();
 
   //---------------------------------------------------------------------------
   // Description : Creates a Bitmap Component using the given collision block
   //---------------------------------------------------------------------------
-  Tunnelour::Bitmap_Component Collision_Block_To_Bitmap_Component(Avatar_Component::Collision_Block* collision_block);
+  Tunnelour::Bitmap_Component CollisionBlockToBitmapComponent(Avatar_Component::Collision_Block collision_block);
+
+
+  //---------------------------------------------------------------------------
+  // Description : Creates a Bitmap Component using the given collision block
+  //---------------------------------------------------------------------------
+  Avatar_Component::Collision_Block GetNamedCollisionBlock(std::string id, std::list<Avatar_Component::Collision_Block> collision_blocks);
 
   //---------------------------------------------------------------------------
   // Member Variables
