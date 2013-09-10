@@ -44,19 +44,14 @@ class Background_Controller_Mutator: public Tunnelour::Component::Component_Muta
   void Mutate(Tunnelour::Component * const component);
 
   //-------------------------------------------------------------------------
-  // Description : Has this component been found in the model?
-  //-------------------------------------------------------------------------
-  bool FoundGameSettings();
-
-  //-------------------------------------------------------------------------
   // Description : Accessors for the Game_Settings_Component
   //-------------------------------------------------------------------------
   Tunnelour::Game_Settings_Component* const GetGameSettings();
 
   //-------------------------------------------------------------------------
-  // Description : Has this component been found in the model?
+  // Description : Has this mutator completed successfully?
   //-------------------------------------------------------------------------
-  bool FoundCamera();
+  bool WasSuccessful();
 
   //-------------------------------------------------------------------------
   // Description : Accessors for the Camera Component

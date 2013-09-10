@@ -1,4 +1,4 @@
-Tileset_Name "Debug Tilset"
+Tileset_Name "Debug"
 Tileset_Type "Tileset"
 Tileset_FileName "Debug_Tileset_0_4.png"
 Tileset_TopLeftX "0"

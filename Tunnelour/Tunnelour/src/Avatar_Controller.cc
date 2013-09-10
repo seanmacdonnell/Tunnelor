@@ -69,7 +69,7 @@ void Avatar_Controller::Run() {
       if (m_avatar == 0) { m_has_avatar_been_generated = false; }
     }
   } else {
-    // Is the avatar currenly not contacting the ground
+    // Is the avatar currently not contacting the ground
     UpdateTimer();
     if (m_animation_tick) {
       RunAvatarState(&mutator);
@@ -166,7 +166,7 @@ void Avatar_Controller::RunWalkingState(Avatar_Controller_Mutator *mutator) {
       ChangeAvatarState(current_command.state, current_command.direction);
     } else {
       // Continue State
-      // Contunue the falling animation
+      // Continue the falling animation
       unsigned int state_index = current_state.state_index;
       state_index++;
       if (state_index > (m_current_animation_subset.number_of_frames - 1)) {
@@ -323,8 +323,8 @@ bool Avatar_Controller::IsAvatarPlatformAdjacent(Avatar_Controller_Mutator *muta
       }
     }
 
-    // If colliding tiles is not empty, there is a tile adjecet to the lowest collision
-    // block of the avatar. This means the avatar is adjectent.
+    // If colliding tiles is not empty, there is a tile adjacent to the lowest collision
+    // block of the avatar. This means the avatar is adjacent.
     if (!colliding_border_tiles.empty()) {
       return true;
     }
@@ -371,22 +371,22 @@ bool Avatar_Controller::IsAvatarPlatformColliding(Avatar_Controller_Mutator *mut
 void Avatar_Controller::LoadTilesets(std::wstring wtileset_path) {
   // Running
   m_running_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Running_Animation_Tileset_1_1.txt");
-  Tileset_Helper::Load_Tileset_Metadata_Into_Struct(m_running_metadata_file_path, m_running_metadata);
+  Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(m_running_metadata_file_path, &m_running_metadata);
   m_animation_metadata.push_back(m_running_metadata);
 
   // Walking
   m_walking_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Walking_Animation_Tileset_1_5.txt");
-  Tileset_Helper::Load_Tileset_Metadata_Into_Struct(m_walking_metadata_file_path, m_walking_metadata);
+  Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(m_walking_metadata_file_path, &m_walking_metadata);
   m_animation_metadata.push_back(m_walking_metadata);
 
   // Standing
   m_standing_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Standing_Animation_Tileset_1_1.txt");
-  Tileset_Helper::Load_Tileset_Metadata_Into_Struct(m_standing_metadata_file_path, m_standing_metadata);
+  Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(m_standing_metadata_file_path, &m_standing_metadata);
   m_animation_metadata.push_back(m_standing_metadata);
 
   // Falling
   m_falling_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Falling_Animation_Tileset_1_1.txt");
-  Tileset_Helper::Load_Tileset_Metadata_Into_Struct(m_falling_metadata_file_path, m_falling_metadata);
+  Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(m_falling_metadata_file_path, &m_falling_metadata);
   m_animation_metadata.push_back(m_falling_metadata);
 }
 
@@ -486,7 +486,7 @@ void Avatar_Controller::ChangeAvatarState(std::string new_state_name, std::strin
 
   if (new_state_metadata.name.compare("") == 0) {
     std::string error;
-    error = "Animation not found in metadata list!" + new_state_name;
+    error = "Animation not found in Metadata list!" + new_state_name;
     throw Tunnelour::Exceptions::init_error(error);
   }
 
@@ -504,7 +504,7 @@ void Avatar_Controller::ChangeAvatarState(std::string new_state_name, std::strin
   m_avatar->SetSize(D3DXVECTOR2(static_cast<float>(new_animation_subset.tile_size_x),
                                 static_cast<float>(new_animation_subset.tile_size_y)));
 
-  // Find the initial frame of the new tileset state
+  // Find the initial frame of the new tile set state
   Tileset_Helper::Frame_Metadata initial_frame;
   std::list<Tileset_Helper::Frame_Metadata>::iterator frame;
   for (frame = new_animation_subset.frames.begin(); frame != new_animation_subset.frames.end(); frame++) {
@@ -513,7 +513,7 @@ void Avatar_Controller::ChangeAvatarState(std::string new_state_name, std::strin
     }
   }
 
-    // Create new collision block from the inital frame collision block
+    // Create new collision block from the initial frame collision block
   std::list<Tileset_Helper::Collision_Block>::iterator collision_block;
   for (collision_block = initial_frame.collision_blocks.begin(); collision_block != initial_frame.collision_blocks.end(); collision_block++) {
     Avatar_Component::Collision_Block new_collision_block;
@@ -545,11 +545,11 @@ void Avatar_Controller::UpdateAvatarState(int new_state_index) {
   incremented_state.state_index = new_state_index; 
   incremented_state.parent_state = m_avatar->GetState().parent_state;
 
-  // Set new bitmap frame location on the tileset
+  // Set new bitmap frame location on the Tileset
   m_avatar->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(m_current_animation_subset.top_left_x + (new_state_index * m_current_animation_subset.tile_size_x)),
                                                           static_cast<float>(m_current_animation_subset.top_left_y * -1));
 
-  // Find the new frame of the current tileset
+  // Find the new frame of the current tile set
   Tileset_Helper::Frame_Metadata new_frame;
   std::list<Tileset_Helper::Frame_Metadata>::iterator frame;
   for (frame = m_current_animation_subset.frames.begin(); frame != m_current_animation_subset.frames.end(); frame++) {
@@ -558,7 +558,7 @@ void Avatar_Controller::UpdateAvatarState(int new_state_index) {
     }
   }
 
-  // Create new collision block from the inital frame collision block
+  // Create new collision block from the initial frame collision block
   std::list<Tileset_Helper::Collision_Block>::iterator collision_block;
   for (collision_block = new_frame.collision_blocks.begin(); collision_block != new_frame.collision_blocks.end(); collision_block++) {
     Avatar_Component::Collision_Block new_collision_block;
@@ -636,7 +636,7 @@ Avatar_Component::Collision_Block Avatar_Controller::TilesetCollisionBlockToAvat
                                                                                                  int state_index) {
   Avatar_Component::Collision_Block new_collision_block;
 
-  // Create new collision block from the inital frame collision block
+  // Create new collision block from the initial frame collision block
   new_collision_block.id = tileset_collision_block.id;
   new_collision_block.is_contacting = tileset_collision_block.is_contacting;
   new_collision_block.size.x = static_cast<float>(tileset_collision_block.size_x);
@@ -651,7 +651,7 @@ Avatar_Component::Collision_Block Avatar_Controller::TilesetCollisionBlockToAvat
   collision_block_tilesheet_centre.y = static_cast<float>(tileset_collision_block.top_left_y - (tileset_collision_block.size_y /2));
 
   // Need to account for different positions in the frame and the avatar
-  // Work out the centre of the avatar frame (128x128 block) int the tileset
+  // Work out the center of the avatar frame (128x128 block) int the Tileset
   // frame is 128x128 so get the frame # and times it by 128/2 for y
   D3DXVECTOR3 animation_frame_centre;
   animation_frame_centre.x = static_cast<float>(((state_index + 1) * 128) - (128 / 2));
@@ -659,7 +659,7 @@ Avatar_Component::Collision_Block Avatar_Controller::TilesetCollisionBlockToAvat
   animation_frame_centre.y = static_cast<float>(((tileset_animation_top_left_y) - (128 / 2)));
   animation_frame_centre.z = static_cast<float>(-2);
 
-  // store the distance from x and y to the centre of the animation frame
+  // store the distance from x and y to the center of the animation frame
   new_collision_block.offset_from_avatar_centre.x = collision_block_tilesheet_centre.x - animation_frame_centre.x;
   new_collision_block.offset_from_avatar_centre.y = collision_block_tilesheet_centre.y - animation_frame_centre.y;
 

@@ -54,18 +54,13 @@ void Background_Controller_Mutator::Mutate(Tunnelour::Component * const componen
 }
 
 //------------------------------------------------------------------------------
-bool Background_Controller_Mutator::FoundGameSettings() {
-  return m_found_game_settings;
-}
-
-//------------------------------------------------------------------------------
 Tunnelour::Game_Settings_Component* const Background_Controller_Mutator::GetGameSettings() {
   return m_game_settings;
 }
 
 //------------------------------------------------------------------------------
-bool Background_Controller_Mutator::FoundCamera() {
-  return m_found_camera;
+bool Background_Controller_Mutator::WasSuccessful() {
+  return m_found_camera && m_found_game_settings;
 }
 
 //------------------------------------------------------------------------------

@@ -24,6 +24,7 @@
 #include "Tile_Bitmap.h"
 #include "Game_Settings_Component.h"
 #include "Camera_Component.h"
+#include "Tileset_Helper.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -33,31 +34,6 @@ namespace Tunnelour {
 //-----------------------------------------------------------------------------
 class Background_Controller: public Tunnelour::Controller {
  public:
-  struct Line {
-    int line_number;
-    int top_left_x, top_left_y;
-    int tile_size_x, tile_size_y;
-    int number_of_tiles;
-  };
-
-  struct Tileset {
-    std::string type;
-    int top_left_x, top_left_y;
-    int size_x, size_y;
-    int number_of_lines;
-    std::list<Line> lines;
-  };
-
-  struct Tileset_Metadata {
-    std::string name;
-    std::string type;
-    std::string filename;
-    int top_left_x, top_left_y;
-    int size_x, size_y;
-    int number_of_subsets;
-    std::list<Tileset> tilesets;
-  };
-
   //---------------------------------------------------------------------------
   // Description : Constructor
   //---------------------------------------------------------------------------
@@ -81,20 +57,38 @@ class Background_Controller: public Tunnelour::Controller {
  protected:
 
  private:
-  void Load_Tilset_Metadata();
-  Tunnelour::Tile_Bitmap* Create_Tile(int base_tile_size);
+  //---------------------------------------------------------------------------
+  // Description : Creates a new bitmap tile of the given tile size.
+  //---------------------------------------------------------------------------
+  Tunnelour::Tile_Bitmap* CreateTile(float base_tile_size);
 
-  Tunnelour::Tile_Bitmap *m_bitmap;
-  Tileset_Metadata m_metadata;
+  //---------------------------------------------------------------------------
+  // Description : Loads the tileset metadata from file into the variables
+  //---------------------------------------------------------------------------
+  void LoadTilesetMetadata();
+
+  Tileset_Helper::Tileset_Metadata GetNamedTileset(std::string name);
+
+  Tileset_Helper::Subset GetCurrentBackgroundTilesetSubset();
+
+  //---------------------------------------------------------------------------
+  // Member Variables
+  //---------------------------------------------------------------------------
+  std::list<Tileset_Helper::Tileset_Metadata> m_tilesets;
+  Tileset_Helper::Tileset_Metadata m_current_tileset;
+  Tileset_Helper::Subset m_current_background_subset;
+
   std::vector<Tunnelour::Tile_Bitmap*> m_background_tiles;
-
   Tunnelour::Game_Settings_Component* m_game_settings;
   Tunnelour::Camera_Component* m_camera;
   bool m_has_init_background_been_generated;
-
   std::string m_metadata_file_path;
-  int m_background_top, m_background_bottom, m_background_left, m_background_right;
-  std::wstring m_tileset_filename;
+  float m_background_top;
+  float m_background_bottom;
+  float m_background_left;
+  float m_background_right;
+  std::string m_debug_metadata_file_path;
+  std::string m_dirt_metadata_file_path;
   bool m_is_debug_mode;
 };
 }  // namespace Tunnelour

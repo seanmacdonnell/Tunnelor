@@ -34,13 +34,14 @@ Tileset_Helper::~Tileset_Helper() {
 }
 
 //------------------------------------------------------------------------------
-bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file, Tileset_Helper::Animation_Tileset_Metadata &out_metadata) {
+bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string metadata_file, Tileset_Helper::Animation_Tileset_Metadata *out_metadata) {
   FILE * pFile;
   int lSize;
 
   // Open Font File as a text file
   if (fopen_s(&pFile, metadata_file.c_str(), "r") != 0) {
-    throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed!");
+    std::string error = "Open Tileset Metadata Failed! " +  metadata_file;
+    throw Tunnelour::Exceptions::init_error(error);
     return false;
   }
 
@@ -58,7 +59,7 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
     token = strtok_s(line, " ", &next_token);
     if (strcmp(token, "Tileset_Name") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata.name = token;
+      out_metadata->name = token;
     } else {
       throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Tileset_Name");
       return false;
@@ -70,7 +71,7 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
     token = strtok_s(line, " ", &next_token);
     if (strcmp(token, "Tileset_Type") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata.type = token;
+      out_metadata->type = token;
     } else {
       throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Tileset_Type");
       return false;
@@ -82,7 +83,7 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
     token = strtok_s(line, " ", &next_token);
     if (strcmp(token, "Tileset_FileName") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata.filename = token;
+      out_metadata->filename = token;
     } else {
       throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Tileset_FileName");
       return false;
@@ -94,7 +95,7 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
     token = strtok_s(line, " ", &next_token);
     if (strcmp(token, "Tileset_TopLeftX") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata.top_left_x = atoi(token);
+      out_metadata->top_left_x = atoi(token);
     } else {
       throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Tileset_TopLeftX");
       return false;
@@ -106,7 +107,7 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
     token = strtok_s(line, " ", &next_token);
     if (strcmp(token, "Tileset_TopLeftY") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata.top_left_y = atoi(token);
+      out_metadata->top_left_y = atoi(token);
     } else {
       throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Tileset_TopLeftY");
       return false;
@@ -118,7 +119,7 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
     token = strtok_s(line, " ", &next_token);
     if (strcmp(token, "Tileset_SizeX") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata.size_x = atoi(token);
+      out_metadata->size_x = atoi(token);
     } else {
       throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Tileset_SizeX");
       return false;
@@ -130,7 +131,7 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
     token = strtok_s(line, " ", &next_token);
     if (strcmp(token, "Tileset_SizeY") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata.size_y = atoi(token);
+      out_metadata->size_y = atoi(token);
     } else {
       throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Tileset_SizeY");
       return false;
@@ -142,15 +143,15 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
     token = strtok_s(line, " ", &next_token);
     if (strcmp(token, "Tileset_NumOfSubSets") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata.number_of_subsets = atoi(token);
+      out_metadata->number_of_subsets = atoi(token);
     } else {
       throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Tileset_NumOfSubSets");
       return false;
     }
   }
 
-  if (out_metadata.number_of_subsets != 0) {
-    for (int i = 0; i <  out_metadata.number_of_subsets; i++) {
+  if (out_metadata->number_of_subsets != 0) {
+    for (int i = 0; i <  out_metadata->number_of_subsets; i++) {
       Animation_Subset temp_subset;
 
       fgets(line, 225, pFile);
@@ -401,11 +402,237 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
         temp_subset.frames.push_back(temp_frame_metadata);
       }
     
-      out_metadata.subsets.push_back(temp_subset);
+      out_metadata->subsets.push_back(temp_subset);
     }
   }
 
   return true;
 }
+
+//---------------------------------------------------------------------------
+bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file, Tileset_Helper::Tileset_Metadata *out_metadata) {
+  FILE * pFile;
+  int lSize;
+
+  // Open Font File as a text file
+  if (fopen_s(&pFile, metadata_file.c_str(), "r") != 0) {
+    std::string error = "Open Tileset Metadata Failed! " +  metadata_file;
+    throw Tunnelour::Exceptions::init_error(error);
+    return false;
+  }
+
+  // obtain file size:
+  fseek(pFile, 0, SEEK_END);
+  lSize = ftell(pFile);
+  rewind(pFile);
+
+  char * token;
+  char * next_token;
+
+  char line[255];
+  fgets(line, 225, pFile);
+  if (line != NULL) {
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token, "Tileset_Name") == 0)   {
+      token = strtok_s(NULL, " =\"", &next_token);
+      out_metadata->name = token;
+    }
+  }
+
+  fgets(line, 225, pFile);
+  if (line != NULL) {
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token, "Tileset_Type") == 0)   {
+      token = strtok_s(NULL, " =\"", &next_token);
+      out_metadata->type = token;
+    }
+  }
+
+  fgets(line, 225, pFile);
+  if (line != NULL) {
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token, "Tileset_FileName") == 0)   {
+      token = strtok_s(NULL, " =\"", &next_token);
+      out_metadata->filename = token;
+    }
+  }
+
+  fgets(line, 225, pFile);
+  if (line != NULL) {
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token, "Tileset_TopLeftX") == 0)   {
+      token = strtok_s(NULL, " =\"", &next_token);
+      out_metadata->top_left_x = atoi(token);
+    }
+  }
+
+  fgets(line, 225, pFile);
+  if (line != NULL) {
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token, "Tileset_TopLeftY") == 0)   {
+      token = strtok_s(NULL, " =\"", &next_token);
+      out_metadata->top_left_y = atoi(token);
+    }
+  }
+
+  fgets(line, 225, pFile);
+  if (line != NULL) {
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token, "Tileset_SizeX") == 0)   {
+      token = strtok_s(NULL, " =\"", &next_token);
+      out_metadata->size_x = atoi(token);
+    }
+  }
+
+  fgets(line, 225, pFile);
+  if (line != NULL) {
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token, "Tileset_SizeY") == 0)   {
+      token = strtok_s(NULL, " =\"", &next_token);
+      out_metadata->size_y = atoi(token);
+    }
+  }
+
+  fgets(line, 225, pFile);
+  if (line != NULL) {
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token, "Tileset_NumOfSubSets") == 0)   {
+      token = strtok_s(NULL, " =\"", &next_token);
+      out_metadata->number_of_subsets = atoi(token);
+    }
+  }
+
+  if (out_metadata->number_of_subsets != 0) {
+    for (int i = 0; i <  out_metadata->number_of_subsets; i++) {
+      Tileset_Helper::Subset temp_tileset;
+
+      fgets(line, 225, pFile);
+      if (line != NULL) {
+        token = strtok_s(line, " ", &next_token);
+        if (strcmp(token, "SubSet_Name") == 0)   {
+        }
+      }
+
+      fgets(line, 225, pFile);
+      if (line != NULL) {
+        token = strtok_s(line, " ", &next_token);
+        if (strcmp(token, "SubSet_Type") == 0)   {
+          token = strtok_s(NULL, " =\"", &next_token);
+          temp_tileset.type = token;
+        }
+      }
+
+      fgets(line, 225, pFile);
+      if (line != NULL) {
+        token = strtok_s(line, " ", &next_token);
+        if (strcmp(token, "SubSet_TopLeftX") == 0)   {
+          token = strtok_s(NULL, " =\"", &next_token);
+          temp_tileset.top_left_x = atoi(token);
+        }
+      }
+
+      fgets(line, 225, pFile);
+      if (line != NULL) {
+        token = strtok_s(line, " ", &next_token);
+        if (strcmp(token, "SubSet_TopLeftY") == 0)   {
+          token = strtok_s(NULL, " =\"", &next_token);
+          temp_tileset.top_left_y = atoi(token);
+        }
+      }
+
+      fgets(line, 225, pFile);
+      if (line != NULL) {
+        token = strtok_s(line, " ", &next_token);
+        if (strcmp(token, "SubSet_SizeX") == 0)   {
+          token = strtok_s(NULL, " =\"", &next_token);
+          temp_tileset.size_x = atoi(token);
+        }
+      }
+
+      fgets(line, 225, pFile);
+      if (line != NULL) {
+        token = strtok_s(line, " ", &next_token);
+        if (strcmp(token, "SubSet_SizeY") == 0)   {
+          token = strtok_s(NULL, " =\"", &next_token);
+          temp_tileset.size_y = atoi(token);
+        }
+      }
+
+      fgets(line, 225, pFile);
+      if (line != NULL) {
+        token = strtok_s(line, " ", &next_token);
+        if (strcmp(token, "SubSet_NumOfLines") == 0)   {
+          token = strtok_s(NULL, " =\"", &next_token);
+          temp_tileset.number_of_lines = atoi(token);
+        }
+      }
+
+      if (temp_tileset.number_of_lines != 0) {
+        for (int i = 0; i < temp_tileset.number_of_lines; i++) {
+          Tileset_Helper::Line temp_line;
+
+          fgets(line, 225, pFile);
+          if (line != NULL) {
+            token = strtok_s(line, " ", &next_token);
+            if (strcmp(token, "Line_Name") == 0)   {
+              token = strtok_s(NULL, " =\"", &next_token);
+              temp_line.line_number = atoi(token);
+            }
+          }
+
+          fgets(line, 225, pFile);
+          if (line != NULL) {
+            token = strtok_s(line, " ", &next_token);
+            if (strcmp(token, "Line_TopLeftX") == 0)   {
+              token = strtok_s(NULL, " =\"", &next_token);
+              temp_line.top_left_x = atoi(token);
+            }
+          }
+
+          fgets(line, 225, pFile);
+          if (line != NULL) {
+            token = strtok_s(line, " ", &next_token);
+            if (strcmp(token, "Line_TopLeftY") == 0)   {
+              token = strtok_s(NULL, " =\"", &next_token);
+              temp_line.top_left_y = atoi(token);
+            }
+          }
+
+          fgets(line, 225, pFile);
+          if (line != NULL) {
+            token = strtok_s(line, " ", &next_token);
+            if (strcmp(token, "Tile_SizeX") == 0)   {
+              token = strtok_s(NULL, " =\"", &next_token);
+              temp_line.tile_size_x = atoi(token);
+            }
+          }
+
+          fgets(line, 225, pFile);
+          if (line != NULL) {
+            token = strtok_s(line, " ", &next_token);
+            if (strcmp(token, "Tile_SizeY") == 0)   {
+              token = strtok_s(NULL, " =\"", &next_token);
+              temp_line.tile_size_y = atoi(token);
+            }
+          }
+
+          fgets(line, 225, pFile);
+          if (line != NULL) {
+            token = strtok_s(line, " ", &next_token);
+            if (strcmp(token, "Line_NumOfTiles") == 0)   {
+              token = strtok_s(NULL, " =\"", &next_token);
+              temp_line.number_of_tiles = atoi(token);
+            }
+          }
+          temp_tileset.lines.push_back(temp_line);
+        }
+      }
+
+      out_metadata->tilesets.push_back(temp_tileset);
+    }
+  }
+}
+
+
 
 } // Tunnelour

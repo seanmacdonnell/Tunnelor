@@ -98,12 +98,12 @@ class Avatar_Controller: public Tunnelour::Controller {
   void RunFallingState(Avatar_Controller_Mutator *mutator);
 
   //---------------------------------------------------------------------------
-  // Description : Returns true if the avatar is standing on a plaform
+  // Description : Returns true if the avatar is standing on a platform
   //---------------------------------------------------------------------------
   bool IsAvatarPlatformAdjacent(Avatar_Controller_Mutator *mutator);
 
   //---------------------------------------------------------------------------
-  // Description : Returns true if the avatar is colliding with a plaform
+  // Description : Returns true if the avatar is colliding with a platform
   //---------------------------------------------------------------------------
   bool IsAvatarPlatformColliding(Avatar_Controller_Mutator *mutator,
                                  std::list<Tunnelour::Bitmap_Component*> *out_colliding_border_tiles,

@@ -62,6 +62,31 @@ class Tileset_Helper {
     std::list<Animation_Subset> subsets;
   };
 
+  struct Line {
+    int line_number;
+    int top_left_x, top_left_y;
+    int tile_size_x, tile_size_y;
+    int number_of_tiles;
+  };
+
+  struct Subset {
+    std::string type;
+    int top_left_x, top_left_y;
+    int size_x, size_y;
+    int number_of_lines;
+    std::list<Line> lines;
+  };
+
+  struct Tileset_Metadata {
+    std::string name;
+    std::string type;
+    std::string filename;
+    int top_left_x, top_left_y;
+    int size_x, size_y;
+    int number_of_subsets;
+    std::list<Subset> tilesets;
+  };
+
   //---------------------------------------------------------------------------
   // Description : Constructor
   //---------------------------------------------------------------------------
@@ -73,9 +98,14 @@ class Tileset_Helper {
   virtual ~Tileset_Helper();
 
   //---------------------------------------------------------------------------
+  // Description : Loads the animation tileset metadata into a struct.
+  //---------------------------------------------------------------------------
+  static bool Load_Animation_Tileset_Metadata_Into_Struct(std::string metadata_file, Tileset_Helper::Animation_Tileset_Metadata *out_metadata);
+
+  //---------------------------------------------------------------------------
   // Description : Loads the tileset metadata into a struct.
   //---------------------------------------------------------------------------
-  static bool Load_Tileset_Metadata_Into_Struct(std::string metadata_file_path, Tileset_Helper::Animation_Tileset_Metadata &out_metadata);
+  static bool Load_Tileset_Metadata_Into_Struct(std::string metadata_file, Tileset_Helper::Tileset_Metadata *out_metadata);
 
  protected:
 
