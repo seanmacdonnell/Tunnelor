@@ -43,19 +43,15 @@ void Debug_Data_Display_Controller_Mutator::Mutate(Tunnelour::Component * const 
     game_settings = static_cast<Tunnelour::Game_Settings_Component*>(component);
     m_game_settings = game_settings;
     m_found_game_settings = true;
-  } else if (component->GetType().compare("Bitmap_Component") == 0) {
-    if (!m_found_avatar_component) {
-      m_avatar_component = dynamic_cast<Avatar_Component*>(component);
-      if (m_avatar_component != 0) {
-        m_found_avatar_component = true;
-      }
-    }
   } else  if (component->GetType().compare("Camera_Component") == 0) {
     // Found Camera_Component
     Tunnelour::Camera_Component *camera = 0;
     camera = static_cast<Tunnelour::Camera_Component*>(component);
     m_camera = camera;
     m_found_camera = true;
+  } else  if (component->GetType().compare("Avatar_Component") == 0) {
+    m_avatar_component = dynamic_cast<Avatar_Component*>(component);
+    m_found_avatar_component = true;
   }
 }
 

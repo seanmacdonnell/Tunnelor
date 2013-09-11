@@ -122,16 +122,6 @@ class Game_Settings_Component: public Tunnelour::Component {
   void SetTilesetPath(std::wstring tileset_path);
 
   //---------------------------------------------------------------------------
-  // Description : Mutator for the Screen Depth
-  //---------------------------------------------------------------------------
-  void SetTileSizeMultiplicationFactor(float tile_multiplication_factor);
-
-  //---------------------------------------------------------------------------
-  // Description : Accessor for the Screen Near
-  //---------------------------------------------------------------------------
-  float GetTileMultiplicationFactor();
-
-  //---------------------------------------------------------------------------
   // Description : Accessor for the HInstance
   //---------------------------------------------------------------------------
   HINSTANCE& GetHInstance();
@@ -184,7 +174,6 @@ class Game_Settings_Component: public Tunnelour::Component {
   float m_screen_near;
   D3DXCOLOR m_color;
   std::wstring m_tileset_path;
-  float m_tile_size_multiplication_factor;
   HINSTANCE m_hinstance;
   HWND m_hwnd;
   bool m_is_debug_mode;

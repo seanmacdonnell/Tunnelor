@@ -212,11 +212,9 @@ void Middleground_Controller::Tile_Tunnel() {
         number_of_1x1_y_tiles--;
       }
 
-      int resised_tile_size = static_cast<int>(base_tile_size * m_game_settings->GetTileMultiplicationFactor());
-
       //Calculate number of x tiles
       int number_of_x_tiles = 0;
-      std::div_t div_x_result = div(static_cast<int>(m_game_settings->GetResolution().x), resised_tile_size);
+      std::div_t div_x_result = div(static_cast<int>(m_game_settings->GetResolution().x), base_tile_size);
       if (div_x_result.rem != 0) {
         number_of_x_tiles = div_x_result.quot + 1; //Add Another Tile if it doesne't fit
       } else {

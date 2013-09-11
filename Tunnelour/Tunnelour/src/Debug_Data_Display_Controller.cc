@@ -42,7 +42,7 @@ Debug_Data_Display_Controller::~Debug_Data_Display_Controller() {
 
 //------------------------------------------------------------------------------
 void Debug_Data_Display_Controller::Init(Tunnelour::Component_Composite * const model) {
-    Tunnelour::Controller::Init(model);
+  Tunnelour::Controller::Init(model);
 }
 
 //------------------------------------------------------------------------------

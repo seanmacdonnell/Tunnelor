@@ -69,7 +69,19 @@ class Background_Controller: public Tunnelour::Controller {
 
   Tileset_Helper::Tileset_Metadata GetNamedTileset(std::string name);
 
-  Tileset_Helper::Subset GetCurrentBackgroundTilesetSubset();
+  Tileset_Helper::Subset GetCurrentBackgroundSubset();
+
+  void TileCurrentWindow();
+
+  void TileUp(float camera_top);
+
+  void TileDown(float camera_bottom);
+
+  void TileRight(float camera_right);
+
+  void TileLeft(float camera_left);
+
+  void SwitchTileset();
 
   //---------------------------------------------------------------------------
   // Member Variables

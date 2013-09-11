@@ -30,7 +30,6 @@ Game_Settings_Component::Game_Settings_Component(): Component() {
   m_color = D3DXCOLOR(0, 0, 0, 1);
   m_tileset_path = L"";
   m_type = "Game_Settings_Component";
-  m_tile_size_multiplication_factor = 0;
   m_hinstance = NULL;
   m_hwnd = NULL;
   m_is_camera_following = true;
@@ -49,7 +48,6 @@ void Game_Settings_Component::Init() {
   m_screen_depth = 1000.0f;
   m_screen_near = 0.1f;
   m_tileset_path = L"resource\\tilesets\\";
-  m_tile_size_multiplication_factor = 1;
   m_is_debug_mode = false;
 }
 
@@ -127,17 +125,6 @@ std::wstring Game_Settings_Component::GetTilesetPath() {
 void Game_Settings_Component::SetTilesetPath(std::wstring tileset_path) {
   m_tileset_path = tileset_path;
 }
-
-//------------------------------------------------------------------------------
-void Game_Settings_Component::SetTileSizeMultiplicationFactor(float tile_multiplication_factor) {
-  m_tile_size_multiplication_factor = tile_multiplication_factor;
-}
-
-//------------------------------------------------------------------------------
-float Game_Settings_Component::GetTileMultiplicationFactor() {
-  return m_tile_size_multiplication_factor;
-}
-
 
 //------------------------------------------------------------------------------
 HINSTANCE& Game_Settings_Component::GetHInstance() {
