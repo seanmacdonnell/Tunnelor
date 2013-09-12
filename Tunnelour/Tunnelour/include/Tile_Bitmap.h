@@ -63,6 +63,8 @@ class Tile_Bitmap: public Tunnelour::Bitmap_Component {
 
   void Set_Is_Left_Edge(bool is_left_edge);
 
+  bool IsEdge();
+
  protected:
 
  private:

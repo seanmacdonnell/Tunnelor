@@ -171,4 +171,8 @@ void Tile_Bitmap::Set_Is_Left_Edge(bool is_left_edge) {
   m_is_left_edge = is_left_edge;
 }
 
+//------------------------------------------------------------------------------
+bool Tile_Bitmap::IsEdge() {
+  return Is_Top_Edge() || Is_Bottom_Edge() || Is_Right_Edge() || Is_Left_Edge();
+}
 }  // namespace Tunnelour

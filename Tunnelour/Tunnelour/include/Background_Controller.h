@@ -60,7 +60,11 @@ class Background_Controller: public Tunnelour::Controller {
   //---------------------------------------------------------------------------
   // Description : Creates a new bitmap tile of the given tile size.
   //---------------------------------------------------------------------------
-  Tunnelour::Tile_Bitmap* CreateTile(float base_tile_size);
+  Tunnelour::Tile_Bitmap* CreateTile(float base_tile_size,
+                                     bool is_top_edge,
+                                     bool is_bottom_edge,
+                                     bool is_right_edge,
+                                     bool is_left_edge);
 
   //---------------------------------------------------------------------------
   // Description : Loads the tileset metadata from file into the variables
@@ -83,6 +87,8 @@ class Background_Controller: public Tunnelour::Controller {
 
   void SwitchTileset();
 
+  Tileset_Helper::Line GetCurrentSizedLine(D3DXVECTOR2 size); 
+
   //---------------------------------------------------------------------------
   // Member Variables
   //---------------------------------------------------------------------------
@@ -91,6 +97,10 @@ class Background_Controller: public Tunnelour::Controller {
   Tileset_Helper::Subset m_current_background_subset;
 
   std::vector<Tunnelour::Tile_Bitmap*> m_background_tiles;
+  std::vector<Tunnelour::Tile_Bitmap*> m_top_edge_tiles;
+  std::vector<Tunnelour::Tile_Bitmap*> m_bottom_edge_tiles;
+  std::vector<Tunnelour::Tile_Bitmap*> m_right_edge_tiles;
+  std::vector<Tunnelour::Tile_Bitmap*> m_left_edge_tiles;
   Tunnelour::Game_Settings_Component* m_game_settings;
   Tunnelour::Camera_Component* m_camera;
   bool m_has_init_background_been_generated;

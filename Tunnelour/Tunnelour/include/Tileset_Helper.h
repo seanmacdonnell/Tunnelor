@@ -30,8 +30,8 @@ class Tileset_Helper {
    struct Collision_Block {
      std::string id;
      bool is_contacting;
-     int top_left_x, top_left_y;
-     int size_x, size_y;
+     float top_left_x, top_left_y;
+     float size_x, size_y;
    };
 
   struct Frame_Metadata {
@@ -43,9 +43,9 @@ class Tileset_Helper {
   struct Animation_Subset {
     std::string name;
     std::string type;
-    int top_left_x, top_left_y;
-    int size_x, size_y;
-    int tile_size_x, tile_size_y;
+    float top_left_x, top_left_y;
+    float size_x, size_y;
+    float tile_size_x, tile_size_y;
     unsigned int number_of_frames;
     unsigned int frames_per_second;
     bool is_repeatable;
@@ -56,23 +56,23 @@ class Tileset_Helper {
     std::string name;
     std::string type;
     std::string filename;
-    int top_left_x, top_left_y;
-    int size_x, size_y;
+    float top_left_x, top_left_y;
+    float size_x, size_y;
     int number_of_subsets;
     std::list<Animation_Subset> subsets;
   };
 
   struct Line {
     int line_number;
-    int top_left_x, top_left_y;
-    int tile_size_x, tile_size_y;
+    float top_left_x, top_left_y;
+    float tile_size_x, tile_size_y;
     int number_of_tiles;
   };
 
   struct Subset {
     std::string type;
-    int top_left_x, top_left_y;
-    int size_x, size_y;
+    float top_left_x, top_left_y;
+    float size_x, size_y;
     int number_of_lines;
     std::list<Line> lines;
   };
@@ -81,8 +81,8 @@ class Tileset_Helper {
     std::string name;
     std::string type;
     std::string filename;
-    int top_left_x, top_left_y;
-    int size_x, size_y;
+    float top_left_x, top_left_y;
+    float size_x, size_y;
     int number_of_subsets;
     std::list<Subset> tilesets;
   };

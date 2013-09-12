@@ -61,7 +61,7 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
       token = strtok_s(NULL, " =\"", &next_token);
       out_metadata->name = token;
     } else {
-      throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Tileset_Name");
+      throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: Tileset_Name");
       return false;
     }
   }
@@ -73,7 +73,7 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
       token = strtok_s(NULL, " =\"", &next_token);
       out_metadata->type = token;
     } else {
-      throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Tileset_Type");
+      throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: Tileset_Type");
       return false;
     }
   }
@@ -85,7 +85,7 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
       token = strtok_s(NULL, " =\"", &next_token);
       out_metadata->filename = token;
     } else {
-      throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Tileset_FileName");
+      throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: Tileset_FileName");
       return false;
     }
   }
@@ -95,9 +95,9 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
     token = strtok_s(line, " ", &next_token);
     if (strcmp(token, "Tileset_TopLeftX") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata->top_left_x = atoi(token);
+      out_metadata->top_left_x = static_cast<float>(atof(token));
     } else {
-      throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Tileset_TopLeftX");
+      throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: Tileset_TopLeftX");
       return false;
     }
   }
@@ -107,9 +107,9 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
     token = strtok_s(line, " ", &next_token);
     if (strcmp(token, "Tileset_TopLeftY") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata->top_left_y = atoi(token);
+      out_metadata->top_left_y = static_cast<float>(atof(token));
     } else {
-      throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Tileset_TopLeftY");
+      throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: Tileset_TopLeftY");
       return false;
     }
   }
@@ -119,9 +119,9 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
     token = strtok_s(line, " ", &next_token);
     if (strcmp(token, "Tileset_SizeX") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata->size_x = atoi(token);
+      out_metadata->size_x = static_cast<float>(atof(token));
     } else {
-      throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Tileset_SizeX");
+      throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: Tileset_SizeX");
       return false;
     }
   }
@@ -131,9 +131,9 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
     token = strtok_s(line, " ", &next_token);
     if (strcmp(token, "Tileset_SizeY") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata->size_y = atoi(token);
+      out_metadata->size_y = static_cast<float>(atof(token));
     } else {
-      throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Tileset_SizeY");
+      throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: Tileset_SizeY");
       return false;
     }
   }
@@ -145,7 +145,7 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
       token = strtok_s(NULL, " =\"", &next_token);
       out_metadata->number_of_subsets = atoi(token);
     } else {
-      throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Tileset_NumOfSubSets");
+      throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: Tileset_NumOfSubSets");
       return false;
     }
   }
@@ -161,7 +161,7 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
           token = strtok_s(NULL, " =\"", &next_token);
           temp_subset.name = token;
         } else {
-          throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: SubSet_Name");
+          throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: SubSet_Name");
           return false;
         }
       }
@@ -173,7 +173,7 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
           token = strtok_s(NULL, " =\"", &next_token);
           temp_subset.type = token;
         } else {
-          throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: SubSet_Type");
+          throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: SubSet_Type");
           return false;
         }
       }
@@ -183,9 +183,9 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
         token = strtok_s(line, " ", &next_token);
         if (strcmp(token, "SubSet_TopLeftX") == 0)   {
           token = strtok_s(NULL, " =\"", &next_token);
-          temp_subset.top_left_x = atoi(token);
+          temp_subset.top_left_x = static_cast<float>(atof(token));
         } else {
-          throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: SubSet_TopLeftX");
+          throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: SubSet_TopLeftX");
           return false;
         }
       }
@@ -195,9 +195,9 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
         token = strtok_s(line, " ", &next_token);
         if (strcmp(token, "SubSet_TopLeftY") == 0)   {
           token = strtok_s(NULL, " =\"", &next_token);
-          temp_subset.top_left_y = atoi(token);
+          temp_subset.top_left_y = static_cast<float>(atof(token));
         } else {
-          throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: SubSet_TopLeftY");
+          throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: SubSet_TopLeftY");
           return false;
         }
       }
@@ -207,9 +207,9 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
         token = strtok_s(line, " ", &next_token);
         if (strcmp(token, "SubSet_SizeX") == 0)   {
           token = strtok_s(NULL, " =\"", &next_token);
-          temp_subset.size_x = atoi(token);
+          temp_subset.size_x = static_cast<float>(atof(token));
         } else {
-          throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: SubSet_SizeX");
+          throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: SubSet_SizeX");
           return false;
         }
       }
@@ -219,9 +219,9 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
         token = strtok_s(line, " ", &next_token);
         if (strcmp(token, "SubSet_SizeY") == 0)   {
           token = strtok_s(NULL, " =\"", &next_token);
-          temp_subset.size_y = atoi(token);
+          temp_subset.size_y = static_cast<float>(atof(token));
         } else {
-          throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: SubSet_SizeY");
+          throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: SubSet_SizeY");
           return false;
         }
       }
@@ -231,9 +231,9 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
         token = strtok_s(line, " ", &next_token);
         if (strcmp(token, "SubSet_Tile_SizeX") == 0)   {
           token = strtok_s(NULL, " =\"", &next_token);
-          temp_subset.tile_size_x = atoi(token);
+          temp_subset.tile_size_x = static_cast<float>(atof(token));
         } else {
-          throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: SubSet_Tile_SizeX");
+          throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: SubSet_Tile_SizeX");
           return false;
         }
       }
@@ -243,9 +243,9 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
         token = strtok_s(line, " ", &next_token);
         if (strcmp(token, "SubSet_Tile_SizeY") == 0)   {
           token = strtok_s(NULL, " =\"", &next_token);
-          temp_subset.tile_size_y = atoi(token);
+          temp_subset.tile_size_y = static_cast<float>(atof(token));
         } else {
-          throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: SubSet_Tile_SizeY");
+          throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: SubSet_Tile_SizeY");
           return false;
         }
       }
@@ -257,7 +257,7 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
           token = strtok_s(NULL, " =\"", &next_token);
           temp_subset.number_of_frames = atoi(token);
         } else {
-          throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: SubSet_NumOfFrames");
+          throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: SubSet_NumOfFrames");
           return false;
         }
       }
@@ -269,7 +269,7 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
           token = strtok_s(NULL, " =\"", &next_token);
           temp_subset.frames_per_second = atoi(token);
         } else {
-          throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: SubSet_FramesPerSecond");
+          throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: SubSet_FramesPerSecond");
           return false;
         }
       }
@@ -285,7 +285,7 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
             temp_subset.is_repeatable = false;
           }
         } else {
-          throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: SubSet_Repeating");
+          throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: SubSet_Repeating");
           return false;
         }
       }
@@ -300,7 +300,7 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
             token = strtok_s(NULL, " =\"", &next_token);
             temp_frame_metadata.id = atoi(token);
           } else {
-            throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Frame_ID");
+            throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: Frame_ID");
             return false;
           }
         }
@@ -312,7 +312,7 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
             token = strtok_s(NULL, " =\"", &next_token);
             temp_frame_metadata.number_of_collision_blocks = atoi(token);
           } else {
-            throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Frame_CollisionBlock_NumOfBlocks");
+            throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: Frame_CollisionBlock_NumOfBlocks");
             return false;
           }
         }
@@ -327,7 +327,7 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
               token = strtok_s(NULL, " =\"", &next_token);
               temp_collision_block.id = token;
             } else {
-              throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Frame_CollisionBlock_ID");
+              throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: Frame_CollisionBlock_ID");
               return false;
             }
           }
@@ -337,9 +337,9 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
             token = strtok_s(line, " ", &next_token);
             if (strcmp(token, "Frame_CollisionBlock_TopLeftX") == 0)   {
               token = strtok_s(NULL, " =\"", &next_token);
-              temp_collision_block.top_left_x = atoi(token);
+              temp_collision_block.top_left_x = static_cast<float>(atof(token));
             } else {
-              throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Frame_CollisionBlock_TopLeftX");
+              throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: Frame_CollisionBlock_TopLeftX");
               return false;
             }
           }
@@ -349,9 +349,9 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
             token = strtok_s(line, " ", &next_token);
             if (strcmp(token, "Frame_CollisionBlock_TopLeftY") == 0)   {
               token = strtok_s(NULL, " =\"", &next_token);
-              temp_collision_block.top_left_y = atoi(token);
+              temp_collision_block.top_left_y = static_cast<float>(atof(token));
             } else {
-              throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Frame_CollisionBlock_TopLeftY");
+              throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: Frame_CollisionBlock_TopLeftY");
               return false;
             }
           }
@@ -361,9 +361,9 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
             token = strtok_s(line, " ", &next_token);
             if (strcmp(token, "Frame_CollisionBlock_SizeX") == 0)   {
               token = strtok_s(NULL, " =\"", &next_token);
-              temp_collision_block.size_x = atoi(token);
+              temp_collision_block.size_x = static_cast<float>(atof(token));
             } else {
-              throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Frame_CollisionBlock_SizeX");
+              throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: Frame_CollisionBlock_SizeX");
               return false;
             }
           }
@@ -373,9 +373,9 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
             token = strtok_s(line, " ", &next_token);
             if (strcmp(token, "Frame_CollisionBlock_SizeY") == 0)   {
               token = strtok_s(NULL, " =\"", &next_token);
-              temp_collision_block.size_y = atoi(token);
+              temp_collision_block.size_y = static_cast<float>(atof(token));
             } else {
-              throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Frame_CollisionBlock_SizeY");
+              throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: Frame_CollisionBlock_SizeY");
               return false;
             }
           }
@@ -391,7 +391,7 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
                 temp_collision_block.is_contacting = false;
               }
             } else {
-              throw Tunnelour::Exceptions::init_error("Open Tileset Metadata Failed! Expected: Frame_CollisionBlock_Contact");
+              throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: Frame_CollisionBlock_Contact");
               return false;
             }
           }
@@ -462,7 +462,7 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
     token = strtok_s(line, " ", &next_token);
     if (strcmp(token, "Tileset_TopLeftX") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata->top_left_x = atoi(token);
+      out_metadata->top_left_x = static_cast<float>(atof(token));
     }
   }
 
@@ -471,7 +471,7 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
     token = strtok_s(line, " ", &next_token);
     if (strcmp(token, "Tileset_TopLeftY") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata->top_left_y = atoi(token);
+      out_metadata->top_left_y = static_cast<float>(atof(token));
     }
   }
 
@@ -480,7 +480,7 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
     token = strtok_s(line, " ", &next_token);
     if (strcmp(token, "Tileset_SizeX") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata->size_x = atoi(token);
+      out_metadata->size_x = static_cast<float>(atof(token));
     }
   }
 
@@ -489,7 +489,7 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
     token = strtok_s(line, " ", &next_token);
     if (strcmp(token, "Tileset_SizeY") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
-      out_metadata->size_y = atoi(token);
+      out_metadata->size_y = static_cast<float>(atof(token));
     }
   }
 
@@ -527,7 +527,7 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
         token = strtok_s(line, " ", &next_token);
         if (strcmp(token, "SubSet_TopLeftX") == 0)   {
           token = strtok_s(NULL, " =\"", &next_token);
-          temp_tileset.top_left_x = atoi(token);
+          temp_tileset.top_left_x = static_cast<float>(atof(token));
         }
       }
 
@@ -536,7 +536,7 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
         token = strtok_s(line, " ", &next_token);
         if (strcmp(token, "SubSet_TopLeftY") == 0)   {
           token = strtok_s(NULL, " =\"", &next_token);
-          temp_tileset.top_left_y = atoi(token);
+          temp_tileset.top_left_y = static_cast<float>(atof(token));
         }
       }
 
@@ -545,7 +545,7 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
         token = strtok_s(line, " ", &next_token);
         if (strcmp(token, "SubSet_SizeX") == 0)   {
           token = strtok_s(NULL, " =\"", &next_token);
-          temp_tileset.size_x = atoi(token);
+          temp_tileset.size_x = static_cast<float>(atof(token));
         }
       }
 
@@ -554,7 +554,7 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
         token = strtok_s(line, " ", &next_token);
         if (strcmp(token, "SubSet_SizeY") == 0)   {
           token = strtok_s(NULL, " =\"", &next_token);
-          temp_tileset.size_y = atoi(token);
+          temp_tileset.size_y = static_cast<float>(atof(token));
         }
       }
 
@@ -585,7 +585,7 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
             token = strtok_s(line, " ", &next_token);
             if (strcmp(token, "Line_TopLeftX") == 0)   {
               token = strtok_s(NULL, " =\"", &next_token);
-              temp_line.top_left_x = atoi(token);
+              temp_line.top_left_x = static_cast<float>(atof(token));
             }
           }
 
@@ -594,7 +594,7 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
             token = strtok_s(line, " ", &next_token);
             if (strcmp(token, "Line_TopLeftY") == 0)   {
               token = strtok_s(NULL, " =\"", &next_token);
-              temp_line.top_left_y = atoi(token);
+              temp_line.top_left_y = static_cast<float>(atof(token));
             }
           }
 
@@ -603,7 +603,7 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
             token = strtok_s(line, " ", &next_token);
             if (strcmp(token, "Tile_SizeX") == 0)   {
               token = strtok_s(NULL, " =\"", &next_token);
-              temp_line.tile_size_x = atoi(token);
+              temp_line.tile_size_x = static_cast<float>(atof(token));
             }
           }
 
@@ -612,7 +612,7 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
             token = strtok_s(line, " ", &next_token);
             if (strcmp(token, "Tile_SizeY") == 0)   {
               token = strtok_s(NULL, " =\"", &next_token);
-              temp_line.tile_size_y = atoi(token);
+              temp_line.tile_size_y = static_cast<float>(atof(token));
             }
           }
 
@@ -631,6 +631,7 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
       out_metadata->tilesets.push_back(temp_tileset);
     }
   }
+  return true;
 }
 
 

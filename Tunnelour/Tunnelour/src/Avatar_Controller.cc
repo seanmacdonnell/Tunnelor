@@ -632,7 +632,7 @@ Avatar_Component::Collision_Block Avatar_Controller::GetNamedCollisionBlock(std:
 
 //---------------------------------------------------------------------------
 Avatar_Component::Collision_Block Avatar_Controller::TilesetCollisionBlockToAvatarCollisionBlock(Tileset_Helper::Collision_Block tileset_collision_block, 
-                                                                                                 int tileset_animation_top_left_y,
+                                                                                                 float tileset_animation_top_left_y,
                                                                                                  int state_index) {
   Avatar_Component::Collision_Block new_collision_block;
 
