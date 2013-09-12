@@ -14,14 +14,15 @@
 //
 
 #include "Background_Controller.h"
+
+#include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctime>
+
 #include "Exceptions.h"
 #include "Background_Controller_Mutator.h"
 #include "String_Helper.h"
-#include "Exceptions.h"
-#include <math.h>
 
 namespace Tunnelour {
 
@@ -78,7 +79,7 @@ void Background_Controller::Run() {
 
       LoadTilesetMetadata();
 
-      m_is_debug_mode = m_game_settings->IsDebugMode(); 
+      m_is_debug_mode = m_game_settings->IsDebugMode();
       if (m_is_debug_mode) {
         m_current_tileset = GetNamedTileset("Debug");
       } else {
@@ -240,12 +241,12 @@ void Background_Controller::TileCurrentWindow() {
   unsigned int number_of_y_tiles = 0;
   float y_rem = m_game_settings->GetResolution().y / base_tile_size;
   number_of_y_tiles = static_cast<unsigned int>(std::ceil(y_rem));
-  number_of_y_tiles -= 1; //Because 0 is the first tile
+  number_of_y_tiles -= 1;  // Because 0 is the first tile
 
   unsigned int number_of_x_tiles = 0;
   float x_rem = m_game_settings->GetResolution().x / base_tile_size;
   number_of_x_tiles = static_cast<unsigned int>(std::ceil(x_rem));
-  number_of_x_tiles -= 1; //Because 0 is the first tile
+  number_of_x_tiles -= 1;  // Because 0 is the first tile
 
   for (unsigned int y = 0; y <= number_of_y_tiles ; y++) {
     std::vector<Tunnelour::Tile_Bitmap*> tile_line;
@@ -260,13 +261,11 @@ void Background_Controller::TileCurrentWindow() {
       } else if (y == number_of_y_tiles) {
         is_bottom_edge = true;
       }
-
       if (x == 0) {
         is_left_edge = true;
       } else if (x == number_of_x_tiles) {
         is_right_edge = true;
       }
-
 
       new_tile = CreateTile(base_tile_size,
                             is_top_edge,
@@ -302,7 +301,7 @@ void Background_Controller::TileCurrentWindow() {
   // Add tiles to the model
   std::vector<Tunnelour::Tile_Bitmap*>::iterator tile_it;
   for (tile_it = m_background_tiles.begin(); tile_it != m_background_tiles.end(); ++tile_it) {
-      //this is the last tile in the background model
+     // this is the last tile in the background model
     if ((*tile_it)->GetBottomRightPostion().x > m_background_right) {
       m_background_right = (*tile_it)->GetBottomRightPostion().x;
     }
@@ -330,19 +329,7 @@ void Background_Controller::TileDown(float camera_bottom) {
   std::vector<Tunnelour::Tile_Bitmap*>::iterator edge_tile;
   for (edge_tile = m_bottom_edge_tiles.begin(); edge_tile != m_bottom_edge_tiles.end(); edge_tile++) {
     (*edge_tile)->Set_Is_Bottom_Edge(false);
-    Tileset_Helper::Line middleground_line = GetCurrentSizedLine((*edge_tile)->GetSize());
-    int random_variable = 0;
-    if (m_is_debug_mode) {
-        random_variable = 0;
-    } else {
-      int random_variable = rand() % middleground_line.number_of_tiles;
-    }
-
-    (*edge_tile)->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(random_variable*(middleground_line.tile_size_x) + static_cast<float>(middleground_line.top_left_x)),
-                                                                static_cast<float>(middleground_line.top_left_y));
-    (*edge_tile)->GetTexture()->texture = 0;
-    (*edge_tile)->GetFrame()->vertex_buffer = 0;
-    (*edge_tile)->Init();
+    ResetTileTexture((*edge_tile));
   }
   m_bottom_edge_tiles.clear();
 
@@ -375,19 +362,7 @@ void Background_Controller::TileRight(float camera_right) {
   std::vector<Tunnelour::Tile_Bitmap*>::iterator edge_tile;
   for (edge_tile = m_right_edge_tiles.begin(); edge_tile != m_right_edge_tiles.end(); edge_tile++) {
     (*edge_tile)->Set_Is_Right_Edge(false);
-    Tileset_Helper::Line middleground_line = GetCurrentSizedLine((*edge_tile)->GetSize());
-    int random_variable = 0;
-    if (m_is_debug_mode) {
-        random_variable = 0;
-    } else {
-      int random_variable = rand() % middleground_line.number_of_tiles;
-    }
-
-    (*edge_tile)->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(random_variable*(middleground_line.tile_size_x) + static_cast<float>(middleground_line.top_left_x)),
-                                                                static_cast<float>(middleground_line.top_left_y));
-    (*edge_tile)->GetTexture()->texture = 0;
-    (*edge_tile)->GetFrame()->vertex_buffer = 0;
-    (*edge_tile)->Init();
+    ResetTileTexture((*edge_tile));
   }
   m_right_edge_tiles.clear();
 
@@ -421,19 +396,7 @@ void Background_Controller::TileLeft(float camera_left) {
   std::vector<Tunnelour::Tile_Bitmap*>::iterator edge_tile;
   for (edge_tile = m_left_edge_tiles.begin(); edge_tile != m_left_edge_tiles.end(); edge_tile++) {
     (*edge_tile)->Set_Is_Left_Edge(false);
-    Tileset_Helper::Line middleground_line = GetCurrentSizedLine((*edge_tile)->GetSize());
-    int random_variable = 0;
-    if (m_is_debug_mode) {
-      random_variable = 0;
-    } else {
-      int random_variable = rand() % middleground_line.number_of_tiles;
-    }
-
-    (*edge_tile)->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(random_variable*(middleground_line.tile_size_x) + static_cast<float>(middleground_line.top_left_x)),
-                                                                static_cast<float>(middleground_line.top_left_y));
-    (*edge_tile)->GetTexture()->texture = 0;
-    (*edge_tile)->GetFrame()->vertex_buffer = 0;
-    (*edge_tile)->Init();
+    ResetTileTexture((*edge_tile));
   }
   m_left_edge_tiles.clear();
 
@@ -447,7 +410,7 @@ void Background_Controller::TileLeft(float camera_left) {
       D3DXVECTOR3 position;
       position.x = m_background_left - (tile->GetSize().y / 2);
       position.y = m_background_top - (x * 128) - (128 / 2);
-      position.z = 0;                         
+      position.z = 0;
       tile->SetPosition(position);
       tile->Set_Is_Left_Edge(true);
       m_model->Add(tile);
@@ -461,7 +424,7 @@ void Background_Controller::TileLeft(float camera_left) {
 //---------------------------------------------------------------------------
 void Background_Controller::SwitchTileset() {
   // Debug Mode has been activated or Deactivated
-  m_is_debug_mode = m_game_settings->IsDebugMode(); 
+  m_is_debug_mode = m_game_settings->IsDebugMode();
   if (m_is_debug_mode) {
     m_current_tileset = GetNamedTileset("Debug");
   } else {
@@ -469,33 +432,16 @@ void Background_Controller::SwitchTileset() {
   }
 
   m_current_background_subset = GetCurrentBackgroundSubset();
-    std::vector<Tunnelour::Tile_Bitmap*>::iterator tile;
+  std::vector<Tunnelour::Tile_Bitmap*>::iterator tile;
   for (tile = m_background_tiles.begin(); tile != m_background_tiles.end(); ++tile) {
-
     Tileset_Helper::Line middleground_line = GetCurrentSizedLine((*tile)->GetSize());
-
     std::wstring texture_path = m_game_settings->GetTilesetPath();
     texture_path += String_Helper::StringToWString(m_current_tileset.filename);
     (*tile)->GetTexture()->texture_path = texture_path;
-    (*tile)->GetTexture()->texture_size = D3DXVECTOR2(static_cast<float>(m_current_tileset.size_x),
-                                                    static_cast<float>(m_current_tileset.size_y));
-
-    int random_variable = 0;
-    if (m_is_debug_mode) {
-      if ((*tile)->IsEdge()) {
-        random_variable = 1;
-      } else {
-        random_variable = 0;
-      }
-    } else {
-      int random_variable = rand() % middleground_line.number_of_tiles;
-    }
-
-    (*tile)->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(random_variable*(middleground_line.tile_size_x) + static_cast<float>(middleground_line.top_left_x)),
-                                                           static_cast<float>(middleground_line.top_left_y));
-    (*tile)->GetTexture()->texture = 0;
-    (*tile)->GetFrame()->vertex_buffer = 0;
-    (*tile)->Init();
+    D3DXVECTOR2 size = D3DXVECTOR2(m_current_tileset.size_x,
+                                   m_current_tileset.size_y);
+    (*tile)->GetTexture()->texture_size = size;
+    ResetTileTexture((*tile));
   }
 }
 
@@ -512,4 +458,23 @@ Tileset_Helper::Line Background_Controller::GetCurrentSizedLine(D3DXVECTOR2 size
   }
   return middleground_line;
 }
+
+//---------------------------------------------------------------------------
+void Background_Controller::ResetTileTexture(Tunnelour::Tile_Bitmap *out_tile) {
+  Tileset_Helper::Line middleground_line = GetCurrentSizedLine(out_tile->GetSize());
+  int random_variable = 0;
+  if (m_is_debug_mode) {
+    random_variable = 0;
+  } else {
+    int random_variable = rand() % middleground_line.number_of_tiles;
+  }
+
+  float left = random_variable * middleground_line.tile_size_x + middleground_line.top_left_x;
+  float top = middleground_line.top_left_y;
+  out_tile->GetTexture()->top_left_position = D3DXVECTOR2(left, top);
+  out_tile->GetTexture()->texture = 0;
+  out_tile->GetFrame()->vertex_buffer = 0;
+  out_tile->Init();
+}
+
 }  // namespace Tunnelour

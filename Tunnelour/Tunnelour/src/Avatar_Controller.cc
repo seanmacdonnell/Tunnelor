@@ -34,7 +34,6 @@ Avatar_Controller::Avatar_Controller() : Controller() {
   m_game_settings = 0;
   m_has_avatar_been_generated = false;
   m_animation_tick = false;
-
   m_world_settings = 0;
 }
 

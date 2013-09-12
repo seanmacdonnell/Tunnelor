@@ -71,23 +71,58 @@ class Background_Controller: public Tunnelour::Controller {
   //---------------------------------------------------------------------------
   void LoadTilesetMetadata();
 
+  //---------------------------------------------------------------------------
+  // Description : Returns the tileset from the current tileset metadata
+  //             : that matches the given name.
+  //---------------------------------------------------------------------------
   Tileset_Helper::Tileset_Metadata GetNamedTileset(std::string name);
 
+  //---------------------------------------------------------------------------
+  // Description : Return the current subset with the background type
+  //---------------------------------------------------------------------------
   Tileset_Helper::Subset GetCurrentBackgroundSubset();
 
+  //---------------------------------------------------------------------------
+  // Description : Tiles within the current camera bounds with background
+  //             : tiles
+  //---------------------------------------------------------------------------
   void TileCurrentWindow();
 
+  //---------------------------------------------------------------------------
+  // Description : Tiles up from the current background edge
+  //---------------------------------------------------------------------------
   void TileUp(float camera_top);
 
+  //---------------------------------------------------------------------------
+  // Description : Tiles down from the current background edge
+  //---------------------------------------------------------------------------
   void TileDown(float camera_bottom);
 
+  //---------------------------------------------------------------------------
+  // Description : Tiles right from the current background edge
+  //---------------------------------------------------------------------------
   void TileRight(float camera_right);
 
+  //---------------------------------------------------------------------------
+  // Description : Tiles left from the current background edge
+  //---------------------------------------------------------------------------
   void TileLeft(float camera_left);
 
+  //---------------------------------------------------------------------------
+  // Description : Switches the tileset from Debug to Dirt and vise versa
+  //---------------------------------------------------------------------------
   void SwitchTileset();
 
-  Tileset_Helper::Line GetCurrentSizedLine(D3DXVECTOR2 size); 
+  //---------------------------------------------------------------------------
+  // Description : Returns the appropriately sized line from the current
+  //             : background tileset.
+  //---------------------------------------------------------------------------
+  Tileset_Helper::Line GetCurrentSizedLine(D3DXVECTOR2 size);
+
+  //---------------------------------------------------------------------------
+  // Description : Resets a tiles texture to 0 for switching tilesets.
+  //---------------------------------------------------------------------------
+  void ResetTileTexture(Tunnelour::Tile_Bitmap *out_tile);
 
   //---------------------------------------------------------------------------
   // Member Variables
@@ -95,7 +130,6 @@ class Background_Controller: public Tunnelour::Controller {
   std::list<Tileset_Helper::Tileset_Metadata> m_tilesets;
   Tileset_Helper::Tileset_Metadata m_current_tileset;
   Tileset_Helper::Subset m_current_background_subset;
-
   std::vector<Tunnelour::Tile_Bitmap*> m_background_tiles;
   std::vector<Tunnelour::Tile_Bitmap*> m_top_edge_tiles;
   std::vector<Tunnelour::Tile_Bitmap*> m_bottom_edge_tiles;
