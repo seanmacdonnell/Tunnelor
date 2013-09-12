@@ -158,7 +158,7 @@ Tunnelour::Tile_Bitmap* Background_Controller::CreateTile(float base_tile_size,
   tile->GetTexture()->tile_size = D3DXVECTOR2(middleground_line.tile_size_x,
                                               middleground_line.tile_size_y);
 
-  tile->Set_Is_Top_Edge(is_bottom_edge);
+  tile->Set_Is_Top_Edge(is_top_edge);
   tile->Set_Is_Bottom_Edge(is_bottom_edge);
   tile->Set_Is_Right_Edge(is_right_edge);
   tile->Set_Is_Left_Edge(is_left_edge);
@@ -262,9 +262,9 @@ void Background_Controller::TileCurrentWindow() {
       }
 
       if (x == 0) {
-        is_right_edge = true;
-      } else if (x == number_of_x_tiles) {
         is_left_edge = true;
+      } else if (x == number_of_x_tiles) {
+        is_right_edge = true;
       }
 
 
@@ -302,9 +302,11 @@ void Background_Controller::TileCurrentWindow() {
   // Add tiles to the model
   std::vector<Tunnelour::Tile_Bitmap*>::iterator tile_it;
   for (tile_it = m_background_tiles.begin(); tile_it != m_background_tiles.end(); ++tile_it) {
-    if (tile_it + 1 == m_background_tiles.end()) {
       //this is the last tile in the background model
+    if ((*tile_it)->GetBottomRightPostion().x > m_background_right) {
       m_background_right = (*tile_it)->GetBottomRightPostion().x;
+    }
+    if ((*tile_it)->GetBottomRightPostion().x < m_background_bottom) {
       m_background_bottom = (*tile_it)->GetBottomRightPostion().y;
     }
     m_model->Add(*tile_it);
@@ -490,7 +492,7 @@ void Background_Controller::SwitchTileset() {
     }
 
     (*tile)->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(random_variable*(middleground_line.tile_size_x) + static_cast<float>(middleground_line.top_left_x)),
-                                                        static_cast<float>(middleground_line.top_left_y));
+                                                           static_cast<float>(middleground_line.top_left_y));
     (*tile)->GetTexture()->texture = 0;
     (*tile)->GetFrame()->vertex_buffer = 0;
     (*tile)->Init();

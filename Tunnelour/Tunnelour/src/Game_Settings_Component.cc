@@ -48,7 +48,7 @@ void Game_Settings_Component::Init() {
   m_screen_depth = 1000.0f;
   m_screen_near = 0.1f;
   m_tileset_path = L"resource\\tilesets\\";
-  m_is_debug_mode = false;
+  m_is_debug_mode = true;
 }
 
 //------------------------------------------------------------------------------
