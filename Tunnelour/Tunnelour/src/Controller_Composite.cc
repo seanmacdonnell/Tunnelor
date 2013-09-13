@@ -33,12 +33,12 @@ Controller_Composite::~Controller_Composite() {
 }
 
 //------------------------------------------------------------------------------
-void Controller_Composite::Init(Tunnelour::Component_Composite *model) {
+void Controller_Composite::Init(Component_Composite *model) {
   m_model = model;
 }
 
 //------------------------------------------------------------------------------
-Tunnelour::Controller * const Controller_Composite::Add(Tunnelour::Controller * const controller) {
+Controller * const Controller_Composite::Add(Tunnelour::Controller * const controller) {
   m_controllers.push_back(controller);
   return m_controllers.back();
 }

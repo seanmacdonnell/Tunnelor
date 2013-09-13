@@ -36,8 +36,8 @@ Camera_Controller::~Camera_Controller() {
 }
 
 //------------------------------------------------------------------------------
-void Camera_Controller::Init(Tunnelour::Component_Composite * const model) {
-  Tunnelour::Controller::Init(model);
+void Camera_Controller::Init(Component_Composite * const model) {
+  Controller::Init(model);
 
   m_camera = new Camera_Component();
   m_model->Add(m_camera);

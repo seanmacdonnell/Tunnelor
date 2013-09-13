@@ -28,15 +28,18 @@ Controller::Controller() {
 //------------------------------------------------------------------------------
 Controller::~Controller() {
   m_model = 0;
+  m_is_finished = false;
 }
 
 //------------------------------------------------------------------------------
-void Controller::Init(Tunnelour::Component_Composite * const model) {
+void Controller::Init(Component_Composite * const model) {
   m_model = model;
 }
 
 //------------------------------------------------------------------------------
 void Controller::Run() {
+  if (!IsFinished()) {
+  }
 }
 
 //------------------------------------------------------------------------------

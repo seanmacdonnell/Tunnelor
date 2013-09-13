@@ -16,8 +16,8 @@
 #ifndef TUNNELOUR_DEBUG_DATA_DISPLAY_CONTROLLER_H_
 #define TUNNELOUR_DEBUG_DATA_DISPLAY_CONTROLLER_H_
 
+#include <string>
 #include "Text_Component.h"
-#include "Game_Settings_Component.h"
 #include "Controller.h"
 #include "Game_Settings_Component.h"
 #include "Game_Metrics_Component.h"
@@ -30,9 +30,8 @@ namespace Tunnelour {
 //  Description : This controller is responsible for the generation of the
 //                middleground (Layer 0)
 //-----------------------------------------------------------------------------
-class Debug_Data_Display_Controller: public Tunnelour::Controller {
+class Debug_Data_Display_Controller: public Controller {
  public:
-
   //---------------------------------------------------------------------------
   // Description : Constructor
   //---------------------------------------------------------------------------
@@ -46,7 +45,7 @@ class Debug_Data_Display_Controller: public Tunnelour::Controller {
   //---------------------------------------------------------------------------
   // Description : Initialisation function for the Controller
   //---------------------------------------------------------------------------
-  virtual void Init(Tunnelour::Component_Composite * const model);
+  virtual void Init(Component_Composite * const model);
 
   //---------------------------------------------------------------------------
   // Description : Controller Runner
@@ -56,16 +55,18 @@ class Debug_Data_Display_Controller: public Tunnelour::Controller {
  protected:
 
  private:
-  Tunnelour::Game_Settings_Component* m_game_settings;
-  Tunnelour::Game_Metrics_Component* m_game_metrics; 
-  Tunnelour::Text_Component *m_debug_data_text_title;
-  Tunnelour::Text_Component *m_debug_data_fps;
-  Tunnelour::Text_Component *m_debug_avatar_position;
-  Tunnelour::Camera_Component *m_camera;
-  Tunnelour::Avatar_Component *m_avatar;
+  Game_Settings_Component* m_game_settings;
+  Game_Metrics_Component* m_game_metrics;
+  Text_Component *m_debug_data_text_title;
+  Text_Component *m_debug_data_fps;
+  Text_Component *m_debug_avatar_position;
+  Camera_Component *m_camera;
+  Avatar_Component *m_avatar;
+  std::string m_font_path;
 
   long double m_fps;
   bool m_is_debug_mode;
+  bool m_has_been_initialised;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_DEBUG_DATA_DISPLAY_CONTROLLER_H_

@@ -42,17 +42,17 @@ class Controller_Composite {
   //---------------------------------------------------------------------------
   // Description : Initialise this Composite Controller
   //---------------------------------------------------------------------------
-  virtual void Init(Tunnelour::Component_Composite * const model);
+  virtual void Init(Component_Composite *const model);
 
   //---------------------------------------------------------------------------
   // Description : Add a Controller
   //---------------------------------------------------------------------------
-  Tunnelour::Controller * const Add(Tunnelour::Controller * const controller);
+  Controller* const Add(Controller *const controller);
 
   //---------------------------------------------------------------------------
   // Description : Remove a Controller
   //---------------------------------------------------------------------------
-  void Remove(Tunnelour::Controller * controller);
+  void Remove(Controller * controller);
 
   //---------------------------------------------------------------------------
   // Description : Run all Controllers
@@ -60,8 +60,8 @@ class Controller_Composite {
   void Run();
 
  protected:
-  Tunnelour::Component_Composite *m_model;
-  std::list<Tunnelour::Controller*> m_controllers;
+  Component_Composite *m_model;
+  std::list<Controller*> m_controllers;
 
  private:
 };

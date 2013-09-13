@@ -22,7 +22,7 @@
 #include "Camera_Component.h"
 
 namespace Tunnelour {
-class Debug_Data_Display_Controller_Mutator: public Tunnelour::Component::Component_Mutator  {
+class Debug_Data_Display_Controller_Mutator: public Component::Component_Mutator  {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
 //  Description : Debug_Data_Display_Controller_Mutator is a mutator run on the model
@@ -42,43 +42,33 @@ class Debug_Data_Display_Controller_Mutator: public Tunnelour::Component::Compon
   //-------------------------------------------------------------------------
   // Description : Mutator function, pass it a component to mutate.
   //-------------------------------------------------------------------------
-  void Mutate(Tunnelour::Component * const component);
-
-  //-------------------------------------------------------------------------
-  // Description : Has this component been found in the model?
-  //-------------------------------------------------------------------------
-  bool FoundGameSettings();
+  void Mutate(Component * const component);
 
   //-------------------------------------------------------------------------
   // Description : Accessors for the Game_Settings_Component
   //-------------------------------------------------------------------------
-  Tunnelour::Game_Settings_Component* const GetGameSettings();
-
-  //-------------------------------------------------------------------------
-  // Description : Has this component been found in the model?
-  //-------------------------------------------------------------------------
-  bool FoundAvatarComponent();
+  Game_Settings_Component* const GetGameSettings();
 
   //-------------------------------------------------------------------------
   // Description : Accessors for the Game_Settings_Component
   //-------------------------------------------------------------------------
-  Tunnelour::Avatar_Component* const GetAvatarComponent();
-
-  //-------------------------------------------------------------------------
-  // Description : Has this component been found in the model?
-  //-------------------------------------------------------------------------
-  bool FoundCamera();
+  Avatar_Component* const GetAvatarComponent();
 
   //-------------------------------------------------------------------------
   // Description : Accessors for the Camera Component
   //-------------------------------------------------------------------------
-  Tunnelour::Camera_Component* const GetCamera();
+  Camera_Component* const GetCamera();
+
+  //-------------------------------------------------------------------------
+  // Description : Did the mutator complete successfully?
+  //-------------------------------------------------------------------------
+  bool WasSuccessful();
 
  private:
   bool m_found_game_settings, m_found_avatar_component, m_found_camera;
-  Tunnelour::Game_Settings_Component *m_game_settings;
+  Game_Settings_Component *m_game_settings;
   Avatar_Component *m_avatar_component;
-  Tunnelour::Camera_Component * m_camera;
+  Camera_Component * m_camera;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_DEBUG_DATA_DISPLAY_CONTROLLER_MUTATOR_H_

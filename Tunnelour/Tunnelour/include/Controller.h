@@ -39,7 +39,7 @@ class Controller {
   //---------------------------------------------------------------------------
   // Description : Initialisation function for the Controller
   //---------------------------------------------------------------------------
-  virtual void Init(Tunnelour::Component_Composite * const model);
+  virtual void Init(Component_Composite *const model);
 
   //---------------------------------------------------------------------------
   // Description : Controller Runner
@@ -52,7 +52,12 @@ class Controller {
   bool IsFinished();
 
  protected:
-  Tunnelour::Component_Composite *m_model;
+  //---------------------------------------------------------------------------
+  // Member Variables
+  //---------------------------------------------------------------------------
+  Component_Composite *m_model;
+
+  // Set m_is_finished to true when this controller is no longer required to run
   bool m_is_finished;
 
  private:

@@ -35,11 +35,11 @@ namespace Tunnelour {
 //  Description : This controller is responsible for the generation of the
 //                middleground (Layer 0)
 //-----------------------------------------------------------------------------
-class Avatar_Controller: public Tunnelour::Controller {
+class Avatar_Controller: public Controller {
  public:
   struct Collision {
-    Tunnelour::Tile_Bitmap* a_tile;
-    Tunnelour::Tile_Bitmap* b_tile;
+    Tile_Bitmap* a_tile;
+    Tile_Bitmap* b_tile;
     D3DXVECTOR2 a_tile_collision_point;
     D3DXVECTOR2 b_tile_collision_point;
   };
@@ -57,7 +57,7 @@ class Avatar_Controller: public Tunnelour::Controller {
   //---------------------------------------------------------------------------
   // Description : Initialisation function for the Controller
   //---------------------------------------------------------------------------
-  virtual void Init(Tunnelour::Component_Composite * const model);
+  virtual void Init(Component_Composite * const model);
 
   //---------------------------------------------------------------------------
   // Description : Controller Runner
@@ -106,8 +106,8 @@ class Avatar_Controller: public Tunnelour::Controller {
   // Description : Returns true if the avatar is colliding with a platform
   //---------------------------------------------------------------------------
   bool IsAvatarPlatformColliding(Avatar_Controller_Mutator *mutator,
-                                 std::list<Tunnelour::Bitmap_Component*> *out_colliding_border_tiles,
-                                 Tunnelour::Bitmap_Component *out_collision_block);
+                                 std::list<Bitmap_Component*> *out_colliding_border_tiles,
+                                 Bitmap_Component *out_collision_block);
 
   //---------------------------------------------------------------------------
   // Description : Loads all the tile animations into the controller
@@ -148,7 +148,7 @@ class Avatar_Controller: public Tunnelour::Controller {
   //---------------------------------------------------------------------------
   // Description : Creates a Bitmap Component using the given collision block
   //---------------------------------------------------------------------------
-  Tunnelour::Bitmap_Component CollisionBlockToBitmapComponent(Avatar_Component::Collision_Block collision_block);
+  Bitmap_Component CollisionBlockToBitmapComponent(Avatar_Component::Collision_Block collision_block);
 
 
   //---------------------------------------------------------------------------
@@ -167,8 +167,8 @@ class Avatar_Controller: public Tunnelour::Controller {
   //---------------------------------------------------------------------------
   // Member Variables
   //---------------------------------------------------------------------------
-  Tunnelour::Avatar_Component *m_avatar;
-  Tunnelour::Game_Settings_Component* m_game_settings;
+  Avatar_Component *m_avatar;
+  Game_Settings_Component* m_game_settings;
   bool m_has_avatar_been_generated;
   std::string m_running_metadata_file_path;
   std::string m_walking_metadata_file_path;
@@ -188,7 +188,7 @@ class Avatar_Controller: public Tunnelour::Controller {
   float m_frameTime;
   bool m_animation_tick;
   int m_current_animation_fps;
-  Tunnelour::World_Settings_Component *m_world_settings;
+  World_Settings_Component *m_world_settings;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_H_

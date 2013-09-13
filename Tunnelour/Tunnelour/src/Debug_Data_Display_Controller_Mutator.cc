@@ -36,55 +36,42 @@ Debug_Data_Display_Controller_Mutator::~Debug_Data_Display_Controller_Mutator() 
 }
 
 //------------------------------------------------------------------------------
-void Debug_Data_Display_Controller_Mutator::Mutate(Tunnelour::Component * const component) {
+void Debug_Data_Display_Controller_Mutator::Mutate(Component * const component) {
   if (component->GetType().compare("Game_Settings_Component") == 0) {
     // Found Game Settings
-    Tunnelour::Game_Settings_Component *game_settings = 0;
-    game_settings = static_cast<Tunnelour::Game_Settings_Component*>(component);
+    Game_Settings_Component *game_settings = 0;
+    game_settings = static_cast<Game_Settings_Component*>(component);
     m_game_settings = game_settings;
     m_found_game_settings = true;
   } else  if (component->GetType().compare("Camera_Component") == 0) {
     // Found Camera_Component
-    Tunnelour::Camera_Component *camera = 0;
-    camera = static_cast<Tunnelour::Camera_Component*>(component);
+    Camera_Component *camera = 0;
+    camera = static_cast<Camera_Component*>(component);
     m_camera = camera;
     m_found_camera = true;
   } else  if (component->GetType().compare("Avatar_Component") == 0) {
-    m_avatar_component = dynamic_cast<Avatar_Component*>(component);
+    m_avatar_component = static_cast<Avatar_Component*>(component);
     m_found_avatar_component = true;
   }
 }
 
 //------------------------------------------------------------------------------
-bool Debug_Data_Display_Controller_Mutator::FoundGameSettings() {
-  return m_found_game_settings;
-}
-
-//------------------------------------------------------------------------------
-Tunnelour::Game_Settings_Component* const Debug_Data_Display_Controller_Mutator::GetGameSettings() {
+Game_Settings_Component* const Debug_Data_Display_Controller_Mutator::GetGameSettings() {
   return m_game_settings;
 }
 
-
 //------------------------------------------------------------------------------
-bool Debug_Data_Display_Controller_Mutator::FoundAvatarComponent() {
-  return m_found_avatar_component;
-}
-
-//------------------------------------------------------------------------------
-Tunnelour::Avatar_Component* const Debug_Data_Display_Controller_Mutator::GetAvatarComponent() {
+Avatar_Component* const Debug_Data_Display_Controller_Mutator::GetAvatarComponent() {
   return m_avatar_component;
 }
 
 //------------------------------------------------------------------------------
-bool Debug_Data_Display_Controller_Mutator::FoundCamera() {
-  return m_found_camera;
+bool Debug_Data_Display_Controller_Mutator::WasSuccessful() {
+  return m_found_game_settings && m_found_avatar_component && m_found_camera;
 }
 
 //------------------------------------------------------------------------------
-Tunnelour::Camera_Component* const Debug_Data_Display_Controller_Mutator::GetCamera() {
+Camera_Component* const Debug_Data_Display_Controller_Mutator::GetCamera() {
   return m_camera;
 }
-
-
 }  // namespace Tunnelour

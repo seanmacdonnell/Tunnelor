@@ -42,8 +42,8 @@ Avatar_Controller::~Avatar_Controller() {
 }
 
 //------------------------------------------------------------------------------
-void Avatar_Controller::Init(Tunnelour::Component_Composite * const model) {
-  Tunnelour::Controller::Init(model);
+void Avatar_Controller::Init(Component_Composite * const model) {
+  Controller::Init(model);
   InitTimer();
 }
 
@@ -81,7 +81,7 @@ void Avatar_Controller::GenerateAvatar() {
 }
 
 void Avatar_Controller::GenerateAvatarTile() {
-  m_avatar = new Tunnelour::Avatar_Component();
+  m_avatar = new Avatar_Component();
   m_avatar->GetTexture()->transparency = 1.0f;
   Avatar_Component::Avatar_State initial_state;
   initial_state.direction = "Right";
@@ -130,7 +130,7 @@ void Avatar_Controller::RunStandingState(Avatar_Controller_Mutator *mutator) {
       } else {
         std::string error;
         error = "No handling for the non-repeating animation: " + current_command.state;
-        throw Tunnelour::Exceptions::init_error(error);
+        throw Exceptions::init_error(error);
       }
     }
 
@@ -168,7 +168,7 @@ void Avatar_Controller::RunWalkingState(Avatar_Controller_Mutator *mutator) {
         } else {
           std::string error;
           error = "No handling for the non-repeating animation: " + current_command.state;
-          throw Tunnelour::Exceptions::init_error(error);
+          throw Exceptions::init_error(error);
         }
       }
 
@@ -208,8 +208,8 @@ void Avatar_Controller::RunWalkingState(Avatar_Controller_Mutator *mutator) {
 void Avatar_Controller::RunFallingState(Avatar_Controller_Mutator *mutator) {
   Avatar_Component::Avatar_State current_state = m_avatar->GetState();
 
-  std::list<Tunnelour::Bitmap_Component*> out_colliding_border_tiles;
-  Tunnelour::Bitmap_Component* out_collision_block = new Tunnelour::Bitmap_Component();
+  std::list<Bitmap_Component*> out_colliding_border_tiles;
+  Bitmap_Component* out_collision_block = new Bitmap_Component();
   if (current_state.state.compare("Falling_To_Standing") == 0) {
     bool is_colliding = IsAvatarPlatformColliding(mutator,
                                                     &out_colliding_border_tiles,
@@ -219,7 +219,7 @@ void Avatar_Controller::RunFallingState(Avatar_Controller_Mutator *mutator) {
       bool is_tangent = false;
       float tile_top = 0;
 
-      std::list<Tunnelour::Bitmap_Component*>::iterator it;
+      std::list<Bitmap_Component*>::iterator it;
       it = out_colliding_border_tiles.begin();
       for (; it != out_colliding_border_tiles.end(); it++) {
         tile_top = (*it)->GetTopLeftPostion().y;
@@ -262,7 +262,7 @@ void Avatar_Controller::RunFallingState(Avatar_Controller_Mutator *mutator) {
         } else {
           std::string error;
           error = "No handling for the non-repeating animation: " + current_state.state;
-          throw Tunnelour::Exceptions::init_error(error);
+          throw Exceptions::init_error(error);
         }
       }
     } else {
@@ -301,13 +301,13 @@ bool Avatar_Controller::IsAvatarPlatformAdjacent(Avatar_Controller_Mutator *muta
     lowest_collision_block = GetLowestCollisionBlock();
 
     // Make a bitmap for the lowest avatar collision block
-    Tunnelour::Bitmap_Component lowest_collision_block_bitmap;
+    Bitmap_Component lowest_collision_block_bitmap;
     lowest_collision_block_bitmap = CollisionBlockToBitmapComponent(lowest_collision_block);
 
     // Create a list of platform tiles which are adjacent with the collision block
-    std::list<Tunnelour::Bitmap_Component*> colliding_border_tiles;
-    std::list<Tunnelour::Bitmap_Component*> border_tiles = mutator->GetBorderTiles();
-    std::list<Tunnelour::Bitmap_Component*>::iterator border_tile;
+    std::list<Bitmap_Component*> colliding_border_tiles;
+    std::list<Bitmap_Component*> border_tiles = mutator->GetBorderTiles();
+    std::list<Bitmap_Component*>::iterator border_tile;
     for (border_tile = border_tiles.begin(); border_tile != border_tiles.end(); border_tile++) {
       if (Bitmap_Helper::DoTheseTilesXCollide(*border_tile, &lowest_collision_block_bitmap)) {
         if (Bitmap_Helper::AreTheseTilesYAdjacent(*border_tile, &lowest_collision_block_bitmap)) {
@@ -328,7 +328,7 @@ bool Avatar_Controller::IsAvatarPlatformAdjacent(Avatar_Controller_Mutator *muta
 }
 
 //------------------------------------------------------------------------------
-bool Avatar_Controller::IsAvatarPlatformColliding(Avatar_Controller_Mutator *mutator, std::list<Tunnelour::Bitmap_Component*> *out_colliding_border_tiles, Tunnelour::Bitmap_Component *out_collision_block) {
+bool Avatar_Controller::IsAvatarPlatformColliding(Avatar_Controller_Mutator *mutator, std::list<Bitmap_Component*> *out_colliding_border_tiles, Bitmap_Component *out_collision_block) {
   // Going to deal only with gravity only
   // Also only dealing with the lowest foot
   if (mutator->FoundBorderTiles()) {
@@ -340,8 +340,8 @@ bool Avatar_Controller::IsAvatarPlatformColliding(Avatar_Controller_Mutator *mut
     (*out_collision_block) = CollisionBlockToBitmapComponent(lowest_collision_block);
 
     // Create a list of platform tiles which are colliding with the collision block
-    std::list<Tunnelour::Bitmap_Component*> border_tiles = mutator->GetBorderTiles();
-    std::list<Tunnelour::Bitmap_Component*>::iterator border_tile;
+    std::list<Bitmap_Component*> border_tiles = mutator->GetBorderTiles();
+    std::list<Bitmap_Component*>::iterator border_tile;
     for (border_tile = border_tiles.begin(); border_tile != border_tiles.end(); border_tile++) {
       if (Bitmap_Helper::DoTheseTilesXCollide(*border_tile, out_collision_block)) {
         if (Bitmap_Helper::DoTheseTilesYCollide(*border_tile, out_collision_block)) {
@@ -480,7 +480,7 @@ void Avatar_Controller::ChangeAvatarState(std::string new_state_name, std::strin
   if (new_state_metadata.name.compare("") == 0) {
     std::string error;
     error = "Animation not found in Metadata list!" + new_state_name;
-    throw Tunnelour::Exceptions::init_error(error);
+    throw Exceptions::init_error(error);
   }
 
   new_state.state_index = 0;
@@ -591,8 +591,8 @@ Avatar_Component::Collision_Block Avatar_Controller::GetLowestCollisionBlock() {
 }
 
 //------------------------------------------------------------------------------
-Tunnelour::Bitmap_Component Avatar_Controller::CollisionBlockToBitmapComponent(Avatar_Component::Collision_Block collision_block) {
-  Tunnelour::Bitmap_Component collision_bitmap;
+Bitmap_Component Avatar_Controller::CollisionBlockToBitmapComponent(Avatar_Component::Collision_Block collision_block) {
+  Bitmap_Component collision_bitmap;
 
   D3DXVECTOR3 collision_bitmap_position;
   collision_bitmap_position.x = m_avatar->GetPosition().x + collision_block.offset_from_avatar_centre.x;

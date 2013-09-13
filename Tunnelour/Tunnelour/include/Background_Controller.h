@@ -32,7 +32,7 @@ namespace Tunnelour {
 //  Description : This controller is responsible for the generation of the
 //                background (Layer 0)
 //-----------------------------------------------------------------------------
-class Background_Controller: public Tunnelour::Controller {
+class Background_Controller: public Controller {
  public:
   //---------------------------------------------------------------------------
   // Description : Constructor
@@ -47,7 +47,7 @@ class Background_Controller: public Tunnelour::Controller {
   //---------------------------------------------------------------------------
   // Description : Initialisation function for the Controller
   //---------------------------------------------------------------------------
-  virtual void Init(Tunnelour::Component_Composite * const model);
+  virtual void Init(Component_Composite * const model);
 
   //---------------------------------------------------------------------------
   // Description : Controller Runner
@@ -60,7 +60,7 @@ class Background_Controller: public Tunnelour::Controller {
   //---------------------------------------------------------------------------
   // Description : Creates a new bitmap tile of the given tile size.
   //---------------------------------------------------------------------------
-  Tunnelour::Tile_Bitmap* CreateTile(float base_tile_size,
+  Tile_Bitmap* CreateTile(float base_tile_size,
                                      bool is_top_edge,
                                      bool is_bottom_edge,
                                      bool is_right_edge,
@@ -122,7 +122,7 @@ class Background_Controller: public Tunnelour::Controller {
   //---------------------------------------------------------------------------
   // Description : Resets a tiles texture to 0 for switching tilesets.
   //---------------------------------------------------------------------------
-  void ResetTileTexture(Tunnelour::Tile_Bitmap *out_tile);
+  void ResetTileTexture(Tile_Bitmap *out_tile);
 
   //---------------------------------------------------------------------------
   // Member Variables
@@ -130,13 +130,13 @@ class Background_Controller: public Tunnelour::Controller {
   std::list<Tileset_Helper::Tileset_Metadata> m_tilesets;
   Tileset_Helper::Tileset_Metadata m_current_tileset;
   Tileset_Helper::Subset m_current_background_subset;
-  std::vector<Tunnelour::Tile_Bitmap*> m_background_tiles;
-  std::vector<Tunnelour::Tile_Bitmap*> m_top_edge_tiles;
-  std::vector<Tunnelour::Tile_Bitmap*> m_bottom_edge_tiles;
-  std::vector<Tunnelour::Tile_Bitmap*> m_right_edge_tiles;
-  std::vector<Tunnelour::Tile_Bitmap*> m_left_edge_tiles;
-  Tunnelour::Game_Settings_Component* m_game_settings;
-  Tunnelour::Camera_Component* m_camera;
+  std::vector<Tile_Bitmap*> m_background_tiles;
+  std::vector<Tile_Bitmap*> m_top_edge_tiles;
+  std::vector<Tile_Bitmap*> m_bottom_edge_tiles;
+  std::vector<Tile_Bitmap*> m_right_edge_tiles;
+  std::vector<Tile_Bitmap*> m_left_edge_tiles;
+  Game_Settings_Component* m_game_settings;
+  Camera_Component* m_camera;
   bool m_has_init_background_been_generated;
   std::string m_metadata_file_path;
   float m_background_top;

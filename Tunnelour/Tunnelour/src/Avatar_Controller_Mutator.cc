@@ -44,15 +44,15 @@ Avatar_Controller_Mutator::~Avatar_Controller_Mutator() {
 }
 
 //------------------------------------------------------------------------------
-void Avatar_Controller_Mutator::Mutate(Tunnelour::Component * const component) {
+void Avatar_Controller_Mutator::Mutate(Component * const component) {
   if (component->GetType().compare("Game_Settings_Component") == 0) {
-    Tunnelour::Game_Settings_Component *game_settings = 0;
-    game_settings = static_cast<Tunnelour::Game_Settings_Component*>(component);
+    Game_Settings_Component *game_settings = 0;
+    game_settings = static_cast<Game_Settings_Component*>(component);
     m_game_settings = game_settings;
     m_found_game_settings = true;
   } else if (component->GetType().compare("Bitmap_Component") == 0) {
-    Tunnelour::Tile_Bitmap *tile = 0;
-    tile = static_cast<Tunnelour::Tile_Bitmap*>(component);
+    Tile_Bitmap *tile = 0;
+    tile = static_cast<Tile_Bitmap*>(component);
     if (tile->Is_Platform()) {
       m_border_tiles.push_back(tile);
       m_found_border_tiles = true;
@@ -71,7 +71,7 @@ bool Avatar_Controller_Mutator::FoundGameSettings() {
 }
 
 //------------------------------------------------------------------------------
-Tunnelour::Game_Settings_Component* const Avatar_Controller_Mutator::GetGameSettings() {
+Game_Settings_Component* const Avatar_Controller_Mutator::GetGameSettings() {
   return m_game_settings;
 }
 
@@ -81,7 +81,7 @@ bool Avatar_Controller_Mutator::FoundBorderTiles() {
 }
 
 //------------------------------------------------------------------------------
-std::list<Tunnelour::Bitmap_Component*> Avatar_Controller_Mutator::GetBorderTiles() {
+std::list<Bitmap_Component*> Avatar_Controller_Mutator::GetBorderTiles() {
   return m_border_tiles;
 }
 
@@ -91,7 +91,7 @@ bool Avatar_Controller_Mutator::FoundWorldSettings() {
 }
 
 //------------------------------------------------------------------------------
-Tunnelour::World_Settings_Component* Avatar_Controller_Mutator::GetWorldSettings() {
+World_Settings_Component* Avatar_Controller_Mutator::GetWorldSettings() {
   return m_world_settings;
 }
 

@@ -61,8 +61,8 @@ Background_Controller::~Background_Controller() {
 }
 
 //------------------------------------------------------------------------------
-void Background_Controller::Init(Tunnelour::Component_Composite * const model) {
-    Tunnelour::Controller::Init(model);
+void Background_Controller::Init(Component_Composite * const model) {
+    Controller::Init(model);
     std::srand(static_cast<unsigned int>(std::time(0)));
 }
 
@@ -71,7 +71,7 @@ void Background_Controller::Run() {
   // Generate an initial Random Tile Background
   if (!m_has_init_background_been_generated) {
     // Get game settings component from the model with the Mutator.
-    Tunnelour::Background_Controller_Mutator mutator;
+    Background_Controller_Mutator mutator;
     m_model->Apply(&mutator);
     if (mutator.WasSuccessful()) {
       m_game_settings = mutator.GetGameSettings();
@@ -132,7 +132,7 @@ void Background_Controller::Run() {
 //------------------------------------------------------------------------------
 // private:
 //------------------------------------------------------------------------------
-Tunnelour::Tile_Bitmap* Background_Controller::CreateTile(float base_tile_size,
+Tile_Bitmap* Background_Controller::CreateTile(float base_tile_size,
                                                           bool is_top_edge,
                                                           bool is_bottom_edge,
                                                           bool is_right_edge,
@@ -147,7 +147,7 @@ Tunnelour::Tile_Bitmap* Background_Controller::CreateTile(float base_tile_size,
     }
   }
 
-  Tunnelour::Tile_Bitmap* tile = new Tunnelour::Tile_Bitmap();
+  Tile_Bitmap* tile = new Tile_Bitmap();
   tile->SetPosition(D3DXVECTOR3(0, 0, 0));
   tile->GetTexture()->transparency = 1.0f;
 
@@ -249,8 +249,8 @@ void Background_Controller::TileCurrentWindow() {
   number_of_x_tiles -= 1;  // Because 0 is the first tile
 
   for (unsigned int y = 0; y <= number_of_y_tiles ; y++) {
-    std::vector<Tunnelour::Tile_Bitmap*> tile_line;
-    Tunnelour::Tile_Bitmap* new_tile;
+    std::vector<Tile_Bitmap*> tile_line;
+    Tile_Bitmap* new_tile;
     for (unsigned int x = 0; x <= number_of_x_tiles ; x++) {
       bool is_top_edge = false;
       bool is_bottom_edge = false;
@@ -299,7 +299,7 @@ void Background_Controller::TileCurrentWindow() {
   }
 
   // Add tiles to the model
-  std::vector<Tunnelour::Tile_Bitmap*>::iterator tile_it;
+  std::vector<Tile_Bitmap*>::iterator tile_it;
   for (tile_it = m_background_tiles.begin(); tile_it != m_background_tiles.end(); ++tile_it) {
      // this is the last tile in the background model
     if ((*tile_it)->GetBottomRightPostion().x > m_background_right) {
@@ -317,7 +317,7 @@ void Background_Controller::TileCurrentWindow() {
 //---------------------------------------------------------------------------
 void Background_Controller::TileUp(float camera_top) {
   std::string error = "Background Up Generation not finished!";
-  throw Tunnelour::Exceptions::unfinished_error(error);
+  throw Exceptions::unfinished_error(error);
 }
 
 //---------------------------------------------------------------------------
@@ -326,7 +326,7 @@ void Background_Controller::TileDown(float camera_bottom) {
   float rem = (m_background_right - m_background_left) / 128;
   number_of_x_tiles = static_cast<unsigned int>(std::ceil(rem));
 
-  std::vector<Tunnelour::Tile_Bitmap*>::iterator edge_tile;
+  std::vector<Tile_Bitmap*>::iterator edge_tile;
   for (edge_tile = m_bottom_edge_tiles.begin(); edge_tile != m_bottom_edge_tiles.end(); edge_tile++) {
     (*edge_tile)->Set_Is_Bottom_Edge(false);
     ResetTileTexture((*edge_tile));
@@ -334,7 +334,7 @@ void Background_Controller::TileDown(float camera_bottom) {
   m_bottom_edge_tiles.clear();
 
   for (unsigned int x = 0; x < number_of_x_tiles; x++) {
-    Tunnelour::Tile_Bitmap* tile = CreateTile(128,
+    Tile_Bitmap* tile = CreateTile(128,
                                               false,
                                               true,
                                               false,
@@ -359,7 +359,7 @@ void Background_Controller::TileRight(float camera_right) {
   float rem = (m_background_top - m_background_bottom) / 128;
   number_of_y_tiles = static_cast<unsigned int>(std::ceil(rem));
 
-  std::vector<Tunnelour::Tile_Bitmap*>::iterator edge_tile;
+  std::vector<Tile_Bitmap*>::iterator edge_tile;
   for (edge_tile = m_right_edge_tiles.begin(); edge_tile != m_right_edge_tiles.end(); edge_tile++) {
     (*edge_tile)->Set_Is_Right_Edge(false);
     ResetTileTexture((*edge_tile));
@@ -368,7 +368,7 @@ void Background_Controller::TileRight(float camera_right) {
 
   while (camera_right > m_background_right) {
     for (unsigned int x = 0; x < number_of_y_tiles; x++) {
-    Tunnelour::Tile_Bitmap* tile = CreateTile(128,
+    Tile_Bitmap* tile = CreateTile(128,
                                               false,
                                               false,
                                               true,
@@ -393,7 +393,7 @@ void Background_Controller::TileLeft(float camera_left) {
   float rem = (m_background_top - m_background_bottom) / 128;
   number_of_y_tiles = static_cast<unsigned int>(std::ceil(rem));
 
-  std::vector<Tunnelour::Tile_Bitmap*>::iterator edge_tile;
+  std::vector<Tile_Bitmap*>::iterator edge_tile;
   for (edge_tile = m_left_edge_tiles.begin(); edge_tile != m_left_edge_tiles.end(); edge_tile++) {
     (*edge_tile)->Set_Is_Left_Edge(false);
     ResetTileTexture((*edge_tile));
@@ -402,7 +402,7 @@ void Background_Controller::TileLeft(float camera_left) {
 
   while (camera_left < m_background_left) {
     for (unsigned int x = 0; x < number_of_y_tiles; x++) {
-    Tunnelour::Tile_Bitmap* tile = CreateTile(128,
+    Tile_Bitmap* tile = CreateTile(128,
                                               false,
                                               false,
                                               false,
@@ -432,7 +432,7 @@ void Background_Controller::SwitchTileset() {
   }
 
   m_current_background_subset = GetCurrentBackgroundSubset();
-  std::vector<Tunnelour::Tile_Bitmap*>::iterator tile;
+  std::vector<Tile_Bitmap*>::iterator tile;
   for (tile = m_background_tiles.begin(); tile != m_background_tiles.end(); ++tile) {
     Tileset_Helper::Line middleground_line = GetCurrentSizedLine((*tile)->GetSize());
     std::wstring texture_path = m_game_settings->GetTilesetPath();
@@ -460,7 +460,7 @@ Tileset_Helper::Line Background_Controller::GetCurrentSizedLine(D3DXVECTOR2 size
 }
 
 //---------------------------------------------------------------------------
-void Background_Controller::ResetTileTexture(Tunnelour::Tile_Bitmap *out_tile) {
+void Background_Controller::ResetTileTexture(Tile_Bitmap *out_tile) {
   Tileset_Helper::Line middleground_line = GetCurrentSizedLine(out_tile->GetSize());
   int random_variable = 0;
   if (m_is_debug_mode) {
