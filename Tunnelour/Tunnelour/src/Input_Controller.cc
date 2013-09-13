@@ -70,7 +70,7 @@ void Input_Controller::Init(Tunnelour::Component_Composite * const model) {
   }
 
   if (mutator.FoundAvatarComponent()) {
-    m_avatar_component = mutator.GetAvatar_Component();
+    m_avatar_component = mutator.GetAvatarComponent();
   }
 
   if (!m_has_direct_input_been_init) {
@@ -147,7 +147,7 @@ void Input_Controller::Run() {
       m_game_settings = mutator.GetGameSettings();
     }
     if (mutator.FoundAvatarComponent()) {
-      m_avatar_component = mutator.GetAvatar_Component();
+      m_avatar_component = mutator.GetAvatarComponent();
     }
   }
 

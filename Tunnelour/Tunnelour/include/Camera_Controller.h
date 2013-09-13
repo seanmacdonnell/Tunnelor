@@ -17,7 +17,7 @@
 #define TUNNELOUR_CAMERA_CONTROLLER_H_
 
 #include "Game_Settings_Component.h"
-#include "Avatar_Controller_Mutator.h"
+#include "Camera_Controller_Mutator.h"
 #include "Avatar_Component.h"
 #include "Controller.h"
 #include "Camera_Component.h"
@@ -25,10 +25,10 @@
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
-//  Description : This controller is responsible for the generation of the
-//                middleground (Layer 0)
+//  Description : This controller is responsible for the generation
+//              : and movement of the camera_component.
 //-----------------------------------------------------------------------------
-class Camera_Controller: public Tunnelour::Controller {
+class Camera_Controller: public Controller {
  public:
   //---------------------------------------------------------------------------
   // Description : Constructor
@@ -53,10 +53,10 @@ class Camera_Controller: public Tunnelour::Controller {
  protected:
 
  private:
-  Tunnelour::Avatar_Component *m_avatar;
-  Tunnelour::Game_Settings_Component* m_game_settings;
-  Tunnelour::Camera_Component *m_camera;
-  Tunnelour::Avatar_Controller_Mutator m_mutator;
+  Avatar_Component *m_avatar;
+  Game_Settings_Component *m_game_settings;
+  Camera_Component *m_camera;
+  bool has_been_initialised;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_CAMERA_CONTROLLER_H_

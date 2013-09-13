@@ -177,6 +177,9 @@
     <ClCompile Include="src\World_Settings_Component.cc">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
+    <ClCompile Include="src\Camera_Controller_Mutator.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Init_Controller.h">
@@ -307,6 +310,9 @@
     </ClInclude>
     <ClInclude Include="include\World_Settings_Component.h">
       <Filter>Include Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Camera_Controller_Mutator.h">
+      <Filter>Include Files\Controllers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

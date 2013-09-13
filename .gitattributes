@@ -14,6 +14,7 @@ Tunnelour/Tunnelour/include/Bitmap_Component.h -text
 Tunnelour/Tunnelour/include/Bitmap_Helper.h -text
 Tunnelour/Tunnelour/include/Camera_Component.h -text
 Tunnelour/Tunnelour/include/Camera_Controller.h -text
+Tunnelour/Tunnelour/include/Camera_Controller_Mutator.h -text
 Tunnelour/Tunnelour/include/Component.h -text
 Tunnelour/Tunnelour/include/Component_Composite.h -text
 Tunnelour/Tunnelour/include/Component_ID.h -text
@@ -81,6 +82,7 @@ Tunnelour/Tunnelour/src/Bitmap_Component.cc -text
 Tunnelour/Tunnelour/src/Bitmap_Helper.cc -text
 Tunnelour/Tunnelour/src/Camera_Component.cc -text
 Tunnelour/Tunnelour/src/Camera_Controller.cc -text
+Tunnelour/Tunnelour/src/Camera_Controller_Mutator.cc -text
 Tunnelour/Tunnelour/src/Component.cc -text
 Tunnelour/Tunnelour/src/Component_Composite.cc -text
 Tunnelour/Tunnelour/src/Component_ID.cc -text

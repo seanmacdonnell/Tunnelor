@@ -38,19 +38,16 @@ Background_Controller_Mutator::~Background_Controller_Mutator() {
 //------------------------------------------------------------------------------
 void Background_Controller_Mutator::Mutate(Tunnelour::Component * const component) {
   if (component->GetType().compare("Game_Settings_Component") == 0) {
-    // Found Game Settings
     Tunnelour::Game_Settings_Component *game_settings = 0;
     game_settings = static_cast<Tunnelour::Game_Settings_Component*>(component);
     m_game_settings = game_settings;
     m_found_game_settings = true;
   } else  if (component->GetType().compare("Camera_Component") == 0) {
-    // Found Camera_Component
     Tunnelour::Camera_Component *camera = 0;
     camera = static_cast<Tunnelour::Camera_Component*>(component);
     m_camera = camera;
     m_found_camera = true;
   }
-
 }
 
 //------------------------------------------------------------------------------

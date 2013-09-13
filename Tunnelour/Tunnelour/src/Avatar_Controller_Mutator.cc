@@ -62,11 +62,6 @@ void Avatar_Controller_Mutator::Mutate(Tunnelour::Component * const component) {
       m_world_settings = static_cast<World_Settings_Component*>(component);
       m_found_world_settings = true;
     }
-  } else if (!m_found_avatar_component) {
-    if (component->GetType().compare("Avatar_Component") == 0) {
-      m_avatar_component = static_cast<Avatar_Component*>(component);
-      m_found_avatar_component = true;
-    }
   }
 }
 
@@ -78,17 +73,6 @@ bool Avatar_Controller_Mutator::FoundGameSettings() {
 //------------------------------------------------------------------------------
 Tunnelour::Game_Settings_Component* const Avatar_Controller_Mutator::GetGameSettings() {
   return m_game_settings;
-}
-
-
-//------------------------------------------------------------------------------
-bool Avatar_Controller_Mutator::FoundAvatarComponent() {
-  return m_found_avatar_component;
-}
-
-//------------------------------------------------------------------------------
-Tunnelour::Avatar_Component* const Avatar_Controller_Mutator::GetAvatarComponent() {
-  return m_avatar_component;
 }
 
 //------------------------------------------------------------------------------
@@ -109,6 +93,13 @@ bool Avatar_Controller_Mutator::FoundWorldSettings() {
 //------------------------------------------------------------------------------
 Tunnelour::World_Settings_Component* Avatar_Controller_Mutator::GetWorldSettings() {
   return m_world_settings;
+}
+
+//------------------------------------------------------------------------------
+bool Avatar_Controller_Mutator::WasSuccessful() {
+  return FoundGameSettings() && 
+         FoundBorderTiles() &&
+         FoundWorldSettings();
 }
 
 }  // namespace Tunnelour

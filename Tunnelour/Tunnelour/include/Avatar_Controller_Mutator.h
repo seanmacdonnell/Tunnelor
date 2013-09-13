@@ -60,16 +60,6 @@ class Avatar_Controller_Mutator: public Tunnelour::Component::Component_Mutator 
   //-------------------------------------------------------------------------
   // Description : Has this component been found in the model?
   //-------------------------------------------------------------------------
-  bool FoundAvatarComponent();
-
-  //-------------------------------------------------------------------------
-  // Description : Accessor for the Game_Settings_Component
-  //-------------------------------------------------------------------------
-  Tunnelour::Avatar_Component* const GetAvatarComponent();
-
-  //-------------------------------------------------------------------------
-  // Description : Has this component been found in the model?
-  //-------------------------------------------------------------------------
   bool FoundBorderTiles();
 
   //-------------------------------------------------------------------------
@@ -86,6 +76,11 @@ class Avatar_Controller_Mutator: public Tunnelour::Component::Component_Mutator 
   // Description : Accessor for the World_Settings_Component
   //-------------------------------------------------------------------------
   Tunnelour::World_Settings_Component* GetWorldSettings();
+
+  //-------------------------------------------------------------------------
+  // Description : Has this mutator completed successfully?
+  //-------------------------------------------------------------------------
+  bool WasSuccessful();
 
  private:
   bool m_found_game_settings, m_found_avatar_component, m_found_border_tiles, m_found_world_settings;

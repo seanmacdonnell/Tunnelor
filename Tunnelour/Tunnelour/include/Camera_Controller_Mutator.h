@@ -13,30 +13,30 @@
 //  limitations under the License.
 //
 
-#ifndef TUNNELOUR_INPUT_CONTROLLER_MUTATOR_H_
-#define TUNNELOUR_INPUT_CONTROLLER_MUTATOR_H_
+#ifndef TUNNELOUR_CAMERA_CONTROLLER_MUTATOR_H_
+#define TUNNELOUR_CAMERA_CONTROLLER_MUTATOR_H_
 
 #include "Component.h"
 #include "Game_Settings_Component.h"
 #include "Avatar_Component.h"
 
 namespace Tunnelour {
-class Input_Controller_Mutator: public Tunnelour::Component::Component_Mutator  {
+class Camera_Controller_Mutator: public Component::Component_Mutator  {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
-//  Description : Input_Controller_Mutator is a mutator run on the model
-//                which collects the game settings component.
+//  Description : Camera_Controller_Mutator is a mutator run on the model
+//                which collects the relevant camera components
 //-----------------------------------------------------------------------------
  public:
   //-------------------------------------------------------------------------
   // Description : Constructor
   //-------------------------------------------------------------------------
-  Input_Controller_Mutator();
+  Camera_Controller_Mutator();
 
   //-------------------------------------------------------------------------
   // Description : Deconstructor
   //-------------------------------------------------------------------------
-  virtual ~Input_Controller_Mutator();
+  virtual ~Camera_Controller_Mutator();
 
   //-------------------------------------------------------------------------
   // Description : Mutator function, pass it a component to mutate.
@@ -44,30 +44,25 @@ class Input_Controller_Mutator: public Tunnelour::Component::Component_Mutator  
   void Mutate(Tunnelour::Component * const component);
 
   //-------------------------------------------------------------------------
-  // Description : Has this component been found in the model?
+  // Description : Accessors for the Game_Settings_Component
   //-------------------------------------------------------------------------
-  bool FoundGameSettings();
+  Game_Settings_Component* const GetGameSettings();
 
   //-------------------------------------------------------------------------
   // Description : Accessors for the Game_Settings_Component
   //-------------------------------------------------------------------------
-  Tunnelour::Game_Settings_Component* const GetGameSettings();
-
-  //-------------------------------------------------------------------------
-  // Description : Has this component been found in the model?
-  //-------------------------------------------------------------------------
-  bool Input_Controller_Mutator::FoundAvatarComponent();
+  Avatar_Component* const GetAvatarComponent();
 
   //-------------------------------------------------------------------------
   // Description : Accessors for the Game_Settings_Component
   //-------------------------------------------------------------------------
-  Tunnelour::Avatar_Component* const Input_Controller_Mutator::GetAvatarComponent();
+  bool WasSuccessful();
 
  private:
   bool m_found_game_settings;
   bool m_found_avatar_component;
-  Tunnelour::Game_Settings_Component * m_game_settings;
-  Tunnelour::Avatar_Component * m_avatar_controller;
+  Game_Settings_Component * m_game_settings;
+  Avatar_Component * m_avatar_controller;
 };
 }  // namespace Tunnelour
-#endif  // TUNNELOUR_INPUT_CONTROLLER_MUTATOR_H_
+#endif  // TUNNELOUR_CAMERA_CONTROLLER_MUTATOR_H_

@@ -51,27 +51,21 @@ void Avatar_Controller::Init(Tunnelour::Component_Composite * const model) {
 void Avatar_Controller::Run() {
   Avatar_Controller_Mutator mutator;
   m_model->Apply(&mutator);
-  if (!m_has_avatar_been_generated) {
-    m_has_avatar_been_generated = true;
-    if (mutator.FoundGameSettings())  {
+  if (mutator.WasSuccessful()) {
+    if (!m_has_avatar_been_generated) {
       m_game_settings = mutator.GetGameSettings();
-      if (m_game_settings == 0) { m_has_avatar_been_generated = false; }
-    }
-    if (mutator.FoundWorldSettings()) {
       m_world_settings = mutator.GetWorldSettings();
-      if (m_world_settings == 0) { m_has_avatar_been_generated = false; }
-    }
-    if (m_avatar == 0) {
-      LoadTilesets(m_game_settings->GetTilesetPath());
-      GenerateAvatarTile();
-      m_model->Add(m_avatar);
-      if (m_avatar == 0) { m_has_avatar_been_generated = false; }
-    }
-  } else {
-    // Is the avatar currently not contacting the ground
-    UpdateTimer();
-    if (m_animation_tick) {
-      RunAvatarState(&mutator);
+      if (m_avatar == 0) {
+        LoadTilesets(m_game_settings->GetTilesetPath());
+        GenerateAvatarTile();
+        m_model->Add(m_avatar);
+      }
+      m_has_avatar_been_generated = true;
+    } else {
+      UpdateTimer();
+      if (m_animation_tick) {
+        RunAvatarState(&mutator);
+      }
     }
   }
 }

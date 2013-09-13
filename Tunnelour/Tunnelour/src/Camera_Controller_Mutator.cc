@@ -13,14 +13,14 @@
 //  limitations under the License.
 //
 
-#include "Input_Controller_Mutator.h"
+#include "Camera_Controller_Mutator.h"
 
 namespace Tunnelour {
 
 //------------------------------------------------------------------------------
 // public:
 //------------------------------------------------------------------------------
-Input_Controller_Mutator::Input_Controller_Mutator() {
+Camera_Controller_Mutator::Camera_Controller_Mutator() {
   m_found_game_settings = false;
   m_found_avatar_component = false;
   m_game_settings = 0;
@@ -28,45 +28,34 @@ Input_Controller_Mutator::Input_Controller_Mutator() {
 }
 
 //------------------------------------------------------------------------------
-Input_Controller_Mutator::~Input_Controller_Mutator() {
+Camera_Controller_Mutator::~Camera_Controller_Mutator() {
   m_found_game_settings = false;
   m_game_settings = 0;
 }
 
 //------------------------------------------------------------------------------
-void Input_Controller_Mutator::Mutate(Tunnelour::Component * const component) {
+void Camera_Controller_Mutator::Mutate(Tunnelour::Component * const component) {
   if (component->GetType().compare("Game_Settings_Component") == 0) {
-    // Found Game Settings
-    Tunnelour::Game_Settings_Component *game_settings = 0;
-    game_settings = static_cast<Tunnelour::Game_Settings_Component*>(component);
-    m_game_settings = game_settings;
+    m_game_settings = static_cast<Game_Settings_Component*>(component);
     m_found_game_settings = true;
   } else if (component->GetType().compare("Avatar_Component") == 0) {
-    if (!m_found_avatar_component)  {
-      m_avatar_controller = static_cast<Tunnelour::Avatar_Component*>(component);
-      m_found_avatar_component = true;
-    }
+    m_avatar_controller = static_cast<Avatar_Component*>(component);
+    m_found_avatar_component = true;
   }
 }
 
 //------------------------------------------------------------------------------
-bool Input_Controller_Mutator::FoundGameSettings() {
-  return m_found_game_settings;
-}
-
-//------------------------------------------------------------------------------
-Tunnelour::Game_Settings_Component* const Input_Controller_Mutator::GetGameSettings() {
+Game_Settings_Component* const Camera_Controller_Mutator::GetGameSettings() {
   return m_game_settings;
 }
 
 //------------------------------------------------------------------------------
-bool Input_Controller_Mutator::FoundAvatarComponent() {
-  return m_found_avatar_component;
-}
-
-//------------------------------------------------------------------------------
-Tunnelour::Avatar_Component* const Input_Controller_Mutator::GetAvatarComponent() {
+Avatar_Component* const Camera_Controller_Mutator::GetAvatarComponent() {
   return m_avatar_controller;
 }
 
+//------------------------------------------------------------------------------
+bool Camera_Controller_Mutator::WasSuccessful() {
+  return (m_found_game_settings && m_found_avatar_component);
+}
 }  // namespace Tunnelour
