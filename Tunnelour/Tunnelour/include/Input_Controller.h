@@ -34,7 +34,7 @@ namespace Tunnelour {
 //  Description : This controller adds all the components to the model
 //                which are require for an intialised state.
 //-----------------------------------------------------------------------------
-class Input_Controller: public Tunnelour::Controller {
+class Input_Controller: public Controller {
  public:
   //---------------------------------------------------------------------------
   // Description : Constructor
@@ -49,7 +49,7 @@ class Input_Controller: public Tunnelour::Controller {
   //---------------------------------------------------------------------------
   // Description : Initialisation function for the Controller
   //---------------------------------------------------------------------------
-  virtual void Init(Tunnelour::Component_Composite * const model);
+  virtual void Init(Component_Composite * const model);
 
   //---------------------------------------------------------------------------
   // Description : Initialisation function for the Direct Input Variables
@@ -72,7 +72,7 @@ class Input_Controller: public Tunnelour::Controller {
  protected:
 
  private:
- Tunnelour::Game_Settings_Component* m_game_settings;
+ Game_Settings_Component* m_game_settings;
 	IDirectInput8* m_directInput;
 	IDirectInputDevice8* m_keyboard;
 	IDirectInputDevice8* m_mouse;
@@ -85,7 +85,7 @@ class Input_Controller: public Tunnelour::Controller {
 
  bool m_has_direct_input_been_init;
 
- Tunnelour::Avatar_Component* m_avatar_component;
+ Avatar_Component* m_avatar_component;
 
  bool m_dik_grave_pressed;
 };

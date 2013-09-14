@@ -828,8 +828,8 @@ void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX 
 
         // Now create the vertex buffer.
         if (FAILED(m_device->CreateBuffer(&vertexBufferDesc,
-                                                &vertexData,
-                                                &(text->GetFrame()->vertex_buffer)))) {
+                                          &vertexData,
+                                          &(text->GetFrame()->vertex_buffer)))) {
           throw Tunnelour::Exceptions::init_error("CreateBuffer (vertex_buffer) Failed!");
         }
       }

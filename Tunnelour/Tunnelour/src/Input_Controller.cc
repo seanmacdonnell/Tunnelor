@@ -56,14 +56,14 @@ Input_Controller::~Input_Controller() {
 }
 
 //------------------------------------------------------------------------------
-void Input_Controller::Init(Tunnelour::Component_Composite * const model) {
-  Tunnelour::Controller::Init(model);
+void Input_Controller::Init(Component_Composite * const model) {
+  Controller::Init(model);
 
   // Initialize the location of the mouse on the screen.
   m_mouseX = 0;
   m_mouseY = 0;
 
-  Tunnelour::Input_Controller_Mutator mutator;
+  Input_Controller_Mutator mutator;
   m_model->Apply(&mutator);
   if (mutator.FoundGameSettings()) {
     m_game_settings = mutator.GetGameSettings();
@@ -88,49 +88,49 @@ void Input_Controller::Init_DirectInput() {
 
       // Initialize the main direct input interface.
       if (FAILED(DirectInput8Create(m_game_settings->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_directInput, NULL)))   {
-        throw Tunnelour::Exceptions::run_error("Input_Controller DirectInput8Create Failed!");
+        throw Exceptions::run_error("Input_Controller DirectInput8Create Failed!");
       }
 
       // Initialize the direct input interface for the keyboard.
 
       if(FAILED(m_directInput->CreateDevice(GUID_SysKeyboard, &m_keyboard, NULL))) {
-        throw Tunnelour::Exceptions::run_error("Input_Controller CreateDevice Keyboard Failed!");
+        throw Exceptions::run_error("Input_Controller CreateDevice Keyboard Failed!");
       }
 
       // Set the data format.  In this case since it is a keyboard we can use the predefined data format.
       if(FAILED(m_keyboard->SetDataFormat(&c_dfDIKeyboard))) {
-        throw Tunnelour::Exceptions::run_error("Input_Controller SetDataFormat Failed!");
+        throw Exceptions::run_error("Input_Controller SetDataFormat Failed!");
       }
 
       // Set the cooperative level of the keyboard to not share with other programs.
       if(FAILED(m_keyboard->SetCooperativeLevel(m_game_settings->GetHWnd(), DISCL_FOREGROUND | DISCL_EXCLUSIVE))) {
-        throw Tunnelour::Exceptions::run_error("Input_Controller SetCooperativeLevel Failed!");
+        throw Exceptions::run_error("Input_Controller SetCooperativeLevel Failed!");
       }
 
       // Now acquire the keyboard.
       if(FAILED(m_keyboard->Acquire())) {
-        throw Tunnelour::Exceptions::run_error("Input_Controller Acquire Failed!");
+        throw Exceptions::run_error("Input_Controller Acquire Failed!");
       }
 
       // Initialize the direct input interface for the mouse.
       if(FAILED(m_directInput->CreateDevice(GUID_SysMouse, &m_mouse, NULL))) {
-        throw Tunnelour::Exceptions::run_error("Input_Controller CreateDevice Mouse Failed!");
+        throw Exceptions::run_error("Input_Controller CreateDevice Mouse Failed!");
       }
 
       // Set the data format for the mouse using the pre-defined mouse data format.
       if(FAILED(m_mouse->SetDataFormat(&c_dfDIMouse))) {
-        throw Tunnelour::Exceptions::run_error("Input_Controller CreateDevice Mouse Failed!");
+        throw Exceptions::run_error("Input_Controller CreateDevice Mouse Failed!");
       }
 
       // Set the cooperative level of the mouse to share with other programs.
 
       if(FAILED(m_mouse->SetCooperativeLevel(m_game_settings->GetHWnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE))) {
-        throw Tunnelour::Exceptions::run_error("Input_Controller SetCooperativeLevel Failed!");
+        throw Exceptions::run_error("Input_Controller SetCooperativeLevel Failed!");
       }
 
       // Acquire the mouse.
       if(FAILED(m_mouse->Acquire())) {
-        throw Tunnelour::Exceptions::run_error("Input_Controller Acquire Failed!");
+        throw Exceptions::run_error("Input_Controller Acquire Failed!");
       }
 
       m_has_direct_input_been_init = true;
@@ -141,7 +141,7 @@ void Input_Controller::Init_DirectInput() {
 //------------------------------------------------------------------------------
 void Input_Controller::Run() {
   if (m_game_settings == 0 || m_avatar_component == 0) {
-    Tunnelour::Input_Controller_Mutator mutator;
+    Input_Controller_Mutator mutator;
     m_model->Apply(&mutator);
     if (mutator.FoundGameSettings()) {
       m_game_settings = mutator.GetGameSettings();
@@ -158,12 +158,12 @@ void Input_Controller::Run() {
   if (m_has_direct_input_been_init) {
     // Read the current state of the keyboard.
     if(!ReadKeyboard())	{
-      throw Tunnelour::Exceptions::run_error("Input_Controller ReadKeyboard Failed!");
+      throw Exceptions::run_error("Input_Controller ReadKeyboard Failed!");
     }
 
     // Read the current state of the mouse.
     if(!ReadMouse()){
-      throw Tunnelour::Exceptions::run_error("Input_Controller ReadMouse Failed!");
+      throw Exceptions::run_error("Input_Controller ReadMouse Failed!");
     }
 
     // Process the changes in the mouse and keyboard.

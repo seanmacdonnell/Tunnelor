@@ -21,7 +21,7 @@
 #include "Avatar_Component.h"
 
 namespace Tunnelour {
-class Input_Controller_Mutator: public Tunnelour::Component::Component_Mutator  {
+class Input_Controller_Mutator: public Component::Component_Mutator  {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
 //  Description : Input_Controller_Mutator is a mutator run on the model
@@ -41,7 +41,7 @@ class Input_Controller_Mutator: public Tunnelour::Component::Component_Mutator  
   //-------------------------------------------------------------------------
   // Description : Mutator function, pass it a component to mutate.
   //-------------------------------------------------------------------------
-  void Mutate(Tunnelour::Component * const component);
+  void Mutate(Component * const component);
 
   //-------------------------------------------------------------------------
   // Description : Has this component been found in the model?
@@ -51,7 +51,7 @@ class Input_Controller_Mutator: public Tunnelour::Component::Component_Mutator  
   //-------------------------------------------------------------------------
   // Description : Accessors for the Game_Settings_Component
   //-------------------------------------------------------------------------
-  Tunnelour::Game_Settings_Component* const GetGameSettings();
+  Game_Settings_Component* const GetGameSettings();
 
   //-------------------------------------------------------------------------
   // Description : Has this component been found in the model?
@@ -61,13 +61,13 @@ class Input_Controller_Mutator: public Tunnelour::Component::Component_Mutator  
   //-------------------------------------------------------------------------
   // Description : Accessors for the Game_Settings_Component
   //-------------------------------------------------------------------------
-  Tunnelour::Avatar_Component* const Input_Controller_Mutator::GetAvatarComponent();
+  Avatar_Component* const Input_Controller_Mutator::GetAvatarComponent();
 
  private:
   bool m_found_game_settings;
   bool m_found_avatar_component;
-  Tunnelour::Game_Settings_Component * m_game_settings;
-  Tunnelour::Avatar_Component * m_avatar_controller;
+  Game_Settings_Component * m_game_settings;
+  Avatar_Component * m_avatar_controller;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_INPUT_CONTROLLER_MUTATOR_H_

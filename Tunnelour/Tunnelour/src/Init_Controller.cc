@@ -31,19 +31,19 @@ Init_Controller::~Init_Controller() {
 }
 
 //------------------------------------------------------------------------------
-void Init_Controller::Init(Tunnelour::Component_Composite * const model) {
-  Tunnelour::Controller::Init(model);
+void Init_Controller::Init(Component_Composite * const model) {
+  Controller::Init(model);
 }
 
 //------------------------------------------------------------------------------
 void Init_Controller::Run() {
   // DO NOT DELETE THESE. PASSING DELETE CONTROL TO THE MODEL FOR THESE.
-  Tunnelour::Component * game_settings = 0;
-  game_settings = m_model->Add(new Tunnelour::Game_Settings_Component());
+  Component * game_settings = 0;
+  game_settings = m_model->Add(new Game_Settings_Component());
   game_settings->Init();
 
-  Tunnelour::Component * world_settings = 0;
-  world_settings = m_model->Add(new Tunnelour::World_Settings_Component());
+  Component * world_settings = 0;
+  world_settings = m_model->Add(new World_Settings_Component());
   world_settings->Init();
 
   m_is_finished = true;

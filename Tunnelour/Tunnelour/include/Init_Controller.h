@@ -25,7 +25,7 @@ namespace Tunnelour {
 //  Description : This controller adds all the components to the model
 //                which are require for an intialised state.
 //-----------------------------------------------------------------------------
-class Init_Controller: public Tunnelour::Controller {
+class Init_Controller: public Controller {
  public:
   //---------------------------------------------------------------------------
   // Description : Constructor
@@ -40,7 +40,7 @@ class Init_Controller: public Tunnelour::Controller {
   //---------------------------------------------------------------------------
   // Description : Initialisation function for the Controller
   //---------------------------------------------------------------------------
-  virtual void Init(Tunnelour::Component_Composite * const model);
+  virtual void Init(Component_Composite * const model);
 
   //---------------------------------------------------------------------------
   // Description : Controller Runner

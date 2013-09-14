@@ -34,16 +34,16 @@ Input_Controller_Mutator::~Input_Controller_Mutator() {
 }
 
 //------------------------------------------------------------------------------
-void Input_Controller_Mutator::Mutate(Tunnelour::Component * const component) {
+void Input_Controller_Mutator::Mutate(Component * const component) {
   if (component->GetType().compare("Game_Settings_Component") == 0) {
     // Found Game Settings
-    Tunnelour::Game_Settings_Component *game_settings = 0;
-    game_settings = static_cast<Tunnelour::Game_Settings_Component*>(component);
+    Game_Settings_Component *game_settings = 0;
+    game_settings = static_cast<Game_Settings_Component*>(component);
     m_game_settings = game_settings;
     m_found_game_settings = true;
   } else if (component->GetType().compare("Avatar_Component") == 0) {
     if (!m_found_avatar_component)  {
-      m_avatar_controller = static_cast<Tunnelour::Avatar_Component*>(component);
+      m_avatar_controller = static_cast<Avatar_Component*>(component);
       m_found_avatar_component = true;
     }
   }
@@ -55,7 +55,7 @@ bool Input_Controller_Mutator::FoundGameSettings() {
 }
 
 //------------------------------------------------------------------------------
-Tunnelour::Game_Settings_Component* const Input_Controller_Mutator::GetGameSettings() {
+Game_Settings_Component* const Input_Controller_Mutator::GetGameSettings() {
   return m_game_settings;
 }
 
@@ -65,7 +65,7 @@ bool Input_Controller_Mutator::FoundAvatarComponent() {
 }
 
 //------------------------------------------------------------------------------
-Tunnelour::Avatar_Component* const Input_Controller_Mutator::GetAvatarComponent() {
+Avatar_Component* const Input_Controller_Mutator::GetAvatarComponent() {
   return m_avatar_controller;
 }
 

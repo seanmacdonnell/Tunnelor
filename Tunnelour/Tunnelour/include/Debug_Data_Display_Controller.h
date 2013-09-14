@@ -55,15 +55,47 @@ class Debug_Data_Display_Controller: public Controller {
  protected:
 
  private:
-  Game_Settings_Component* m_game_settings;
-  Game_Metrics_Component* m_game_metrics;
-  Text_Component *m_debug_data_text_title;
-  Text_Component *m_debug_data_fps;
-  Text_Component *m_debug_avatar_position;
+  //---------------------------------------------------------------------------
+  // Description : Creates the data debug heading
+  //---------------------------------------------------------------------------
+  void CreateDebugDataHeading();
+
+  //---------------------------------------------------------------------------
+  // Description : Updates the location of the heading
+  //---------------------------------------------------------------------------
+  void UpdateDebugDataHeading();
+
+  //---------------------------------------------------------------------------
+  // Description : Creates the fps display
+  //---------------------------------------------------------------------------
+  void CreateFPSDisplay();
+
+  //---------------------------------------------------------------------------
+  // Description : Updates the fps location and value
+  //---------------------------------------------------------------------------
+  void UpdateFPSDisplay();
+
+  //---------------------------------------------------------------------------
+  // Description : Creates the avatar position display
+  //---------------------------------------------------------------------------
+  void CreateAvatarPositionDisplay();
+
+  //---------------------------------------------------------------------------
+  // Description : Updates the avatar position display
+  //---------------------------------------------------------------------------
+  void UpdateAvatarPositionDisplay();
+
+  //---------------------------------------------------------------------------
+  // Member Variables
+  //---------------------------------------------------------------------------
+  Game_Settings_Component *m_game_settings;
+  Game_Metrics_Component *m_game_metrics;
+  Text_Component *m_debug_heading;
+  Text_Component *m_debug_fps_display;
+  Text_Component *m_debug_avatar_position_display;
   Camera_Component *m_camera;
   Avatar_Component *m_avatar;
   std::string m_font_path;
-
   long double m_fps;
   bool m_is_debug_mode;
   bool m_has_been_initialised;
