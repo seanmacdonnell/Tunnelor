@@ -25,8 +25,8 @@ namespace Tunnelour {
 class Debug_Data_Display_Controller_Mutator: public Component::Component_Mutator  {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
-//  Description : Debug_Data_Display_Controller_Mutator is a mutator run on the model
-//                which collects the game settings component.
+//  Description : Debug_Data_Display_Controller_Mutator is a mutator run on
+//                the model which collects the game settings component.
 //-----------------------------------------------------------------------------
  public:
   //-------------------------------------------------------------------------

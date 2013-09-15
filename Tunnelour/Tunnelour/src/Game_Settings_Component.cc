@@ -30,8 +30,8 @@ Game_Settings_Component::Game_Settings_Component(): Component() {
   m_color = D3DXCOLOR(0, 0, 0, 1);
   m_tileset_path = L"";
   m_type = "Game_Settings_Component";
-  m_hinstance = NULL;
-  m_hwnd = NULL;
+  m_hinstance = 0;
+  m_hwnd = 0;
   m_is_camera_following = true;
 }
 

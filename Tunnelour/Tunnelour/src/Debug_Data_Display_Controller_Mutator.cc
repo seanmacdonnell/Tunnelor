@@ -38,13 +38,11 @@ Debug_Data_Display_Controller_Mutator::~Debug_Data_Display_Controller_Mutator() 
 //------------------------------------------------------------------------------
 void Debug_Data_Display_Controller_Mutator::Mutate(Component * const component) {
   if (component->GetType().compare("Game_Settings_Component") == 0) {
-    // Found Game Settings
     Game_Settings_Component *game_settings = 0;
     game_settings = static_cast<Game_Settings_Component*>(component);
     m_game_settings = game_settings;
     m_found_game_settings = true;
   } else  if (component->GetType().compare("Camera_Component") == 0) {
-    // Found Camera_Component
     Camera_Component *camera = 0;
     camera = static_cast<Camera_Component*>(component);
     m_camera = camera;

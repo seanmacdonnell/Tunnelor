@@ -232,14 +232,14 @@ void Direct3D11_View::Run() {
   }
 
   if (m_game_metrics != 0 ) {
-	Tunnelour::Game_Metrics_Component::FPS_Data fps_data = m_game_metrics->GetFPSData();
+  Tunnelour::Game_Metrics_Component::FPS_Data fps_data = m_game_metrics->GetFPSData();
     fps_data.count++;
 
-	if(timeGetTime() >= (fps_data.startTime + 1000)) {
-		fps_data.fps = fps_data.count;
-		fps_data.count = 0;
-		fps_data.startTime = timeGetTime();
-	}
+  if(timeGetTime() >= (fps_data.startTime + 1000)) {
+    fps_data.fps = fps_data.count;
+    fps_data.count = 0;
+    fps_data.startTime = timeGetTime();
+  }
 
     m_game_metrics->SetFPSData(fps_data);
   }

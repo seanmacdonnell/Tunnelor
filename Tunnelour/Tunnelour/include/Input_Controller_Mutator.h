@@ -41,33 +41,28 @@ class Input_Controller_Mutator: public Component::Component_Mutator  {
   //-------------------------------------------------------------------------
   // Description : Mutator function, pass it a component to mutate.
   //-------------------------------------------------------------------------
-  void Mutate(Component * const component);
-
-  //-------------------------------------------------------------------------
-  // Description : Has this component been found in the model?
-  //-------------------------------------------------------------------------
-  bool FoundGameSettings();
+  void Mutate(Component *const component);
 
   //-------------------------------------------------------------------------
   // Description : Accessors for the Game_Settings_Component
   //-------------------------------------------------------------------------
-  Game_Settings_Component* const GetGameSettings();
-
-  //-------------------------------------------------------------------------
-  // Description : Has this component been found in the model?
-  //-------------------------------------------------------------------------
-  bool Input_Controller_Mutator::FoundAvatarComponent();
+  Game_Settings_Component *const GetGameSettings();
 
   //-------------------------------------------------------------------------
   // Description : Accessors for the Game_Settings_Component
   //-------------------------------------------------------------------------
-  Avatar_Component* const Input_Controller_Mutator::GetAvatarComponent();
+  Avatar_Component *const Input_Controller_Mutator::GetAvatarComponent();
+
+  //-------------------------------------------------------------------------
+  // Description : Did this mutator run successfully?
+  //-------------------------------------------------------------------------
+  bool Input_Controller_Mutator::WasSuccessful();
 
  private:
   bool m_found_game_settings;
   bool m_found_avatar_component;
-  Game_Settings_Component * m_game_settings;
-  Avatar_Component * m_avatar_controller;
+  Game_Settings_Component *m_game_settings;
+  Avatar_Component *m_avatar_controller;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_INPUT_CONTROLLER_MUTATOR_H_

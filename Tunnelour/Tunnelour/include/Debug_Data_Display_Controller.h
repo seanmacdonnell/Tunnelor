@@ -28,7 +28,8 @@ namespace Tunnelour {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
 //  Description : This controller is responsible for the generation of the
-//                middleground (Layer 0)
+//                data display which shows debug data in text components
+//                when the game is in debug mode.
 //-----------------------------------------------------------------------------
 class Debug_Data_Display_Controller: public Controller {
  public:
@@ -90,9 +91,9 @@ class Debug_Data_Display_Controller: public Controller {
   //---------------------------------------------------------------------------
   Game_Settings_Component *m_game_settings;
   Game_Metrics_Component *m_game_metrics;
-  Text_Component *m_debug_heading;
-  Text_Component *m_debug_fps_display;
-  Text_Component *m_debug_avatar_position_display;
+  Text_Component *m_heading;
+  Text_Component *m_fps_display;
+  Text_Component *m_avatar_position_display;
   Camera_Component *m_camera;
   Avatar_Component *m_avatar;
   std::string m_font_path;

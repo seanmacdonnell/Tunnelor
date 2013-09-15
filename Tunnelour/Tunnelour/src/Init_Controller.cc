@@ -38,11 +38,11 @@ void Init_Controller::Init(Component_Composite * const model) {
 //------------------------------------------------------------------------------
 void Init_Controller::Run() {
   // DO NOT DELETE THESE. PASSING DELETE CONTROL TO THE MODEL FOR THESE.
-  Component * game_settings = 0;
+  Component *game_settings = 0;
   game_settings = m_model->Add(new Game_Settings_Component());
   game_settings->Init();
 
-  Component * world_settings = 0;
+  Component *world_settings = 0;
   world_settings = m_model->Add(new World_Settings_Component());
   world_settings->Init();
 

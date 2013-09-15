@@ -52,42 +52,46 @@ class Input_Controller: public Controller {
   virtual void Init(Component_Composite * const model);
 
   //---------------------------------------------------------------------------
-  // Description : Initialisation function for the Direct Input Variables
-  //---------------------------------------------------------------------------
-  void Init_DirectInput();
-
-  //---------------------------------------------------------------------------
   // Description : Controller Runner
   //---------------------------------------------------------------------------
   virtual void Run();
 
-  bool Frame();
-
-  bool IsEscapePressed();
-  void GetMouseLocation(int&, int&);
-  bool ReadKeyboard();
-  bool ReadMouse();
-  void ProcessInput();
-  
  protected:
+  //---------------------------------------------------------------------------
+  // Description : Initialisation function for the Direct Input Variables
+  //---------------------------------------------------------------------------
+  bool InitDirectInput();
+
+  //---------------------------------------------------------------------------
+  // Description : Reads the current state of the keyboard
+  //---------------------------------------------------------------------------
+  bool ReadKeyboard();
+
+  //---------------------------------------------------------------------------
+  // Description : Reads the current state of the mouse
+  //---------------------------------------------------------------------------
+  bool ReadMouse();
+
+  //---------------------------------------------------------------------------
+  // Description : Processes all current input
+  //---------------------------------------------------------------------------
+  void ProcessInput();
 
  private:
- Game_Settings_Component* m_game_settings;
-	IDirectInput8* m_directInput;
-	IDirectInputDevice8* m_keyboard;
-	IDirectInputDevice8* m_mouse;
-
-	unsigned char m_keyboardState[256];
-	DIMOUSESTATE m_mouseState;
-
-	int m_screenWidth, m_screenHeight;
-	int m_mouseX, m_mouseY;
-
- bool m_has_direct_input_been_init;
-
- Avatar_Component* m_avatar_component;
-
- bool m_dik_grave_pressed;
+  //---------------------------------------------------------------------------
+  // Member Variables
+  //---------------------------------------------------------------------------
+  Game_Settings_Component *m_game_settings;
+  IDirectInput8 *m_directInput;
+  IDirectInputDevice8 *m_keyboard;
+  IDirectInputDevice8 *m_mouse;
+  unsigned char m_keyboardState[256];
+  DIMOUSESTATE m_mouseState;
+  int m_screenWidth, m_screenHeight;
+  int m_mouseX, m_mouseY;
+  Avatar_Component *m_avatar_component;
+  bool m_dik_grave_pressed;  // Tilda
+  bool m_has_been_initalised;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_INPUT_CONTROLLER_H_
