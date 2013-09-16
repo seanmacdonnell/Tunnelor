@@ -32,7 +32,7 @@ namespace Tunnelour {
 //  Description : This controller is responsible for the generation of the
 //                middleground (Layer 0)
 //-----------------------------------------------------------------------------
-class Middleground_Controller: public Tunnelour::Controller {
+class Middleground_Controller: public Controller {
  public:
   struct Line {
     int line_number;
@@ -61,8 +61,8 @@ class Middleground_Controller: public Tunnelour::Controller {
   };
 
   struct Collision {
-    Tunnelour::Tile_Bitmap* a_tile;
-    Tunnelour::Tile_Bitmap* b_tile;
+    Tile_Bitmap* a_tile;
+    Tile_Bitmap* b_tile;
     D3DXVECTOR2 a_tile_collision_point;
     D3DXVECTOR2 b_tile_collision_point;
   };
@@ -80,7 +80,7 @@ class Middleground_Controller: public Tunnelour::Controller {
   //---------------------------------------------------------------------------
   // Description : Initialisation function for the Controller
   //---------------------------------------------------------------------------
-  virtual void Init(Tunnelour::Component_Composite * const model);
+  virtual void Init(Component_Composite * const model);
 
   //---------------------------------------------------------------------------
   // Description : Controller Runner
@@ -95,26 +95,26 @@ class Middleground_Controller: public Tunnelour::Controller {
   void Extend_Tunnel_Right();
   void Extend_Tunnel_Left();
   void Switch_Tileset();
-  std::vector<Tunnelour::Tile_Bitmap*> GenerateTilesUpwards(Tunnelour::Tile_Bitmap* from_tile);
-  std::vector<Tunnelour::Tile_Bitmap*> GenerateTilesDownwards(Tunnelour::Tile_Bitmap* from_tile);
-  Tunnelour::Tile_Bitmap* Create_Tile(int base_tile_size, bool is_platform);
+  std::vector<Tile_Bitmap*> GenerateTilesUpwards(Tile_Bitmap* from_tile);
+  std::vector<Tile_Bitmap*> GenerateTilesDownwards(Tile_Bitmap* from_tile);
+  Tile_Bitmap* Create_Tile(int base_tile_size, bool is_platform);
 
   void Load_Tilset_Metadata();
 
   Tileset_Metadata m_metadata;
-  std::vector<Tunnelour::Tile_Bitmap*> m_middleground_tiles;
-  std::vector<Tunnelour::Tile_Bitmap*> m_left_edge_middleground_tiles;
-  std::vector<Tunnelour::Tile_Bitmap*> m_right_edge_middleground_tiles;
-  std::vector<Tunnelour::Tile_Bitmap*> m_tunnel_tiles;
-  std::vector<Tunnelour::Tile_Bitmap*> m_left_edge_tunnel_tiles;
-  std::vector<Tunnelour::Tile_Bitmap*> m_right_edge_tunnel_tiles;
+  std::vector<Tile_Bitmap*> m_middleground_tiles;
+  std::vector<Tile_Bitmap*> m_left_edge_middleground_tiles;
+  std::vector<Tile_Bitmap*> m_right_edge_middleground_tiles;
+  std::vector<Tile_Bitmap*> m_tunnel_tiles;
+  std::vector<Tile_Bitmap*> m_left_edge_tunnel_tiles;
+  std::vector<Tile_Bitmap*> m_right_edge_tunnel_tiles;
 
-  Tunnelour::Game_Settings_Component* m_game_settings;
-  bool m_has_init_middleground_been_generated, m_has_init_tunnel_been_generated;
+  Game_Settings_Component* m_game_settings;
+  bool m_has_been_initalised;
   int m_middleground_top, m_middleground_bottom, m_middleground_left, m_middleground_right;
   std::string m_metadata_file_path;
   int m_tunnel_x_size;
-  Tunnelour::Camera_Component *m_camera;
+  Camera_Component *m_camera;
   std::wstring m_tileset_filename;
   bool m_is_debug_mode;
   int m_camera_top, m_camera_bottom, m_camera_left, m_camera_right;

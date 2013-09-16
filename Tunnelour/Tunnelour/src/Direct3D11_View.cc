@@ -150,7 +150,7 @@ Direct3D11_View::~Direct3D11_View() {
 }
 
 //------------------------------------------------------------------------------
-void Direct3D11_View::Init(Tunnelour::Component_Composite * const model) {
+void Direct3D11_View::Init(Component_Composite * const model) {
   View::Init(model);
 
   m_is_initialised = true;
@@ -159,20 +159,20 @@ void Direct3D11_View::Init(Tunnelour::Component_Composite * const model) {
 //------------------------------------------------------------------------------
 void Direct3D11_View::Run() {
   // Get Relevant Components from the model with the Mutator.
-  Tunnelour::Direct3D11_View_Mutator mutator;
+  Direct3D11_View_Mutator mutator;
 
   m_model->Apply(&mutator);
 
   if (!mutator.FoundCamera()) {
-    throw Tunnelour::Exceptions::run_error("Can't find Camera component!");
+    throw Exceptions::run_error("Can't find Camera component!");
   }
 
   if (!mutator.FoundRenderables()) {
-    throw Tunnelour::Exceptions::run_error("Can't find Renderable components!");
+    throw Exceptions::run_error("Can't find Renderable components!");
   }
 
   if (!mutator.FoundGameSettings())  {
-    throw Tunnelour::Exceptions::run_error("Can't find Background component!");
+    throw Exceptions::run_error("Can't find Background component!");
   }
 
   if (mutator.FoundGameMetrics() && m_game_metrics == 0)  {
@@ -184,15 +184,15 @@ void Direct3D11_View::Run() {
   if (!m_is_window_init) { Init_Window(); }
   if (!m_is_d3d11_init) { Init_D3D11(); }
   if (!m_font_shader) {
-    m_font_shader = new Tunnelour::Direct3D11_View_FontShader();
+    m_font_shader = new Direct3D11_View_FontShader();
     m_font_shader->Init(m_device, &(m_game_settings->GetHWnd()));
   }
   if (!m_transparent_shader) {
-    m_transparent_shader = new Tunnelour::Direct3D11_View_TransparentShader();
+    m_transparent_shader = new Direct3D11_View_TransparentShader();
     m_transparent_shader->Init(m_device, &(m_game_settings->GetHWnd()));
   }
   if (!m_debug_shader) {
-    m_debug_shader = new Tunnelour::Direct3D11_View_DebugShader();
+    m_debug_shader = new Direct3D11_View_DebugShader();
     m_debug_shader->Init(m_device, &(m_game_settings->GetHWnd()));
   }
 
@@ -232,7 +232,7 @@ void Direct3D11_View::Run() {
   }
 
   if (m_game_metrics != 0 ) {
-  Tunnelour::Game_Metrics_Component::FPS_Data fps_data = m_game_metrics->GetFPSData();
+  Game_Metrics_Component::FPS_Data fps_data = m_game_metrics->GetFPSData();
     fps_data.count++;
 
   if(timeGetTime() >= (fps_data.startTime + 1000)) {
@@ -348,18 +348,18 @@ void Direct3D11_View::Init_D3D11() {
   // Create a DirectX graphics interface factory.
   if (FAILED(CreateDXGIFactory(__uuidof(IDXGIFactory),
                              reinterpret_cast<void**>(&factory)))) {
-    throw Tunnelour::Exceptions::init_error("CreateDXGIFactory Failed!");
+    throw Exceptions::init_error("CreateDXGIFactory Failed!");
   }
 
   // Use the factory to create an adapter for the
   // primary graphics interface (video card).
   if (FAILED(factory->EnumAdapters(0, &adapter))) {
-    throw Tunnelour::Exceptions::init_error("EnumAdapters Failed!");
+    throw Exceptions::init_error("EnumAdapters Failed!");
   }
 
   // Enumerate the primary adapter output (monitor).
   if (FAILED(adapter->EnumOutputs(0, &adapter_output))) {
-    throw Tunnelour::Exceptions::init_error("EnumOutputs Failed!");
+    throw Exceptions::init_error("EnumOutputs Failed!");
   }
 
   // Get the number of modes that fit the
@@ -369,14 +369,14 @@ void Direct3D11_View::Init_D3D11() {
                                                 DXGI_ENUM_MODES_INTERLACED,
                                                 &num_modes,
                                                 NULL))) {
-    throw Tunnelour::Exceptions::init_error("Getdisplay_mode_list Failed!");
+    throw Exceptions::init_error("Getdisplay_mode_list Failed!");
   }
 
   // Create a list to hold all the possible display modes for this
   // monitor/video card combination.
   display_mode_list = new DXGI_MODE_DESC[num_modes];
   if (!display_mode_list) {
-    throw Tunnelour::Exceptions::init_error("display_mode_list Failed!");
+    throw Exceptions::init_error("display_mode_list Failed!");
   }
 
   // Now fill the display mode list structures.
@@ -384,7 +384,7 @@ void Direct3D11_View::Init_D3D11() {
                                                 DXGI_ENUM_MODES_INTERLACED,
                                                 &num_modes,
                                                 display_mode_list))) {
-    throw Tunnelour::Exceptions::init_error("Getdisplay_mode_list Failed!");
+    throw Exceptions::init_error("Getdisplay_mode_list Failed!");
   }
 
   // Now go through all the display modes and find the one that matches
@@ -403,7 +403,7 @@ void Direct3D11_View::Init_D3D11() {
 
   // Get the adapter (video card) description.
   if (FAILED(adapter->GetDesc(&adapter_desc))) {
-    throw Tunnelour::Exceptions::init_error("GetDesc Failed!");
+    throw Exceptions::init_error("GetDesc Failed!");
   }
 
   // Store the dedicated video card memory in megabytes.
@@ -416,7 +416,7 @@ void Direct3D11_View::Init_D3D11() {
                      adapter_desc.Description,
                      128);
   if (error != 0) {
-    throw Tunnelour::Exceptions::init_error("wcstombs_s Failed!");
+    throw Exceptions::init_error("wcstombs_s Failed!");
   }
 
   // Release the display mode list.
@@ -495,7 +495,7 @@ void Direct3D11_View::Init_D3D11() {
                                NULL,
                                &feature_level,
                                NULL))) {
-      throw Tunnelour::Exceptions::init_error("Finding Feature Level Failed!");
+      throw Exceptions::init_error("Finding Feature Level Failed!");
   }
 
   // Create the Swap Chain, Direct3D device, and Direct3D device context.
@@ -511,21 +511,21 @@ void Direct3D11_View::Init_D3D11() {
                                            &m_device,
                                            NULL,
                                            &m_device_context))) {
-    throw Tunnelour::Exceptions::init_error("D3D11CreateDeviceAndSwapChain Failed!");
+    throw Exceptions::init_error("D3D11CreateDeviceAndSwapChain Failed!");
   }
 
   // Get the pointer to the back buffer.
   if (FAILED(m_swap_chain->GetBuffer(0,
                                      __uuidof(ID3D11Texture2D),
                                      reinterpret_cast<LPVOID*>(&back_buffer_ptr)))) {
-    throw Tunnelour::Exceptions::init_error("GetBuffer Failed!");
+    throw Exceptions::init_error("GetBuffer Failed!");
   }
 
   // Create the render target view with the back buffer pointer.
   if (FAILED(m_device->CreateRenderTargetView(back_buffer_ptr,
                                               NULL,
                                               &m_render_target_view))) {
-    throw Tunnelour::Exceptions::init_error("CreateRenderTargetView Failed!");
+    throw Exceptions::init_error("CreateRenderTargetView Failed!");
   }
 
   // Release pointer to the back buffer as we no longer need it.
@@ -552,7 +552,7 @@ void Direct3D11_View::Init_D3D11() {
   if (FAILED(m_device->CreateTexture2D(&depth_buffer_desc,
                                        NULL,
                                        &m_depth_stencil_buffer))) {
-    throw Tunnelour::Exceptions::init_error("CreateTexture2D Failed!");
+    throw Exceptions::init_error("CreateTexture2D Failed!");
   }
 
   // Initialize the description of the stencil state.
@@ -582,7 +582,7 @@ void Direct3D11_View::Init_D3D11() {
   // Create the depth stencil state.
   if (FAILED(m_device->CreateDepthStencilState(&depth_stencil_desc,
                                                &m_depth_stencil_state))) {
-    throw Tunnelour::Exceptions::init_error("CreateDepthStencilState Failed!");
+    throw Exceptions::init_error("CreateDepthStencilState Failed!");
   }
 
   // Set the depth stencil state.
@@ -600,7 +600,7 @@ void Direct3D11_View::Init_D3D11() {
   if (FAILED(m_device->CreateDepthStencilView(m_depth_stencil_buffer,
                                               &depth_stencil_view_desc,
                                               &m_depth_stencil_view))) {
-    throw Tunnelour::Exceptions::init_error("CreateDepthStencilView Failed!");
+    throw Exceptions::init_error("CreateDepthStencilView Failed!");
   }
 
   // Bind the render target view and depth stencil buffer to the
@@ -625,7 +625,7 @@ void Direct3D11_View::Init_D3D11() {
   // Create the rasterizer state from the description we just filled out.
   if (FAILED(m_device->CreateRasterizerState(&raster_desc,
                                              &m_raster_state))) {
-    throw Tunnelour::Exceptions::init_error("CreateRasterizerState Failed!");
+    throw Exceptions::init_error("CreateRasterizerState Failed!");
   }
 
   // Now set the rasterizer state.
@@ -682,7 +682,7 @@ void Direct3D11_View::Init_D3D11() {
   // Create the state using the device.
   if (FAILED(m_device->CreateDepthStencilState(&depthDisabledStencilDesc,
                                                &m_depthDisabledStencilState)))  {
-    throw Tunnelour::Exceptions::init_error("CreateDepthStencilState Failed!");
+    throw Exceptions::init_error("CreateDepthStencilState Failed!");
   }
 
   // Clear the blend state description.
@@ -700,7 +700,7 @@ void Direct3D11_View::Init_D3D11() {
 
   // Create the blend state using the description.
   if (FAILED(m_device->CreateBlendState(&blendStateDescription, &m_alphaEnableBlendingState))) {
-    throw Tunnelour::Exceptions::init_error("CreateBlendState Failed!");
+    throw Exceptions::init_error("CreateBlendState Failed!");
   }
 
   // Modify the description to create an alpha disabled blend state description.
@@ -708,18 +708,18 @@ void Direct3D11_View::Init_D3D11() {
 
   // Create the blend state using the description.
   if (FAILED(m_device->CreateBlendState(&blendStateDescription, &m_alphaDisableBlendingState))) {
-    throw Tunnelour::Exceptions::init_error("CreateBlendState Failed!");
+    throw Exceptions::init_error("CreateBlendState Failed!");
   }
 
   m_is_d3d11_init = true;
 }
 
 //------------------------------------------------------------------------------
-void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX *viewmatrix) {
+void Direct3D11_View::Render(std::list<Component*> layer, D3DXMATRIX *viewmatrix) {
   if (layer.empty()) { return; }
-  for (std::list<Tunnelour::Component*>::const_iterator iterator = layer.begin(), end = layer.end(); iterator != end; ++iterator) {
+  for (std::list<Component*>::const_iterator iterator = layer.begin(), end = layer.end(); iterator != end; ++iterator) {
     if ((*iterator)->GetType().compare("Bitmap_Component") == 0 || (*iterator)->GetType().compare("Avatar_Component") == 0) {
-      Tunnelour::Bitmap_Component *bitmap = static_cast<Tunnelour::Bitmap_Component*>(*iterator);
+      Bitmap_Component *bitmap = static_cast<Bitmap_Component*>(*iterator);
       if (!bitmap->IsInitialised()) {  bitmap->Init(); }
       if (bitmap->GetFrame()->vertex_buffer == 0) {
         D3D11_BUFFER_DESC vertexBufferDesc;
@@ -742,7 +742,7 @@ void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX 
         if (FAILED(m_device->CreateBuffer(&vertexBufferDesc,
                                           &vertexData,
                                           &(bitmap->GetFrame()->vertex_buffer)))) {
-          throw Tunnelour::Exceptions::init_error("CreateBuffer (vertex_buffer) Failed!");
+          throw Exceptions::init_error("CreateBuffer (vertex_buffer) Failed!");
         }
       }
       if (bitmap->GetFrame()->index_buffer == 0) {
@@ -766,7 +766,7 @@ void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX 
         if (FAILED(m_device->CreateBuffer(&indexBufferDesc,
                                           &indexData,
                                           &(bitmap->GetFrame()->index_buffer)))) {
-          throw Tunnelour::Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
+          throw Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
         }
       }
       if (bitmap->GetTexture()->texture == 0) { 
@@ -794,7 +794,7 @@ void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX 
                                                             NULL,
                                                             &texture,
                                                             NULL)))  {
-            throw Tunnelour::Exceptions::init_error("Loading font file failed!");
+            throw Exceptions::init_error("Loading font file failed!");
           }
           m_texture_map[bitmap->GetTexture()->texture_path] = texture;
           bitmap->GetTexture()->texture = texture;
@@ -807,7 +807,7 @@ void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX 
       }
     }
     if ((*iterator)->GetType().compare("Text_Component") == 0) {
-      Tunnelour::Text_Component *text = static_cast<Tunnelour::Text_Component*>(*iterator);
+      Text_Component *text = static_cast<Text_Component*>(*iterator);
       if (!text->IsInitialised()) {  text->Init(); }
       if (text->GetFrame()->vertex_buffer == 0) {
         D3D11_BUFFER_DESC vertexBufferDesc;
@@ -830,7 +830,7 @@ void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX 
         if (FAILED(m_device->CreateBuffer(&vertexBufferDesc,
                                           &vertexData,
                                           &(text->GetFrame()->vertex_buffer)))) {
-          throw Tunnelour::Exceptions::init_error("CreateBuffer (vertex_buffer) Failed!");
+          throw Exceptions::init_error("CreateBuffer (vertex_buffer) Failed!");
         }
       }
       if (text->GetFrame()->index_buffer == 0) {
@@ -853,7 +853,7 @@ void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX 
         if (FAILED(m_device->CreateBuffer(&indexBufferDesc,
                                                 &indexData,
                                                 &(text->GetFrame()->index_buffer)))) {
-          throw Tunnelour::Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
+          throw Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
         }
       }
       if (text->GetTexture()->texture == 0) { 
@@ -867,7 +867,7 @@ void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX 
                                                             NULL,
                                                             &texture,
                                                             NULL)))  {
-            throw Tunnelour::Exceptions::init_error("Loading font file failed!");
+            throw Exceptions::init_error("Loading font file failed!");
           }
           m_texture_map[text->GetTexture()->texture_path]=texture;
         } else {
@@ -882,7 +882,7 @@ void Direct3D11_View::Render(std::list<Tunnelour::Component*> layer, D3DXMATRIX 
 }
 
 //------------------------------------------------------------------------------
-void Direct3D11_View::Render_Camera(Tunnelour::Camera_Component *camera, D3DXMATRIX *viewmatrix) {
+void Direct3D11_View::Render_Camera(Camera_Component *camera, D3DXMATRIX *viewmatrix) {
   D3DXMATRIX rotationMatrix;
   D3DXVECTOR3 rotationVector = camera->GetRotationInRadians();
   D3DXVECTOR3 LookingAtVector = camera->GetLookingAtPosition();
@@ -908,7 +908,7 @@ void Direct3D11_View::Render_Camera(Tunnelour::Camera_Component *camera, D3DXMAT
 }
 
 //------------------------------------------------------------------------------
-void Direct3D11_View::Render_Bitmap(Tunnelour::Bitmap_Component* bitmap,
+void Direct3D11_View::Render_Bitmap(Bitmap_Component* bitmap,
                                     D3DXMATRIX *viewmatrix) {
   // Put the model vertex and index buffers on the graphics pipeline to
   // prepare them for drawing.
@@ -948,7 +948,7 @@ void Direct3D11_View::Render_Bitmap(Tunnelour::Bitmap_Component* bitmap,
   ID3D11Buffer *indexbuffer = bitmap->GetFrame()->index_buffer;
 
   // Set vertex buffer stride and offset.
-  stride = sizeof(Tunnelour::Bitmap_Component::Vertex_Type);
+  stride = sizeof(Bitmap_Component::Vertex_Type);
   offset = 0;
 
   // Set the vertex buffer to active in the input assembler
@@ -985,7 +985,7 @@ void Direct3D11_View::Render_Bitmap(Tunnelour::Bitmap_Component* bitmap,
 }
 
 //------------------------------------------------------------------------------
-void Direct3D11_View::Render_Text(Tunnelour::Text_Component *text,
+void Direct3D11_View::Render_Text(Text_Component *text,
                                   D3DXMATRIX *viewmatrix) {
   unsigned int stride, offset;
   D3DXCOLOR pixelColor;
@@ -1024,7 +1024,7 @@ void Direct3D11_View::Render_Text(Tunnelour::Text_Component *text,
   indexbuffer = text->GetFrame()->index_buffer;
 
   // Set vertex buffer stride and offset.
-  stride = sizeof(Tunnelour::Text_Component::Vertex_Type);
+  stride = sizeof(Text_Component::Vertex_Type);
   offset = 0;
 
   // Set the vertex buffer to active in the input assembler so it can be rendered.

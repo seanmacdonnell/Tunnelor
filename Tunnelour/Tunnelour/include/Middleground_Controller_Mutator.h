@@ -21,11 +21,12 @@
 #include "Camera_Component.h"
 
 namespace Tunnelour {
-class Middleground_Controller_Mutator: public Tunnelour::Component::Component_Mutator  {
+class Middleground_Controller_Mutator: public Component::Component_Mutator  {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
 //  Description : Middleground_Controller_Mutator is a mutator run on the model
-//                which collects the game settings component.
+//                which collects the game settings component and the 
+//                camera component.
 //-----------------------------------------------------------------------------
  public:
   //-------------------------------------------------------------------------
@@ -41,32 +42,27 @@ class Middleground_Controller_Mutator: public Tunnelour::Component::Component_Mu
   //-------------------------------------------------------------------------
   // Description : Mutator function, pass it a component to mutate.
   //-------------------------------------------------------------------------
-  void Mutate(Tunnelour::Component * const component);
-
-  //-------------------------------------------------------------------------
-  // Description : Has this component been found in the model?
-  //-------------------------------------------------------------------------
-  bool FoundGameSettings();
+  void Mutate(Component *const component);
 
   //-------------------------------------------------------------------------
   // Description : Accessors for the Game_Settings_Component
   //-------------------------------------------------------------------------
-  Tunnelour::Game_Settings_Component* const GetGameSettings();
-
-  //-------------------------------------------------------------------------
-  // Description : Has this component been found in the model?
-  //-------------------------------------------------------------------------
-  bool FoundCamera();
+  Game_Settings_Component *const GetGameSettings();
 
   //-------------------------------------------------------------------------
   // Description : Accessors for the Camera Component
   //-------------------------------------------------------------------------
-  Tunnelour::Camera_Component* const GetCamera();
+  Camera_Component *const GetCamera();
+
+  //-------------------------------------------------------------------------
+  // Description : Has this mutator completed successfully?
+  //-------------------------------------------------------------------------
+  bool WasSuccessful();
 
  private:
   bool m_found_game_settings, m_found_camera;
-  Tunnelour::Game_Settings_Component * m_game_settings;
-  Tunnelour::Camera_Component * m_camera;
+  Game_Settings_Component *m_game_settings;
+  Camera_Component *m_camera;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_MIDDLEGROUND_CONTROLLER_MUTATOR_H_

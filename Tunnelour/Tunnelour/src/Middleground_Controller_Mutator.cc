@@ -22,50 +22,43 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 Middleground_Controller_Mutator::Middleground_Controller_Mutator() {
   m_found_game_settings = false;
+  m_found_camera = false;
   m_game_settings = 0;
+  m_camera = 0;
 }
 
 //------------------------------------------------------------------------------
 Middleground_Controller_Mutator::~Middleground_Controller_Mutator() {
   m_found_game_settings = false;
+  m_found_camera = false;
   m_game_settings = 0;
+  m_camera = 0;
 }
 
 //------------------------------------------------------------------------------
-void Middleground_Controller_Mutator::Mutate(Tunnelour::Component * const component) {
+void Middleground_Controller_Mutator::Mutate(Component * const component) {
   if (component->GetType().compare("Game_Settings_Component") == 0) {
-    // Found Game Settings
-    Tunnelour::Game_Settings_Component *game_settings = 0;
-    game_settings = static_cast<Tunnelour::Game_Settings_Component*>(component);
-    m_game_settings = game_settings;
+    m_game_settings = static_cast<Game_Settings_Component*>(component);
     m_found_game_settings = true;
   } else  if (component->GetType().compare("Camera_Component") == 0) {
-    // Found Camera_Component
-    Tunnelour::Camera_Component *camera = 0;
-    camera = static_cast<Tunnelour::Camera_Component*>(component);
-    m_camera = camera;
+    m_camera = static_cast<Camera_Component*>(component);
     m_found_camera = true;
   }
 }
 
 //------------------------------------------------------------------------------
-bool Middleground_Controller_Mutator::FoundGameSettings() {
-  return m_found_game_settings;
-}
-
-//------------------------------------------------------------------------------
-Tunnelour::Game_Settings_Component* const Middleground_Controller_Mutator::GetGameSettings() {
+Game_Settings_Component *const Middleground_Controller_Mutator::GetGameSettings() {
   return m_game_settings;
 }
 
 //------------------------------------------------------------------------------
-bool Middleground_Controller_Mutator::FoundCamera() {
-  return m_found_camera;
+Camera_Component *const Middleground_Controller_Mutator::GetCamera() {
+  return m_camera;
 }
 
 //------------------------------------------------------------------------------
-Tunnelour::Camera_Component* const Middleground_Controller_Mutator::GetCamera() {
-  return m_camera;
+bool Middleground_Controller_Mutator::WasSuccessful() {
+  return m_found_camera && m_found_game_settings;
 }
 
 }  // namespace Tunnelour
