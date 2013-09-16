@@ -42,7 +42,7 @@ class Controller_Composite {
   //---------------------------------------------------------------------------
   // Description : Initialise this Composite Controller
   //---------------------------------------------------------------------------
-  virtual void Init(Component_Composite *const model);
+  virtual bool Init(Component_Composite *const model);
 
   //---------------------------------------------------------------------------
   // Description : Add a Controller
@@ -57,7 +57,7 @@ class Controller_Composite {
   //---------------------------------------------------------------------------
   // Description : Run all Controllers
   //---------------------------------------------------------------------------
-  void Run();
+  virtual bool Run();
 
  protected:
   Component_Composite *m_model;

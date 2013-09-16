@@ -49,24 +49,29 @@ Debug_Data_Display_Controller::~Debug_Data_Display_Controller() {
 }
 
 //------------------------------------------------------------------------------
-void Debug_Data_Display_Controller::Init(Component_Composite * const model) {
+bool Debug_Data_Display_Controller::Init(Component_Composite * const model) {
   Controller::Init(model);
   m_font_path = "resource\\tilesets\\Ariel.fnt";
+  Debug_Data_Display_Controller_Mutator mutator;
+  m_model->Apply(&mutator);
+  if (mutator.WasSuccessful())  {
+    m_game_settings = mutator.GetGameSettings();
+    m_camera = mutator.GetCamera();
+    m_avatar = mutator.GetAvatarComponent();
+    m_has_been_initialised = true;
+    m_game_metrics = new Game_Metrics_Component();
+    m_model->Add(m_game_metrics);
+  } else {
+    return false;
+  }
+  m_has_been_initialised = true;
+  return true;
 }
 
 //------------------------------------------------------------------------------
-void Debug_Data_Display_Controller::Run() {
+bool Debug_Data_Display_Controller::Run() {
   if (!m_has_been_initialised) {
-    Debug_Data_Display_Controller_Mutator mutator;
-    m_model->Apply(&mutator);
-    if (mutator.WasSuccessful())  {
-      m_game_settings = mutator.GetGameSettings();
-      m_camera = mutator.GetCamera();
-      m_avatar = mutator.GetAvatarComponent();
-      m_has_been_initialised = true;
-      m_game_metrics = new Game_Metrics_Component();
-      m_model->Add(m_game_metrics);
-    }
+    return false;
   } else {
     if (m_heading == 0) {
       CreateDebugDataHeading();
@@ -96,6 +101,7 @@ void Debug_Data_Display_Controller::Run() {
     UpdateFPSDisplay();
     UpdateAvatarPositionDisplay();
   }
+  return true;
 }
 
 //------------------------------------------------------------------------------

@@ -80,12 +80,12 @@ class Middleground_Controller: public Controller {
   //---------------------------------------------------------------------------
   // Description : Initialisation function for the Controller
   //---------------------------------------------------------------------------
-  virtual void Init(Component_Composite * const model);
+  virtual bool Init(Component_Composite * const model);
 
   //---------------------------------------------------------------------------
   // Description : Controller Runner
   //---------------------------------------------------------------------------
-  virtual void Run();
+  virtual bool Run();
 
  protected:
 
@@ -110,7 +110,6 @@ class Middleground_Controller: public Controller {
   std::vector<Tile_Bitmap*> m_right_edge_tunnel_tiles;
 
   Game_Settings_Component* m_game_settings;
-  bool m_has_been_initalised;
   int m_middleground_top, m_middleground_bottom, m_middleground_left, m_middleground_right;
   std::string m_metadata_file_path;
   int m_tunnel_x_size;

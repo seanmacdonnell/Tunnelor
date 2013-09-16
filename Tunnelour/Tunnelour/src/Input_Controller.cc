@@ -28,7 +28,6 @@ Input_Controller::Input_Controller() : Controller() {
   m_game_settings = 0;
   m_avatar_component = 0;
   m_dik_grave_pressed = false;
-  m_has_been_initalised = false;
 }
 
 //------------------------------------------------------------------------------
@@ -56,12 +55,27 @@ Input_Controller::~Input_Controller() {
   m_game_settings = 0;
   m_avatar_component = 0;
   m_dik_grave_pressed = false;
-  m_has_been_initalised = false;
 }
 
 //------------------------------------------------------------------------------
-void Input_Controller::Init(Component_Composite * const model) {
+bool Input_Controller::Init(Component_Composite * const model) {
   Controller::Init(model);
+  Input_Controller_Mutator mutator;
+  m_model->Apply(&mutator);
+  if (mutator.WasSuccessful()) {
+    m_mouseX = 0;
+    m_mouseY = 0;
+
+    m_game_settings = mutator.GetGameSettings();
+    m_avatar_component = mutator.GetAvatarComponent();
+
+    InitDirectInput();
+
+    m_has_been_initialised = true;
+  } else {
+    return false;
+  }
+  return true;
 }
 
 //------------------------------------------------------------------------------
@@ -147,21 +161,9 @@ bool Input_Controller::InitDirectInput() {
 }
 
 //------------------------------------------------------------------------------
-void Input_Controller::Run() {
-  if (!m_has_been_initalised) {
-    Input_Controller_Mutator mutator;
-    m_model->Apply(&mutator);
-    if (mutator.WasSuccessful()) {
-      m_mouseX = 0;
-      m_mouseY = 0;
-
-      m_game_settings = mutator.GetGameSettings();
-      m_avatar_component = mutator.GetAvatarComponent();
-
-      if (InitDirectInput()) {
-        m_has_been_initalised = true;
-      }
-    }
+bool Input_Controller::Run() {
+  if (!m_has_been_initialised) {
+    return false;
   } else {
     // Read the current state of the keyboard.
     if (!ReadKeyboard()) {
@@ -176,6 +178,7 @@ void Input_Controller::Run() {
     // Process the changes in the mouse and keyboard.
     ProcessInput();
   }
+  return true;
 }
 
 //------------------------------------------------------------------------------

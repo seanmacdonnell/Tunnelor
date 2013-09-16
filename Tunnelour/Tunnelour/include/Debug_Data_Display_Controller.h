@@ -46,12 +46,12 @@ class Debug_Data_Display_Controller: public Controller {
   //---------------------------------------------------------------------------
   // Description : Initialisation function for the Controller
   //---------------------------------------------------------------------------
-  virtual void Init(Component_Composite * const model);
+  virtual bool Init(Component_Composite * const model);
 
   //---------------------------------------------------------------------------
   // Description : Controller Runner
   //---------------------------------------------------------------------------
-  virtual void Run();
+  virtual bool Run();
 
  protected:
 
@@ -99,7 +99,6 @@ class Debug_Data_Display_Controller: public Controller {
   std::string m_font_path;
   long double m_fps;
   bool m_is_debug_mode;
-  bool m_has_been_initialised;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_DEBUG_DATA_DISPLAY_CONTROLLER_H_

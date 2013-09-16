@@ -34,7 +34,6 @@ Background_Controller::Background_Controller() : Controller() {
   m_background_tiles.clear();
   m_game_settings = 0;
   m_camera = 0;
-  m_has_init_background_been_generated = false;
   m_background_top = 0;
   m_background_bottom = 0;
   m_background_left = 0;
@@ -50,7 +49,6 @@ Background_Controller::~Background_Controller() {
   m_background_tiles.clear();
   m_game_settings = 0;
   m_camera = 0;
-  m_has_init_background_been_generated = false;
   m_background_top = 0;
   m_background_bottom = 0;
   m_background_left = 0;
@@ -61,68 +59,74 @@ Background_Controller::~Background_Controller() {
 }
 
 //------------------------------------------------------------------------------
-void Background_Controller::Init(Component_Composite * const model) {
-    Controller::Init(model);
-    std::srand(static_cast<unsigned int>(std::time(0)));
+bool Background_Controller::Init(Component_Composite * const model) {
+  Controller::Init(model);
+  std::srand(static_cast<unsigned int>(std::time(0)));
+  // Get game settings component from the model with the Mutator.
+  Background_Controller_Mutator mutator;
+  m_model->Apply(&mutator);
+  if (mutator.WasSuccessful()) {
+    m_game_settings = mutator.GetGameSettings();
+    m_camera = mutator.GetCamera();
+
+    LoadTilesetMetadata();
+
+    m_is_debug_mode = m_game_settings->IsDebugMode();
+    if (m_is_debug_mode) {
+      m_current_tileset = GetNamedTileset("Debug");
+    } else {
+      m_current_tileset = GetNamedTileset("Dirt");
+    }
+    m_current_background_subset = GetCurrentBackgroundSubset();
+
+    TileCurrentWindow();
+  } else {
+    return false;
+  }
+
+  m_has_been_initialised = true;
+  return true;
 }
 
 //------------------------------------------------------------------------------
-void Background_Controller::Run() {
+bool Background_Controller::Run() {
   // Generate an initial Random Tile Background
-  if (!m_has_init_background_been_generated) {
-    // Get game settings component from the model with the Mutator.
-    Background_Controller_Mutator mutator;
-    m_model->Apply(&mutator);
-    if (mutator.WasSuccessful()) {
-      m_game_settings = mutator.GetGameSettings();
-      m_camera = mutator.GetCamera();
+  if (!m_has_been_initialised) { return false; }
 
-      LoadTilesetMetadata();
+  float camera_top = 0;
+  float camera_bottom = 0;
+  float camera_left = 0;
+  float camera_right = 0;
 
-      m_is_debug_mode = m_game_settings->IsDebugMode();
-      if (m_is_debug_mode) {
-        m_current_tileset = GetNamedTileset("Debug");
-      } else {
-        m_current_tileset = GetNamedTileset("Dirt");
-      }
-      m_current_background_subset = GetCurrentBackgroundSubset();
+  D3DXVECTOR2 game_resolution = m_game_settings->GetResolution();
+  D3DXVECTOR3 camera_position = m_camera->GetPosition();
 
-      TileCurrentWindow();
-    }
-  } else {
-    float camera_top = 0;
-    float camera_bottom = 0;
-    float camera_left = 0;
-    float camera_right = 0;
+  camera_top = (camera_position.y + (game_resolution.y / 2));
+  camera_bottom = (camera_position.y - (game_resolution.y / 2));
+  camera_left = (camera_position.x - (game_resolution.x / 2));
+  camera_right = (camera_position.x + (game_resolution.x / 2));
 
-    D3DXVECTOR2 game_resolution = m_game_settings->GetResolution();
-    D3DXVECTOR3 camera_position = m_camera->GetPosition();
-
-    camera_top = (camera_position.y + (game_resolution.y / 2));
-    camera_bottom = (camera_position.y - (game_resolution.y / 2));
-    camera_left = (camera_position.x - (game_resolution.x / 2));
-    camera_right = (camera_position.x + (game_resolution.x / 2));
-
-    if (camera_top > m_background_top) {
-      TileUp(camera_top);
-    }
-
-    if (camera_bottom < m_background_bottom) {
-      TileDown(camera_bottom);
-    }
-
-    if (camera_right > m_background_right) {
-      TileRight(camera_right);
-    }
-
-    if (camera_left < m_background_left) {
-      TileLeft(camera_left);
-    }
-
-    if (m_is_debug_mode != m_game_settings->IsDebugMode()) {
-      SwitchTileset();
-    }
+  if (camera_top > m_background_top) {
+    TileUp(camera_top);
   }
+
+  if (camera_bottom < m_background_bottom) {
+    TileDown(camera_bottom);
+  }
+
+  if (camera_right > m_background_right) {
+    TileRight(camera_right);
+  }
+
+  if (camera_left < m_background_left) {
+    TileLeft(camera_left);
+  }
+
+  if (m_is_debug_mode != m_game_settings->IsDebugMode()) {
+    SwitchTileset();
+  }
+
+  return true;
 }
 
 //------------------------------------------------------------------------------
@@ -310,8 +314,6 @@ void Background_Controller::TileCurrentWindow() {
     }
     m_model->Add(*tile_it);
   }
-
-  m_has_init_background_been_generated = true;
 }
 
 //---------------------------------------------------------------------------

@@ -39,17 +39,22 @@ class Controller {
   //---------------------------------------------------------------------------
   // Description : Initialisation function for the Controller
   //---------------------------------------------------------------------------
-  virtual void Init(Component_Composite *const model);
+  virtual bool Init(Component_Composite *const model);
 
   //---------------------------------------------------------------------------
   // Description : Controller Runner
   //---------------------------------------------------------------------------
-  virtual void Run();
+  virtual bool Run();
 
   //---------------------------------------------------------------------------
   // Description : Accessor for whether this controller can be removed
   //---------------------------------------------------------------------------
   bool IsFinished();
+
+  //---------------------------------------------------------------------------
+  // Description : Accessor for whether this controller can be removed
+  //---------------------------------------------------------------------------
+  bool HasBeenInitalised();
 
  protected:
   //---------------------------------------------------------------------------
@@ -59,6 +64,7 @@ class Controller {
 
   // Set m_is_finished to true when this controller is no longer required to run
   bool m_is_finished;
+  bool m_has_been_initialised;
 
  private:
 };

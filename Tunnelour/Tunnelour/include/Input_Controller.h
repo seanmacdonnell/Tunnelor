@@ -49,12 +49,12 @@ class Input_Controller: public Controller {
   //---------------------------------------------------------------------------
   // Description : Initialisation function for the Controller
   //---------------------------------------------------------------------------
-  virtual void Init(Component_Composite * const model);
+  virtual bool Init(Component_Composite * const model);
 
   //---------------------------------------------------------------------------
   // Description : Controller Runner
   //---------------------------------------------------------------------------
-  virtual void Run();
+  virtual bool Run();
 
  protected:
   //---------------------------------------------------------------------------
@@ -91,7 +91,6 @@ class Input_Controller: public Controller {
   int m_mouseX, m_mouseY;
   Avatar_Component *m_avatar_component;
   bool m_dik_grave_pressed;  // Tilda
-  bool m_has_been_initalised;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_INPUT_CONTROLLER_H_

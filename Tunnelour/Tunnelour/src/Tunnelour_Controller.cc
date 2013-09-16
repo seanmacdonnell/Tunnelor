@@ -35,7 +35,7 @@ Tunnelour_Controller::~Tunnelour_Controller() {
 }
 
 //------------------------------------------------------------------------------
-void Tunnelour_Controller::Init(Tunnelour::Component_Composite * const model) {
+bool Tunnelour_Controller::Init(Tunnelour::Component_Composite *const model) {
   Controller_Composite::Init(model);
 
   Tunnelour::Controller* controller;
@@ -59,6 +59,8 @@ void Tunnelour_Controller::Init(Tunnelour::Component_Composite * const model) {
 
   controller = Add(new Tunnelour::Debug_Data_Display_Controller());
   controller->Init(m_model);
+
+  return true;
 }
 
 //------------------------------------------------------------------------------

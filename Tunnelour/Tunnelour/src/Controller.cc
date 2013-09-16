@@ -23,28 +23,37 @@ namespace Tunnelour {
 Controller::Controller() {
   m_model = 0;
   m_is_finished = false;
+  m_has_been_initialised = false;
 }
 
 //------------------------------------------------------------------------------
 Controller::~Controller() {
   m_model = 0;
   m_is_finished = false;
+  m_has_been_initialised = false;
 }
 
 //------------------------------------------------------------------------------
-void Controller::Init(Component_Composite * const model) {
+bool Controller::Init(Component_Composite *const model) {
   m_model = model;
+  return true;
 }
 
 //------------------------------------------------------------------------------
-void Controller::Run() {
+bool Controller::Run() {
   if (!IsFinished()) {
   }
+  return true;
 }
 
 //------------------------------------------------------------------------------
 bool Controller::IsFinished() {
   return m_is_finished;
+}
+
+//------------------------------------------------------------------------------
+bool Controller::HasBeenInitalised() {
+  return m_has_been_initialised;
 }
 
 //------------------------------------------------------------------------------

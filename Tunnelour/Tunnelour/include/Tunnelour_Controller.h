@@ -40,7 +40,7 @@ class Tunnelour_Controller: public Tunnelour::Controller_Composite {
   //---------------------------------------------------------------------------
   // Description : Initialise this Composite Controller
   //---------------------------------------------------------------------------
-  virtual void Init(Tunnelour::Component_Composite * const model);
+  virtual bool Init(Tunnelour::Component_Composite * const model);
 
  protected:
 

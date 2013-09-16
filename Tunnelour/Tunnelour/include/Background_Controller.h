@@ -47,12 +47,12 @@ class Background_Controller: public Controller {
   //---------------------------------------------------------------------------
   // Description : Initialisation function for the Controller
   //---------------------------------------------------------------------------
-  virtual void Init(Component_Composite * const model);
+  virtual bool Init(Component_Composite * const model);
 
   //---------------------------------------------------------------------------
   // Description : Controller Runner
   //---------------------------------------------------------------------------
-  virtual void Run();
+  virtual bool Run();
 
  protected:
 
@@ -137,7 +137,6 @@ class Background_Controller: public Controller {
   std::vector<Tile_Bitmap*> m_left_edge_tiles;
   Game_Settings_Component* m_game_settings;
   Camera_Component* m_camera;
-  bool m_has_init_background_been_generated;
   std::string m_metadata_file_path;
   float m_background_top;
   float m_background_bottom;

@@ -28,7 +28,6 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 Middleground_Controller::Middleground_Controller() : Controller() {
   m_game_settings = 0;
-  m_has_been_initalised = false;
   m_tunnel_x_size = 0;
   m_camera = 0;
   m_tileset_filename = L"";
@@ -42,7 +41,6 @@ Middleground_Controller::Middleground_Controller() : Controller() {
 //------------------------------------------------------------------------------
 Middleground_Controller::~Middleground_Controller() {
   m_game_settings = 0;
-  m_has_been_initalised = false;
   m_tunnel_x_size = 0;
   m_camera = 0;
   m_tileset_filename = L"";
@@ -54,36 +52,40 @@ Middleground_Controller::~Middleground_Controller() {
 }
 
 //------------------------------------------------------------------------------
-void Middleground_Controller::Init(Component_Composite * const model) {
+bool Middleground_Controller::Init(Component_Composite * const model) {
   Controller::Init(model);
   std::srand(static_cast<unsigned int>(std::time(0)));
   m_tunnel_x_size = (128+64);
+  Middleground_Controller_Mutator mutator;
+  m_model->Apply(&mutator);
+  if (mutator.WasSuccessful()) {
+    m_game_settings = mutator.GetGameSettings();
+    m_camera = mutator.GetCamera();
+    m_is_debug_mode = m_game_settings->IsDebugMode();
+    if (m_is_debug_mode) {
+      m_tileset_filename = L"Debug_Tileset_0_4.txt";
+    } else {
+      m_tileset_filename = L"Dirt_Tileset_5.txt";
+    }
+
+    Load_Tilset_Metadata();
+
+    Tile_Tunnel();
+
+    Tile_Middleground();
+
+    m_has_been_initialised = true;
+  } else {
+    return false;
+  }
+  return true;
 }
 
 //------------------------------------------------------------------------------
-void Middleground_Controller::Run() {
+bool Middleground_Controller::Run() {
   // Get game settings component from the model with the Mutator.
-  if (!m_has_been_initalised) {
-    Middleground_Controller_Mutator mutator;
-    m_model->Apply(&mutator);
-    if (mutator.WasSuccessful()) {
-      m_game_settings = mutator.GetGameSettings();
-      m_camera = mutator.GetCamera();
-      m_is_debug_mode = m_game_settings->IsDebugMode();
-      if (m_is_debug_mode) {
-        m_tileset_filename = L"Debug_Tileset_0_4.txt";
-      } else {
-        m_tileset_filename = L"Dirt_Tileset_5.txt";
-      }
-
-      Load_Tilset_Metadata();
-
-      Tile_Tunnel();
-
-      Tile_Middleground();
-
-      m_has_been_initalised = true;
-    }
+  if (!m_has_been_initialised) {
+    return false;
   } else {
     // If Camera is over an area with no tiles
     m_camera_top = static_cast<int>(m_camera->GetPosition().y + (m_game_settings->GetResolution().y / 2));
@@ -111,6 +113,7 @@ void Middleground_Controller::Run() {
       Switch_Tileset();
     }
   }
+  return true;
 }
 
 //------------------------------------------------------------------------------

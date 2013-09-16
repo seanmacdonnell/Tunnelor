@@ -42,32 +42,36 @@ Avatar_Controller::~Avatar_Controller() {
 }
 
 //------------------------------------------------------------------------------
-void Avatar_Controller::Init(Component_Composite * const model) {
+bool Avatar_Controller::Init(Component_Composite * const model) {
   Controller::Init(model);
   InitTimer();
-}
-
-//------------------------------------------------------------------------------
-void Avatar_Controller::Run() {
   Avatar_Controller_Mutator mutator;
   m_model->Apply(&mutator);
   if (mutator.WasSuccessful()) {
-    if (!m_has_avatar_been_generated) {
-      m_game_settings = mutator.GetGameSettings();
-      m_world_settings = mutator.GetWorldSettings();
-      if (m_avatar == 0) {
-        LoadTilesets(m_game_settings->GetTilesetPath());
-        GenerateAvatarTile();
-        m_model->Add(m_avatar);
-      }
-      m_has_avatar_been_generated = true;
-    } else {
-      UpdateTimer();
-      if (m_animation_tick) {
-        RunAvatarState(&mutator);
-      }
-    }
+    m_game_settings = mutator.GetGameSettings();
+    m_world_settings = mutator.GetWorldSettings();
+    LoadTilesets(m_game_settings->GetTilesetPath());
+    GenerateAvatarTile();
+    m_model->Add(m_avatar);
+  } else {
+    return false;
   }
+  m_has_been_initialised = true;
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool Avatar_Controller::Run() {
+  if (!m_has_been_initialised) { return false; }
+  Avatar_Controller_Mutator mutator;
+  m_model->Apply(&mutator);
+  if (mutator.WasSuccessful()) {
+    UpdateTimer();
+    if (m_animation_tick) { RunAvatarState(&mutator); }
+  } else {
+    return false;
+  }
+  return true;
 }
 
 //------------------------------------------------------------------------------

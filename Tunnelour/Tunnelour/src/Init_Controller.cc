@@ -31,12 +31,14 @@ Init_Controller::~Init_Controller() {
 }
 
 //------------------------------------------------------------------------------
-void Init_Controller::Init(Component_Composite * const model) {
+bool Init_Controller::Init(Component_Composite * const model) {
   Controller::Init(model);
+  m_has_been_initialised = true;
+  return true;
 }
 
 //------------------------------------------------------------------------------
-void Init_Controller::Run() {
+bool Init_Controller::Run() {
   // DO NOT DELETE THESE. PASSING DELETE CONTROL TO THE MODEL FOR THESE.
   Component *game_settings = 0;
   game_settings = m_model->Add(new Game_Settings_Component());
@@ -47,6 +49,7 @@ void Init_Controller::Run() {
   world_settings->Init();
 
   m_is_finished = true;
+  return true;
 }
 
 //------------------------------------------------------------------------------

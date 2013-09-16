@@ -14,6 +14,7 @@
 //
 
 #include "Controller_Composite.h"
+#include "Exceptions.h"
 
 namespace Tunnelour {
 
@@ -33,8 +34,9 @@ Controller_Composite::~Controller_Composite() {
 }
 
 //------------------------------------------------------------------------------
-void Controller_Composite::Init(Component_Composite *model) {
+bool Controller_Composite::Init(Component_Composite *model) {
   m_model = model;
+  return true;
 }
 
 //------------------------------------------------------------------------------
@@ -50,17 +52,25 @@ void Controller_Composite::Remove(Tunnelour::Controller *controller) {
 }
 
 //---------------------------------------------------------------------------
-void Controller_Composite::Run() {
+bool Controller_Composite::Run() {
   // This algorithm was provided by John Barker
   // Run controllers who are not finished, and remove controllers that are.
   std::list<Tunnelour::Controller*>::iterator it;
-  for (it = m_controllers.begin(); it != m_controllers.end(); ) {
+  for (it = m_controllers.begin(); it != m_controllers.end(); it++) {
     if ((*it)->IsFinished()) {
       it = m_controllers.erase(it);
     } else {
-      (*it++)->Run();
+      if ((*it)->HasBeenInitalised()) {
+        if (!(*it)->Run()) {
+          std::string error = "a controller has failed to run!";
+          throw Exceptions::init_error(error);
+        }
+      } else {
+        (*it)->Init(m_model);
+      }
     }
   }
+  return true;
 }
 
 //------------------------------------------------------------------------------

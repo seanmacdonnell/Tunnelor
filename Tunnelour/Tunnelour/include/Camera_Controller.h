@@ -43,12 +43,12 @@ class Camera_Controller: public Controller {
   //---------------------------------------------------------------------------
   // Description : Initialisation function for the Controller
   //---------------------------------------------------------------------------
-  virtual void Init(Tunnelour::Component_Composite * const model);
+  virtual bool Init(Tunnelour::Component_Composite * const model);
 
   //---------------------------------------------------------------------------
   // Description : Controller Runner
   //---------------------------------------------------------------------------
-  virtual void Run();
+  virtual bool Run();
 
  protected:
 
@@ -56,7 +56,6 @@ class Camera_Controller: public Controller {
   Avatar_Component *m_avatar;
   Game_Settings_Component *m_game_settings;
   Camera_Component *m_camera;
-  bool has_been_initialised;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_CAMERA_CONTROLLER_H_

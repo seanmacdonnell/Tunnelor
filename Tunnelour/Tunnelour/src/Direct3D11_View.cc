@@ -164,7 +164,7 @@ void Direct3D11_View::Run() {
   m_model->Apply(&mutator);
 
   if (!mutator.FoundCamera()) {
-    throw Exceptions::run_error("Can't find Camera component!");
+    throw Exceptions::run_error("Can't find a Camera component!");
   }
 
   if (!mutator.FoundRenderables()) {
