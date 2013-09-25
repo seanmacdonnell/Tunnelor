@@ -24,6 +24,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
+#include <vector>
+#include <sstream>
+#include <locale>
+#include <codecvt>
 
 namespace String_Helper {
 
@@ -44,12 +48,14 @@ inline std::wstring CharToWChar(const char* pstrSrc) {
 //  Description : Converts a string to a wstring
 //-----------------------------------------------------------------------------
 inline std::wstring StringToWString(const std::string& string) {
-    int len;
-    int slength = static_cast<int>(string.length() + 1);
-    len = MultiByteToWideChar(CP_ACP, 0, string.c_str(), slength, 0, 0);
-    std::wstring r(len, L'\0');
-    MultiByteToWideChar(CP_ACP, 0, string.c_str(), slength, &r[0], len);
-    return r;
+  int len;
+  int slength = (int)string.length() + 1;
+  len = MultiByteToWideChar(CP_ACP, 0, string.c_str(), slength, 0, 0); 
+  wchar_t* buf = new wchar_t[len];
+  MultiByteToWideChar(CP_ACP, 0, string.c_str(), slength, buf, len);
+  std::wstring r(buf);
+  delete[] buf;
+  return r;
 }
 
 //-----------------------------------------------------------------------------
@@ -57,12 +63,33 @@ inline std::wstring StringToWString(const std::string& string) {
 //  Description : Convert wstring to string
 //-----------------------------------------------------------------------------
 inline std::string WStringToString(const std::wstring& wstring) {
-    int len;
-    int slength = static_cast<int>(wstring.length() + 1);
-    len = WideCharToMultiByte(CP_ACP, 0, wstring.c_str(), slength, 0, 0, 0, 0);
-    std::string r(len, '\0');
-    WideCharToMultiByte(CP_ACP, 0, wstring.c_str(), slength, &r[0], len, 0, 0);
-    return r;
+  std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
+  return converter.to_bytes( wstring );
+}
+
+//-----------------------------------------------------------------------------
+//  Author(s)   : http://stackoverflow.com/a/236803
+//  Description : Splits a string into elements on a given delimiter and
+//              : adds them to the provided vector
+//-----------------------------------------------------------------------------
+inline std::vector<std::string> &Split(const std::string &s, char delim, std::vector<std::string> &elems) {
+  std::stringstream ss(s);
+  std::string item;
+  while (std::getline(ss, item, delim)) {
+      elems.push_back(item);
+  }
+  return elems;
+}
+
+//-----------------------------------------------------------------------------
+//  Author(s)   : http://stackoverflow.com/a/236803
+//  Description : Splits a string into elements on a given delimiter returns
+//              : a vector
+//-----------------------------------------------------------------------------
+inline std::vector<std::string> Split(const std::string &s, char delim) {
+  std::vector<std::string> elems;
+  Split(s, delim, elems);
+  return elems;
 }
 
 

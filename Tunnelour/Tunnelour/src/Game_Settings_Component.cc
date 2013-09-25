@@ -48,6 +48,7 @@ void Game_Settings_Component::Init() {
   m_screen_depth = 1000.0f;
   m_screen_near = 0.1f;
   m_tileset_path = L"resource\\tilesets\\";
+  m_level_path = L"resource\\levels\\";
   m_is_debug_mode = true;
 }
 
@@ -114,6 +115,11 @@ void Game_Settings_Component::SetColor(D3DXCOLOR & color) {
 //------------------------------------------------------------------------------
 void Game_Settings_Component::SetColor(float red, float green, float blue, float alpha) {
   m_color = D3DXCOLOR(red, green, blue, alpha);
+}
+
+//------------------------------------------------------------------------------
+std::wstring Game_Settings_Component::GetLevelPath() {
+  return m_level_path;
 }
 
 //------------------------------------------------------------------------------

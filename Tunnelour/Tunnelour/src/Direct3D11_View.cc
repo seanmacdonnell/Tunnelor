@@ -18,6 +18,7 @@
 #include "Exceptions.h"
 #include "Direct3D11_View_Mutator.h"
 #include "Direct3D11_View_FontShader.h"
+#include "String_Helper.h"
 
 namespace Tunnelour {
 
@@ -172,7 +173,7 @@ void Direct3D11_View::Run() {
   }
 
   if (!mutator.FoundGameSettings())  {
-    throw Exceptions::run_error("Can't find Background component!");
+    throw Exceptions::run_error("Can't find Middleground component!");
   }
 
   if (mutator.FoundGameMetrics() && m_game_metrics == 0)  {
@@ -794,7 +795,8 @@ void Direct3D11_View::Render(std::list<Component*> layer, D3DXMATRIX *viewmatrix
                                                             NULL,
                                                             &texture,
                                                             NULL)))  {
-            throw Exceptions::init_error("Loading font file failed!");
+            std::string error = "Loading bitmap file failed! :" + String_Helper::WStringToString(bitmap->GetTexture()->texture_path);
+            throw Exceptions::init_error(error);
           }
           m_texture_map[bitmap->GetTexture()->texture_path] = texture;
           bitmap->GetTexture()->texture = texture;

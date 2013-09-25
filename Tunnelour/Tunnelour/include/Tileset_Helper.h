@@ -100,12 +100,12 @@ class Tileset_Helper {
   //---------------------------------------------------------------------------
   // Description : Loads the animation tileset metadata into a struct.
   //---------------------------------------------------------------------------
-  static bool Load_Animation_Tileset_Metadata_Into_Struct(std::string metadata_file, Tileset_Helper::Animation_Tileset_Metadata *out_metadata);
+  static bool LoadAnimationTilesetMetadataIntoStruct(std::string metadata_file, Tileset_Helper::Animation_Tileset_Metadata *out_metadata);
 
   //---------------------------------------------------------------------------
   // Description : Loads the tileset metadata into a struct.
   //---------------------------------------------------------------------------
-  static bool Load_Tileset_Metadata_Into_Struct(std::string metadata_file, Tileset_Helper::Tileset_Metadata *out_metadata);
+  static bool LoadTilesetMetadataIntoStruct(std::string metadata_file, Tileset_Helper::Tileset_Metadata *out_metadata);
 
  protected:
 

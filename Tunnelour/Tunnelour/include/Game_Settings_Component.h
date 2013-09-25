@@ -17,11 +17,11 @@
 #define TUNNELOUR_GAME_SETTINGS_COMPONENT_H_
 
 //-----------------------------------------------------------------------------
-// NOTE(Sean): d3d11 is not required for this class, I am inclduing it as a
-//             tempory fix for a compatibility error of including d3dx10math
+// NOTE(Sean): d3d11 is not required for this class, I am including it as a
+//             temporary fix for a compatibility error of including d3dx10math
 //             before d3d11.
 // TODO(Sean): Either replace d3dx10math with a different maths library or fix
-//             the include order dependancy.
+//             the include order dependency.
 //-----------------------------------------------------------------------------
 #include <d3d11.h>
 #include <d3dx10math.h>
@@ -117,6 +117,11 @@ class Game_Settings_Component: public Tunnelour::Component {
   std::wstring GetTilesetPath();
 
   //---------------------------------------------------------------------------
+  // Description : Accessor for the resource path
+  //---------------------------------------------------------------------------
+  std::wstring GetLevelPath();
+
+  //---------------------------------------------------------------------------
   // Description : Mutator for the color
   //---------------------------------------------------------------------------
   void SetTilesetPath(std::wstring tileset_path);
@@ -174,10 +179,12 @@ class Game_Settings_Component: public Tunnelour::Component {
   float m_screen_near;
   D3DXCOLOR m_color;
   std::wstring m_tileset_path;
+  std::wstring m_level_path;
   HINSTANCE m_hinstance;
   HWND m_hwnd;
   bool m_is_debug_mode;
   bool m_is_camera_following;
+
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_COLOR_COMPONENT_H_

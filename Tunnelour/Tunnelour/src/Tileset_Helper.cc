@@ -34,7 +34,7 @@ Tileset_Helper::~Tileset_Helper() {
 }
 
 //------------------------------------------------------------------------------
-bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string metadata_file, Tileset_Helper::Animation_Tileset_Metadata *out_metadata) {
+bool Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(std::string metadata_file, Tileset_Helper::Animation_Tileset_Metadata *out_metadata) {
   FILE * pFile;
   int lSize;
 
@@ -406,11 +406,12 @@ bool Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(std::string met
     }
   }
 
+  fclose(pFile);
   return true;
 }
 
 //---------------------------------------------------------------------------
-bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file, Tileset_Helper::Tileset_Metadata *out_metadata) {
+bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Tileset_Helper::Tileset_Metadata *out_metadata) {
   FILE * pFile;
   int lSize;
 
@@ -631,6 +632,8 @@ bool Tileset_Helper::Load_Tileset_Metadata_Into_Struct(std::string metadata_file
       out_metadata->tilesets.push_back(temp_tileset);
     }
   }
+
+  fclose(pFile);
   return true;
 }
 

@@ -61,10 +61,10 @@ class Background_Controller: public Controller {
   // Description : Creates a new bitmap tile of the given tile size.
   //---------------------------------------------------------------------------
   Tile_Bitmap* CreateTile(float base_tile_size,
-                                     bool is_top_edge,
-                                     bool is_bottom_edge,
-                                     bool is_right_edge,
-                                     bool is_left_edge);
+                          bool is_top_edge,
+                          bool is_bottom_edge,
+                          bool is_right_edge,
+                          bool is_left_edge);
 
   //---------------------------------------------------------------------------
   // Description : Loads the tileset metadata from file into the variables
@@ -137,7 +137,6 @@ class Background_Controller: public Controller {
   std::vector<Tile_Bitmap*> m_left_edge_tiles;
   Game_Settings_Component* m_game_settings;
   Camera_Component* m_camera;
-  std::string m_metadata_file_path;
   float m_background_top;
   float m_background_bottom;
   float m_background_left;

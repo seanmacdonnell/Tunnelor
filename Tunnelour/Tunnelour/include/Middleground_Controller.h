@@ -25,6 +25,7 @@
 #include "Game_Settings_Component.h"
 #include "Middleground_Controller_Mutator.h"
 #include "Camera_Component.h"
+#include "Tileset_Helper.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -34,37 +35,35 @@ namespace Tunnelour {
 //-----------------------------------------------------------------------------
 class Middleground_Controller: public Controller {
  public:
-  struct Line {
-    int line_number;
-    int top_left_x, top_left_y;
-    int tile_size_x, tile_size_y;
-    int number_of_tiles;
+  /* Example
+  Size 128;Type Middleground,Size 128;Type Tunnel,Size 128;Type Tunnel
+  Size 128;Type Middleground,Size 128;Type Tunnel,Size 128;Type Tunnel
+  */
+  struct Tile_Metadata {
+    std::string type;
+    float size;
   };
 
-  struct Tileset {
-    std::string name;
-    std::string type;
-    int top_left_x, top_left_y;
-    int size_x, size_y;
-    int number_of_lines;
-    std::list<Line> lines;
-  };
-
-  struct Tileset_Metadata {
-    std::string name;
-    std::string type;
+  /* Example
+  Level_Name "Level 0"
+  Level_Blurb "Testing Walking"
+  Level_CSV_Filename "Level_0.csv"
+  Level_TilesetName "Dirt"
+  Level_TunnelStartTopLeftX "0"
+  Level_TunnelStartTopLeftY "0"
+  Level_AvatarStartTopLeftY "64"
+  Level_AvatarStartTopLeftX "-64"
+  */
+  struct Level_Metadata {
+    std::string level_name;
+    std::string blurb;
     std::string filename;
-    int top_left_x, top_left_y;
-    int size_x, size_y;
-    int number_of_subsets;
-    std::list<Tileset> tilesets;
-  };
-
-  struct Collision {
-    Tile_Bitmap* a_tile;
-    Tile_Bitmap* b_tile;
-    D3DXVECTOR2 a_tile_collision_point;
-    D3DXVECTOR2 b_tile_collision_point;
+    std::string tileset_name;
+    float tunnel_top_left_x;
+    float tunnel_top_left_y;
+    float avatar_top_left_x;
+    float avatar_top_left_y;
+    std::vector<std::vector<Tile_Metadata>> level;
   };
 
   //---------------------------------------------------------------------------
@@ -77,7 +76,7 @@ class Middleground_Controller: public Controller {
   //---------------------------------------------------------------------------
   virtual ~Middleground_Controller();
 
-  //---------------------------------------------------------------------------
+  //--------------------------------------------------------------------------
   // Description : Initialisation function for the Controller
   //---------------------------------------------------------------------------
   virtual bool Init(Component_Composite * const model);
@@ -90,33 +89,67 @@ class Middleground_Controller: public Controller {
  protected:
 
  private:
-  void Tile_Tunnel();
-  void Tile_Middleground();
-  void Extend_Tunnel_Right();
-  void Extend_Tunnel_Left();
-  void Switch_Tileset();
-  std::vector<Tile_Bitmap*> GenerateTilesUpwards(Tile_Bitmap* from_tile);
-  std::vector<Tile_Bitmap*> GenerateTilesDownwards(Tile_Bitmap* from_tile);
-  Tile_Bitmap* Create_Tile(int base_tile_size, bool is_platform);
+  void CreateLevel();
+  void LoadLevelMetadata();
+  std::list<Level_Metadata> m_level_metadata;
+  Level_Metadata LoadLevelMetadataIntoStruct(std::string metadata_path);
+  void LoadLevelCSVIntoStruct(std::string metadata_path, Level_Metadata *out_struct);
+  std::vector<Tile_Bitmap*> GenerateTunnelFromMetadata(Level_Metadata level_metadata);
+  std::list<Tileset_Helper::Tileset_Metadata> m_tilesets;
+  Tileset_Helper::Tileset_Metadata m_current_tileset;
+  Tileset_Helper::Subset m_current_middleground_subset;
+  void LoadTilesetMetadata();
+  Tileset_Helper::Tileset_Metadata GetNamedTileset(std::string name);
+  Tileset_Helper::Subset GetCurrentMiddlegroundSubset();
+  Tile_Bitmap* CreateTile(float base_tile_size);
+  Tileset_Helper::Line GetCurrentSizedLine(float size);
+  Level_Metadata GetNamedLevel(std::string name);
+  //---------------------------------------------------------------------------
+  // Description : Resets a tiles texture to 0 for switching tilesets.
+  //---------------------------------------------------------------------------
+  void ResetTileTexture(Tile_Bitmap *out_tile);
+  std::vector<Tile_Bitmap*> m_left_edge_tiles;
+  std::vector<Tile_Bitmap*> m_right_edge_tiles;
+  std::vector<Tile_Bitmap*> m_bottom_edge_tiles;
+  std::vector<Tile_Bitmap*> m_top_edge_tiles;
 
-  void Load_Tilset_Metadata();
+  //---------------------------------------------------------------------------
+  // Description : Tiles up from the current background edge
+  //---------------------------------------------------------------------------
+  void TileUp(float camera_top, float middleground_top);
 
-  Tileset_Metadata m_metadata;
+  //---------------------------------------------------------------------------
+  // Description : Tiles down from the current background edge
+  //---------------------------------------------------------------------------
+  void TileDown(float camera_bottom, float middleground_bottom);
+
+  //---------------------------------------------------------------------------
+  // Description : Tiles right from the current background edge
+  //---------------------------------------------------------------------------
+  void TileRight(float camera_right, float middleground_right);
+
+  //---------------------------------------------------------------------------
+  // Description : Tiles left from the current background edge
+  //---------------------------------------------------------------------------
+  void TileLeft(float camera_left, float middleground_left);
+
+  //---------------------------------------------------------------------------
+  // Description : Switches the tileset from Debug to Dirt and vise versa
+  //---------------------------------------------------------------------------
+  void SwitchTileset();
+
+
   std::vector<Tile_Bitmap*> m_middleground_tiles;
-  std::vector<Tile_Bitmap*> m_left_edge_middleground_tiles;
-  std::vector<Tile_Bitmap*> m_right_edge_middleground_tiles;
-  std::vector<Tile_Bitmap*> m_tunnel_tiles;
-  std::vector<Tile_Bitmap*> m_left_edge_tunnel_tiles;
-  std::vector<Tile_Bitmap*> m_right_edge_tunnel_tiles;
 
   Game_Settings_Component* m_game_settings;
-  int m_middleground_top, m_middleground_bottom, m_middleground_left, m_middleground_right;
-  std::string m_metadata_file_path;
-  int m_tunnel_x_size;
+
   Camera_Component *m_camera;
-  std::wstring m_tileset_filename;
+  std::string m_tileset_filename;
   bool m_is_debug_mode;
-  int m_camera_top, m_camera_bottom, m_camera_left, m_camera_right;
+  
+  std::string m_debug_metadata_file_path;
+  std::string m_dirt_metadata_file_path;
+
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_MIDDLEGROUND_CONTROLLER_H_

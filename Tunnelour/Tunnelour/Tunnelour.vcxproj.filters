@@ -260,9 +260,6 @@
     <ClInclude Include="include\View_Composite.h">
       <Filter>Include Files\View</Filter>
     </ClInclude>
-    <ClInclude Include="include\String_Helper.h">
-      <Filter>Include Files\Engine</Filter>
-    </ClInclude>
     <ClInclude Include="include\Middleground_Controller.h">
       <Filter>Include Files\Controllers</Filter>
     </ClInclude>
@@ -313,6 +310,9 @@
     </ClInclude>
     <ClInclude Include="include\Camera_Controller_Mutator.h">
       <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\String_Helper.h">
+      <Filter>Include Files\Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

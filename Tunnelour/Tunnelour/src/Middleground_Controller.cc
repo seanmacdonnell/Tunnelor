@@ -14,12 +14,14 @@
 //
 
 #include "Middleground_Controller.h"
+#include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctime>
 #include <string>
 #include "Exceptions.h"
 #include "String_Helper.h"
+#include "Bitmap_Helper.h"
 
 namespace Tunnelour {
 
@@ -28,51 +30,44 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 Middleground_Controller::Middleground_Controller() : Controller() {
   m_game_settings = 0;
-  m_tunnel_x_size = 0;
   m_camera = 0;
-  m_tileset_filename = L"";
+  m_tileset_filename = "";
   m_is_debug_mode = false;
-  m_camera_top = 0;
-  m_camera_bottom = 0;
-  m_camera_left = 0;
-  m_camera_right = 0;
+  m_debug_metadata_file_path = "";
+  m_dirt_metadata_file_path = "";
 }
 
 //------------------------------------------------------------------------------
 Middleground_Controller::~Middleground_Controller() {
   m_game_settings = 0;
-  m_tunnel_x_size = 0;
   m_camera = 0;
-  m_tileset_filename = L"";
+  m_tileset_filename = "";
   m_is_debug_mode = false;
-  m_camera_top = 0;
-  m_camera_bottom = 0;
-  m_camera_left = 0;
-  m_camera_right = 0;
+  m_debug_metadata_file_path = "";
+  m_dirt_metadata_file_path = "";
 }
 
 //------------------------------------------------------------------------------
 bool Middleground_Controller::Init(Component_Composite * const model) {
   Controller::Init(model);
   std::srand(static_cast<unsigned int>(std::time(0)));
-  m_tunnel_x_size = (128+64);
+
   Middleground_Controller_Mutator mutator;
   m_model->Apply(&mutator);
   if (mutator.WasSuccessful()) {
     m_game_settings = mutator.GetGameSettings();
     m_camera = mutator.GetCamera();
     m_is_debug_mode = m_game_settings->IsDebugMode();
+
+    m_is_debug_mode = m_game_settings->IsDebugMode();
     if (m_is_debug_mode) {
-      m_tileset_filename = L"Debug_Tileset_0_4.txt";
+      m_current_tileset = GetNamedTileset("Debug");
     } else {
-      m_tileset_filename = L"Dirt_Tileset_5.txt";
+      m_current_tileset = GetNamedTileset("Dirt");
     }
+    m_current_middleground_subset = GetCurrentMiddlegroundSubset();
 
-    Load_Tilset_Metadata();
-
-    Tile_Tunnel();
-
-    Tile_Middleground();
+    CreateLevel();
 
     m_has_been_initialised = true;
   } else {
@@ -84,35 +79,45 @@ bool Middleground_Controller::Init(Component_Composite * const model) {
 //------------------------------------------------------------------------------
 bool Middleground_Controller::Run() {
   // Get game settings component from the model with the Mutator.
-  if (!m_has_been_initialised) {
-    return false;
-  } else {
-    // If Camera is over an area with no tiles
-    m_camera_top = static_cast<int>(m_camera->GetPosition().y + (m_game_settings->GetResolution().y / 2));
-    m_camera_bottom = static_cast<int>(m_camera->GetPosition().y - (m_game_settings->GetResolution().y / 2));
-    m_camera_left = static_cast<int>(m_camera->GetPosition().x - (m_game_settings->GetResolution().x / 2));
-    m_camera_right = static_cast<int>(m_camera->GetPosition().x + (m_game_settings->GetResolution().x / 2));
-      
-    if (m_camera_top < m_middleground_top) {
-        //throw Exceptions::unfinished_error("Up Generation not finished!");
-    }
+  if (!m_has_been_initialised) { return false; }
 
-    if (m_camera_bottom > m_middleground_bottom) {
-      //throw Exceptions::unfinished_error("Down Generation not finished!");
-    }
-      
-    if (m_camera_right > m_middleground_right) {
-      //Extend_Tunnel_Right();
-    }
+  float camera_top, camera_bottom, camera_left, camera_right;
 
-    if (m_camera_left < m_middleground_left) {
-      Extend_Tunnel_Left();
-    }
+  // If Camera is over an area with no tiles
+  D3DXVECTOR2 game_resolution = m_game_settings->GetResolution();
+  D3DXVECTOR3 camera_position = m_camera->GetPosition();
 
-    if (m_is_debug_mode != m_game_settings->IsDebugMode()) {
-      Switch_Tileset();
-    }
+  camera_top = (camera_position.y + (game_resolution.y / 2));
+  camera_bottom = (camera_position.y - (game_resolution.y / 2));
+  camera_left = (camera_position.x - (game_resolution.x / 2));
+  camera_right = (camera_position.x + (game_resolution.x / 2));
+
+  float middleground_top, middleground_bottom, middleground_left, middleground_right;
+  middleground_top = (*m_top_edge_tiles.begin())->GetTopLeftPostion().y;
+  middleground_left = (*m_left_edge_tiles.begin())->GetTopLeftPostion().x;
+  middleground_bottom = (*m_bottom_edge_tiles.begin())->GetBottomRightPostion().y;
+  middleground_right = (*m_right_edge_tiles.begin())->GetBottomRightPostion().x;
+
+  if (camera_top < middleground_top) {
+    TileUp(camera_top, middleground_top);
   }
+
+  if (camera_bottom > middleground_bottom) {
+    TileDown(camera_bottom, middleground_bottom);
+  }
+      
+  if (camera_right > middleground_right) {
+    TileRight(camera_right, middleground_right);
+  }
+
+  if (camera_left < middleground_left) {
+    TileLeft(camera_left, middleground_left);
+  }
+
+  if (m_is_debug_mode != m_game_settings->IsDebugMode()) {
+    SwitchTileset();
+  }
+
   return true;
 }
 
@@ -123,148 +128,554 @@ bool Middleground_Controller::Run() {
 //------------------------------------------------------------------------------
 // private:
 //------------------------------------------------------------------------------
-void Middleground_Controller::Tile_Tunnel() {
-  // Get game settings component from the model with the Mutator.
-  Middleground_Controller_Mutator mutator;
+void Middleground_Controller::CreateLevel() {
+  LoadLevelMetadata();
+  std::vector<Tile_Bitmap*> tiles = GenerateTunnelFromMetadata((*m_level_metadata.begin()));
 
-  // Load the Tileset Data
-  Load_Tilset_Metadata();
+  // Add tiles to Model
+  for (std::vector<Tile_Bitmap*>::iterator tile = tiles.begin(); tile != tiles.end(); ++tile) {
+    m_model->Add(*tile);
+    m_middleground_tiles.push_back(*tile);
+  }
+}
 
-  int tunnel_start_x = static_cast<int>((m_game_settings->GetResolution().x/2) * -1);
-  int tunnel_start_y = 128;
-  m_middleground_left = tunnel_start_x;
-  m_middleground_top = m_middleground_top;
-  int current_x = tunnel_start_x;
-  int current_y = tunnel_start_y;
-  Tile_Bitmap* tile;
+//---------------------------------------------------------------------------
+void Middleground_Controller::LoadLevelMetadata() {
+  Level_Metadata level_0_metadata;
+  std::string level_0_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_0.txt");
+  level_0_metadata = LoadLevelMetadataIntoStruct(level_0_metadata_file_path);
+  std::string level_0_csv_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_0.csv");
+  LoadLevelCSVIntoStruct(level_0_csv_file_path, &level_0_metadata);
+  m_level_metadata.push_back(level_0_metadata);
+}
 
-  int number_of_128x128_y_tiles = 0;
-  int number_of_64x64_y_tiles = 0;
-  int number_of_32x32_y_tiles = 0;
-  int number_of_16x16_y_tiles = 0;
-  int number_of_8x8_y_tiles = 0;
-  int number_of_4x4_y_tiles = 0;
-  int number_of_2x2_y_tiles = 0;
-  int number_of_1x1_y_tiles = 0;
+//------------------------------------------------------------------------------
+Middleground_Controller::Level_Metadata Middleground_Controller::LoadLevelMetadataIntoStruct(std::string metadata_path) {
+  Level_Metadata level_metadata;
 
-  div_t div_y_result =  div(m_tunnel_x_size, 128);
-  number_of_128x128_y_tiles = div_y_result.quot;
-  if (div_y_result.rem != 0) {
-    div_y_result =  div(div_y_result.rem, 64);
-    number_of_64x64_y_tiles = div_y_result.quot;
-    if (div_y_result.rem != 0) {
-      div_y_result =  div(div_y_result.rem, 32);
-      number_of_32x32_y_tiles = div_y_result.quot;
-      if (div_y_result.rem != 0) {
-        div_y_result =  div(div_y_result.rem, 32);
-        number_of_16x16_y_tiles = div_y_result.quot;
-        if (div_y_result.rem != 0) {
-          div_y_result =  div(div_y_result.rem, 16);
-          number_of_16x16_y_tiles = div_y_result.quot;
-          if (div_y_result.rem != 0) {
-            div_y_result =  div(div_y_result.rem, 8);
-            number_of_8x8_y_tiles = div_y_result.quot;
-            if (div_y_result.rem != 0) {
-              div_y_result =  div(div_y_result.rem, 4);
-              number_of_4x4_y_tiles = div_y_result.quot;
-              if (div_y_result.rem != 0) {
-                div_y_result =  div(div_y_result.rem, 2);
-                number_of_2x2_y_tiles = div_y_result.quot;
-                if  (div_y_result.rem != 0) {
-                  number_of_1x1_y_tiles = div_y_result.rem;
-                }
-              }
-            }
+  FILE * pFile;
+  int lSize;
+
+  // Open Font File as a text file
+  if (fopen_s(&pFile, metadata_path.c_str(), "r") != 0) {
+    std::string error = "Open Tileset Metadata Failed! " +  metadata_path;
+    throw Tunnelour::Exceptions::init_error(error);
+  }
+
+  // obtain file size:
+  fseek(pFile, 0, SEEK_END);
+  lSize = ftell(pFile);
+  rewind(pFile);
+
+  char * token;
+  char * next_token;
+
+  char line[255];
+  fgets(line, 225, pFile);
+  if (line != NULL) {
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token, "Level_Name") == 0)   {
+      token = strtok_s(NULL, " =\"", &next_token);
+      level_metadata.level_name = token;
+    } else {
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_Name");
+    }
+  }
+  fgets(line, 225, pFile);
+  if (line != NULL) {
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token, "Level_Blurb") == 0)   {
+      token = strtok_s(NULL, " =\"", &next_token);
+      level_metadata.blurb = token;
+    } else {
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_Blurb");
+    }
+  }
+  fgets(line, 225, pFile);
+  if (line != NULL) {
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token, "Level_CSV_Filename") == 0)   {
+      token = strtok_s(NULL, " =\"", &next_token);
+      level_metadata.filename = token;
+    } else {
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_CSV_Filename");
+    }
+  }
+  fgets(line, 225, pFile);
+  if (line != NULL) {
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token, "Level_TilesetName") == 0)   {
+      token = strtok_s(NULL, " =\"", &next_token);
+      level_metadata.tileset_name = token;
+    } else {
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_TilesetName");
+    }
+  }
+  fgets(line, 225, pFile);
+  if (line != NULL) {
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token, "Level_TunnelStartTopLeftX") == 0)   {
+      token = strtok_s(NULL, " =\"", &next_token);
+      level_metadata.tunnel_top_left_x = static_cast<float>(atof(token));
+    } else {
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Tileset_TopLeftX");
+    }
+  }
+  fgets(line, 225, pFile);
+  if (line != NULL) {
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token, "Level_TunnelStartTopLeftY") == 0)   {
+      token = strtok_s(NULL, " =\"", &next_token);
+      level_metadata.tunnel_top_left_y = static_cast<float>(atof(token));
+    } else {
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Tileset_TopLeftX");
+    }
+  }
+  fgets(line, 225, pFile);
+  if (line != NULL) {
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token, "Level_AvatarStartTopLeftX") == 0)   {
+      token = strtok_s(NULL, " =\"", &next_token);
+      level_metadata.avatar_top_left_x = static_cast<float>(atof(token));
+    } else {
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Tileset_TopLeftX");
+    }
+  }
+  fgets(line, 225, pFile);
+  if (line != NULL) {
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token, "Level_AvatarStartTopLeftY") == 0)   {
+      token = strtok_s(NULL, " =\"", &next_token);
+      level_metadata.avatar_top_left_y = static_cast<float>(atof(token));
+    } else {
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Tileset_TopLeftX");
+    }
+  }
+  fclose(pFile);
+
+  return level_metadata;
+}
+
+//------------------------------------------------------------------------------
+void Middleground_Controller::LoadLevelCSVIntoStruct(std::string metadata_path, Level_Metadata *out_metadata) {
+  if (out_metadata == 0) { throw Tunnelour::Exceptions::run_error("Need an initialized strut"); }
+  if (out_metadata->filename.compare("") == 0) { throw Tunnelour::Exceptions::run_error("Need a struct with a filename"); }
+  Level_Metadata level_metadata;
+
+  FILE * pFile;
+  int lSize;
+
+  // Open Font File as a text file
+  if (fopen_s(&pFile, metadata_path.c_str(), "r") != 0) {
+    std::string error = "Open Tileset Metadata Failed! " +  metadata_path;
+    throw Tunnelour::Exceptions::init_error(error);
+  }
+
+  // obtain file size:
+  fseek(pFile, 0, SEEK_END);
+  lSize = ftell(pFile);
+  rewind(pFile);
+
+  char * token;
+  char * next_token;
+
+  //This is string::max_size
+  unsigned int max_size = 10000;
+  char line[10000];
+  while (fgets(line, max_size, pFile) != NULL) {
+    std::vector<Tile_Metadata> line_metadata;
+    std::vector<std::string> split_line = String_Helper::Split(line, ',');
+    std::vector<std::string>::iterator line_tile;
+    for (line_tile = split_line.begin(); line_tile != split_line.end(); line_tile++) {
+      Tile_Metadata tile_metadata;
+      std::vector<std::string> quote_stripper = String_Helper::Split((*line_tile), '\'');
+      std::vector<std::string> split_tile = String_Helper::Split(quote_stripper[0], ';');
+      std::vector<std::string>::iterator line_tile_data;
+      for (line_tile_data = split_tile.begin(); line_tile_data != split_tile.end(); line_tile_data++) {
+        std::vector<std::string> split_tile_data = String_Helper::Split((*line_tile_data), ' ');
+        if (split_tile_data.begin()->compare("Size") == 0) {
+          tile_metadata.size = static_cast<float>(atof(split_tile_data[1].c_str()));
+        } else if (split_tile_data.begin()->compare("Type") == 0) {
+          tile_metadata.type = split_tile_data[1];
+        }
+      }
+      line_metadata.push_back(tile_metadata);
+    }
+    out_metadata->level.push_back(line_metadata);
+  }
+
+  fclose (pFile);
+}
+
+//------------------------------------------------------------------------------
+std::vector<Tile_Bitmap*> Middleground_Controller::GenerateTunnelFromMetadata(Level_Metadata level_metadata) {
+  LoadTilesetMetadata();
+
+  std::vector<Tile_Bitmap*> tiles;
+  std::vector<std::vector<Tile_Bitmap*>> middleground_lines;
+  
+  std::vector<std::vector<Tile_Metadata>>::iterator line;
+  for (line = level_metadata.level.begin(); line != level_metadata.level.end(); line++) {
+    std::vector<Tile_Metadata>::iterator tile;
+    std::vector<Tile_Bitmap*> middleground_line;
+    for (tile = (*line).begin(); tile != (*line).end(); tile++) {
+      Tile_Bitmap* new_tile = new_tile = CreateTile((*tile).size);
+      if (tile == (*line).begin()) {
+        new_tile->Set_Is_Left_Edge(true);
+        m_left_edge_tiles.push_back(new_tile);
+      }
+      if (tile == (*line).end() - 1) {
+        new_tile->Set_Is_Right_Edge(true);
+        m_right_edge_tiles.push_back(new_tile);
+      }
+      if (line == level_metadata.level.begin()) {
+        new_tile->Set_Is_Top_Edge(true);
+        m_top_edge_tiles.push_back(new_tile);
+      }
+      if (line == level_metadata.level.end() - 1) {
+        new_tile->Set_Is_Bottom_Edge(true);
+        m_bottom_edge_tiles.push_back(new_tile);
+      }
+
+      float position_x = 0;
+      float position_y = 0;
+      float position_z = -1;
+      // X position is the sum of all the tile sizes before it.
+      std::vector<Tile_Metadata>::iterator x_sum_iterator;
+      for (x_sum_iterator = (*line).begin(); x_sum_iterator != tile; x_sum_iterator++) {
+        position_x += (*x_sum_iterator).size;
+      }
+      position_x += ((*tile).size / 2);
+      // I'm setting the position here so I can use DoTheseTilesXCollide
+      new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
+
+      // Check the line above for any X colliding tiles
+      if (!middleground_lines.empty()) {
+        std::vector<Tile_Bitmap*>::iterator y_sum_iterator;
+        for (y_sum_iterator = middleground_lines.back().begin(); y_sum_iterator != middleground_lines.back().end(); y_sum_iterator++) {
+          if (Bitmap_Helper::DoTheseTilesXCollide((*y_sum_iterator), new_tile) ||
+            Bitmap_Helper::AreTheseTilesXAdjacent((*y_sum_iterator), new_tile)) {
+            position_y = (*y_sum_iterator)->GetPosition().y;
           }
         }
+        position_y -= ((*tile).size);
+      } else {
+        position_y -= ((*tile).size / 2);
+      }
+
+      new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
+
+      if ((*tile).type.compare("Middleground") == 0) {
+        new_tile->Set_Is_Platform(true);
+        new_tile->GetTexture()->transparency = 1.0f;
+      } else {
+        new_tile->GetTexture()->transparency = 0.0f; //TUNNEL
+      }
+
+      ResetTileTexture(new_tile);
+
+      middleground_line.push_back(new_tile);
+      tiles.push_back(new_tile);
+    }
+    middleground_lines.push_back(middleground_line);
+  }
+
+  return tiles;
+}
+
+//---------------------------------------------------------------------------
+void Middleground_Controller::LoadTilesetMetadata() {
+  Tileset_Helper::Tileset_Metadata debug_tileset_metadata;
+  m_debug_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Debug_Tileset_0_4.txt");
+  Tileset_Helper::LoadTilesetMetadataIntoStruct(m_debug_metadata_file_path, &debug_tileset_metadata);
+  m_tilesets.push_back(debug_tileset_metadata);
+
+  Tileset_Helper::Tileset_Metadata dirt_tileset_metadata;
+  m_dirt_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Dirt_Tileset_5.txt");
+  Tileset_Helper::LoadTilesetMetadataIntoStruct(m_dirt_metadata_file_path, &dirt_tileset_metadata);
+  m_tilesets.push_back(dirt_tileset_metadata);
+
+  if (m_game_settings->IsDebugMode()) {
+    m_current_tileset = GetNamedTileset("Debug");
+  } else {
+    m_current_tileset = GetNamedTileset("Dirt");
+  }
+  m_current_middleground_subset = GetCurrentMiddlegroundSubset();
+}
+
+//---------------------------------------------------------------------------
+Tileset_Helper::Tileset_Metadata Middleground_Controller::GetNamedTileset(std::string name) {
+  Tileset_Helper::Tileset_Metadata found_tileset_metadata;
+
+  std::list<Tileset_Helper::Tileset_Metadata>::iterator tileset_metadata;
+  for (tileset_metadata = m_tilesets.begin(); tileset_metadata != m_tilesets.end(); tileset_metadata++) {
+    if (tileset_metadata->name.compare(name) == 0) {
+      found_tileset_metadata = (*tileset_metadata);
+    }
+  }
+
+  return found_tileset_metadata;
+}
+
+//---------------------------------------------------------------------------
+Tileset_Helper::Subset Middleground_Controller::GetCurrentMiddlegroundSubset() {
+  Tileset_Helper::Subset found_subset;
+
+  std::list<Tileset_Helper::Subset>::iterator tileset;
+  for (tileset = m_current_tileset.tilesets.begin(); tileset != m_current_tileset.tilesets.end(); tileset++) {
+    if (tileset->type.compare("Middleground") == 0) {
+      found_subset = *tileset;
+    }
+  }
+
+  return found_subset;
+}
+
+//------------------------------------------------------------------------------
+Tile_Bitmap* Middleground_Controller::CreateTile(float base_tile_size) {
+  Tileset_Helper::Line middleground_line;
+  std::list<Tileset_Helper::Line>::iterator line;
+  for (line = m_current_middleground_subset.lines.begin(); line != m_current_middleground_subset.lines.end(); line++) {
+    if (line->tile_size_x == base_tile_size) {
+      if (line->tile_size_y == base_tile_size) {
+        middleground_line = *line;
       }
     }
   }
 
-  int number_of_y_tiles = number_of_128x128_y_tiles + 
-                          number_of_64x64_y_tiles +
-                          number_of_32x32_y_tiles +
-                          number_of_16x16_y_tiles +
-                          number_of_8x8_y_tiles +
-                          number_of_4x4_y_tiles +
-                          number_of_2x2_y_tiles +
-                          number_of_1x1_y_tiles;
+  Tile_Bitmap* tile = new Tile_Bitmap();
+  tile->SetPosition(D3DXVECTOR3(0, 0, -1));
+  tile->GetTexture()->transparency = 1.0f;
 
-  for (int y = 0; y < number_of_y_tiles ; y++) {
-    int base_tile_size = 0;
-    if (number_of_128x128_y_tiles != 0) {
-      base_tile_size = 128;
-      number_of_128x128_y_tiles--;
-    } else if (number_of_64x64_y_tiles != 0) {
-      base_tile_size = 64;
-      number_of_64x64_y_tiles--;
-    } else if (number_of_32x32_y_tiles != 0) {
-      base_tile_size = 32;
-      number_of_32x32_y_tiles--;
-    } else if (number_of_16x16_y_tiles != 0) {
-      base_tile_size = 16;
-      number_of_16x16_y_tiles--;
-    } else if (number_of_8x8_y_tiles != 0) {
-      base_tile_size = 8;
-      number_of_8x8_y_tiles--;
-    } else if (number_of_4x4_y_tiles != 0) {
-      base_tile_size = 4;
-      number_of_4x4_y_tiles--;
-    } else if (number_of_2x2_y_tiles != 0) {
-      base_tile_size = 2;
-      number_of_2x2_y_tiles--;
-    } else if (number_of_1x1_y_tiles != 0) {
-      base_tile_size = 1;
-      number_of_1x1_y_tiles--;
-    }
+  std::wstring texture_path = m_game_settings->GetTilesetPath();
+  texture_path += String_Helper::StringToWString(m_current_tileset.filename);
+  tile->GetTexture()->texture_path = texture_path;
+  tile->GetTexture()->texture_size = D3DXVECTOR2(m_current_tileset.size_x,
+                                                 m_current_tileset.size_y);
+  tile->GetTexture()->tile_size = D3DXVECTOR2(middleground_line.tile_size_x,
+                                              middleground_line.tile_size_y);
 
-    //Calculate number of x tiles
-    int number_of_x_tiles = 0;
-    std::div_t div_x_result = div(static_cast<int>(m_game_settings->GetResolution().x), base_tile_size);
-    if (div_x_result.rem != 0) {
-      number_of_x_tiles = div_x_result.quot + 1; //Add Another Tile if it doesne't fit
+  unsigned int random_line_tile = 0;
+  if (m_is_debug_mode) {
+    if (tile->IsEdge()) {
+      random_line_tile = 1;
     } else {
-      number_of_x_tiles = div_x_result.quot;
+      random_line_tile = 0;
     }
-
-    std::vector<Tile_Bitmap*> tile_line;
-    for (int x = 0; x < number_of_x_tiles ; x++) {
-        tile = Create_Tile(base_tile_size, false);
-        if (y == 0) {
-          tile->Set_Is_Top_Edge(true);
-        } else if (y == (number_of_y_tiles - 1)) {
-          tile->Set_Is_Bottom_Edge(true);
-        }
-
-        tile->SetPosition(D3DXVECTOR3(current_x + (tile->GetSize().x/2),
-                                          current_y - (tile->GetSize().y/2),
-                                          -1)); // Middleground Z Space is -1
-        tile->GetTexture()->transparency = 0.0f; //TUNNEL
-        current_x += static_cast<int>(tile->GetSize().x);
-        m_tunnel_tiles.push_back(tile);
-        if (x == 0) {
-          tile->Set_Is_Left_Edge(true);
-          m_left_edge_tunnel_tiles.push_back(tile);
-          m_middleground_left = static_cast<int>(tile->GetPosition().x - (tile->GetSize().x / 2));
-        }
-        if (x == (number_of_x_tiles - 1)) {
-          tile->Set_Is_Right_Edge(true);
-          m_right_edge_tunnel_tiles.push_back(tile);
-          m_middleground_right = static_cast<int>(tile->GetPosition().x + (tile->GetSize().x / 2));
-        }
-    }
-    current_y -= static_cast<int>(tile->GetSize().y);
-    current_x = static_cast<int>(tunnel_start_x);
+  } else {
+    random_line_tile = rand() % middleground_line.number_of_tiles;
   }
 
-  // Add tiles to the model
-  for (std::vector<Tile_Bitmap*>::iterator tile = m_tunnel_tiles.begin(); tile != m_tunnel_tiles.end(); tile++) {
-    m_model->Add(*tile);
+  float random_tile_x = random_line_tile * middleground_line.tile_size_x;
+  random_tile_x += middleground_line.top_left_x;
+
+  float random_tile_y = middleground_line.top_left_y;
+
+  tile->GetTexture()->top_left_position = D3DXVECTOR2(random_tile_x, random_tile_y);
+
+  tile->SetSize(D3DXVECTOR2(base_tile_size, base_tile_size));
+
+  return tile;
+}
+
+//---------------------------------------------------------------------------
+Tileset_Helper::Line Middleground_Controller::GetCurrentSizedLine(float size) {
+  Tileset_Helper::Line middleground_line;
+  std::list<Tileset_Helper::Line>::iterator line;
+  for (line = m_current_middleground_subset.lines.begin(); line != m_current_middleground_subset.lines.end(); line++) {
+    if (line->tile_size_x == size) {
+      if (line->tile_size_y == size) {
+        middleground_line = *line;
+      }
+    }
+  }
+  return middleground_line;
+}
+
+//---------------------------------------------------------------------------
+Middleground_Controller::Level_Metadata Middleground_Controller::GetNamedLevel(std::string name) {
+  Level_Metadata found_level_metadata;
+
+  std::list<Level_Metadata>::iterator level_metadata;
+  for (level_metadata = m_level_metadata.begin(); level_metadata != m_level_metadata.end(); level_metadata++) {
+    if (level_metadata->level_name.compare(name) == 0) {
+      found_level_metadata = (*level_metadata);
+    }
+  }
+
+  return found_level_metadata;
+}
+
+//---------------------------------------------------------------------------
+void Middleground_Controller::ResetTileTexture(Tile_Bitmap *out_tile) {
+  Tileset_Helper::Line middleground_line = GetCurrentSizedLine(out_tile->GetSize().x);
+  int random_variable = 0;
+  if (m_is_debug_mode) {
+    if (out_tile->Is_Bottom_Edge() || out_tile->Is_Top_Edge() || out_tile->Is_Left_Edge() || out_tile->Is_Right_Edge()) {
+      random_variable = 1;
+    } else {
+      random_variable = 0;
+    }   
+  } else {
+    int random_variable = rand() % middleground_line.number_of_tiles;
+  }
+
+  float left = random_variable * middleground_line.tile_size_x + middleground_line.top_left_x;
+  float top = middleground_line.top_left_y;
+  out_tile->GetTexture()->top_left_position = D3DXVECTOR2(left, top);
+  out_tile->GetTexture()->texture = 0;
+  out_tile->GetFrame()->vertex_buffer = 0;
+  out_tile->Init();
+}
+
+//---------------------------------------------------------------------------
+void Middleground_Controller::SwitchTileset() {
+  // Debug Mode has been activated or Deactivated
+  m_is_debug_mode = m_game_settings->IsDebugMode();
+  if (m_is_debug_mode) {
+    m_current_tileset = GetNamedTileset("Debug");
+  } else {
+    m_current_tileset = GetNamedTileset("Dirt");
+  }
+
+  m_current_middleground_subset = GetCurrentMiddlegroundSubset();
+  std::vector<Tile_Bitmap*>::iterator tile;
+  for (tile = m_middleground_tiles.begin(); tile != m_middleground_tiles.end(); ++tile) {
+    Tileset_Helper::Line middleground_line = GetCurrentSizedLine((*tile)->GetSize().x);
+    std::wstring texture_path = m_game_settings->GetTilesetPath();
+    texture_path += String_Helper::StringToWString(m_current_tileset.filename);
+    (*tile)->GetTexture()->texture_path = texture_path;
+    D3DXVECTOR2 size = D3DXVECTOR2(m_current_tileset.size_x,
+                                   m_current_tileset.size_y);
+    (*tile)->GetTexture()->texture_size = size;
+    ResetTileTexture((*tile));
   }
 }
 
+//---------------------------------------------------------------------------
+void Middleground_Controller::TileUp(float camera_top, float middleground_top) {
+  unsigned int number_of_x_tiles = m_top_edge_tiles.size();
+  std::vector<Tile_Bitmap*> new_top_tiles;
+
+  std::vector<Tile_Bitmap*>::iterator edge_tile;
+  for (edge_tile = m_top_edge_tiles.begin(); edge_tile != m_top_edge_tiles.end(); edge_tile++) {
+    Tile_Bitmap* tile = CreateTile(128);
+    D3DXVECTOR3 position;
+    position.x = (*edge_tile)->GetPosition().x;
+    position.y = (*edge_tile)->GetPosition().y + tile->GetSize().y;
+    position.z = -1.0; // Middleground Z Space is -1
+    tile->SetPosition(position);
+    tile->Set_Is_Top_Edge((*edge_tile)->Is_Top_Edge());
+    tile->Set_Is_Bottom_Edge((*edge_tile)->Is_Bottom_Edge());
+    tile->Set_Is_Right_Edge((*edge_tile)->Is_Right_Edge());
+    tile->Set_Is_Left_Edge((*edge_tile)->Is_Left_Edge());
+    m_model->Add(tile);
+    m_middleground_tiles.push_back(tile);
+    new_top_tiles.push_back(tile);
+
+    (*edge_tile)->Set_Is_Top_Edge(false);
+    ResetTileTexture((*edge_tile));
+    ResetTileTexture(tile);
+  }
+  m_top_edge_tiles.clear();
+
+  m_top_edge_tiles = new_top_tiles;
+}
+
+//---------------------------------------------------------------------------
+void Middleground_Controller::TileDown(float camera_bottom, float middleground_bottom) {
+  unsigned int number_of_x_tiles = m_bottom_edge_tiles.size();
+  std::vector<Tile_Bitmap*> new_bottom_tiles;
+
+  std::vector<Tile_Bitmap*>::iterator edge_tile;
+  for (edge_tile = m_bottom_edge_tiles.begin(); edge_tile != m_bottom_edge_tiles.end(); edge_tile++) {
+    Tile_Bitmap* tile = CreateTile(128);
+    D3DXVECTOR3 position;
+    position.x = (*edge_tile)->GetPosition().x;
+    position.y = (*edge_tile)->GetPosition().y + tile->GetSize().y;
+    position.z = -1.0; // Middleground Z Space is -1
+    tile->SetPosition(position);
+    tile->Set_Is_Top_Edge((*edge_tile)->Is_Top_Edge());
+    tile->Set_Is_Bottom_Edge((*edge_tile)->Is_Bottom_Edge());
+    tile->Set_Is_Right_Edge((*edge_tile)->Is_Right_Edge());
+    tile->Set_Is_Left_Edge((*edge_tile)->Is_Left_Edge());
+    m_model->Add(tile);
+    m_middleground_tiles.push_back(tile);
+    new_bottom_tiles.push_back(tile);
+
+    (*edge_tile)->Set_Is_Bottom_Edge(false);
+    ResetTileTexture((*edge_tile));
+    ResetTileTexture(tile);
+  }
+  m_bottom_edge_tiles.clear();
+
+  m_top_edge_tiles = new_bottom_tiles;
+}
+
+//---------------------------------------------------------------------------
+void Middleground_Controller::TileRight(float camera_right, float middleground_right) {
+  unsigned int number_of_x_tiles = m_right_edge_tiles.size();
+  std::vector<Tile_Bitmap*> new_right_edge_tiles;
+
+  std::vector<Tile_Bitmap*>::iterator edge_tile;
+  for (edge_tile = m_right_edge_tiles.begin(); edge_tile != m_right_edge_tiles.end(); edge_tile++) {
+    Tile_Bitmap* tile = CreateTile(128);
+    D3DXVECTOR3 position;
+    position.x = (*edge_tile)->GetPosition().x + tile->GetSize().x;
+    position.y = (*edge_tile)->GetPosition().y;
+    position.z = -1.0; // Middleground Z Space is -1
+    tile->SetPosition(position);
+    tile->Set_Is_Top_Edge((*edge_tile)->Is_Top_Edge());
+    tile->Set_Is_Bottom_Edge((*edge_tile)->Is_Bottom_Edge());
+    tile->Set_Is_Right_Edge((*edge_tile)->Is_Right_Edge());
+    tile->Set_Is_Left_Edge((*edge_tile)->Is_Left_Edge());
+    m_model->Add(tile);
+    m_middleground_tiles.push_back(tile);
+    new_right_edge_tiles.push_back(tile);
+
+    (*edge_tile)->Set_Is_Right_Edge(false);
+    ResetTileTexture((*edge_tile));
+    ResetTileTexture(tile);
+  }
+  m_right_edge_tiles.clear();
+
+  m_right_edge_tiles = new_right_edge_tiles;
+}
+
+//---------------------------------------------------------------------------
+void Middleground_Controller::TileLeft(float camera_left, float middleground_left) {
+  unsigned int number_of_x_tiles = m_left_edge_tiles.size();
+  std::vector<Tile_Bitmap*> new_left_edge_tiles;
+
+  std::vector<Tile_Bitmap*>::iterator edge_tile;
+  for (edge_tile = m_left_edge_tiles.begin(); edge_tile != m_left_edge_tiles.end(); edge_tile++) {
+    Tile_Bitmap* tile = CreateTile(128);
+    D3DXVECTOR3 position;
+    position.x = (*edge_tile)->GetPosition().x - tile->GetSize().x;
+    position.y = (*edge_tile)->GetPosition().y;
+    position.z = -1.0; // Middleground Z Space is -1
+    tile->SetPosition(position);
+    tile->Set_Is_Top_Edge((*edge_tile)->Is_Top_Edge());
+    tile->Set_Is_Bottom_Edge((*edge_tile)->Is_Bottom_Edge());
+    tile->Set_Is_Right_Edge((*edge_tile)->Is_Right_Edge());
+    tile->Set_Is_Left_Edge((*edge_tile)->Is_Left_Edge());
+    m_model->Add(tile);
+    m_middleground_tiles.push_back(tile);
+    new_left_edge_tiles.push_back(tile);
+
+    (*edge_tile)->Set_Is_Left_Edge(false);
+    ResetTileTexture((*edge_tile));
+    ResetTileTexture(tile);
+  }
+  m_left_edge_tiles.clear();
+
+  m_left_edge_tiles = new_left_edge_tiles;
+}
+
+
+/*
 //------------------------------------------------------------------------------
-void Middleground_Controller::Tile_Middleground() {
+void Middleground_Controller::TileMiddleground() {
   // Generate an initial Random Tile Middleground Spanning the Screen
   std::vector<Tile_Bitmap*> middleground_tiles;
 
@@ -297,6 +708,8 @@ void Middleground_Controller::Tile_Middleground() {
   }
 }
 
+
+//------------------------------------------------------------------------------
 void Middleground_Controller::Extend_Tunnel_Right() {
   std::vector<Tile_Bitmap*> new_tunnel_tiles;
   while (m_camera_right > m_middleground_right) {
@@ -415,8 +828,8 @@ void Middleground_Controller::Extend_Tunnel_Left() {
       (*old_edge_tile)->Set_Is_Left_Edge(false);
 
       if (m_is_debug_mode) {
-        Tileset middleground_tileset;
-        std::list<Tileset>::iterator tileset;
+        Tileset_Helper::Subset middleground_tileset;
+        std::list<Tileset_Helper::Subset>::iterator tileset;
 
         for (tileset = m_metadata.tilesets.begin(); tileset != m_metadata.tilesets.end(); tileset++) {
           if (tileset->type.compare("Middleground") == 0) {
@@ -424,8 +837,8 @@ void Middleground_Controller::Extend_Tunnel_Left() {
           }
         }
 
-        Line middleground_line;
-        std::list<Line>::iterator line;
+        Tileset_Helper::Line middleground_line;
+        std::list<Tileset_Helper::Line>::iterator line;
         for (line = middleground_tileset.lines.begin(); line != middleground_tileset.lines.end(); line++) {
           if (line->tile_size_x == (*old_edge_tile)->GetSize().x && line->tile_size_y == (*old_edge_tile)->GetSize().y) {
             middleground_line = *line;
@@ -453,8 +866,8 @@ void Middleground_Controller::Extend_Tunnel_Left() {
       m_left_edge_middleground_tiles.push_back(*tile);
 
       if (m_is_debug_mode) {
-        Tileset middleground_tileset;
-        std::list<Tileset>::iterator tileset;
+        Tileset_Helper::Subset middleground_tileset;
+        std::list<Tileset_Helper::Subset>::iterator tileset;
 
         for (tileset = m_metadata.tilesets.begin(); tileset != m_metadata.tilesets.end(); tileset++) {
           if (tileset->type.compare("Middleground") == 0) {
@@ -462,8 +875,8 @@ void Middleground_Controller::Extend_Tunnel_Left() {
           }
         }
 
-        Line middleground_line;
-        std::list<Line>::iterator line;
+        Tileset_Helper::Line middleground_line;
+        std::list<Tileset_Helper::Line>::iterator line;
         for (line = middleground_tileset.lines.begin(); line != middleground_tileset.lines.end(); line++) {
           if (line->tile_size_x == (*tile)->GetSize().x && line->tile_size_y == (*tile)->GetSize().y) {
             middleground_line = *line;
@@ -484,20 +897,20 @@ void Middleground_Controller::Extend_Tunnel_Left() {
   }
 }
 
+
 void Middleground_Controller::Switch_Tileset() {
   // Debug Mode has been activated or Deactivated
   m_is_debug_mode = m_game_settings->IsDebugMode();
   if (m_is_debug_mode) {
-    m_tileset_filename = L"Debug_Tileset_0_4.txt";
-    Load_Tilset_Metadata();
+    m_tileset_filename = "Debug_Tileset_0_4.txt";
   } else {
-    m_tileset_filename = L"Dirt_Tileset_5.txt";
-    Load_Tilset_Metadata();
+    m_tileset_filename = "Dirt_Tileset_5.txt";
   }
+  Tileset_Helper::LoadTilesetMetadataIntoStruct(m_tileset_filename, &m_metadata);
 
   for (std::vector<Tile_Bitmap*>::iterator tile = m_middleground_tiles.begin(); tile != m_middleground_tiles.end(); ++tile) {
-    Tileset middleground_tileset;
-    std::list<Tileset>::iterator tileset;
+    Tileset_Helper::Subset middleground_tileset;
+    std::list<Tileset_Helper::Subset>::iterator tileset;
 
     for (tileset = m_metadata.tilesets.begin(); tileset != m_metadata.tilesets.end(); tileset++) {
       if (tileset->type.compare("Middleground") == 0) {
@@ -505,8 +918,8 @@ void Middleground_Controller::Switch_Tileset() {
       }
     }
 
-    Line middleground_line;
-    std::list<Line>::iterator line;
+    Tileset_Helper::Line middleground_line;
+    std::list<Tileset_Helper::Line>::iterator line;
     for (line = middleground_tileset.lines.begin(); line != middleground_tileset.lines.end(); line++) {
       if (line->tile_size_x == (*tile)->GetSize().x && line->tile_size_y == (*tile)->GetSize().y) {
         middleground_line = *line;
@@ -583,274 +996,63 @@ std::vector<Tile_Bitmap*> Middleground_Controller::GenerateTilesDownwards(Tile_B
   return new_tiles;
 }
 
-//------------------------------------------------------------------------------
-Tile_Bitmap* Middleground_Controller::Create_Tile(int base_tile_size, bool is_platform) {
-  Tileset middleground_tileset;
-  std::list<Tileset>::iterator tileset;
-
-  for (tileset = m_metadata.tilesets.begin(); tileset != m_metadata.tilesets.end(); tileset++) {
-    if (tileset->type.compare("Middleground") == 0) {
-      middleground_tileset = *tileset;
-    }
+//---------------------------------------------------------------------------
+void Middleground_Controller::SwitchTileset() {
+  // Debug Mode has been activated or Deactivated
+  m_is_debug_mode = m_game_settings->IsDebugMode();
+  if (m_is_debug_mode) {
+    m_current_tileset = GetNamedTileset("Debug");
+  } else {
+    m_current_tileset = GetNamedTileset("Dirt");
   }
 
-  Line middleground_line;
-  std::list<Line>::iterator line;
-  for (line = middleground_tileset.lines.begin(); line != middleground_tileset.lines.end(); line++) {
-    if (line->tile_size_x == base_tile_size && line->tile_size_y == base_tile_size) {
-      middleground_line = *line;
-    }
-  }
-
-  Tile_Bitmap* tile = new Tile_Bitmap();
-  tile->SetPosition(D3DXVECTOR3(0, 0, -1));
-  tile->GetTexture()->transparency = 1.0f;
-
-  std::wstring texture_path = m_game_settings->GetTilesetPath();
-  texture_path += String_Helper::StringToWString(m_metadata.filename);
-  tile->GetTexture()->texture_path = texture_path;
-  tile->GetTexture()->texture_size = D3DXVECTOR2(static_cast<float>(m_metadata.size_x),
-                                                 static_cast<float>(m_metadata.size_y));
-  tile->GetTexture()->tile_size = D3DXVECTOR2(static_cast<float>(middleground_line.tile_size_x),
-                                              static_cast<float>(middleground_line.tile_size_y));
-
-  tile->Set_Is_Platform(is_platform);
-  int random_variable = rand() % middleground_line.number_of_tiles;
- 
-
-  tile->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(random_variable*(middleground_line.tile_size_x) + static_cast<float>(middleground_line.top_left_x)),
-                                                      static_cast<float>(middleground_line.top_left_y));
-
-  tile->SetSize(D3DXVECTOR2(static_cast<float>(base_tile_size), static_cast<float>(base_tile_size)));
-
-  return tile;
-}
-
-//------------------------------------------------------------------------------
-void Middleground_Controller::Load_Tilset_Metadata() {
-  FILE * pFile;
-  int lSize;
-
-  std::wstring wtileset_path = m_game_settings->GetTilesetPath();
-  m_metadata_file_path = String_Helper::WStringToString(wtileset_path + m_tileset_filename);
-
-  // Open Font File as a text file
-  if (fopen_s(&pFile, m_metadata_file_path.c_str(), "r") != 0) {
-    throw Exceptions::init_error("Open Tileset Metadata Failed!");
-  }
-
-  // obtain file size:
-  fseek(pFile, 0, SEEK_END);
-  lSize = ftell(pFile);
-  rewind(pFile);
-
-  char * token;
-  char * next_token;
-
-  char line[255];
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Tileset_Name") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      m_metadata.name = token;
-    }
-  }
-
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Tileset_Type") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      m_metadata.type = token;
-    }
-  }
-
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Tileset_FileName") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      m_metadata.filename = token;
-    }
-  }
-
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Tileset_TopLeftX") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      m_metadata.top_left_x = atoi(token);
-    }
-  }
-
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Tileset_TopLeftY") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      m_metadata.top_left_y = atoi(token);
-    }
-  }
-
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Tileset_SizeX") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      m_metadata.size_x = atoi(token);
-    }
-  }
-
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Tileset_SizeY") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      m_metadata.size_y = atoi(token);
-    }
-  }
-
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Tileset_NumOfSubSets") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      m_metadata.number_of_subsets = atoi(token);
-    }
-  }
-
-  if (m_metadata.number_of_subsets != 0) {
-    for (int subset_num = 0; subset_num <  m_metadata.number_of_subsets; subset_num++) {
-      Tileset temp_tileset;
-
-      fgets(line, 225, pFile);
-      if (line != NULL) {
-        token = strtok_s(line, " ", &next_token);
-        if (strcmp(token, "SubSet_Name") == 0)   {
-          token = strtok_s(NULL, " =\"", &next_token);
-          temp_tileset.name = token;
-        }
-      }
-
-      fgets(line, 225, pFile);
-      if (line != NULL) {
-        token = strtok_s(line, " ", &next_token);
-        if (strcmp(token, "SubSet_Type") == 0)   {
-          token = strtok_s(NULL, " =\"", &next_token);
-          temp_tileset.type = token;
-        }
-      }
-
-      fgets(line, 225, pFile);
-      if (line != NULL) {
-        token = strtok_s(line, " ", &next_token);
-        if (strcmp(token, "SubSet_TopLeftX") == 0)   {
-          token = strtok_s(NULL, " =\"", &next_token);
-          temp_tileset.top_left_x = atoi(token);
-        }
-      }
-
-      fgets(line, 225, pFile);
-      if (line != NULL) {
-        token = strtok_s(line, " ", &next_token);
-        if (strcmp(token, "SubSet_TopLeftY") == 0)   {
-          token = strtok_s(NULL, " =\"", &next_token);
-          temp_tileset.top_left_y = atoi(token);
-        }
-      }
-
-      fgets(line, 225, pFile);
-      if (line != NULL) {
-        token = strtok_s(line, " ", &next_token);
-        if (strcmp(token, "SubSet_SizeX") == 0)   {
-          token = strtok_s(NULL, " =\"", &next_token);
-          temp_tileset.size_x = atoi(token);
-        }
-      }
-
-      fgets(line, 225, pFile);
-      if (line != NULL) {
-        token = strtok_s(line, " ", &next_token);
-        if (strcmp(token, "SubSet_SizeY") == 0)   {
-          token = strtok_s(NULL, " =\"", &next_token);
-          temp_tileset.size_y = atoi(token);
-        }
-      }
-
-      fgets(line, 225, pFile);
-      if (line != NULL) {
-        token = strtok_s(line, " ", &next_token);
-        if (strcmp(token, "SubSet_NumOfLines") == 0)   {
-          token = strtok_s(NULL, " =\"", &next_token);
-          temp_tileset.number_of_lines = atoi(token);
-        }
-      }
-
-      if (temp_tileset.number_of_lines != 0) {
-        for (int line_num = 0; line_num < temp_tileset.number_of_lines; line_num++) {
-          Line temp_line;
-
-          fgets(line, 225, pFile);
-          if (line != NULL) {
-            token = strtok_s(line, " ", &next_token);
-            if (strcmp(token, "Line_Name") == 0)   {
-              token = strtok_s(NULL, " =\"", &next_token);
-              temp_line.line_number = atoi(token);
-            }
-          }
-
-          fgets(line, 225, pFile);
-          if (line != NULL) {
-            token = strtok_s(line, " ", &next_token);
-            if (strcmp(token, "Line_TopLeftX") == 0)   {
-              token = strtok_s(NULL, " =\"", &next_token);
-              temp_line.top_left_x = atoi(token);
-            }
-          }
-
-          fgets(line, 225, pFile);
-          if (line != NULL) {
-            token = strtok_s(line, " ", &next_token);
-            if (strcmp(token, "Line_TopLeftY") == 0)   {
-              token = strtok_s(NULL, " =\"", &next_token);
-              temp_line.top_left_y = atoi(token);
-            }
-          }
-
-          fgets(line, 225, pFile);
-          if (line != NULL) {
-            token = strtok_s(line, " ", &next_token);
-            if (strcmp(token, "Tile_SizeX") == 0)   {
-              token = strtok_s(NULL, " =\"", &next_token);
-              temp_line.tile_size_x = atoi(token);
-            }
-          }
-
-          fgets(line, 225, pFile);
-          if (line != NULL) {
-            token = strtok_s(line, " ", &next_token);
-            if (strcmp(token, "Tile_SizeY") == 0)   {
-              token = strtok_s(NULL, " =\"", &next_token);
-              temp_line.tile_size_y = atoi(token);
-            }
-          }
-
-          fgets(line, 225, pFile);
-          if (line != NULL) {
-            token = strtok_s(line, " ", &next_token);
-            if (strcmp(token, "Line_NumOfTiles") == 0)   {
-              token = strtok_s(NULL, " =\"", &next_token);
-              temp_line.number_of_tiles = atoi(token);
-            }
-          }
-          temp_tileset.lines.push_back(temp_line);
-        }
-      }
-
-      m_metadata.tilesets.push_back(temp_tileset);
-    }
+  m_current_middleground_subset = GetCurrentMiddlegroundSubset();
+  std::vector<Tile_Bitmap*>::iterator tile;
+  for (tile = m_middleground_tiles.begin(); tile != m_middleground_tiles.end(); ++tile) {
+    Tileset_Helper::Line middleground_line = GetCurrentSizedLine((*tile)->GetSize());
+    std::wstring texture_path = m_game_settings->GetTilesetPath();
+    texture_path += String_Helper::StringToWString(m_current_tileset.filename);
+    (*tile)->GetTexture()->texture_path = texture_path;
+    D3DXVECTOR2 size = D3DXVECTOR2(m_current_tileset.size_x,
+                                   m_current_tileset.size_y);
+    (*tile)->GetTexture()->texture_size = size;
+    ResetTileTexture((*tile));
   }
 }
+
+//---------------------------------------------------------------------------
+Tileset_Helper::Line Middleground_Controller::GetCurrentSizedLine(D3DXVECTOR2 size) {
+  Tileset_Helper::Line middleground_line;
+  std::list<Tileset_Helper::Line>::iterator line;
+  for (line = m_current_middleground_subset.lines.begin(); line != m_current_middleground_subset.lines.end(); line++) {
+    if (line->tile_size_x == size.x) {
+      if (line->tile_size_y == size.y) {
+        middleground_line = *line;
+      }
+    }
+  }
+  return middleground_line;
+}
+
+//---------------------------------------------------------------------------
+void Middleground_Controller::ResetTileTexture(Tile_Bitmap *out_tile) {
+  Tileset_Helper::Line middleground_line = GetCurrentSizedLine(out_tile->GetSize());
+  int random_variable = 0;
+  if (m_is_debug_mode) {
+    random_variable = 0;
+  } else {
+    int random_variable = rand() % middleground_line.number_of_tiles;
+  }
+
+  float left = random_variable * middleground_line.tile_size_x + middleground_line.top_left_x;
+  float top = middleground_line.top_left_y;
+  out_tile->GetTexture()->top_left_position = D3DXVECTOR2(left, top);
+  out_tile->GetTexture()->texture = 0;
+  out_tile->GetFrame()->vertex_buffer = 0;
+  out_tile->Init();
+}
+
+
+*/
 
 } // Tunnelour

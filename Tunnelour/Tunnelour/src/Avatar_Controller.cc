@@ -90,7 +90,7 @@ void Avatar_Controller::GenerateAvatarTile() {
   Avatar_Component::Avatar_State initial_state;
   initial_state.direction = "Right";
   m_avatar->SetState(initial_state);
-  m_avatar->SetPosition(D3DXVECTOR3(0, 0, -2));  // Middleground Z Space is -1
+  m_avatar->SetPosition(D3DXVECTOR3(192, -448, -2));  // Middleground Z Space is -1
   ChangeAvatarState("Standing", initial_state.direction);
 }
 
@@ -368,22 +368,22 @@ bool Avatar_Controller::IsAvatarPlatformColliding(Avatar_Controller_Mutator *mut
 void Avatar_Controller::LoadTilesets(std::wstring wtileset_path) {
   // Running
   m_running_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Running_Animation_Tileset_1_1.txt");
-  Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(m_running_metadata_file_path, &m_running_metadata);
+  Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(m_running_metadata_file_path, &m_running_metadata);
   m_animation_metadata.push_back(m_running_metadata);
 
   // Walking
   m_walking_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Walking_Animation_Tileset_1_5.txt");
-  Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(m_walking_metadata_file_path, &m_walking_metadata);
+  Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(m_walking_metadata_file_path, &m_walking_metadata);
   m_animation_metadata.push_back(m_walking_metadata);
 
   // Standing
   m_standing_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Standing_Animation_Tileset_1_1.txt");
-  Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(m_standing_metadata_file_path, &m_standing_metadata);
+  Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(m_standing_metadata_file_path, &m_standing_metadata);
   m_animation_metadata.push_back(m_standing_metadata);
 
   // Falling
   m_falling_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Falling_Animation_Tileset_1_1.txt");
-  Tileset_Helper::Load_Animation_Tileset_Metadata_Into_Struct(m_falling_metadata_file_path, &m_falling_metadata);
+  Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(m_falling_metadata_file_path, &m_falling_metadata);
   m_animation_metadata.push_back(m_falling_metadata);
 }
 

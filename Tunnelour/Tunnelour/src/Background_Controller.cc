@@ -137,10 +137,10 @@ bool Background_Controller::Run() {
 // private:
 //------------------------------------------------------------------------------
 Tile_Bitmap* Background_Controller::CreateTile(float base_tile_size,
-                                                          bool is_top_edge,
-                                                          bool is_bottom_edge,
-                                                          bool is_right_edge,
-                                                          bool is_left_edge) {
+                                               bool is_top_edge,
+                                               bool is_bottom_edge,
+                                               bool is_right_edge,
+                                               bool is_left_edge) {
   Tileset_Helper::Line middleground_line;
   std::list<Tileset_Helper::Line>::iterator line;
   for (line = m_current_background_subset.lines.begin(); line != m_current_background_subset.lines.end(); line++) {
@@ -193,15 +193,15 @@ Tile_Bitmap* Background_Controller::CreateTile(float base_tile_size,
 
 //---------------------------------------------------------------------------
 void Background_Controller::LoadTilesetMetadata() {
-  Tileset_Helper::Tileset_Metadata m_debug_tileset_metadata;
+  Tileset_Helper::Tileset_Metadata debug_tileset_metadata;
   m_debug_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Debug_Tileset_0_4.txt");
-  Tileset_Helper::Load_Tileset_Metadata_Into_Struct(m_debug_metadata_file_path, &m_debug_tileset_metadata);
-  m_tilesets.push_back(m_debug_tileset_metadata);
+  Tileset_Helper::LoadTilesetMetadataIntoStruct(m_debug_metadata_file_path, &debug_tileset_metadata);
+  m_tilesets.push_back(debug_tileset_metadata);
 
-  Tileset_Helper::Tileset_Metadata m_dirt_tileset_metadata;
+  Tileset_Helper::Tileset_Metadata dirt_tileset_metadata;
   m_dirt_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Dirt_Tileset_5.txt");
-  Tileset_Helper::Load_Tileset_Metadata_Into_Struct(m_dirt_metadata_file_path, &m_dirt_tileset_metadata);
-  m_tilesets.push_back(m_dirt_tileset_metadata);
+  Tileset_Helper::LoadTilesetMetadataIntoStruct(m_dirt_metadata_file_path, &dirt_tileset_metadata);
+  m_tilesets.push_back(dirt_tileset_metadata);
 }
 
 //---------------------------------------------------------------------------
@@ -234,8 +234,8 @@ Tileset_Helper::Subset Background_Controller::GetCurrentBackgroundSubset() {
 
 //---------------------------------------------------------------------------
 void Background_Controller::TileCurrentWindow() {
-  float top_left_window_x = (m_game_settings->GetResolution().x / 2) * -1;
-  float top_left_window_y = (m_game_settings->GetResolution().y / 2);
+  float top_left_window_x = 0;  // (m_game_settings->GetResolution().x / 2) * -1;
+  float top_left_window_y = 0;  // (m_game_settings->GetResolution().y / 2);
   m_background_left = top_left_window_x;
   m_background_top = top_left_window_y;
   float current_x = top_left_window_x;
@@ -318,8 +318,31 @@ void Background_Controller::TileCurrentWindow() {
 
 //---------------------------------------------------------------------------
 void Background_Controller::TileUp(float camera_top) {
-  std::string error = "Background Up Generation not finished!";
-  throw Exceptions::unfinished_error(error);
+  unsigned int number_of_x_tiles = 0;
+  float rem = (m_background_right - m_background_left) / 128;
+  number_of_x_tiles = static_cast<unsigned int>(std::ceil(rem));
+
+  std::vector<Tile_Bitmap*>::iterator edge_tile;
+  for (edge_tile = m_top_edge_tiles.begin(); edge_tile != m_top_edge_tiles.end(); edge_tile++) {
+    (*edge_tile)->Set_Is_Top_Edge(false);
+    ResetTileTexture((*edge_tile));
+  }
+  m_bottom_edge_tiles.clear();
+
+  for (unsigned int x = 0; x < number_of_x_tiles; x++) {
+    Tile_Bitmap* tile = CreateTile(128, true, false, false, false);
+    D3DXVECTOR3 position;
+    position.x = m_background_left + (x * 128) + (128 / 2);
+    position.y = m_background_top + (tile->GetSize().y / 2);
+    position.z = 0.0; // Background Z Space is 0
+    tile->SetPosition(position);
+    tile->Set_Is_Top_Edge(true);
+    m_model->Add(tile);
+    m_background_tiles.push_back(tile);
+    m_bottom_edge_tiles.push_back(tile);
+  }
+
+  m_background_top += 128;
 }
 
 //---------------------------------------------------------------------------
@@ -336,11 +359,7 @@ void Background_Controller::TileDown(float camera_bottom) {
   m_bottom_edge_tiles.clear();
 
   for (unsigned int x = 0; x < number_of_x_tiles; x++) {
-    Tile_Bitmap* tile = CreateTile(128,
-                                              false,
-                                              true,
-                                              false,
-                                              false);
+    Tile_Bitmap* tile = CreateTile(128, false, true, false, false);
     D3DXVECTOR3 position;
     position.x = m_background_left + (x * 128) + (128 / 2);
     position.y = m_background_bottom - (tile->GetSize().y / 2);
