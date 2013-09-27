@@ -32,7 +32,7 @@ Game_Settings_Component::Game_Settings_Component(): Component() {
   m_type = "Game_Settings_Component";
   m_hinstance = 0;
   m_hwnd = 0;
-  m_is_camera_following = true;
+  m_is_camera_following = false;
 }
 
 //------------------------------------------------------------------------------
@@ -49,7 +49,8 @@ void Game_Settings_Component::Init() {
   m_screen_near = 0.1f;
   m_tileset_path = L"resource\\tilesets\\";
   m_level_path = L"resource\\levels\\";
-  m_is_debug_mode = true;
+  m_is_debug_mode = false;
+  m_is_camera_following = true;
 }
 
 //------------------------------------------------------------------------------

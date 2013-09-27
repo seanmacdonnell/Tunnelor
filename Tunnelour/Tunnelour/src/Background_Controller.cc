@@ -325,7 +325,9 @@ void Background_Controller::TileUp(float camera_top) {
   std::vector<Tile_Bitmap*>::iterator edge_tile;
   for (edge_tile = m_top_edge_tiles.begin(); edge_tile != m_top_edge_tiles.end(); edge_tile++) {
     (*edge_tile)->Set_Is_Top_Edge(false);
-    ResetTileTexture((*edge_tile));
+    if (m_is_debug_mode) {
+      ResetTileTexture((*edge_tile));
+    }
   }
   m_bottom_edge_tiles.clear();
 
@@ -354,7 +356,9 @@ void Background_Controller::TileDown(float camera_bottom) {
   std::vector<Tile_Bitmap*>::iterator edge_tile;
   for (edge_tile = m_bottom_edge_tiles.begin(); edge_tile != m_bottom_edge_tiles.end(); edge_tile++) {
     (*edge_tile)->Set_Is_Bottom_Edge(false);
-    ResetTileTexture((*edge_tile));
+    if (m_is_debug_mode) {
+      ResetTileTexture((*edge_tile));
+    }
   }
   m_bottom_edge_tiles.clear();
 
@@ -383,7 +387,9 @@ void Background_Controller::TileRight(float camera_right) {
   std::vector<Tile_Bitmap*>::iterator edge_tile;
   for (edge_tile = m_right_edge_tiles.begin(); edge_tile != m_right_edge_tiles.end(); edge_tile++) {
     (*edge_tile)->Set_Is_Right_Edge(false);
-    ResetTileTexture((*edge_tile));
+    if (m_is_debug_mode) {
+      ResetTileTexture((*edge_tile));
+    }
   }
   m_right_edge_tiles.clear();
 
@@ -417,7 +423,9 @@ void Background_Controller::TileLeft(float camera_left) {
   std::vector<Tile_Bitmap*>::iterator edge_tile;
   for (edge_tile = m_left_edge_tiles.begin(); edge_tile != m_left_edge_tiles.end(); edge_tile++) {
     (*edge_tile)->Set_Is_Left_Edge(false);
-    ResetTileTexture((*edge_tile));
+    if (m_is_debug_mode) {
+      ResetTileTexture((*edge_tile));
+    }
   }
   m_left_edge_tiles.clear();
 

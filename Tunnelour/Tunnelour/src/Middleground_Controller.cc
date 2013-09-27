@@ -517,7 +517,7 @@ void Middleground_Controller::ResetTileTexture(Tile_Bitmap *out_tile) {
       random_variable = 0;
     }   
   } else {
-    int random_variable = rand() % middleground_line.number_of_tiles;
+    random_variable = rand() % middleground_line.number_of_tiles;
   }
 
   float left = random_variable * middleground_line.tile_size_x + middleground_line.top_left_x;
@@ -574,8 +574,10 @@ void Middleground_Controller::TileUp(float camera_top, float middleground_top) {
     new_top_tiles.push_back(tile);
 
     (*edge_tile)->Set_Is_Top_Edge(false);
-    ResetTileTexture((*edge_tile));
-    ResetTileTexture(tile);
+    if (m_is_debug_mode) {
+      ResetTileTexture((*edge_tile));
+      ResetTileTexture(tile);
+    }
   }
   m_top_edge_tiles.clear();
 
@@ -604,8 +606,10 @@ void Middleground_Controller::TileDown(float camera_bottom, float middleground_b
     new_bottom_tiles.push_back(tile);
 
     (*edge_tile)->Set_Is_Bottom_Edge(false);
-    ResetTileTexture((*edge_tile));
-    ResetTileTexture(tile);
+    if (m_is_debug_mode) {
+      ResetTileTexture((*edge_tile));
+      ResetTileTexture(tile);
+    }
   }
   m_bottom_edge_tiles.clear();
 
@@ -634,8 +638,10 @@ void Middleground_Controller::TileRight(float camera_right, float middleground_r
     new_right_edge_tiles.push_back(tile);
 
     (*edge_tile)->Set_Is_Right_Edge(false);
-    ResetTileTexture((*edge_tile));
-    ResetTileTexture(tile);
+    if (m_is_debug_mode) {
+      ResetTileTexture((*edge_tile));
+      ResetTileTexture(tile);
+    }
   }
   m_right_edge_tiles.clear();
 
@@ -664,395 +670,14 @@ void Middleground_Controller::TileLeft(float camera_left, float middleground_lef
     new_left_edge_tiles.push_back(tile);
 
     (*edge_tile)->Set_Is_Left_Edge(false);
-    ResetTileTexture((*edge_tile));
-    ResetTileTexture(tile);
+    if (m_is_debug_mode) {
+      ResetTileTexture((*edge_tile));
+      ResetTileTexture(tile);
+    }
   }
   m_left_edge_tiles.clear();
 
   m_left_edge_tiles = new_left_edge_tiles;
 }
-
-
-/*
-//------------------------------------------------------------------------------
-void Middleground_Controller::TileMiddleground() {
-  // Generate an initial Random Tile Middleground Spanning the Screen
-  std::vector<Tile_Bitmap*> middleground_tiles;
-
-  for (std::vector<Tile_Bitmap*>::iterator tunnel_tile = m_tunnel_tiles.begin(); tunnel_tile != m_tunnel_tiles.end(); tunnel_tile++) {
-    std::vector<Tile_Bitmap*> tiles;
-    if ((*tunnel_tile)->Is_Top_Edge()) {
-      // produce tiles upwards of the same size until out of camera view
-      tiles = GenerateTilesUpwards(*tunnel_tile);
-    } else if ((*tunnel_tile)->Is_Bottom_Edge()) {
-      // produce tiles upwards of the same size until out of camera view
-      tiles = GenerateTilesDownwards(*tunnel_tile);
-    } 
-
-    for (std::vector<Tile_Bitmap*>::iterator middleground_tile = tiles.begin(); middleground_tile != tiles.end(); ++middleground_tile) {
-      if ((*tunnel_tile)->Is_Left_Edge()) {
-        (*middleground_tile)->Set_Is_Left_Edge(true);
-        m_left_edge_middleground_tiles.push_back(*middleground_tile);
-      } else if  ((*tunnel_tile)->Is_Right_Edge()) {
-        (*middleground_tile)->Set_Is_Right_Edge(true);
-        m_right_edge_middleground_tiles.push_back(*middleground_tile);
-      }
-      middleground_tiles.push_back(*middleground_tile);
-    }
-  }
-
-  // Add tiles to Model
-  for (std::vector<Tile_Bitmap*>::iterator tile = middleground_tiles.begin(); tile != middleground_tiles.end(); ++tile) {
-    m_model->Add(*tile);
-    m_middleground_tiles.push_back(*tile);
-  }
-}
-
-
-//------------------------------------------------------------------------------
-void Middleground_Controller::Extend_Tunnel_Right() {
-  std::vector<Tile_Bitmap*> new_tunnel_tiles;
-  while (m_camera_right > m_middleground_right) {
-    for (std::vector<Tile_Bitmap*>::iterator tunnel_edge_tile = m_right_edge_tunnel_tiles.begin(); tunnel_edge_tile !=  m_right_edge_tunnel_tiles.end(); tunnel_edge_tile++) {
-      int current_tile_right = static_cast<int>((*tunnel_edge_tile)->GetPosition().x  + ((*tunnel_edge_tile)->GetSize().x / 2));
-      while (m_camera_right > current_tile_right) {
-        Tile_Bitmap* tile = Create_Tile(static_cast<int>((*tunnel_edge_tile)->GetSize().x), false);
-        D3DXVECTOR3 position = D3DXVECTOR3((*tunnel_edge_tile)->GetPosition().x + tile->GetSize().x,
-                                            (*tunnel_edge_tile)->GetPosition().y,
-                                            (*tunnel_edge_tile)->GetPosition().z);
-        tile->GetTexture()->transparency = 0.0f; //TUNNEL
-        tile->SetPosition(position);
-        m_model->Add(tile);
-        m_tunnel_tiles.push_back(tile);
-        new_tunnel_tiles.push_back(tile);
-        *tunnel_edge_tile = tile;
-        current_tile_right += static_cast<int>(tile->GetSize().x / 2);
-        if (tunnel_edge_tile == m_right_edge_tunnel_tiles.begin()) {
-          tile->Set_Is_Top_Edge(true);
-        } else if ((tunnel_edge_tile + 1) == m_right_edge_tunnel_tiles.end()) {
-          tile->Set_Is_Bottom_Edge(true);
-        }
-      }
-    }
-    Tile_Bitmap* smallest_tile = 0;
-    for (std::vector<Tile_Bitmap*>::iterator tunnel_edge_tile = m_right_edge_tunnel_tiles.begin(); tunnel_edge_tile !=  m_right_edge_tunnel_tiles.end(); tunnel_edge_tile++) {
-      // store the smallest number as the new middleground right.
-      if (smallest_tile == 0) {
-        smallest_tile = *tunnel_edge_tile;
-      } else if (smallest_tile->GetSize().x > (*tunnel_edge_tile)->GetSize().x) {
-        smallest_tile = (*tunnel_edge_tile);
-      }
-    }
-    m_middleground_right += static_cast<int>(smallest_tile->GetSize().x);
-
-    std::vector<Tile_Bitmap*> new_middleground_tiles;
-
-    for (std::vector<Tile_Bitmap*>::iterator tunnel_tile = new_tunnel_tiles.begin(); tunnel_tile != new_tunnel_tiles.end(); tunnel_tile++) {
-      std::vector<Tile_Bitmap*> tiles;
-      if ((*tunnel_tile)->Is_Top_Edge()) {
-        // produce tiles upwards of the same size until out of camera view
-        tiles = GenerateTilesUpwards(*tunnel_tile);
-      } else if ((*tunnel_tile)->Is_Bottom_Edge()) {
-        // produce tiles upwards of the same size until out of camera view
-        tiles = GenerateTilesDownwards(*tunnel_tile);
-      } 
-
-      for (std::vector<Tile_Bitmap*>::iterator middleground_tile = tiles.begin(); middleground_tile != tiles.end(); ++middleground_tile) {
-        new_middleground_tiles.push_back(*middleground_tile);
-      }
-    }
-
-    // Add tiles to Model
-    for (std::vector<Tile_Bitmap*>::iterator tile = new_middleground_tiles.begin(); tile != new_middleground_tiles.end(); ++tile) {
-      m_model->Add(*tile);
-      m_middleground_tiles.push_back(*tile);
-    }
-  }
-}
-
-void Middleground_Controller::Extend_Tunnel_Left() {
-  std::vector<Tile_Bitmap*> new_tunnel_tiles;
-  while (m_camera_left < m_middleground_left) {
-    for (std::vector<Tile_Bitmap*>::iterator tunnel_edge_tile = m_left_edge_tunnel_tiles.begin(); tunnel_edge_tile !=  m_left_edge_tunnel_tiles.end(); tunnel_edge_tile++) {
-      int current_tile_left = static_cast<int>((*tunnel_edge_tile)->GetPosition().x  - ((*tunnel_edge_tile)->GetSize().x / 2));
-      while (m_camera_left < current_tile_left) {
-        Tile_Bitmap* tile = Create_Tile(static_cast<int>((*tunnel_edge_tile)->GetSize().x), false);
-        D3DXVECTOR3 position = D3DXVECTOR3((*tunnel_edge_tile)->GetPosition().x - tile->GetSize().x,
-                                            (*tunnel_edge_tile)->GetPosition().y,
-                                            (*tunnel_edge_tile)->GetPosition().z);
-        tile->GetTexture()->transparency = 0.0f; //TUNNEL
-        tile->SetPosition(position);
-        m_model->Add(tile);
-        m_tunnel_tiles.push_back(tile);
-        new_tunnel_tiles.push_back(tile);
-        *tunnel_edge_tile = tile;
-        current_tile_left -= static_cast<int>(tile->GetSize().x / 2);
-        if (tunnel_edge_tile == m_left_edge_tunnel_tiles.begin()) {
-          tile->Set_Is_Top_Edge(true);
-        } else if ((tunnel_edge_tile + 1) == m_left_edge_tunnel_tiles.end()) {
-          tile->Set_Is_Bottom_Edge(true);
-        }
-
-        tile->Set_Is_Left_Edge(true);
-      }
-    }
-    Tile_Bitmap* smallest_tile = 0;
-    for (std::vector<Tile_Bitmap*>::iterator tunnel_edge_tile = m_left_edge_tunnel_tiles.begin(); tunnel_edge_tile !=  m_left_edge_tunnel_tiles.end(); tunnel_edge_tile++) {
-      // store the smallest number as the new middleground right.
-      if (smallest_tile == 0) {
-        smallest_tile = *tunnel_edge_tile;
-      } else if (smallest_tile->GetSize().x > (*tunnel_edge_tile)->GetSize().x) {
-        smallest_tile = (*tunnel_edge_tile);
-      }
-    }
-    m_middleground_left -= static_cast<int>(smallest_tile->GetSize().x);
-
-    std::vector<Tile_Bitmap*> new_middleground_tiles;
-
-    for (std::vector<Tile_Bitmap*>::iterator tunnel_tile = new_tunnel_tiles.begin(); tunnel_tile != new_tunnel_tiles.end(); tunnel_tile++) {
-      std::vector<Tile_Bitmap*> tiles;
-      if ((*tunnel_tile)->Is_Top_Edge()) {
-        // produce tiles upwards of the same size until out of camera view
-        tiles = GenerateTilesUpwards(*tunnel_tile);
-      } else if ((*tunnel_tile)->Is_Bottom_Edge()) {
-        // produce tiles upwards of the same size until out of camera view
-        tiles = GenerateTilesDownwards(*tunnel_tile);
-      } 
-
-      for (std::vector<Tile_Bitmap*>::iterator middleground_tile = tiles.begin(); middleground_tile != tiles.end(); ++middleground_tile) {
-        new_middleground_tiles.push_back(*middleground_tile);
-      }
-    }
-
-    for (std::vector<Tile_Bitmap*>::iterator old_edge_tile = m_left_edge_middleground_tiles.begin(); old_edge_tile != m_left_edge_middleground_tiles.end(); old_edge_tile++) {
-      (*old_edge_tile)->Set_Is_Left_Edge(false);
-
-      if (m_is_debug_mode) {
-        Tileset_Helper::Subset middleground_tileset;
-        std::list<Tileset_Helper::Subset>::iterator tileset;
-
-        for (tileset = m_metadata.tilesets.begin(); tileset != m_metadata.tilesets.end(); tileset++) {
-          if (tileset->type.compare("Middleground") == 0) {
-            middleground_tileset = *tileset;
-          }
-        }
-
-        Tileset_Helper::Line middleground_line;
-        std::list<Tileset_Helper::Line>::iterator line;
-        for (line = middleground_tileset.lines.begin(); line != middleground_tileset.lines.end(); line++) {
-          if (line->tile_size_x == (*old_edge_tile)->GetSize().x && line->tile_size_y == (*old_edge_tile)->GetSize().y) {
-            middleground_line = *line;
-          }
-        }
-
-        int random_variable = 0;
-        if ((*old_edge_tile)->Is_Platform() || (*old_edge_tile)->Is_Bottom_Edge() || (*old_edge_tile)->Is_Left_Edge() || (*old_edge_tile)->Is_Right_Edge() || (*old_edge_tile)->Is_Top_Edge()) {
-          random_variable = 1;
-        }
-        (*old_edge_tile)->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(random_variable*(middleground_line.tile_size_x) + static_cast<float>(middleground_line.top_left_x)),
-                                                            static_cast<float>(middleground_line.top_left_y));
-        (*old_edge_tile)->GetTexture()->texture = 0;
-        (*old_edge_tile)->GetFrame()->vertex_buffer = 0;
-        (*old_edge_tile)->Init();
-      }
-    }
-    m_left_edge_middleground_tiles.clear();
-
-    // Add tiles to Model
-    for (std::vector<Tile_Bitmap*>::iterator tile = new_middleground_tiles.begin(); tile != new_middleground_tiles.end(); ++tile) {
-      (*tile)->Set_Is_Left_Edge(true);
-      m_model->Add(*tile);
-      m_middleground_tiles.push_back(*tile);
-      m_left_edge_middleground_tiles.push_back(*tile);
-
-      if (m_is_debug_mode) {
-        Tileset_Helper::Subset middleground_tileset;
-        std::list<Tileset_Helper::Subset>::iterator tileset;
-
-        for (tileset = m_metadata.tilesets.begin(); tileset != m_metadata.tilesets.end(); tileset++) {
-          if (tileset->type.compare("Middleground") == 0) {
-            middleground_tileset = *tileset;
-          }
-        }
-
-        Tileset_Helper::Line middleground_line;
-        std::list<Tileset_Helper::Line>::iterator line;
-        for (line = middleground_tileset.lines.begin(); line != middleground_tileset.lines.end(); line++) {
-          if (line->tile_size_x == (*tile)->GetSize().x && line->tile_size_y == (*tile)->GetSize().y) {
-            middleground_line = *line;
-          }
-        }
-
-        int random_variable = 0;
-        if ((*tile)->Is_Platform() || (*tile)->Is_Bottom_Edge() || (*tile)->Is_Left_Edge() || (*tile)->Is_Right_Edge() || (*tile)->Is_Top_Edge()) {
-          random_variable = 1;
-        }
-        (*tile)->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(random_variable*(middleground_line.tile_size_x) + static_cast<float>(middleground_line.top_left_x)),
-                                                            static_cast<float>(middleground_line.top_left_y));
-        (*tile)->GetTexture()->texture = 0;
-        (*tile)->GetFrame()->vertex_buffer = 0;
-        (*tile)->Init();
-      }
-    }
-  }
-}
-
-
-void Middleground_Controller::Switch_Tileset() {
-  // Debug Mode has been activated or Deactivated
-  m_is_debug_mode = m_game_settings->IsDebugMode();
-  if (m_is_debug_mode) {
-    m_tileset_filename = "Debug_Tileset_0_4.txt";
-  } else {
-    m_tileset_filename = "Dirt_Tileset_5.txt";
-  }
-  Tileset_Helper::LoadTilesetMetadataIntoStruct(m_tileset_filename, &m_metadata);
-
-  for (std::vector<Tile_Bitmap*>::iterator tile = m_middleground_tiles.begin(); tile != m_middleground_tiles.end(); ++tile) {
-    Tileset_Helper::Subset middleground_tileset;
-    std::list<Tileset_Helper::Subset>::iterator tileset;
-
-    for (tileset = m_metadata.tilesets.begin(); tileset != m_metadata.tilesets.end(); tileset++) {
-      if (tileset->type.compare("Middleground") == 0) {
-        middleground_tileset = *tileset;
-      }
-    }
-
-    Tileset_Helper::Line middleground_line;
-    std::list<Tileset_Helper::Line>::iterator line;
-    for (line = middleground_tileset.lines.begin(); line != middleground_tileset.lines.end(); line++) {
-      if (line->tile_size_x == (*tile)->GetSize().x && line->tile_size_y == (*tile)->GetSize().y) {
-        middleground_line = *line;
-      }
-    }
-
-    std::wstring texture_path = m_game_settings->GetTilesetPath();
-    texture_path += String_Helper::StringToWString(m_metadata.filename);
-    (*tile)->GetTexture()->texture_path = texture_path;
-    (*tile)->GetTexture()->texture_size = D3DXVECTOR2(static_cast<float>(m_metadata.size_x),
-                                                    static_cast<float>(m_metadata.size_y));
-    int random_variable = 0;
-    if (m_is_debug_mode) {
-      random_variable = 0;
-      if ((*tile)->Is_Platform() || (*tile)->Is_Bottom_Edge() || (*tile)->Is_Left_Edge() || (*tile)->Is_Right_Edge() || (*tile)->Is_Top_Edge()) {
-        random_variable = 1;
-      }
-    } else {
-      int random_variable = rand() % middleground_line.number_of_tiles;
-    }
-
-    (*tile)->GetTexture()->top_left_position = D3DXVECTOR2(static_cast<float>(random_variable*(middleground_line.tile_size_x) + static_cast<float>(middleground_line.top_left_x)),
-                                                        static_cast<float>(middleground_line.top_left_y));
-    (*tile)->GetTexture()->texture = 0;
-    (*tile)->GetFrame()->vertex_buffer = 0;
-    (*tile)->Init();
-  }
-}
-
-//------------------------------------------------------------------------------
-std::vector<Tile_Bitmap*> Middleground_Controller::GenerateTilesUpwards(Tile_Bitmap* from_tile) {
-  std::vector<Tile_Bitmap*> new_tiles;
-
-  int y_boundary_top = static_cast<int>(m_camera->GetPosition().y + (m_game_settings->GetResolution().y / 2));
-  int y_current = static_cast<int>(from_tile->GetPosition().y + (from_tile->GetSize().y / 2));
-  Tile_Bitmap* tile = 0;
-  bool is_top_edge = true;
-  while (y_current < y_boundary_top) {
-    tile = Create_Tile(static_cast<int>(from_tile->GetSize().y), from_tile->Is_Platform());
-    D3DXVECTOR3 position = from_tile->GetPosition();
-    position.y = y_current + (tile->GetSize().y / 2);
-    tile->SetPosition(position);
-    tile->Set_Is_Top_Edge(is_top_edge);
-    y_current = static_cast<int>(tile->GetPosition().y + (tile->GetSize().y / 2));
-    new_tiles.push_back(tile);
-  }
-  m_middleground_top = static_cast<int>(tile->GetPosition().y);
-
-  return new_tiles;
-}
-
-//------------------------------------------------------------------------------
-std::vector<Tile_Bitmap*> Middleground_Controller::GenerateTilesDownwards(Tile_Bitmap* from_tile) {
-  std::vector<Tile_Bitmap*> new_tiles;
-
-  int y_boundary_top = static_cast<int>(m_camera->GetPosition().y - (m_game_settings->GetResolution().y / 2));
-  int y_current = static_cast<int>(from_tile->GetPosition().y - (from_tile->GetSize().y / 2));
-  Tile_Bitmap* tile = 0;
-  bool is_platform = true;
-  bool is_bottom_edge = true;
-  while (y_current > y_boundary_top) {
-    tile = Create_Tile(static_cast<int>(from_tile->GetSize().y), is_platform);
-    D3DXVECTOR3 position = from_tile->GetPosition();
-    position.y = y_current - (tile->GetSize().y / 2);
-    tile->SetPosition(position);
-    tile->Set_Is_Bottom_Edge(is_bottom_edge);
-    y_current = static_cast<int>(tile->GetPosition().y - (tile->GetSize().y / 2));
-    new_tiles.push_back(tile);
-    is_platform = false;
-    is_bottom_edge = false;
-  }
-  m_middleground_bottom = static_cast<int>(tile->GetPosition().y);
-
-  return new_tiles;
-}
-
-//---------------------------------------------------------------------------
-void Middleground_Controller::SwitchTileset() {
-  // Debug Mode has been activated or Deactivated
-  m_is_debug_mode = m_game_settings->IsDebugMode();
-  if (m_is_debug_mode) {
-    m_current_tileset = GetNamedTileset("Debug");
-  } else {
-    m_current_tileset = GetNamedTileset("Dirt");
-  }
-
-  m_current_middleground_subset = GetCurrentMiddlegroundSubset();
-  std::vector<Tile_Bitmap*>::iterator tile;
-  for (tile = m_middleground_tiles.begin(); tile != m_middleground_tiles.end(); ++tile) {
-    Tileset_Helper::Line middleground_line = GetCurrentSizedLine((*tile)->GetSize());
-    std::wstring texture_path = m_game_settings->GetTilesetPath();
-    texture_path += String_Helper::StringToWString(m_current_tileset.filename);
-    (*tile)->GetTexture()->texture_path = texture_path;
-    D3DXVECTOR2 size = D3DXVECTOR2(m_current_tileset.size_x,
-                                   m_current_tileset.size_y);
-    (*tile)->GetTexture()->texture_size = size;
-    ResetTileTexture((*tile));
-  }
-}
-
-//---------------------------------------------------------------------------
-Tileset_Helper::Line Middleground_Controller::GetCurrentSizedLine(D3DXVECTOR2 size) {
-  Tileset_Helper::Line middleground_line;
-  std::list<Tileset_Helper::Line>::iterator line;
-  for (line = m_current_middleground_subset.lines.begin(); line != m_current_middleground_subset.lines.end(); line++) {
-    if (line->tile_size_x == size.x) {
-      if (line->tile_size_y == size.y) {
-        middleground_line = *line;
-      }
-    }
-  }
-  return middleground_line;
-}
-
-//---------------------------------------------------------------------------
-void Middleground_Controller::ResetTileTexture(Tile_Bitmap *out_tile) {
-  Tileset_Helper::Line middleground_line = GetCurrentSizedLine(out_tile->GetSize());
-  int random_variable = 0;
-  if (m_is_debug_mode) {
-    random_variable = 0;
-  } else {
-    int random_variable = rand() % middleground_line.number_of_tiles;
-  }
-
-  float left = random_variable * middleground_line.tile_size_x + middleground_line.top_left_x;
-  float top = middleground_line.top_left_y;
-  out_tile->GetTexture()->top_left_position = D3DXVECTOR2(left, top);
-  out_tile->GetTexture()->texture = 0;
-  out_tile->GetFrame()->vertex_buffer = 0;
-  out_tile->Init();
-}
-
-
-*/
 
 } // Tunnelour
