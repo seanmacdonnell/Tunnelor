@@ -25,7 +25,7 @@ Tile_Bitmap::Tile_Bitmap(): Bitmap_Component() {
   m_position = D3DXVECTOR3(0, 0, 0);
   m_size = D3DXVECTOR2(0, 0);
   m_texture->texture_path = L"";
-  m_is_platform = false;
+  m_is_floor = false;
   m_is_top_edge = false;
   m_is_bottom_edge = false;
   m_is_right_edge = false;
@@ -122,57 +122,78 @@ void Tile_Bitmap::Init_Frame() {
 }
 
 //------------------------------------------------------------------------------
-bool Tile_Bitmap::Is_Platform() {
-  return m_is_platform;
+bool Tile_Bitmap::IsFloor() {
+  return m_is_floor;
 }
 
 //------------------------------------------------------------------------------
-void Tile_Bitmap::Set_Is_Platform(bool is_platform) {
-  m_is_platform = is_platform;
+void Tile_Bitmap::SetIsFloor(bool is_floor) {
+  m_is_floor = is_floor;
 }
 
 //------------------------------------------------------------------------------
-bool Tile_Bitmap::Is_Top_Edge() {
+bool Tile_Bitmap::IsRoof() {
+  return m_is_roof;
+}
+
+//------------------------------------------------------------------------------
+void Tile_Bitmap::SetIsRoof(bool is_roof) {
+  m_is_roof = is_roof;
+}
+
+//------------------------------------------------------------------------------
+bool Tile_Bitmap::IsWall() {
+  return m_is_wall;
+}
+
+//------------------------------------------------------------------------------
+void Tile_Bitmap::SetIsWall(bool is_wall) {
+  m_is_wall = is_wall;
+}
+
+//------------------------------------------------------------------------------
+bool Tile_Bitmap::IsTopEdge() {
   return m_is_top_edge;
 }
 
 //------------------------------------------------------------------------------
-void Tile_Bitmap::Set_Is_Top_Edge(bool is_top_edge) {
+void Tile_Bitmap::SetIsTopEdge(bool is_top_edge) {
   m_is_top_edge = is_top_edge;
 }
 
 //------------------------------------------------------------------------------
-bool Tile_Bitmap::Is_Bottom_Edge() {
+bool Tile_Bitmap::IsBottomEdge() {
   return m_is_bottom_edge;
 }
 
 //------------------------------------------------------------------------------
-void Tile_Bitmap::Set_Is_Bottom_Edge(bool is_bottom_edge) {
+void Tile_Bitmap::SetIsBottomEdge(bool is_bottom_edge) {
   m_is_bottom_edge = is_bottom_edge;
 }
 
 //------------------------------------------------------------------------------
-bool Tile_Bitmap::Is_Right_Edge() {
+bool Tile_Bitmap::IsRightEdge() {
   return m_is_right_edge;
 }
 
 //------------------------------------------------------------------------------
-void Tile_Bitmap::Set_Is_Right_Edge(bool is_right_edge) {
+void Tile_Bitmap::SetIsRightEdge(bool is_right_edge) {
   m_is_right_edge = is_right_edge;
 }
 
 //------------------------------------------------------------------------------
-bool Tile_Bitmap::Is_Left_Edge() {
+bool Tile_Bitmap::IsLeftEdge() {
   return m_is_left_edge;
 }
 
 //------------------------------------------------------------------------------
-void Tile_Bitmap::Set_Is_Left_Edge(bool is_left_edge) {
+void Tile_Bitmap::SetIsLeftEdge(bool is_left_edge) {
   m_is_left_edge = is_left_edge;
 }
 
 //------------------------------------------------------------------------------
 bool Tile_Bitmap::IsEdge() {
-  return Is_Top_Edge() || Is_Bottom_Edge() || Is_Right_Edge() || Is_Left_Edge();
+  return IsTopEdge() || IsBottomEdge() || IsRightEdge() || IsLeftEdge() ||
+         IsFloor() || IsRoof() || IsWall();
 }
 }  // namespace Tunnelour

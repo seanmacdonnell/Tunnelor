@@ -20,7 +20,6 @@
 
 #include "Component.h"
 #include "Game_Settings_Component.h"
-#include "Avatar_Component.h"
 #include "Tile_Bitmap.h"
 #include "World_Settings_Component.h"
 
@@ -48,29 +47,19 @@ class Avatar_Controller_Mutator: public Component::Component_Mutator  {
   void Mutate(Component * const component);
 
   //-------------------------------------------------------------------------
-  // Description : Has this component been found in the model?
-  //-------------------------------------------------------------------------
-  bool FoundGameSettings();
-
-  //-------------------------------------------------------------------------
   // Description : Accessors for the Game_Settings_Component
   //-------------------------------------------------------------------------
   Game_Settings_Component* const GetGameSettings();
 
   //-------------------------------------------------------------------------
-  // Description : Has this component been found in the model?
+  // Description : Accessor for the Floor Tiles
   //-------------------------------------------------------------------------
-  bool FoundBorderTiles();
+  std::list<Bitmap_Component*> GetFloorTiles();
 
   //-------------------------------------------------------------------------
-  // Description : Accessor for the Border Tiles
+  // Description : Accessor for the Wall Tiles
   //-------------------------------------------------------------------------
-  std::list<Bitmap_Component*> GetBorderTiles();
-
-  //-------------------------------------------------------------------------
-  // Description : Has this component been found in the model?
-  //-------------------------------------------------------------------------
-  bool FoundWorldSettings();
+  std::list<Bitmap_Component*> GetWallTiles();
 
   //-------------------------------------------------------------------------
   // Description : Accessor for the World_Settings_Component
@@ -83,10 +72,13 @@ class Avatar_Controller_Mutator: public Component::Component_Mutator  {
   bool WasSuccessful();
 
  private:
-  bool m_found_game_settings, m_found_avatar_component, m_found_border_tiles, m_found_world_settings;
+  bool m_found_game_settings;
+  bool m_found_floor_tiles;
+  bool m_found_world_settings;
+  bool m_found_wall_tiles;
   Game_Settings_Component *m_game_settings;
-  Avatar_Component *m_avatar_component;
-  std::list<Bitmap_Component*> m_border_tiles;
+  std::list<Bitmap_Component*> m_floor_tiles;
+  std::list<Bitmap_Component*> m_wall_tiles;
   World_Settings_Component *m_world_settings;
 };
 }  // namespace Tunnelour

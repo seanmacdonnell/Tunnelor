@@ -60,6 +60,18 @@ class Bitmap_Helper {
   //---------------------------------------------------------------------------
   static bool AreTheseTilesXAdjacent(Tunnelour::Bitmap_Component* TileA, Tunnelour::Bitmap_Component* TileB);
 
+  //---------------------------------------------------------------------------
+  // Description : Returns whether the bounds of one tile is tangent with
+  //             : the other in the X dimension but only on the Left side
+  //---------------------------------------------------------------------------
+  static bool AreTheseTilesLeftXAdjacent(Tunnelour::Bitmap_Component* TileA, Tunnelour::Bitmap_Component* TileB);
+
+  //---------------------------------------------------------------------------
+  // Description : Returns whether the bounds of one tile is tangent with
+  //             : the other in the X dimension but only on the Right side
+  //---------------------------------------------------------------------------
+  static bool AreTheseTilesRightXAdjacent(Tunnelour::Bitmap_Component* TileA, Tunnelour::Bitmap_Component* TileB);
+
  protected:
 
  private:

@@ -43,25 +43,33 @@ class Tile_Bitmap: public Tunnelour::Bitmap_Component {
   //---------------------------------------------------------------------------
   virtual void Init();
 
-  bool Is_Platform();
+  bool IsFloor();
 
-  void Set_Is_Platform(bool is_platform);
+  void SetIsFloor(bool is_floor);
 
-  bool Is_Top_Edge();
+  bool IsRoof();
 
-  void Set_Is_Top_Edge(bool is_top_edge);
+  void SetIsRoof(bool is_roof);
 
-  bool Is_Bottom_Edge();
+  bool IsWall();
 
-  void Set_Is_Bottom_Edge(bool is_bottom_edge);
+  void SetIsWall(bool is_wall);
 
-  bool Is_Right_Edge();
+  bool IsTopEdge();
 
-  void Set_Is_Right_Edge(bool is_right_edge);
+  void SetIsTopEdge(bool is_top_edge);
 
-  bool Is_Left_Edge();
+  bool IsBottomEdge();
 
-  void Set_Is_Left_Edge(bool is_left_edge);
+  void SetIsBottomEdge(bool is_bottom_edge);
+
+  bool IsRightEdge();
+
+  void SetIsRightEdge(bool is_right_edge);
+
+  bool IsLeftEdge();
+
+  void SetIsLeftEdge(bool is_left_edge);
 
   bool IsEdge();
 
@@ -72,7 +80,9 @@ class Tile_Bitmap: public Tunnelour::Bitmap_Component {
   // Description : Inits this components frame stucture
   //---------------------------------------------------------------------------
   void Init_Frame();
-  bool m_is_platform;
+  bool m_is_floor;
+  bool m_is_roof;
+  bool m_is_wall;
   bool m_is_top_edge;
   bool m_is_bottom_edge;
   bool m_is_right_edge;

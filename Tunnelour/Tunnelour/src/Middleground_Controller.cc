@@ -321,19 +321,19 @@ std::vector<Tile_Bitmap*> Middleground_Controller::GenerateTunnelFromMetadata(Le
     for (tile = (*line).begin(); tile != (*line).end(); tile++) {
       Tile_Bitmap* new_tile = new_tile = CreateTile((*tile).size);
       if (tile == (*line).begin()) {
-        new_tile->Set_Is_Left_Edge(true);
+        new_tile->SetIsLeftEdge(true);
         m_left_edge_tiles.push_back(new_tile);
       }
       if (tile == (*line).end() - 1) {
-        new_tile->Set_Is_Right_Edge(true);
+        new_tile->SetIsRightEdge(true);
         m_right_edge_tiles.push_back(new_tile);
       }
       if (line == level_metadata.level.begin()) {
-        new_tile->Set_Is_Top_Edge(true);
+        new_tile->SetIsTopEdge(true);
         m_top_edge_tiles.push_back(new_tile);
       }
       if (line == level_metadata.level.end() - 1) {
-        new_tile->Set_Is_Bottom_Edge(true);
+        new_tile->SetIsBottomEdge(true);
         m_bottom_edge_tiles.push_back(new_tile);
       }
 
@@ -366,10 +366,41 @@ std::vector<Tile_Bitmap*> Middleground_Controller::GenerateTunnelFromMetadata(Le
       new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
 
       if ((*tile).type.compare("Middleground") == 0) {
-        new_tile->Set_Is_Platform(true);
         new_tile->GetTexture()->transparency = 1.0f;
+        if (!middleground_line.empty()) {
+          if (middleground_line.back()->GetTexture()->transparency == 0.0f) {
+            new_tile->SetIsWall(true);
+            m_tunnel_edge_tiles.push_back(new_tile);
+          }
+          if (!middleground_lines.empty()) {
+            std::vector<Tile_Bitmap*>::iterator above_tile;
+            for (above_tile = middleground_lines.back().begin(); above_tile != middleground_lines.back().end(); above_tile++) {
+              if (Bitmap_Helper::DoTheseTilesXCollide((*above_tile), new_tile)) {
+                if ((*above_tile)->GetTexture()->transparency == 0.0f) {
+                  new_tile->SetIsFloor(true);
+                  m_tunnel_edge_tiles.push_back(new_tile);
+                }
+              }
+            }
+          }
+        }
       } else {
         new_tile->GetTexture()->transparency = 0.0f; //TUNNEL
+        if (middleground_line.back()->GetTexture()->transparency != 0.0f) {
+          middleground_line.back()->SetIsWall(true);
+          m_tunnel_edge_tiles.push_back(middleground_line.back());
+        }
+        if (!middleground_lines.empty()) {
+          std::vector<Tile_Bitmap*>::iterator above_tile;
+          for (above_tile = middleground_lines.back().begin(); above_tile != middleground_lines.back().end(); above_tile++) {
+            if (Bitmap_Helper::DoTheseTilesXCollide((*above_tile), new_tile)) {
+              if ((*above_tile)->GetTexture()->transparency != 0.0f) {
+                (*above_tile)->SetIsRoof(true);
+                m_tunnel_edge_tiles.push_back((*above_tile));
+              }
+            }
+          }
+        }
       }
 
       ResetTileTexture(new_tile);
@@ -455,16 +486,7 @@ Tile_Bitmap* Middleground_Controller::CreateTile(float base_tile_size) {
   tile->GetTexture()->tile_size = D3DXVECTOR2(middleground_line.tile_size_x,
                                               middleground_line.tile_size_y);
 
-  unsigned int random_line_tile = 0;
-  if (m_is_debug_mode) {
-    if (tile->IsEdge()) {
-      random_line_tile = 1;
-    } else {
-      random_line_tile = 0;
-    }
-  } else {
-    random_line_tile = rand() % middleground_line.number_of_tiles;
-  }
+  int random_line_tile = rand() % middleground_line.number_of_tiles;
 
   float random_tile_x = random_line_tile * middleground_line.tile_size_x;
   random_tile_x += middleground_line.top_left_x;
@@ -511,7 +533,7 @@ void Middleground_Controller::ResetTileTexture(Tile_Bitmap *out_tile) {
   Tileset_Helper::Line middleground_line = GetCurrentSizedLine(out_tile->GetSize().x);
   int random_variable = 0;
   if (m_is_debug_mode) {
-    if (out_tile->Is_Bottom_Edge() || out_tile->Is_Top_Edge() || out_tile->Is_Left_Edge() || out_tile->Is_Right_Edge()) {
+    if (out_tile->IsEdge()) {
       random_variable = 1;
     } else {
       random_variable = 0;
@@ -565,15 +587,15 @@ void Middleground_Controller::TileUp(float camera_top, float middleground_top) {
     position.y = (*edge_tile)->GetPosition().y + tile->GetSize().y;
     position.z = -1.0; // Middleground Z Space is -1
     tile->SetPosition(position);
-    tile->Set_Is_Top_Edge((*edge_tile)->Is_Top_Edge());
-    tile->Set_Is_Bottom_Edge((*edge_tile)->Is_Bottom_Edge());
-    tile->Set_Is_Right_Edge((*edge_tile)->Is_Right_Edge());
-    tile->Set_Is_Left_Edge((*edge_tile)->Is_Left_Edge());
+    tile->SetIsTopEdge((*edge_tile)->IsTopEdge());
+    tile->SetIsBottomEdge((*edge_tile)->IsBottomEdge());
+    tile->SetIsRightEdge((*edge_tile)->IsRightEdge());
+    tile->SetIsLeftEdge((*edge_tile)->IsLeftEdge());
     m_model->Add(tile);
     m_middleground_tiles.push_back(tile);
     new_top_tiles.push_back(tile);
 
-    (*edge_tile)->Set_Is_Top_Edge(false);
+    (*edge_tile)->SetIsTopEdge(false);
     if (m_is_debug_mode) {
       ResetTileTexture((*edge_tile));
       ResetTileTexture(tile);
@@ -597,15 +619,15 @@ void Middleground_Controller::TileDown(float camera_bottom, float middleground_b
     position.y = (*edge_tile)->GetPosition().y + tile->GetSize().y;
     position.z = -1.0; // Middleground Z Space is -1
     tile->SetPosition(position);
-    tile->Set_Is_Top_Edge((*edge_tile)->Is_Top_Edge());
-    tile->Set_Is_Bottom_Edge((*edge_tile)->Is_Bottom_Edge());
-    tile->Set_Is_Right_Edge((*edge_tile)->Is_Right_Edge());
-    tile->Set_Is_Left_Edge((*edge_tile)->Is_Left_Edge());
+    tile->SetIsTopEdge((*edge_tile)->IsTopEdge());
+    tile->SetIsBottomEdge((*edge_tile)->IsBottomEdge());
+    tile->SetIsRightEdge((*edge_tile)->IsRightEdge());
+    tile->SetIsLeftEdge((*edge_tile)->IsLeftEdge());
     m_model->Add(tile);
     m_middleground_tiles.push_back(tile);
     new_bottom_tiles.push_back(tile);
 
-    (*edge_tile)->Set_Is_Bottom_Edge(false);
+    (*edge_tile)->SetIsBottomEdge(false);
     if (m_is_debug_mode) {
       ResetTileTexture((*edge_tile));
       ResetTileTexture(tile);
@@ -629,15 +651,15 @@ void Middleground_Controller::TileRight(float camera_right, float middleground_r
     position.y = (*edge_tile)->GetPosition().y;
     position.z = -1.0; // Middleground Z Space is -1
     tile->SetPosition(position);
-    tile->Set_Is_Top_Edge((*edge_tile)->Is_Top_Edge());
-    tile->Set_Is_Bottom_Edge((*edge_tile)->Is_Bottom_Edge());
-    tile->Set_Is_Right_Edge((*edge_tile)->Is_Right_Edge());
-    tile->Set_Is_Left_Edge((*edge_tile)->Is_Left_Edge());
+    tile->SetIsTopEdge((*edge_tile)->IsTopEdge());
+    tile->SetIsBottomEdge((*edge_tile)->IsBottomEdge());
+    tile->SetIsRightEdge((*edge_tile)->IsRightEdge());
+    tile->SetIsLeftEdge((*edge_tile)->IsLeftEdge());
     m_model->Add(tile);
     m_middleground_tiles.push_back(tile);
     new_right_edge_tiles.push_back(tile);
 
-    (*edge_tile)->Set_Is_Right_Edge(false);
+    (*edge_tile)->SetIsRightEdge(false);
     if (m_is_debug_mode) {
       ResetTileTexture((*edge_tile));
       ResetTileTexture(tile);
@@ -661,15 +683,15 @@ void Middleground_Controller::TileLeft(float camera_left, float middleground_lef
     position.y = (*edge_tile)->GetPosition().y;
     position.z = -1.0; // Middleground Z Space is -1
     tile->SetPosition(position);
-    tile->Set_Is_Top_Edge((*edge_tile)->Is_Top_Edge());
-    tile->Set_Is_Bottom_Edge((*edge_tile)->Is_Bottom_Edge());
-    tile->Set_Is_Right_Edge((*edge_tile)->Is_Right_Edge());
-    tile->Set_Is_Left_Edge((*edge_tile)->Is_Left_Edge());
+    tile->SetIsTopEdge((*edge_tile)->IsTopEdge());
+    tile->SetIsBottomEdge((*edge_tile)->IsBottomEdge());
+    tile->SetIsRightEdge((*edge_tile)->IsRightEdge());
+    tile->SetIsLeftEdge((*edge_tile)->IsLeftEdge());
     m_model->Add(tile);
     m_middleground_tiles.push_back(tile);
     new_left_edge_tiles.push_back(tile);
 
-    (*edge_tile)->Set_Is_Left_Edge(false);
+    (*edge_tile)->SetIsLeftEdge(false);
     if (m_is_debug_mode) {
       ResetTileTexture((*edge_tile));
       ResetTileTexture(tile);

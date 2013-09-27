@@ -142,7 +142,7 @@ void Avatar_Controller::RunStandingState(Avatar_Controller_Mutator *mutator) {
   }
 
   // Detect if the avatar is overbalancing from walking
-  if (!IsAvatarPlatformAdjacent(mutator)) {
+  if (!IsAvatarFloorAdjacent(mutator)) {
     ChangeAvatarState("Falling_To_Standing", m_avatar->GetState().direction);
   }
 }
@@ -197,8 +197,21 @@ void Avatar_Controller::RunWalkingState(Avatar_Controller_Mutator *mutator) {
     ChangeAvatarState("Standing", m_avatar->GetState().direction);
   }
 
+  // Detect if the avatar is intersecting with a wall
+  std::list<Bitmap_Component*> *out_colliding_border_tiles = new std::list<Bitmap_Component*>();
+  if (IsAvatarWallColliding(mutator, out_colliding_border_tiles, &CollisionBlockToBitmapComponent(GetLowestCollisionBlock()))) {
+    // Move back avatar
+    if (m_avatar->GetState().direction.compare("Left") == 0) {
+      D3DXVECTOR3 tile_position = (*out_colliding_border_tiles->begin())->GetBottomRightPostion();
+      D3DXVECTOR3 avatar_position = m_avatar->GetPosition();
+      avatar_position += m_avatar->GetVelocity();
+      m_avatar->SetPosition(avatar_position);
+    }
+    ChangeAvatarState("Standing", m_avatar->GetState().direction);
+  }
+
   // Detect if the avatar is overbalancing from walking
-  if (!IsAvatarPlatformAdjacent(mutator)) {
+  if (!IsAvatarFloorAdjacent(mutator)) {
     ChangeAvatarState("Walking_To_Falling", m_avatar->GetState().direction);
     D3DXVECTOR3 new_velocity;
     new_velocity.x = m_avatar->GetVelocity().x * cos(m_avatar->GetAngle());
@@ -215,7 +228,7 @@ void Avatar_Controller::RunFallingState(Avatar_Controller_Mutator *mutator) {
   std::list<Bitmap_Component*> out_colliding_border_tiles;
   Bitmap_Component* out_collision_block = new Bitmap_Component();
   if (current_state.state.compare("Falling_To_Standing") == 0) {
-    bool is_colliding = IsAvatarPlatformColliding(mutator,
+    bool is_colliding = IsAvatarFloorColliding(mutator,
                                                     &out_colliding_border_tiles,
                                                      out_collision_block);
     if (is_colliding) {
@@ -296,10 +309,10 @@ void Avatar_Controller::RunFallingState(Avatar_Controller_Mutator *mutator) {
 
 
 //------------------------------------------------------------------------------
-bool Avatar_Controller::IsAvatarPlatformAdjacent(Avatar_Controller_Mutator *mutator) {
+bool Avatar_Controller::IsAvatarFloorAdjacent(Avatar_Controller_Mutator *mutator) {
   // Going to deal only with gravity only
   // Also only dealing with the lowest foot (Lowest collision Block).
-  if (mutator->FoundBorderTiles()) {
+  if (mutator->WasSuccessful()) {
     // Find the lowest contact block
     Avatar_Component::Collision_Block lowest_collision_block;
     lowest_collision_block = GetLowestCollisionBlock();
@@ -308,9 +321,9 @@ bool Avatar_Controller::IsAvatarPlatformAdjacent(Avatar_Controller_Mutator *muta
     Bitmap_Component lowest_collision_block_bitmap;
     lowest_collision_block_bitmap = CollisionBlockToBitmapComponent(lowest_collision_block);
 
-    // Create a list of platform tiles which are adjacent with the collision block
+    // Create a list of floor tiles which are adjacent with the collision block
     std::list<Bitmap_Component*> colliding_border_tiles;
-    std::list<Bitmap_Component*> border_tiles = mutator->GetBorderTiles();
+    std::list<Bitmap_Component*> border_tiles = mutator->GetFloorTiles();
     std::list<Bitmap_Component*>::iterator border_tile;
     for (border_tile = border_tiles.begin(); border_tile != border_tiles.end(); border_tile++) {
       if (Bitmap_Helper::DoTheseTilesXCollide(*border_tile, &lowest_collision_block_bitmap)) {
@@ -332,10 +345,10 @@ bool Avatar_Controller::IsAvatarPlatformAdjacent(Avatar_Controller_Mutator *muta
 }
 
 //------------------------------------------------------------------------------
-bool Avatar_Controller::IsAvatarPlatformColliding(Avatar_Controller_Mutator *mutator, std::list<Bitmap_Component*> *out_colliding_border_tiles, Bitmap_Component *out_collision_block) {
+bool Avatar_Controller::IsAvatarFloorColliding(Avatar_Controller_Mutator *mutator, std::list<Bitmap_Component*> *out_colliding_border_tiles, Bitmap_Component *out_collision_block) {
   // Going to deal only with gravity only
   // Also only dealing with the lowest foot
-  if (mutator->FoundBorderTiles()) {
+  if (mutator->WasSuccessful()) {
     // Get the lowest block
     Avatar_Component::Collision_Block lowest_collision_block;
     lowest_collision_block = GetLowestCollisionBlock();
@@ -343,8 +356,41 @@ bool Avatar_Controller::IsAvatarPlatformColliding(Avatar_Controller_Mutator *mut
     // Make a bitmap for the lowest avatar collision block
     (*out_collision_block) = CollisionBlockToBitmapComponent(lowest_collision_block);
 
-    // Create a list of platform tiles which are colliding with the collision block
-    std::list<Bitmap_Component*> border_tiles = mutator->GetBorderTiles();
+    // Create a list of floor tiles which are colliding with the collision block
+    std::list<Bitmap_Component*> border_tiles = mutator->GetFloorTiles();
+    std::list<Bitmap_Component*>::iterator border_tile;
+    for (border_tile = border_tiles.begin(); border_tile != border_tiles.end(); border_tile++) {
+      if (Bitmap_Helper::DoTheseTilesXCollide(*border_tile, out_collision_block)) {
+        if (Bitmap_Helper::DoTheseTilesYCollide(*border_tile, out_collision_block)) {
+          out_colliding_border_tiles->push_back(*border_tile);
+        }
+      }
+    }
+
+    // If colliding tiles is not empty
+    // This means the avatar is colliding with a tile.
+    if (!out_colliding_border_tiles->empty()) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+//------------------------------------------------------------------------------
+bool Avatar_Controller::IsAvatarWallColliding(Avatar_Controller_Mutator *mutator, std::list<Bitmap_Component*> *out_colliding_border_tiles, Bitmap_Component *out_collision_block) {
+  // Going to deal only with gravity only
+  // Also only dealing with the lowest foot
+  if (mutator->WasSuccessful()) {
+    // Get the lowest block
+    Avatar_Component::Collision_Block lowest_collision_block;
+    lowest_collision_block = GetLowestCollisionBlock();
+
+    // Make a bitmap for the lowest avatar collision block
+    (*out_collision_block) = CollisionBlockToBitmapComponent(lowest_collision_block);
+
+    // Create a list of floor tiles which are colliding with the collision block
+    std::list<Bitmap_Component*> border_tiles = mutator->GetWallTiles();
     std::list<Bitmap_Component*>::iterator border_tile;
     for (border_tile = border_tiles.begin(); border_tile != border_tiles.end(); border_tile++) {
       if (Bitmap_Helper::DoTheseTilesXCollide(*border_tile, out_collision_block)) {

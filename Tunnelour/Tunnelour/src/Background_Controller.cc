@@ -163,10 +163,10 @@ Tile_Bitmap* Background_Controller::CreateTile(float base_tile_size,
   tile->GetTexture()->tile_size = D3DXVECTOR2(middleground_line.tile_size_x,
                                               middleground_line.tile_size_y);
 
-  tile->Set_Is_Top_Edge(is_top_edge);
-  tile->Set_Is_Bottom_Edge(is_bottom_edge);
-  tile->Set_Is_Right_Edge(is_right_edge);
-  tile->Set_Is_Left_Edge(is_left_edge);
+  tile->SetIsTopEdge(is_top_edge);
+  tile->SetIsBottomEdge(is_bottom_edge);
+  tile->SetIsRightEdge(is_right_edge);
+  tile->SetIsLeftEdge(is_left_edge);
 
   unsigned int random_line_tile = 0;
   if (m_is_debug_mode) {
@@ -282,15 +282,15 @@ void Background_Controller::TileCurrentWindow() {
                                         position_y,
                                         0)); // Background Z Space is 0
 
-      if (new_tile->Is_Top_Edge()) {
+      if (new_tile->IsTopEdge()) {
         m_top_edge_tiles.push_back(new_tile);
-      } else if (new_tile->Is_Bottom_Edge()) {
+      } else if (new_tile->IsBottomEdge()) {
         m_bottom_edge_tiles.push_back(new_tile);
       }
 
-      if (new_tile->Is_Right_Edge()) {
+      if (new_tile->IsRightEdge()) {
         m_right_edge_tiles.push_back(new_tile);
-      } else if (new_tile->Is_Left_Edge()) {
+      } else if (new_tile->IsLeftEdge()) {
         m_left_edge_tiles.push_back(new_tile);
       }
 
@@ -324,7 +324,7 @@ void Background_Controller::TileUp(float camera_top) {
 
   std::vector<Tile_Bitmap*>::iterator edge_tile;
   for (edge_tile = m_top_edge_tiles.begin(); edge_tile != m_top_edge_tiles.end(); edge_tile++) {
-    (*edge_tile)->Set_Is_Top_Edge(false);
+    (*edge_tile)->SetIsTopEdge(false);
     if (m_is_debug_mode) {
       ResetTileTexture((*edge_tile));
     }
@@ -338,7 +338,7 @@ void Background_Controller::TileUp(float camera_top) {
     position.y = m_background_top + (tile->GetSize().y / 2);
     position.z = 0.0; // Background Z Space is 0
     tile->SetPosition(position);
-    tile->Set_Is_Top_Edge(true);
+    tile->SetIsTopEdge(true);
     m_model->Add(tile);
     m_background_tiles.push_back(tile);
     m_bottom_edge_tiles.push_back(tile);
@@ -355,7 +355,7 @@ void Background_Controller::TileDown(float camera_bottom) {
 
   std::vector<Tile_Bitmap*>::iterator edge_tile;
   for (edge_tile = m_bottom_edge_tiles.begin(); edge_tile != m_bottom_edge_tiles.end(); edge_tile++) {
-    (*edge_tile)->Set_Is_Bottom_Edge(false);
+    (*edge_tile)->SetIsBottomEdge(false);
     if (m_is_debug_mode) {
       ResetTileTexture((*edge_tile));
     }
@@ -369,7 +369,7 @@ void Background_Controller::TileDown(float camera_bottom) {
     position.y = m_background_bottom - (tile->GetSize().y / 2);
     position.z = 0.0; // Background Z Space is 0
     tile->SetPosition(position);
-    tile->Set_Is_Bottom_Edge(true);
+    tile->SetIsBottomEdge(true);
     m_model->Add(tile);
     m_background_tiles.push_back(tile);
     m_bottom_edge_tiles.push_back(tile);
@@ -386,7 +386,7 @@ void Background_Controller::TileRight(float camera_right) {
 
   std::vector<Tile_Bitmap*>::iterator edge_tile;
   for (edge_tile = m_right_edge_tiles.begin(); edge_tile != m_right_edge_tiles.end(); edge_tile++) {
-    (*edge_tile)->Set_Is_Right_Edge(false);
+    (*edge_tile)->SetIsRightEdge(false);
     if (m_is_debug_mode) {
       ResetTileTexture((*edge_tile));
     }
@@ -405,7 +405,7 @@ void Background_Controller::TileRight(float camera_right) {
       position.y = m_background_top - (x * 128) - (128 / 2);
       position.z = 0.0;
       tile->SetPosition(position);
-      tile->Set_Is_Right_Edge(true);
+      tile->SetIsRightEdge(true);
       m_model->Add(tile);
       m_background_tiles.push_back(tile);
       m_right_edge_tiles.push_back(tile);
@@ -422,7 +422,7 @@ void Background_Controller::TileLeft(float camera_left) {
 
   std::vector<Tile_Bitmap*>::iterator edge_tile;
   for (edge_tile = m_left_edge_tiles.begin(); edge_tile != m_left_edge_tiles.end(); edge_tile++) {
-    (*edge_tile)->Set_Is_Left_Edge(false);
+    (*edge_tile)->SetIsLeftEdge(false);
     if (m_is_debug_mode) {
       ResetTileTexture((*edge_tile));
     }
@@ -441,7 +441,7 @@ void Background_Controller::TileLeft(float camera_left) {
       position.y = m_background_top - (x * 128) - (128 / 2);
       position.z = 0;
       tile->SetPosition(position);
-      tile->Set_Is_Left_Edge(true);
+      tile->SetIsLeftEdge(true);
       m_model->Add(tile);
       m_background_tiles.push_back(tile);
       m_left_edge_tiles.push_back(tile);

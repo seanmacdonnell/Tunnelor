@@ -23,10 +23,8 @@ namespace Tunnelour {
 Avatar_Controller_Mutator::Avatar_Controller_Mutator() {
   m_found_game_settings = false;
   m_game_settings = 0;
-  m_found_avatar_component = false;
-  m_avatar_component = 0;
-  m_found_border_tiles = false;
-  m_border_tiles.clear();
+  m_found_floor_tiles = false;
+  m_floor_tiles.clear();
   m_found_world_settings = false;
   m_world_settings = 0;
 }
@@ -35,10 +33,8 @@ Avatar_Controller_Mutator::Avatar_Controller_Mutator() {
 Avatar_Controller_Mutator::~Avatar_Controller_Mutator() {
   m_found_game_settings = false;
   m_game_settings = 0;
-  m_found_avatar_component = false;
-  m_avatar_component = 0;
-  m_found_border_tiles = false;
-  m_border_tiles.clear();
+  m_found_floor_tiles = false;
+  m_floor_tiles.clear();
   m_found_world_settings = false;
   m_world_settings = 0;
 }
@@ -53,9 +49,13 @@ void Avatar_Controller_Mutator::Mutate(Component * const component) {
   } else if (component->GetType().compare("Bitmap_Component") == 0) {
     Tile_Bitmap *tile = 0;
     tile = static_cast<Tile_Bitmap*>(component);
-    if (tile->Is_Platform()) {
-      m_border_tiles.push_back(tile);
-      m_found_border_tiles = true;
+    if (tile->IsFloor()) {
+      m_floor_tiles.push_back(tile);
+      m_found_floor_tiles = true;
+    }
+    if (tile->IsWall()) {
+      m_wall_tiles.push_back(tile);
+      m_found_wall_tiles = true;
     }
   } else if (!m_found_world_settings) {
     if (component->GetType().compare("World_Settings_Component") == 0) {
@@ -66,28 +66,18 @@ void Avatar_Controller_Mutator::Mutate(Component * const component) {
 }
 
 //------------------------------------------------------------------------------
-bool Avatar_Controller_Mutator::FoundGameSettings() {
-  return m_found_game_settings;
-}
-
-//------------------------------------------------------------------------------
 Game_Settings_Component* const Avatar_Controller_Mutator::GetGameSettings() {
   return m_game_settings;
 }
 
 //------------------------------------------------------------------------------
-bool Avatar_Controller_Mutator::FoundBorderTiles() {
-  return m_found_border_tiles;
+std::list<Bitmap_Component*> Avatar_Controller_Mutator::GetFloorTiles() {
+  return m_floor_tiles;
 }
 
 //------------------------------------------------------------------------------
-std::list<Bitmap_Component*> Avatar_Controller_Mutator::GetBorderTiles() {
-  return m_border_tiles;
-}
-
-//------------------------------------------------------------------------------
-bool Avatar_Controller_Mutator::FoundWorldSettings() {
-  return m_found_world_settings;
+std::list<Bitmap_Component*> Avatar_Controller_Mutator::GetWallTiles() {
+  return m_wall_tiles;
 }
 
 //------------------------------------------------------------------------------
@@ -97,9 +87,10 @@ World_Settings_Component* Avatar_Controller_Mutator::GetWorldSettings() {
 
 //------------------------------------------------------------------------------
 bool Avatar_Controller_Mutator::WasSuccessful() {
-  return FoundGameSettings() && 
-         FoundBorderTiles() &&
-         FoundWorldSettings();
+  return m_found_game_settings && 
+         m_found_floor_tiles &&
+         m_found_world_settings &&
+         m_found_wall_tiles;
 }
 
 }  // namespace Tunnelour

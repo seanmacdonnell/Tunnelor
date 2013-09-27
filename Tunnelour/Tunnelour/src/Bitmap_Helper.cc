@@ -93,6 +93,10 @@ bool Bitmap_Helper::DoTheseTilesXCollide(Tunnelour::Bitmap_Component* TileA, Tun
     return true;
   }
 
+  if (b_tile_left == a_tile_left && b_tile_right == a_tile_right) {
+    return true;
+  }
+
   return false;
 }
 
@@ -118,5 +122,36 @@ bool Bitmap_Helper::AreTheseTilesXAdjacent(Tunnelour::Bitmap_Component* TileA, T
 
   return false;
 }
+
+//------------------------------------------------------------------------------
+bool Bitmap_Helper::AreTheseTilesLeftXAdjacent(Tunnelour::Bitmap_Component* TileA, Tunnelour::Bitmap_Component* TileB) {
+  float a_tile_left;
+  a_tile_left = TileA->GetPosition().x - static_cast<float>(TileA->GetSize().x / 2);
+
+  float b_tile_left;
+  b_tile_left = TileB->GetPosition().x - static_cast<float>(TileB->GetSize().x / 2);
+
+  if (b_tile_left == a_tile_left) {
+    return true;
+  }
+
+  return false;
+}
+
+//------------------------------------------------------------------------------
+bool Bitmap_Helper::AreTheseTilesRightXAdjacent(Tunnelour::Bitmap_Component* TileA, Tunnelour::Bitmap_Component* TileB) {
+  float a_tile_right;
+  a_tile_right = TileA->GetPosition().x + static_cast<float>(TileA->GetSize().x / 2);
+
+  float b_tile_right;
+  b_tile_right = TileB->GetPosition().x + static_cast<float>(TileB->GetSize().x / 2);
+
+  if (b_tile_right == a_tile_right) {
+    return true;
+  }
+
+  return false;
+}
+
 
 } // Tunnelour

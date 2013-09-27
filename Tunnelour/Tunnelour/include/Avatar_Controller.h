@@ -98,16 +98,23 @@ class Avatar_Controller: public Controller {
   void RunFallingState(Avatar_Controller_Mutator *mutator);
 
   //---------------------------------------------------------------------------
-  // Description : Returns true if the avatar is standing on a platform
+  // Description : Returns true if the avatar is standing on a floor
   //---------------------------------------------------------------------------
-  bool IsAvatarPlatformAdjacent(Avatar_Controller_Mutator *mutator);
+  bool IsAvatarFloorAdjacent(Avatar_Controller_Mutator *mutator);
 
   //---------------------------------------------------------------------------
-  // Description : Returns true if the avatar is colliding with a platform
+  // Description : Returns true if the avatar is colliding with a floor
   //---------------------------------------------------------------------------
-  bool IsAvatarPlatformColliding(Avatar_Controller_Mutator *mutator,
+  bool IsAvatarFloorColliding(Avatar_Controller_Mutator *mutator,
                                  std::list<Bitmap_Component*> *out_colliding_border_tiles,
                                  Bitmap_Component *out_collision_block);
+
+  //---------------------------------------------------------------------------
+  // Description : Returns true if the avatar is colliding with a floor
+  //---------------------------------------------------------------------------
+  bool IsAvatarWallColliding(Avatar_Controller_Mutator *mutator,
+                             std::list<Bitmap_Component*> *out_colliding_border_tiles,
+                             Bitmap_Component *out_collision_block);
 
   //---------------------------------------------------------------------------
   // Description : Loads all the tile animations into the controller

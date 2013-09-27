@@ -112,6 +112,7 @@ class Middleground_Controller: public Controller {
   std::vector<Tile_Bitmap*> m_right_edge_tiles;
   std::vector<Tile_Bitmap*> m_bottom_edge_tiles;
   std::vector<Tile_Bitmap*> m_top_edge_tiles;
+  std::vector<Tile_Bitmap*> m_tunnel_edge_tiles;
 
   //---------------------------------------------------------------------------
   // Description : Tiles up from the current background edge
