@@ -95,24 +95,32 @@ bool Middleground_Controller::Run() {
   float middleground_bottom = (*m_bottom_edge_tiles.begin())->GetBottomRightPostion().y;
   float middleground_right = (*m_right_edge_tiles.begin())->GetBottomRightPostion().x;
 
-  while (camera_right > middleground_right) {
-    TileRight(camera_right, middleground_right);
-    middleground_right = (*m_right_edge_tiles.begin())->GetBottomRightPostion().x;
+  if (camera_right > middleground_right) {
+    while ((camera_right + (game_resolution.x / 2)) > middleground_right) {
+      TileRight(camera_right, middleground_right);
+      middleground_right = (*m_right_edge_tiles.begin())->GetBottomRightPostion().x;
+    }
   }
   
-  while (camera_left < middleground_left) {
-    TileLeft(camera_left, middleground_left);
-    middleground_left = (*m_left_edge_tiles.begin())->GetTopLeftPostion().x;
+  if (camera_left < middleground_left) {
+    while ((camera_left - (game_resolution.x / 2)) < middleground_left) {
+      TileLeft(camera_left, middleground_left);
+      middleground_left = (*m_left_edge_tiles.begin())->GetTopLeftPostion().x;
+    }
   }
 
-  while (camera_top > middleground_top) {
-    TileUp(camera_top, middleground_top);
-    middleground_top = (*m_top_edge_tiles.begin())->GetTopLeftPostion().y;
+  if (camera_top > middleground_top) {
+    while ((camera_top + (game_resolution.y / 2)) > middleground_top) {
+      TileUp(camera_top, middleground_top);
+      middleground_top = (*m_top_edge_tiles.begin())->GetTopLeftPostion().y;
+    }
   }
 
-  while (camera_bottom < middleground_bottom) {
-    TileDown(camera_bottom, middleground_bottom);
-    middleground_bottom = (*m_bottom_edge_tiles.begin())->GetBottomRightPostion().y;
+  if (camera_bottom < middleground_bottom) {
+    while ((camera_bottom - (game_resolution.y / 2)) < middleground_bottom) {
+      TileDown(camera_bottom, middleground_bottom);
+      middleground_bottom = (*m_bottom_edge_tiles.begin())->GetBottomRightPostion().y;
+    }
   }
 
   if (m_is_debug_mode != m_game_settings->IsDebugMode()) {

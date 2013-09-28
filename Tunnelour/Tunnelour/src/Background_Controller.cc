@@ -107,19 +107,16 @@ bool Background_Controller::Run() {
   camera_right = (camera_position.x + (game_resolution.x / 2));
 
   if (camera_top > m_background_top) {
-    TileUp(camera_top);
+    TileUp(camera_top + (game_resolution.y / 2));
   }
-
-  if (camera_bottom < m_background_bottom) {
-    TileDown(camera_bottom);
+  if  (camera_bottom < m_background_bottom) {
+    TileDown(camera_bottom  - (game_resolution.y / 2));
   }
-
   if (camera_right > m_background_right) {
-    TileRight(camera_right);
+    TileRight(camera_right + (game_resolution.x / 2));
   }
-
-  if (camera_left < m_background_left) {
-    TileLeft(camera_left);
+  if (camera_left > m_background_left) {
+    TileLeft(camera_left - (game_resolution.x / 2));
   }
 
   if (m_is_debug_mode != m_game_settings->IsDebugMode()) {
