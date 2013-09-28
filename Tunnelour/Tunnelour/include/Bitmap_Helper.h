@@ -36,6 +36,8 @@ class Bitmap_Helper {
   //---------------------------------------------------------------------------
   virtual ~Bitmap_Helper();
 
+  static bool DoTheseTilesIntersect(Tunnelour::Bitmap_Component* TileA, Tunnelour::Bitmap_Component* TileB);
+
   //---------------------------------------------------------------------------
   // Description : Returns whether the bounds of one tile intersects or is
   //             : tangent with the other in the Y dimension

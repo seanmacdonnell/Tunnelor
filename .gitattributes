@@ -61,6 +61,8 @@ Tunnelour/Tunnelour/resource/Direct3D11_View_TransparentPixelShader.ps -text
 Tunnelour/Tunnelour/resource/Direct3D11_View_TransparentVertexShader.vs -text
 Tunnelour/Tunnelour/resource/levels/Level_0.csv -text
 Tunnelour/Tunnelour/resource/levels/Level_0.txt -text
+Tunnelour/Tunnelour/resource/levels/Level_0_2.csv -text
+Tunnelour/Tunnelour/resource/levels/Level_0_2.txt -text
 Tunnelour/Tunnelour/resource/tilesets/Ariel.fnt -text
 Tunnelour/Tunnelour/resource/tilesets/Ariel_0.png -text
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Falling_Animation_Tileset_1_1.png -text

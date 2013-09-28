@@ -120,11 +120,9 @@ void Avatar_Controller::RunStandingState(Avatar_Controller_Mutator *mutator) {
 
   if (current_command.state.compare("") != 0) {
     ChangeAvatarState(current_command.state, current_command.direction);
-    Avatar_Component::Avatar_State cleared_state;
-    cleared_state.state = "";
-    cleared_state.direction = "";
-    cleared_state.state_index = 0;
-    m_avatar->SetCommand(cleared_state);
+    if (current_command.state.compare("Walking") == 0) {
+      RunWalkingState(mutator);
+    }
   } else {
     unsigned int state_index = current_state.state_index;
     state_index++;
@@ -199,15 +197,23 @@ void Avatar_Controller::RunWalkingState(Avatar_Controller_Mutator *mutator) {
 
   // Detect if the avatar is intersecting with a wall
   std::list<Bitmap_Component*> *out_colliding_border_tiles = new std::list<Bitmap_Component*>();
-  if (IsAvatarWallColliding(mutator, out_colliding_border_tiles, &CollisionBlockToBitmapComponent(GetLowestCollisionBlock()))) {
+  if (IsAvatarWallColliding(mutator, out_colliding_border_tiles, &CollisionBlockToBitmapComponent(GetNamedCollisionBlock("Avatar", m_avatar->GetState().collision_blocks)))) {
+    ChangeAvatarState("Standing", m_avatar->GetState().direction);
     // Move back avatar
     if (m_avatar->GetState().direction.compare("Left") == 0) {
       D3DXVECTOR3 tile_position = (*out_colliding_border_tiles->begin())->GetBottomRightPostion();
       D3DXVECTOR3 avatar_position = m_avatar->GetPosition();
-      avatar_position += m_avatar->GetVelocity();
+      float foot_x_offset = GetLowestCollisionBlock().offset_from_avatar_centre.x + (GetNamedCollisionBlock("Avatar", m_avatar->GetState().collision_blocks).size.x / 2);
+      avatar_position.x = tile_position.x + foot_x_offset;
       m_avatar->SetPosition(avatar_position);
     }
-    ChangeAvatarState("Standing", m_avatar->GetState().direction);
+    if (m_avatar->GetState().direction.compare("Right") == 0) {
+      D3DXVECTOR3 tile_position = (*out_colliding_border_tiles->begin())->GetTopLeftPostion();
+      D3DXVECTOR3 avatar_position = m_avatar->GetPosition();
+      float foot_x_offset = GetLowestCollisionBlock().offset_from_avatar_centre.x + (GetNamedCollisionBlock("Avatar", m_avatar->GetState().collision_blocks).size.x / 2);
+      avatar_position.x = tile_position.x + (foot_x_offset * -1);
+      m_avatar->SetPosition(avatar_position);
+    }
   }
 
   // Detect if the avatar is overbalancing from walking
@@ -393,10 +399,8 @@ bool Avatar_Controller::IsAvatarWallColliding(Avatar_Controller_Mutator *mutator
     std::list<Bitmap_Component*> border_tiles = mutator->GetWallTiles();
     std::list<Bitmap_Component*>::iterator border_tile;
     for (border_tile = border_tiles.begin(); border_tile != border_tiles.end(); border_tile++) {
-      if (Bitmap_Helper::DoTheseTilesXCollide(*border_tile, out_collision_block)) {
-        if (Bitmap_Helper::DoTheseTilesYCollide(*border_tile, out_collision_block)) {
-          out_colliding_border_tiles->push_back(*border_tile);
-        }
+      if (Bitmap_Helper::DoTheseTilesIntersect(*border_tile, out_collision_block)) {
+        out_colliding_border_tiles->push_back(*border_tile);
       }
     }
 

@@ -28,6 +28,15 @@ Bitmap_Helper::~Bitmap_Helper() {
 }
 
 //------------------------------------------------------------------------------
+bool Bitmap_Helper::DoTheseTilesIntersect(Tunnelour::Bitmap_Component* TileA, Tunnelour::Bitmap_Component* TileB) {
+  if (DoTheseTilesYCollide(TileA, TileB) && DoTheseTilesXCollide(TileA, TileB)) {
+    return true;
+  }
+
+  return false;
+}
+
+//------------------------------------------------------------------------------
 bool Bitmap_Helper::DoTheseTilesYCollide(Tunnelour::Bitmap_Component* TileA, Tunnelour::Bitmap_Component* TileB) {
   // At least one vertex in TileA is contained in the TileB.
 

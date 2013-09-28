@@ -81,37 +81,38 @@ bool Middleground_Controller::Run() {
   // Get game settings component from the model with the Mutator.
   if (!m_has_been_initialised) { return false; }
 
-  float camera_top, camera_bottom, camera_left, camera_right;
-
   // If Camera is over an area with no tiles
   D3DXVECTOR2 game_resolution = m_game_settings->GetResolution();
   D3DXVECTOR3 camera_position = m_camera->GetPosition();
 
-  camera_top = (camera_position.y + (game_resolution.y / 2));
-  camera_bottom = (camera_position.y - (game_resolution.y / 2));
-  camera_left = (camera_position.x - (game_resolution.x / 2));
-  camera_right = (camera_position.x + (game_resolution.x / 2));
+  float camera_top = (camera_position.y + (game_resolution.y / 2));
+  float camera_bottom = (camera_position.y - (game_resolution.y / 2));
+  float camera_left = (camera_position.x - (game_resolution.x / 2));
+  float camera_right = (camera_position.x + (game_resolution.x / 2));
 
-  float middleground_top, middleground_bottom, middleground_left, middleground_right;
-  middleground_top = (*m_top_edge_tiles.begin())->GetTopLeftPostion().y;
-  middleground_left = (*m_left_edge_tiles.begin())->GetTopLeftPostion().x;
-  middleground_bottom = (*m_bottom_edge_tiles.begin())->GetBottomRightPostion().y;
-  middleground_right = (*m_right_edge_tiles.begin())->GetBottomRightPostion().x;
+  float middleground_top = (*m_top_edge_tiles.begin())->GetTopLeftPostion().y;
+  float middleground_left = (*m_left_edge_tiles.begin())->GetTopLeftPostion().x;
+  float middleground_bottom = (*m_bottom_edge_tiles.begin())->GetBottomRightPostion().y;
+  float middleground_right = (*m_right_edge_tiles.begin())->GetBottomRightPostion().x;
 
-  if (camera_top < middleground_top) {
-    TileUp(camera_top, middleground_top);
-  }
-
-  if (camera_bottom > middleground_bottom) {
-    TileDown(camera_bottom, middleground_bottom);
-  }
-      
-  if (camera_right > middleground_right) {
+  while (camera_right > middleground_right) {
     TileRight(camera_right, middleground_right);
+    middleground_right = (*m_right_edge_tiles.begin())->GetBottomRightPostion().x;
+  }
+  
+  while (camera_left < middleground_left) {
+    TileLeft(camera_left, middleground_left);
+    middleground_left = (*m_left_edge_tiles.begin())->GetTopLeftPostion().x;
   }
 
-  if (camera_left < middleground_left) {
-    TileLeft(camera_left, middleground_left);
+  while (camera_top > middleground_top) {
+    TileUp(camera_top, middleground_top);
+    middleground_top = (*m_top_edge_tiles.begin())->GetTopLeftPostion().y;
+  }
+
+  while (camera_bottom < middleground_bottom) {
+    TileDown(camera_bottom, middleground_bottom);
+    middleground_bottom = (*m_bottom_edge_tiles.begin())->GetBottomRightPostion().y;
   }
 
   if (m_is_debug_mode != m_game_settings->IsDebugMode()) {
@@ -576,7 +577,6 @@ void Middleground_Controller::SwitchTileset() {
 
 //---------------------------------------------------------------------------
 void Middleground_Controller::TileUp(float camera_top, float middleground_top) {
-  unsigned int number_of_x_tiles = m_top_edge_tiles.size();
   std::vector<Tile_Bitmap*> new_top_tiles;
 
   std::vector<Tile_Bitmap*>::iterator edge_tile;
@@ -596,6 +596,15 @@ void Middleground_Controller::TileUp(float camera_top, float middleground_top) {
     new_top_tiles.push_back(tile);
 
     (*edge_tile)->SetIsTopEdge(false);
+    if (tile->IsBottomEdge()) {
+      m_bottom_edge_tiles.push_back(tile);
+    }
+    if (tile->IsRightEdge()) {
+      m_right_edge_tiles.push_back(tile);
+    }
+    if (tile->IsLeftEdge()) {
+      m_left_edge_tiles.push_back(tile);
+    }
     if (m_is_debug_mode) {
       ResetTileTexture((*edge_tile));
       ResetTileTexture(tile);
@@ -608,7 +617,6 @@ void Middleground_Controller::TileUp(float camera_top, float middleground_top) {
 
 //---------------------------------------------------------------------------
 void Middleground_Controller::TileDown(float camera_bottom, float middleground_bottom) {
-  unsigned int number_of_x_tiles = m_bottom_edge_tiles.size();
   std::vector<Tile_Bitmap*> new_bottom_tiles;
 
   std::vector<Tile_Bitmap*>::iterator edge_tile;
@@ -616,7 +624,7 @@ void Middleground_Controller::TileDown(float camera_bottom, float middleground_b
     Tile_Bitmap* tile = CreateTile(128);
     D3DXVECTOR3 position;
     position.x = (*edge_tile)->GetPosition().x;
-    position.y = (*edge_tile)->GetPosition().y + tile->GetSize().y;
+    position.y = (*edge_tile)->GetPosition().y - tile->GetSize().y;
     position.z = -1.0; // Middleground Z Space is -1
     tile->SetPosition(position);
     tile->SetIsTopEdge((*edge_tile)->IsTopEdge());
@@ -628,6 +636,15 @@ void Middleground_Controller::TileDown(float camera_bottom, float middleground_b
     new_bottom_tiles.push_back(tile);
 
     (*edge_tile)->SetIsBottomEdge(false);
+    if (tile->IsTopEdge()) {
+      m_top_edge_tiles.push_back(tile);
+    }
+    if (tile->IsRightEdge()) {
+      m_right_edge_tiles.push_back(tile);
+    }
+    if (tile->IsLeftEdge()) {
+      m_left_edge_tiles.push_back(tile);
+    }
     if (m_is_debug_mode) {
       ResetTileTexture((*edge_tile));
       ResetTileTexture(tile);
@@ -635,12 +652,11 @@ void Middleground_Controller::TileDown(float camera_bottom, float middleground_b
   }
   m_bottom_edge_tiles.clear();
 
-  m_top_edge_tiles = new_bottom_tiles;
+  m_bottom_edge_tiles = new_bottom_tiles;
 }
 
 //---------------------------------------------------------------------------
 void Middleground_Controller::TileRight(float camera_right, float middleground_right) {
-  unsigned int number_of_x_tiles = m_right_edge_tiles.size();
   std::vector<Tile_Bitmap*> new_right_edge_tiles;
 
   std::vector<Tile_Bitmap*>::iterator edge_tile;
@@ -660,6 +676,15 @@ void Middleground_Controller::TileRight(float camera_right, float middleground_r
     new_right_edge_tiles.push_back(tile);
 
     (*edge_tile)->SetIsRightEdge(false);
+    if (tile->IsTopEdge()) {
+      m_top_edge_tiles.push_back(tile);
+    }
+    if (tile->IsBottomEdge()) {
+      m_bottom_edge_tiles.push_back(tile);
+    }
+    if (tile->IsLeftEdge()) {
+      m_left_edge_tiles.push_back(tile);
+    }
     if (m_is_debug_mode) {
       ResetTileTexture((*edge_tile));
       ResetTileTexture(tile);
@@ -672,7 +697,6 @@ void Middleground_Controller::TileRight(float camera_right, float middleground_r
 
 //---------------------------------------------------------------------------
 void Middleground_Controller::TileLeft(float camera_left, float middleground_left) {
-  unsigned int number_of_x_tiles = m_left_edge_tiles.size();
   std::vector<Tile_Bitmap*> new_left_edge_tiles;
 
   std::vector<Tile_Bitmap*>::iterator edge_tile;
@@ -692,6 +716,15 @@ void Middleground_Controller::TileLeft(float camera_left, float middleground_lef
     new_left_edge_tiles.push_back(tile);
 
     (*edge_tile)->SetIsLeftEdge(false);
+    if (tile->IsTopEdge()) {
+      m_top_edge_tiles.push_back(tile);
+    }
+    if (tile->IsBottomEdge()) {
+      m_bottom_edge_tiles.push_back(tile);
+    }
+    if (tile->IsRightEdge()) {
+      m_right_edge_tiles.push_back(tile);
+    }
     if (m_is_debug_mode) {
       ResetTileTexture((*edge_tile));
       ResetTileTexture(tile);
