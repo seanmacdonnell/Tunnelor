@@ -130,6 +130,8 @@ class Avatar_Controller: public Controller {
   void AlignAvatarOnAvatarCollisionBlock();
 
   void MoveAvatarWallAdjacent(Avatar_Controller_Mutator *mutator, std::string direction);
+
+  void MoveAvatarFloorAdjacent(Avatar_Controller_Mutator *mutator);
   //---------------------------------------------------------------------------
   // Description : Initialises the timer used for the animation ticks
   //---------------------------------------------------------------------------
