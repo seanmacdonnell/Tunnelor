@@ -56,6 +56,10 @@ bool Bitmap_Helper::DoTheseTilesYCollide(Tunnelour::Bitmap_Component* TileA, Tun
     return true;
   }
 
+  if (a_tile_top == b_tile_top  && a_tile_bottom == a_tile_bottom) {
+    return true;
+  }
+
   return false;
 }
 
@@ -64,12 +68,12 @@ bool Bitmap_Helper::AreTheseTilesYAdjacent(Tunnelour::Bitmap_Component* TileA, T
   // At least one vertex in TileA is contained in the TileB.
 
   float a_tile_top, a_tile_bottom;
-  a_tile_top = TileA->GetPosition().y + static_cast<float>(TileA->GetSize().y / 2);
-  a_tile_bottom = TileA->GetPosition().y - static_cast<float>(TileA->GetSize().y / 2);
+  a_tile_top = TileA->GetTopLeftPostion().y;
+  a_tile_bottom = TileA->GetBottomRightPostion().y;
 
   float b_tile_top, b_tile_bottom;
-  b_tile_top = TileB->GetPosition().y + static_cast<float>(TileB->GetSize().y / 2);
-  b_tile_bottom = TileB->GetPosition().y - static_cast<float>(TileB->GetSize().y / 2);
+  b_tile_top = TileB->GetTopLeftPostion().y;
+  b_tile_bottom = TileB->GetBottomRightPostion().y;
 
   if (b_tile_top == a_tile_top  || b_tile_top == a_tile_bottom) {
     return true;

@@ -151,9 +151,9 @@ void Middleground_Controller::CreateLevel() {
 //---------------------------------------------------------------------------
 void Middleground_Controller::LoadLevelMetadata() {
   Level_Metadata level_0_metadata;
-  std::string level_0_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_0.txt");
+  std::string level_0_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_0_2_2.txt");
   level_0_metadata = LoadLevelMetadataIntoStruct(level_0_metadata_file_path);
-  std::string level_0_csv_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_0.csv");
+  std::string level_0_csv_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_0_2_2.csv");
   LoadLevelCSVIntoStruct(level_0_csv_file_path, &level_0_metadata);
   m_level_metadata.push_back(level_0_metadata);
 }

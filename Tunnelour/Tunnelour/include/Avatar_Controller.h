@@ -106,14 +106,14 @@ class Avatar_Controller: public Controller {
   // Description : Returns true if the avatar is colliding with a floor
   //---------------------------------------------------------------------------
   bool IsAvatarFloorColliding(Avatar_Controller_Mutator *mutator,
-                                 std::list<Bitmap_Component*> *out_colliding_border_tiles,
+                                 std::list<Bitmap_Component*> *out_colliding_floor_tiles,
                                  Bitmap_Component *out_collision_block);
 
   //---------------------------------------------------------------------------
   // Description : Returns true if the avatar is colliding with a floor
   //---------------------------------------------------------------------------
   bool IsAvatarWallColliding(Avatar_Controller_Mutator *mutator,
-                             std::list<Bitmap_Component*> *out_colliding_border_tiles,
+                             std::list<Bitmap_Component*> *out_colliding_floor_tiles,
                              Bitmap_Component *out_collision_block);
 
   //---------------------------------------------------------------------------
@@ -125,8 +125,11 @@ class Avatar_Controller: public Controller {
   // Description : Syncs the avatar tile position with the right foot position
   //             : of the last avatar animation frame.
   //---------------------------------------------------------------------------
-  D3DXVECTOR3 AlignAvatarOnRightFoot(Avatar_Controller_Mutator *mutator);
+  void AlignAvatarOnRightFoot();
 
+  void AlignAvatarOnAvatarCollisionBlock();
+
+  void MoveAvatarWallAdjacent(Avatar_Controller_Mutator *mutator, std::string direction);
   //---------------------------------------------------------------------------
   // Description : Initialises the timer used for the animation ticks
   //---------------------------------------------------------------------------
@@ -153,10 +156,15 @@ class Avatar_Controller: public Controller {
   Avatar_Component::Collision_Block GetLowestCollisionBlock();
 
   //---------------------------------------------------------------------------
+  // Description : Returns the lowest and most towards the direction 
+  //             : collision block on the avatar
+  //---------------------------------------------------------------------------
+  Avatar_Component::Collision_Block GetLowestMostForwardFootCollisionBlock(std::string direction);
+
+  //---------------------------------------------------------------------------
   // Description : Creates a Bitmap Component using the given collision block
   //---------------------------------------------------------------------------
   Bitmap_Component CollisionBlockToBitmapComponent(Avatar_Component::Collision_Block collision_block);
-
 
   //---------------------------------------------------------------------------
   // Description : Creates a Bitmap Component using the given collision block
