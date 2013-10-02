@@ -126,6 +126,7 @@ class Avatar_Controller: public Controller {
   //             : of the last avatar animation frame.
   //---------------------------------------------------------------------------
   void AlignAvatarOnRightFoot();
+  void AlignAvatarOnLeftFoot();
 
   void AlignAvatarOnAvatarCollisionBlock();
 
