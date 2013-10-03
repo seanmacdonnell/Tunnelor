@@ -23,6 +23,8 @@
 #include "Game_Metrics_Component.h"
 #include "Camera_Component.h"
 #include "Debug_Data_Display_Controller_Mutator.h"
+#include "Tileset_Helper.h"
+#include "Tile_Bitmap.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -99,6 +101,9 @@ class Debug_Data_Display_Controller: public Controller {
   std::string m_font_path;
   long double m_fps;
   bool m_is_debug_mode;
+  Tileset_Helper::Tileset_Metadata m_debug_tileset_metadata;
+  std::string m_debug_metadata_file_path;
+  std::list<Tile_Bitmap*> m_collision_bitmaps;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_DEBUG_DATA_DISPLAY_CONTROLLER_H_

@@ -20,6 +20,7 @@
 #include "Game_Settings_Component.h"
 #include "Avatar_Component.h"
 #include "Camera_Component.h"
+#include "Bitmap_Component.h"
 
 namespace Tunnelour {
 class Debug_Data_Display_Controller_Mutator: public Component::Component_Mutator  {
@@ -69,6 +70,7 @@ class Debug_Data_Display_Controller_Mutator: public Component::Component_Mutator
   Game_Settings_Component *m_game_settings;
   Avatar_Component *m_avatar_component;
   Camera_Component * m_camera;
+  std::list<Bitmap_Component*> m_collision_blocks;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_DEBUG_DATA_DISPLAY_CONTROLLER_MUTATOR_H_

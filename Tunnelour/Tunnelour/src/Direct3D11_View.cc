@@ -932,19 +932,20 @@ void Direct3D11_View::Render_Bitmap(Bitmap_Component* bitmap,
   D3DXMATRIX MeshMatrix;
   D3DXMatrixIdentity(&MeshMatrix);
 
-  // Translate
-  D3DXMatrixTranslation(&TranslateMatrix,
-                        bitmap->GetPosition().x,
-                        bitmap->GetPosition().y,
-                        bitmap->GetPosition().z);
-
   // Scale
   D3DXMatrixScaling(&ScaleMatrix,
                     bitmap->GetScale()->x,
                     bitmap->GetScale()->y,
                     bitmap->GetScale()->z);
 
-  m_world = ((OffsetMatrix) * TranslateMatrix) * ScaleMatrix;
+  // Translate
+  D3DXMatrixTranslation(&TranslateMatrix,
+                        bitmap->GetPosition().x,
+                        bitmap->GetPosition().y,
+                        bitmap->GetPosition().z);
+
+
+  m_world = OffsetMatrix * ScaleMatrix * TranslateMatrix;
 
   ID3D11Buffer *vertexbuffer = bitmap->GetFrame()->vertex_buffer;
   ID3D11Buffer *indexbuffer = bitmap->GetFrame()->index_buffer;

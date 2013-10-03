@@ -16,6 +16,8 @@
 #include "Debug_Data_Display_Controller.h"
 #include "Debug_Data_Display_Controller_Mutator.h"
 #include "Exceptions.h"
+#include "Bitmap_Helper.h"
+#include "String_Helper.h"
 
 namespace Tunnelour {
 
@@ -61,6 +63,11 @@ bool Debug_Data_Display_Controller::Init(Component_Composite * const model) {
     m_has_been_initialised = true;
     m_game_metrics = new Game_Metrics_Component();
     m_model->Add(m_game_metrics);
+    // Create Collision Blocks For Avatar
+    
+    m_debug_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Debug_Tileset_0_4.txt");
+    Tileset_Helper::LoadTilesetMetadataIntoStruct(m_debug_metadata_file_path, &m_debug_tileset_metadata);
+
   } else {
     return false;
   }
@@ -82,17 +89,47 @@ bool Debug_Data_Display_Controller::Run() {
     if (m_avatar_position_display == 0) {
       CreateAvatarPositionDisplay();
     }
+    
+    if (!m_avatar->GetState().collision_blocks.empty()) {
+      std::list<Tile_Bitmap*>::iterator collision_bitmap;
+      for (collision_bitmap = m_collision_bitmaps.begin(); collision_bitmap != m_collision_bitmaps.end(); collision_bitmap++) {
+        m_model->Remove((*collision_bitmap));
+      }
+      m_collision_bitmaps.clear();
+
+      std::list<Avatar_Component::Collision_Block>::iterator collision_block;
+      std::list<Avatar_Component::Collision_Block> collision_blocks = m_avatar->GetState().collision_blocks;
+      for (collision_block = collision_blocks.begin(); collision_block != collision_blocks.end(); collision_block++) {
+        Tile_Bitmap *collision_block_bitmap = Bitmap_Helper::CollisionBlockToBitmapComponent((*collision_block), m_avatar, m_debug_tileset_metadata, m_game_settings->GetTilesetPath());
+        m_collision_bitmaps.push_back(collision_block_bitmap);
+        m_model->Add(collision_block_bitmap);
+        if (m_is_debug_mode) {
+          collision_block_bitmap->GetTexture()->transparency = 1.0f;
+        }
+      }
+    }
 
     if (m_is_debug_mode !=  m_game_settings->IsDebugMode()) {
       if (!m_game_settings->IsDebugMode()) {
         m_heading->GetTexture()->transparency = 0.0f;
         m_fps_display->GetTexture()->transparency = 0.0f;
         m_avatar_position_display->GetTexture()->transparency = 0.0f;
+        std::list<Tile_Bitmap*>::iterator collision_bitmap;
+        for (collision_bitmap = m_collision_bitmaps.begin(); collision_bitmap != m_collision_bitmaps.end(); collision_bitmap++) {
+          (*collision_bitmap)->GetTexture()->transparency = 0.0f;
+          (*collision_bitmap)->Init();
+        }
         m_is_debug_mode = m_game_settings->IsDebugMode();
+
       } else {
         m_heading->GetTexture()->transparency = 1.0f;
         m_fps_display->GetTexture()->transparency = 1.0f;
         m_avatar_position_display->GetTexture()->transparency = 1.0f;
+        std::list<Tile_Bitmap*>::iterator collision_bitmap;
+        for (collision_bitmap = m_collision_bitmaps.begin(); collision_bitmap != m_collision_bitmaps.end(); collision_bitmap++) {
+          (*collision_bitmap)->GetTexture()->transparency = 1.0f;
+          (*collision_bitmap)->Init();
+        }
         m_is_debug_mode = m_game_settings->IsDebugMode();
       }
     }

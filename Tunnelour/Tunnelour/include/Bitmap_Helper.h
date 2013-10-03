@@ -17,6 +17,9 @@
 #define TUNNELOUR_BITMAP_HELPER_H_
 
 #include "Bitmap_Component.h"
+#include "Avatar_Component.h"
+#include "Tileset_Helper.h"
+#include "Tile_Bitmap.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -73,6 +76,12 @@ class Bitmap_Helper {
   //             : the other in the X dimension but only on the Right side
   //---------------------------------------------------------------------------
   static bool AreTheseTilesRightXAdjacent(Tunnelour::Bitmap_Component* TileA, Tunnelour::Bitmap_Component* TileB);
+
+  //---------------------------------------------------------------------------
+  // Description : Creates a bitmap component of the given avatar collision
+  //             : block.
+  //---------------------------------------------------------------------------
+  static Tile_Bitmap* CollisionBlockToBitmapComponent(Avatar_Component::Collision_Block collision_block, Bitmap_Component *avatar, Tileset_Helper::Tileset_Metadata tileset_metadata, std::wstring tileset_path);
 
  protected:
 
