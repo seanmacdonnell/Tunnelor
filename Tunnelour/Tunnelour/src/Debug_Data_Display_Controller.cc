@@ -65,7 +65,7 @@ bool Debug_Data_Display_Controller::Init(Component_Composite * const model) {
     m_model->Add(m_game_metrics);
     // Create Collision Blocks For Avatar
     
-    m_debug_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Debug_Tileset_0_4.txt");
+    m_debug_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Debug_Tileset_0_5.txt");
     Tileset_Helper::LoadTilesetMetadataIntoStruct(m_debug_metadata_file_path, &m_debug_tileset_metadata);
 
   } else {
@@ -89,7 +89,7 @@ bool Debug_Data_Display_Controller::Run() {
     if (m_avatar_position_display == 0) {
       CreateAvatarPositionDisplay();
     }
-    
+
     if (!m_avatar->GetState().collision_blocks.empty()) {
       std::list<Tile_Bitmap*>::iterator collision_bitmap;
       for (collision_bitmap = m_collision_bitmaps.begin(); collision_bitmap != m_collision_bitmaps.end(); collision_bitmap++) {

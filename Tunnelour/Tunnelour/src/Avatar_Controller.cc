@@ -90,7 +90,7 @@ void Avatar_Controller::GenerateAvatarTile() {
   Avatar_Component::Avatar_State initial_state;
   initial_state.direction = "Right";
   m_avatar->SetState(initial_state);
-  m_avatar->SetPosition(D3DXVECTOR3(320, -704, -2));  // Middleground Z Space is -1
+  m_avatar->SetPosition(D3DXVECTOR3(192, -448, -2));  // Middleground Z Space is -1
   ChangeAvatarState("Standing", initial_state.direction);
 }
 
@@ -890,11 +890,9 @@ Avatar_Component::Collision_Block Avatar_Controller::TilesetCollisionBlockToAvat
     if (new_collision_block.id.compare("Left_Foot") == 0) {
       new_collision_block.id = "Right_Foot";
       new_collision_block.offset_from_avatar_centre.x = (new_collision_block.offset_from_avatar_centre.x * -1);
-      new_collision_block.offset_from_avatar_centre.x =+ new_collision_block.size.x;
     } else if (new_collision_block.id.compare("Right_Foot") == 0) {
       new_collision_block.id = "Left_Foot";
       new_collision_block.offset_from_avatar_centre.x = (new_collision_block.offset_from_avatar_centre.x * -1);
-      new_collision_block.offset_from_avatar_centre.x =+ new_collision_block.size.x;
     }
   }
 

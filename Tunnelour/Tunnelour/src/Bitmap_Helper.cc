@@ -173,13 +173,6 @@ Tile_Bitmap* Bitmap_Helper::CollisionBlockToBitmapComponent(Avatar_Component::Co
 
   Tileset_Helper::Line middleground_line = (*debug_tileset_metadata.tilesets.begin()->lines.begin());
 
-  D3DXVECTOR3 collision_bitmap_position;
-  collision_bitmap_position.x = avatar->GetPosition().x + collision_block.offset_from_avatar_centre.x;
-  collision_bitmap_position.y = avatar->GetPosition().y + collision_block.offset_from_avatar_centre.y;
-  collision_bitmap_position.z = -4.0;
-
-  collision_bitmap->SetPosition(collision_bitmap_position);
-
   collision_bitmap->GetTexture()->transparency = 0.0f;
 
   std::wstring texture_path = tileset_path;
@@ -190,12 +183,29 @@ Tile_Bitmap* Bitmap_Helper::CollisionBlockToBitmapComponent(Avatar_Component::Co
   collision_bitmap->GetTexture()->tile_size = D3DXVECTOR2(middleground_line.tile_size_x,
                                                           middleground_line.tile_size_y);
 
+  D3DXVECTOR3 collision_bitmap_position;
+  collision_bitmap_position.x = avatar->GetPosition().x + collision_block.offset_from_avatar_centre.x;
+  collision_bitmap_position.y = avatar->GetPosition().y + collision_block.offset_from_avatar_centre.y;
+  
   float random_line_tile = 0;
-  if (collision_block.is_contacting) {
-    random_line_tile = 1;
-  } else {
-    random_line_tile = 0;
+  if (collision_block.id.compare("Left_Foot") == 0) {
+    random_line_tile = 2;
+    collision_bitmap_position.z = -3.0;
   }
+  if (collision_block.id.compare("Right_Foot") == 0) {
+    random_line_tile = 3;
+    collision_bitmap_position.z = -3.0;
+  }
+  if (collision_block.id.compare("Avatar") == 0) {
+    if (collision_block.is_contacting) {
+      random_line_tile = 1;
+    } else {
+      random_line_tile = 0;
+    }
+    collision_bitmap_position.z = -1.0;
+  }
+
+  collision_bitmap->SetPosition(collision_bitmap_position);
 
   float random_tile_x = random_line_tile * middleground_line.tile_size_x;
   random_tile_x += middleground_line.top_left_x;
