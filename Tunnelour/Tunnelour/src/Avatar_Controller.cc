@@ -158,6 +158,7 @@ void Avatar_Controller::RunWalkingState(Avatar_Controller_Mutator *mutator) {
         current_state.direction != current_command.direction) {
       // New State
       ChangeAvatarState(current_command.state, current_command.direction);
+      AlignAvatarOnAvatarCollisionBlock();
     } else {
       // Continue State
       unsigned int state_index = current_state.state_index;
