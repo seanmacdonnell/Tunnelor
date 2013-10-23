@@ -61,12 +61,36 @@ bool Camera_Controller::Run() {
     // Currently the camera is locked to the avatar.
     D3DXVECTOR3 avatar_position = m_avatar->GetPosition();
     D3DXVECTOR3 camera_position = m_camera->GetPosition();
+
+    // Get the avatar collision block
+    Avatar_Component::Collision_Block collision_block = GetNamedCollisionBlock("Avatar", m_avatar->GetState().collision_blocks);
+
+    avatar_position.x = m_avatar->GetPosition().x + collision_block.offset_from_avatar_centre.x;
+    avatar_position.y = m_avatar->GetPosition().y + collision_block.offset_from_avatar_centre.y;
+    avatar_position.z = m_avatar->GetPosition().z;
+
     camera_position.x = avatar_position.x;
-    camera_position.y = avatar_position.y;
+    camera_position.y = avatar_position.y - (collision_block.size.y / 2);
 
     m_camera->SetPosition(camera_position);
   }
   return true;
+}
+
+//---------------------------------------------------------------------------
+Avatar_Component::Collision_Block Camera_Controller::GetNamedCollisionBlock(std::string id, std::list<Avatar_Component::Collision_Block> collision_blocks) {
+  Avatar_Component::Collision_Block found_collision_block;
+
+  Avatar_Component::Collision_Block* current_right_foot_collision_block = 0;
+
+  std::list<Avatar_Component::Collision_Block>::iterator collision_block;
+  for (collision_block = collision_blocks.begin(); collision_block != collision_blocks.end(); collision_block++) {
+    if (collision_block->id.compare(id) == 0) {
+      found_collision_block = (*collision_block);
+    }
+  }
+
+  return found_collision_block;
 }
 
 //------------------------------------------------------------------------------
