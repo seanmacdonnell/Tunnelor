@@ -18,6 +18,7 @@
 
 #include "Component.h"
 #include <list>
+#include <utility>
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -28,6 +29,19 @@ namespace Tunnelour {
 //-----------------------------------------------------------------------------
 class Component_Composite: public Component {
  public:
+  //---------------------------------------------------------------------------
+  // Author(s)   : Sean MacDonnell
+  // Description : Inheritable Observer class for this component.
+  //---------------------------------------------------------------------------
+  class Component_Composite_Type_Observer {
+   public:
+    //-------------------------------------------------------------------------
+    // Description : HandleEvent is called when the component changes.
+    //-------------------------------------------------------------------------
+    virtual void HandleEventAdd(Tunnelour::Component * const component) = 0;
+    virtual void HandleEventRemove(Tunnelour::Component * const component) = 0;
+  };
+
   //---------------------------------------------------------------------------
   // Description : Constructor
   //---------------------------------------------------------------------------
@@ -58,13 +72,31 @@ class Component_Composite: public Component {
   //---------------------------------------------------------------------------
   void Apply(Tunnelour::Component::Component_Mutator * const mutator);
 
+  //---------------------------------------------------------------------------
+  // Description : Observe this component
+  //---------------------------------------------------------------------------
+  void ObserveType(Component_Composite_Type_Observer* component_observer, std::string type);
+
+  //---------------------------------------------------------------------------
+  // Description : Stop observing this component
+  //---------------------------------------------------------------------------
+  void IgnoreType(Component_Composite_Type_Observer* component_observer, std::string type);
+
  protected:
   //---------------------------------------------------------------------------
   // Description : Component Storage
   //---------------------------------------------------------------------------
   std::list<Tunnelour::Component*> m_components;
 
+  //---------------------------------------------------------------------------
+  // Description : Notify all observers
+  //---------------------------------------------------------------------------
+  void NotifyOnAddType(Tunnelour::Component * component);
+  void NotifyOnRemoveType(Tunnelour::Component * component);
+
  private:
+  std::list<std::pair<std::string, Component_Composite_Type_Observer*>> m_type_observers;
+
 };
 }
 #endif  // TUNNELOUR_COMPONENT_COMPOSITE_H_

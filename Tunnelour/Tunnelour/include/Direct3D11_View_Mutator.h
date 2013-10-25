@@ -26,7 +26,7 @@
 #include "Game_Metrics_Component.h"
 
 namespace Tunnelour {
-class Direct3D11_View_Mutator: public Tunnelour::Component::Component_Mutator  {
+class Direct3D11_View_Mutator: public Tunnelour::Component::Component_Mutator {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
 //  Description : Direct3D11_View_Mutator is a mutator run on the model

@@ -72,7 +72,7 @@ void Component::SetType(std::string const type) {
 // private:
 //------------------------------------------------------------------------------
 void Component::Notify() {
-  for each( Component_Observer* observer in m_observers ) {
+  for each(Component_Observer* observer in m_observers) {
     observer->HandleEvent(this);
   }
 }

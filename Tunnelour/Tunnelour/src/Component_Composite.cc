@@ -38,12 +38,14 @@ void Component_Composite::Init() {
 //------------------------------------------------------------------------------
 Tunnelour::Component * const Component_Composite::Add(Tunnelour::Component * component) {
   m_components.push_back(component);
+  NotifyOnAddType(component);
   return m_components.back();
 }
 
 //------------------------------------------------------------------------------
 void Component_Composite::Remove(Tunnelour::Component * component) {
   m_components.remove(component);
+  NotifyOnRemoveType(component);
   delete component;
 }
 
@@ -58,11 +60,37 @@ void Component_Composite::Apply(Tunnelour::Component::Component_Mutator * const 
 }
 
 //------------------------------------------------------------------------------
+void Component_Composite::ObserveType(Component_Composite_Type_Observer* component_observer, std::string type) {
+  m_type_observers.push_back(std::pair<std::string, Component_Composite_Type_Observer*>(type, component_observer));
+}
+//------------------------------------------------------------------------------
+void Component_Composite::IgnoreType(Component_Composite_Type_Observer* component_observer, std::string type) {
+  m_type_observers.remove(std::pair<std::string, Component_Composite_Type_Observer*>(type, component_observer)); 
+}
+
+//------------------------------------------------------------------------------
 // protected:
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 // private:
 //------------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------
+void Component_Composite::NotifyOnAddType(Tunnelour::Component * component) {
+  for each(std::pair<std::string, Component_Composite_Type_Observer*> observer in m_type_observers) {
+    if (observer.first.compare(component->GetType()) == 0) {
+      observer.second->HandleEventAdd(component);
+    }
+  }
+}
+
+void Component_Composite::NotifyOnRemoveType(Tunnelour::Component * component) {
+  for each(std::pair<std::string, Component_Composite_Type_Observer*> observer in m_type_observers) {
+    if (observer.first.compare(component->GetType()) == 0) {
+      observer.second->HandleEventRemove(component);
+    }
+  }
+}
 
 }  // namespace Tunnelour

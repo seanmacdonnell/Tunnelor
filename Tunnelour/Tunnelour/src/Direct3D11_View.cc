@@ -148,11 +148,17 @@ Direct3D11_View::~Direct3D11_View() {
       texture->second = 0;
     }
   }
+
+  m_model->IgnoreType(this, "Bitmap_Component");
+  m_model->IgnoreType(this, "Text_Component");
 }
 
 //------------------------------------------------------------------------------
 void Direct3D11_View::Init(Component_Composite * const model) {
   View::Init(model);
+
+  m_model->ObserveType(this, "Bitmap_Component");
+  m_model->ObserveType(this, "Text_Component");
 
   m_is_initialised = true;
 }
@@ -244,6 +250,18 @@ void Direct3D11_View::Run() {
 
     m_game_metrics->SetFPSData(fps_data);
   }
+}
+
+//------------------------------------------------------------------------------
+void Direct3D11_View::HandleEventAdd(Tunnelour::Component * const component) {
+  bool hello = true;
+  hello = false;
+}
+
+//------------------------------------------------------------------------------
+void Direct3D11_View::HandleEventRemove(Tunnelour::Component * const component){
+    bool hello = true;
+  hello = false;
 }
 
 //------------------------------------------------------------------------------

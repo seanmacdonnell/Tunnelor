@@ -105,7 +105,7 @@ bool Background_Controller::Run() {
   camera_bottom = (camera_position.y - (game_resolution.y / 2));
   camera_left = (camera_position.x - (game_resolution.x / 2));
   camera_right = (camera_position.x + (game_resolution.x / 2));
-
+  /*
   if (camera_top > m_background_top) {
     TileUp(camera_top + (game_resolution.y / 2));
   }
@@ -118,7 +118,7 @@ bool Background_Controller::Run() {
   if (camera_left > m_background_left) {
     TileLeft(camera_left - (game_resolution.x / 2));
   }
-
+  */
   if (m_is_debug_mode != m_game_settings->IsDebugMode()) {
     SwitchTileset();
   }

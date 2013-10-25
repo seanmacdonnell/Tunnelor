@@ -54,7 +54,8 @@ namespace Tunnelour {
 //                The code here was copied and pasted and modified from
 //                the tutorials at http://rastertek.com/dx11tut011.html
 //-----------------------------------------------------------------------------
-class Direct3D11_View : public Tunnelour::View {
+class Direct3D11_View : public Tunnelour::View,
+                        public Component_Composite::Component_Composite_Type_Observer{
  public:
   //---------------------------------------------------------------------------
   // Description : Constructor
@@ -75,6 +76,9 @@ class Direct3D11_View : public Tunnelour::View {
   // Description : View Runner
   //---------------------------------------------------------------------------
   virtual void Run();
+
+  virtual void HandleEventAdd(Tunnelour::Component * const component);
+  virtual void HandleEventRemove(Tunnelour::Component * const component);
 
  protected:
 
