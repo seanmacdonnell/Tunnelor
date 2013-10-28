@@ -56,7 +56,7 @@ namespace Tunnelour {
 //                the tutorials at http://rastertek.com/dx11tut011.html
 //-----------------------------------------------------------------------------
 class Direct3D11_View : public Tunnelour::View,
-                        public Component_Composite::Component_Composite_Type_Observer{
+                        public Component_Composite::Component_Composite_Type_Observer {
  public:
   struct Renderables {
     std::list<Tunnelour::Component*> Layer_00;

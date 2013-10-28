@@ -71,12 +71,12 @@ Game_Settings_Component* const Avatar_Controller_Mutator::GetGameSettings() {
 }
 
 //------------------------------------------------------------------------------
-std::list<Bitmap_Component*> Avatar_Controller_Mutator::GetFloorTiles() {
+std::list<Tile_Bitmap*> Avatar_Controller_Mutator::GetFloorTiles() {
   return m_floor_tiles;
 }
 
 //------------------------------------------------------------------------------
-std::list<Bitmap_Component*> Avatar_Controller_Mutator::GetWallTiles() {
+std::list<Tile_Bitmap*> Avatar_Controller_Mutator::GetWallTiles() {
   return m_wall_tiles;
 }
 
@@ -87,10 +87,7 @@ World_Settings_Component* Avatar_Controller_Mutator::GetWorldSettings() {
 
 //------------------------------------------------------------------------------
 bool Avatar_Controller_Mutator::WasSuccessful() {
-  return m_found_game_settings && 
-         m_found_floor_tiles &&
-         m_found_world_settings &&
-         m_found_wall_tiles;
+  return m_found_game_settings && m_found_world_settings;
 }
 
 }  // namespace Tunnelour

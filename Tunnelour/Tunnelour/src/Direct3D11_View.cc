@@ -166,8 +166,8 @@ Direct3D11_View::~Direct3D11_View() {
 void Direct3D11_View::Init(Component_Composite * const model) {
   View::Init(model);
 
-    m_model->ObserveType(this, "Bitmap_Component");
-    m_model->ObserveType(this, "Text_Component");
+  m_model->ObserveType(this, "Bitmap_Component");
+  m_model->ObserveType(this, "Text_Component");
 
   Direct3D11_View_Mutator mutator;
   m_model->Apply(&mutator);
@@ -186,8 +186,6 @@ void Direct3D11_View::Init(Component_Composite * const model) {
     if (m_avatar->GetPosition().z <= -2) {
       m_renderables.Layer_02.push_back(m_avatar);
     }
-
-
 
     m_is_initialised = true;
   }

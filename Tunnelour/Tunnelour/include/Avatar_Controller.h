@@ -35,7 +35,8 @@ namespace Tunnelour {
 //  Description : This controller is responsible for the generation of the
 //                middleground (Layer 0)
 //-----------------------------------------------------------------------------
-class Avatar_Controller: public Controller {
+class Avatar_Controller: public Controller,
+                         public Component_Composite::Component_Composite_Type_Observer {
  public:
   struct Collision {
     Tile_Bitmap* a_tile;
@@ -64,6 +65,9 @@ class Avatar_Controller: public Controller {
   //---------------------------------------------------------------------------
   virtual bool Run();
 
+  virtual void HandleEventAdd(Tunnelour::Component * const component);
+  virtual void HandleEventRemove(Tunnelour::Component * const component);
+
  protected:
 
  private:
@@ -80,40 +84,38 @@ class Avatar_Controller: public Controller {
   //---------------------------------------------------------------------------
   // Description : Changes and maintains the state of the avatar
   //---------------------------------------------------------------------------
-  void RunAvatarState(Avatar_Controller_Mutator *mutator);
+  void RunAvatarState();
 
   //---------------------------------------------------------------------------
   // Description : Changes and maintains the standing state of the avatar
   //---------------------------------------------------------------------------
-  void RunStandingState(Avatar_Controller_Mutator *mutator);
+  void RunStandingState();
 
   //---------------------------------------------------------------------------
   // Description : Changes and maintains the walking state of the avatar
   //---------------------------------------------------------------------------
-  void RunWalkingState(Avatar_Controller_Mutator *mutator);
+  void RunWalkingState();
 
   //---------------------------------------------------------------------------
   // Description : Changes and maintains the falling state of the avatar
   //---------------------------------------------------------------------------
-  void RunFallingState(Avatar_Controller_Mutator *mutator);
+  void RunFallingState();
 
   //---------------------------------------------------------------------------
   // Description : Returns true if the avatar is standing on a floor
   //---------------------------------------------------------------------------
-  bool IsAvatarFloorAdjacent(Avatar_Controller_Mutator *mutator);
+  bool IsAvatarFloorAdjacent();
 
   //---------------------------------------------------------------------------
   // Description : Returns true if the avatar is colliding with a floor
   //---------------------------------------------------------------------------
-  bool IsAvatarFloorColliding(Avatar_Controller_Mutator *mutator,
-                                 std::list<Bitmap_Component*> *out_colliding_floor_tiles,
+  bool IsAvatarFloorColliding(std::list<Bitmap_Component*> *out_colliding_floor_tiles,
                                  Bitmap_Component *out_collision_block);
 
   //---------------------------------------------------------------------------
   // Description : Returns true if the avatar is colliding with a floor
   //---------------------------------------------------------------------------
-  bool IsAvatarWallColliding(Avatar_Controller_Mutator *mutator,
-                             std::list<Bitmap_Component*> *out_colliding_floor_tiles,
+  bool IsAvatarWallColliding(std::list<Bitmap_Component*> *out_colliding_floor_tiles,
                              Bitmap_Component *out_collision_block);
 
   //---------------------------------------------------------------------------
@@ -130,9 +132,9 @@ class Avatar_Controller: public Controller {
 
   void AlignAvatarOnAvatarCollisionBlock();
 
-  void MoveAvatarWallAdjacent(Avatar_Controller_Mutator *mutator, std::string direction);
+  void MoveAvatarWallAdjacent(std::string direction);
 
-  void MoveAvatarFloorAdjacent(Avatar_Controller_Mutator *mutator);
+  void MoveAvatarFloorAdjacent();
   //---------------------------------------------------------------------------
   // Description : Initialises the timer used for the animation ticks
   //---------------------------------------------------------------------------
@@ -207,6 +209,9 @@ class Avatar_Controller: public Controller {
   bool m_animation_tick;
   int m_current_animation_fps;
   World_Settings_Component *m_world_settings;
+
+  std::list<Tile_Bitmap*> m_floor_tiles;
+  std::list<Tile_Bitmap*> m_wall_tiles;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_H_

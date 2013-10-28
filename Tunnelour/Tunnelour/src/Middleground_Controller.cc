@@ -94,7 +94,7 @@ bool Middleground_Controller::Run() {
   float middleground_left = (*m_left_edge_tiles.begin())->GetTopLeftPostion().x;
   float middleground_bottom = (*m_bottom_edge_tiles.begin())->GetBottomRightPostion().y;
   float middleground_right = (*m_right_edge_tiles.begin())->GetBottomRightPostion().x;
-/*
+
   if (camera_right > middleground_right) {
     while ((camera_right + (game_resolution.x / 2)) > middleground_right) {
       TileRight(camera_right, middleground_right);
@@ -122,7 +122,7 @@ bool Middleground_Controller::Run() {
       middleground_bottom = (*m_bottom_edge_tiles.begin())->GetBottomRightPostion().y;
     }
   }
-  */
+  
   if (m_is_debug_mode != m_game_settings->IsDebugMode()) {
     SwitchTileset();
   }

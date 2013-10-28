@@ -54,12 +54,12 @@ class Avatar_Controller_Mutator: public Component::Component_Mutator  {
   //-------------------------------------------------------------------------
   // Description : Accessor for the Floor Tiles
   //-------------------------------------------------------------------------
-  std::list<Bitmap_Component*> GetFloorTiles();
+  std::list<Tile_Bitmap*> GetFloorTiles();
 
   //-------------------------------------------------------------------------
   // Description : Accessor for the Wall Tiles
   //-------------------------------------------------------------------------
-  std::list<Bitmap_Component*> GetWallTiles();
+  std::list<Tile_Bitmap*> GetWallTiles();
 
   //-------------------------------------------------------------------------
   // Description : Accessor for the World_Settings_Component
@@ -77,8 +77,8 @@ class Avatar_Controller_Mutator: public Component::Component_Mutator  {
   bool m_found_world_settings;
   bool m_found_wall_tiles;
   Game_Settings_Component *m_game_settings;
-  std::list<Bitmap_Component*> m_floor_tiles;
-  std::list<Bitmap_Component*> m_wall_tiles;
+  std::list<Tile_Bitmap*> m_floor_tiles;
+  std::list<Tile_Bitmap*> m_wall_tiles;
   World_Settings_Component *m_world_settings;
 };
 }  // namespace Tunnelour
