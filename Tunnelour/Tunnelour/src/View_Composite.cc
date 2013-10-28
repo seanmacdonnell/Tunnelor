@@ -57,7 +57,7 @@ void View_Composite::Remove(Tunnelour::View *view) {
 void View_Composite::Run() {
   for each ( Tunnelour::View* view in m_views ) {
     if (!view->IsInitialised()) {
-      throw Tunnelour::Exceptions::uninit_error("View is UnInitialised!");
+      view->Init(m_model);
     } else {
       view->Run();
     }

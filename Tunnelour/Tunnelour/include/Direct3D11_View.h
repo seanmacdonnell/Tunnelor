@@ -44,6 +44,7 @@
 #include "Game_Settings_Component.h"
 #include "Game_Metrics_Component.h"
 #include "Direct3D11_View_DebugShader.h"
+#include "Avatar_Component.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -57,6 +58,12 @@ namespace Tunnelour {
 class Direct3D11_View : public Tunnelour::View,
                         public Component_Composite::Component_Composite_Type_Observer{
  public:
+  struct Renderables {
+    std::list<Tunnelour::Component*> Layer_00;
+    std::list<Tunnelour::Component*> Layer_01;
+    std::list<Tunnelour::Component*> Layer_02;
+  };
+
   //---------------------------------------------------------------------------
   // Description : Constructor
   //---------------------------------------------------------------------------
@@ -163,10 +170,13 @@ class Direct3D11_View : public Tunnelour::View,
   //---------------------------------------------------------------------------
   // Description : Model Components
   //---------------------------------------------------------------------------
-  Tunnelour::Game_Settings_Component* m_game_settings;
   std::map<std::wstring, ID3D11ShaderResourceView*> m_texture_map;
 
-  Tunnelour::Game_Metrics_Component* m_game_metrics;
+  Renderables m_renderables;
+  Tunnelour::Camera_Component * m_camera;
+  Tunnelour::Game_Settings_Component * m_game_settings;
+  Tunnelour::Game_Metrics_Component * m_game_metrics;
+  Tunnelour::Avatar_Component * m_avatar;
 };
 }  // namespace Tunnelour
 

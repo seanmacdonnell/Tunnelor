@@ -26,8 +26,9 @@ Component_Composite::Component_Composite() : Component() {
 //------------------------------------------------------------------------------
 Component_Composite::~Component_Composite() {
   while (!m_components.empty()) {
-    delete m_components.front();
-    m_components.pop_front();
+    Remove(m_components.front());
+    //delete m_components.front();
+    //m_components.pop_front();
   }
 }
 
@@ -61,6 +62,7 @@ void Component_Composite::Apply(Tunnelour::Component::Component_Mutator * const 
 
 //------------------------------------------------------------------------------
 void Component_Composite::ObserveType(Component_Composite_Type_Observer* component_observer, std::string type) {
+  m_type_observers.remove(std::pair<std::string, Component_Composite_Type_Observer*>(type, component_observer));
   m_type_observers.push_back(std::pair<std::string, Component_Composite_Type_Observer*>(type, component_observer));
 }
 //------------------------------------------------------------------------------

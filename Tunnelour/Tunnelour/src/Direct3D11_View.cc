@@ -151,117 +151,157 @@ Direct3D11_View::~Direct3D11_View() {
 
   m_model->IgnoreType(this, "Bitmap_Component");
   m_model->IgnoreType(this, "Text_Component");
+
+  m_renderables.Layer_00.clear();
+  m_renderables.Layer_01.clear();
+  m_renderables.Layer_02.clear();
+
+  m_camera = 0;
+  m_game_settings = 0;
+  m_game_metrics = 0;
+  m_avatar = 0;
 }
 
 //------------------------------------------------------------------------------
 void Direct3D11_View::Init(Component_Composite * const model) {
   View::Init(model);
 
-  m_model->ObserveType(this, "Bitmap_Component");
-  m_model->ObserveType(this, "Text_Component");
+    m_model->ObserveType(this, "Bitmap_Component");
+    m_model->ObserveType(this, "Text_Component");
 
-  m_is_initialised = true;
+  Direct3D11_View_Mutator mutator;
+  m_model->Apply(&mutator);
+  if (mutator.WasSuccessful()) {
+    m_camera = mutator.GetCamera();
+    m_avatar = mutator.GetAvatar();
+    m_game_metrics = mutator.GetGameMetrics();
+    m_game_settings = mutator.GetGameSettings();
+
+    if (m_avatar->GetPosition().z > -1) {
+      m_renderables.Layer_00.push_back(m_avatar);
+    }
+    if (m_avatar->GetPosition().z <= -1 && m_avatar->GetPosition().z > -2) {
+      m_renderables.Layer_01.push_back(m_avatar);
+    }
+    if (m_avatar->GetPosition().z <= -2) {
+      m_renderables.Layer_02.push_back(m_avatar);
+    }
+
+
+
+    m_is_initialised = true;
+  }
 }
 
 //------------------------------------------------------------------------------
 void Direct3D11_View::Run() {
   // Get Relevant Components from the model with the Mutator.
-  Direct3D11_View_Mutator mutator;
-
-  m_model->Apply(&mutator);
-
-  if (!mutator.FoundCamera()) {
-    throw Exceptions::run_error("Can't find a Camera component!");
-  }
-
-  if (!mutator.FoundRenderables()) {
-    throw Exceptions::run_error("Can't find Renderable components!");
-  }
-
-  if (!mutator.FoundGameSettings())  {
-    throw Exceptions::run_error("Can't find Middleground component!");
-  }
-
-  if (mutator.FoundGameMetrics() && m_game_metrics == 0)  {
-    m_game_metrics = mutator.GetGameMetrics();
-  }
-  
-  m_game_settings = mutator.GetGameSettings();
-
-  if (!m_is_window_init) { Init_Window(); }
-  if (!m_is_d3d11_init) { Init_D3D11(); }
-  if (!m_font_shader) {
-    m_font_shader = new Direct3D11_View_FontShader();
-    m_font_shader->Init(m_device, &(m_game_settings->GetHWnd()));
-  }
-  if (!m_transparent_shader) {
-    m_transparent_shader = new Direct3D11_View_TransparentShader();
-    m_transparent_shader->Init(m_device, &(m_game_settings->GetHWnd()));
-  }
-  if (!m_debug_shader) {
-    m_debug_shader = new Direct3D11_View_DebugShader();
-    m_debug_shader->Init(m_device, &(m_game_settings->GetHWnd()));
-  }
-
-
-  // <BeginScene>
-  D3DXMATRIX *viewmatrix = new D3DXMATRIX();
-
-  // Clear the back buffer.
-  m_device_context->ClearRenderTargetView(m_render_target_view,
-                                          mutator.GetGameSettings()->GetColor());
-
-  // Clear the depth buffer.
-  m_device_context->ClearDepthStencilView(m_depth_stencil_view,
-                                          D3D11_CLEAR_DEPTH,
-                                          1.0f,
-                                          0);
-
-  Render_Camera(mutator.GetCamera(), viewmatrix);
-
-  TurnOnAlphaBlending();
-
-  // Sort the Renderables by Z order.
-  Render(mutator.GetRenderables().Layer_00, viewmatrix);
-  Render(mutator.GetRenderables().Layer_01, viewmatrix);
-  Render(mutator.GetRenderables().Layer_02, viewmatrix);
-
-  TurnOffAlphaBlending();
-
-  // Present the rendered scene to the screen.
-  // Present the back buffer to the screen since rendering is complete.
-  if (m_game_settings->IsVSyncEnabled()) {
-    // Lock to screen refresh rate.
-    m_swap_chain->Present(1, 0);
+  if (!m_is_initialised) {
+    Init(m_model);
   } else {
-    // Present as fast as possible.
-    m_swap_chain->Present(0, 0);
-  }
+    if (!m_is_window_init) { Init_Window(); }
+    if (!m_is_d3d11_init) { Init_D3D11(); }
+    if (!m_font_shader) {
+      m_font_shader = new Direct3D11_View_FontShader();
+      m_font_shader->Init(m_device, &(m_game_settings->GetHWnd()));
+    }
+    if (!m_transparent_shader) {
+      m_transparent_shader = new Direct3D11_View_TransparentShader();
+      m_transparent_shader->Init(m_device, &(m_game_settings->GetHWnd()));
+    }
+    if (!m_debug_shader) {
+      m_debug_shader = new Direct3D11_View_DebugShader();
+      m_debug_shader->Init(m_device, &(m_game_settings->GetHWnd()));
+    }
 
-  if (m_game_metrics != 0 ) {
-  Game_Metrics_Component::FPS_Data fps_data = m_game_metrics->GetFPSData();
-    fps_data.count++;
 
-  if(timeGetTime() >= (fps_data.startTime + 1000)) {
-    fps_data.fps = fps_data.count;
-    fps_data.count = 0;
-    fps_data.startTime = timeGetTime();
-  }
+    // <BeginScene>
+    D3DXMATRIX *viewmatrix = new D3DXMATRIX();
 
-    m_game_metrics->SetFPSData(fps_data);
+    // Clear the back buffer.
+    m_device_context->ClearRenderTargetView(m_render_target_view,
+                                            m_game_settings->GetColor());
+
+    // Clear the depth buffer.
+    m_device_context->ClearDepthStencilView(m_depth_stencil_view,
+                                            D3D11_CLEAR_DEPTH,
+                                            1.0f,
+                                            0);
+
+    Render_Camera(m_camera, viewmatrix);
+
+    TurnOnAlphaBlending();
+
+    // Sort the Renderables by Z order.
+    Render(m_renderables.Layer_00, viewmatrix);
+    Render(m_renderables.Layer_01, viewmatrix);
+    Render(m_renderables.Layer_02, viewmatrix);
+
+    TurnOffAlphaBlending();
+
+    // Present the rendered scene to the screen.
+    // Present the back buffer to the screen since rendering is complete.
+    if (m_game_settings->IsVSyncEnabled()) {
+      // Lock to screen refresh rate.
+      m_swap_chain->Present(1, 0);
+    } else {
+      // Present as fast as possible.
+      m_swap_chain->Present(0, 0);
+    }
+
+    if (m_game_metrics != 0 ) {
+    Game_Metrics_Component::FPS_Data fps_data = m_game_metrics->GetFPSData();
+      fps_data.count++;
+
+    if(timeGetTime() >= (fps_data.startTime + 1000)) {
+      fps_data.fps = fps_data.count;
+      fps_data.count = 0;
+      fps_data.startTime = timeGetTime();
+    }
+
+      m_game_metrics->SetFPSData(fps_data);
+    }
   }
 }
 
 //------------------------------------------------------------------------------
 void Direct3D11_View::HandleEventAdd(Tunnelour::Component * const component) {
-  bool hello = true;
-  hello = false;
+  if (component->GetType().compare("Bitmap_Component") == 0) {
+    // Found Bitmap_Component
+    Tunnelour::Bitmap_Component *bitmap = 0;
+    bitmap = static_cast<Tunnelour::Bitmap_Component*>(component);
+    if (bitmap->GetPosition().z > -1) {
+      m_renderables.Layer_00.push_back(bitmap);
+    }
+    if (bitmap->GetPosition().z <= -1 && bitmap->GetPosition().z > -2) {
+      m_renderables.Layer_01.push_back(bitmap);
+    }
+    if (bitmap->GetPosition().z <= -2) {
+      m_renderables.Layer_02.push_back(bitmap);
+    }
+  }
+
+  if (component->GetType().compare("Text_Component") == 0) {
+    // Found Text_Component
+    Tunnelour::Text_Component *text = 0;
+    text = static_cast<Tunnelour::Text_Component*>(component);
+    if (text->GetPosition().z > -1) {
+      m_renderables.Layer_00.push_back(text);
+    }
+    if (text->GetPosition().z <= -1 && text->GetPosition().z > -2) {
+      m_renderables.Layer_01.push_back(text);
+    }
+    if (text->GetPosition().z <= -2) {
+      m_renderables.Layer_02.push_back(text);
+    }
+  }
 }
 
 //------------------------------------------------------------------------------
 void Direct3D11_View::HandleEventRemove(Tunnelour::Component * const component){
-    bool hello = true;
-  hello = false;
+  m_renderables.Layer_00.remove(component);
+  m_renderables.Layer_01.remove(component);
+  m_renderables.Layer_02.remove(component);
 }
 
 //------------------------------------------------------------------------------

@@ -20,10 +20,9 @@
 
 #include "Component.h"
 #include "Camera_Component.h"
-#include "Bitmap_Component.h"
-#include "Text_Component.h"
 #include "Game_Settings_Component.h"
 #include "Game_Metrics_Component.h"
+#include "Avatar_Component.h"
 
 namespace Tunnelour {
 class Direct3D11_View_Mutator: public Tunnelour::Component::Component_Mutator {
@@ -33,11 +32,6 @@ class Direct3D11_View_Mutator: public Tunnelour::Component::Component_Mutator {
 //                which collects all the renderable components.
 //-----------------------------------------------------------------------------
  public:
-  struct Renderables {
-    std::list<Tunnelour::Component*> Layer_00;
-    std::list<Tunnelour::Component*> Layer_01;
-    std::list<Tunnelour::Component*> Layer_02;
-  };
 
   //-------------------------------------------------------------------------
   // Description : Constructor
@@ -55,47 +49,36 @@ class Direct3D11_View_Mutator: public Tunnelour::Component::Component_Mutator {
   void Mutate(Tunnelour::Component * const component);
 
   //-------------------------------------------------------------------------
-  // Description : Has this component been found in the model?
+  // Description : Has this mutator run successfully?
   //-------------------------------------------------------------------------
-  bool FoundCamera();
+  bool WasSuccessful();
 
   //-------------------------------------------------------------------------
-  // Description : Accessors for the Camera Component
+  // Description : Accessor for the Camera Component
   //-------------------------------------------------------------------------
   Tunnelour::Camera_Component* const GetCamera();
 
   //-------------------------------------------------------------------------
-  // Description : Has this component been found in the model?
-  //-------------------------------------------------------------------------
-  bool FoundRenderables();
-
-  //-------------------------------------------------------------------------
-  // Description : Accessors for the Renderables
-  //-------------------------------------------------------------------------
-  Renderables& GetRenderables();
-
-  //-------------------------------------------------------------------------
-  // Description : Has this component been found in the model?
-  //-------------------------------------------------------------------------
-  bool FoundGameSettings();
-
-  //-------------------------------------------------------------------------
-  // Description : Accessors for the Game_Settings_Component
+  // Description : Accessor for the Game_Settings_Component
   //-------------------------------------------------------------------------
   Tunnelour::Game_Settings_Component* const GetGameSettings();
 
   //-------------------------------------------------------------------------
-  // Description : Has this component been found in the model?
+  // Description : Accessor for the game metrics
   //-------------------------------------------------------------------------
-  bool Direct3D11_View_Mutator::FoundGameMetrics();
   Tunnelour::Game_Metrics_Component* const Direct3D11_View_Mutator::GetGameMetrics();
 
+  //-------------------------------------------------------------------------
+  // Description : Returns the avatar
+  //-------------------------------------------------------------------------
+  Tunnelour::Avatar_Component* const Direct3D11_View_Mutator::GetAvatar();
+
  private:
-  bool m_found_camera, m_found_renderables, m_found_game_settings, m_found_game_metics;
+  bool m_found_camera, m_found_avatar, m_found_game_settings, m_found_game_metics;
   Tunnelour::Camera_Component * m_camera;
-  Renderables m_renderables;
   Tunnelour::Game_Settings_Component * m_game_settings;
-  Tunnelour::Game_Metrics_Component * m_game_metics;
+  Tunnelour::Game_Metrics_Component * m_game_metrics;
+  Tunnelour::Avatar_Component * m_avatar;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_DIRECT3D11_VIEW_MUTATOR_H_
