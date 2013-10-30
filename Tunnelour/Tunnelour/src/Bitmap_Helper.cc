@@ -57,7 +57,7 @@ bool Bitmap_Helper::DoTheseTilesYCollide(Tunnelour::Bitmap_Component* TileA, Tun
     return true;
   }
 
-  if (a_tile_top == b_tile_top  && a_tile_bottom == a_tile_bottom) {
+  if (a_tile_top == b_tile_top  && a_tile_bottom == b_tile_bottom) {
     return true;
   }
 

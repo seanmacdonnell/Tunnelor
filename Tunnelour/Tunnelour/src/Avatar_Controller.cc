@@ -223,12 +223,14 @@ void Avatar_Controller::RunWalkingState() {
   std::list<Bitmap_Component*> *out_colliding_floor_tiles = new std::list<Bitmap_Component*>();
   if (IsAvatarWallColliding(out_colliding_floor_tiles, &CollisionBlockToBitmapComponent(GetNamedCollisionBlock("Avatar", m_avatar->GetState().collision_blocks)))) {
     ChangeAvatarState("Standing", m_avatar->GetState().direction);
+    AlignAvatarOnAvatarCollisionBlock();
     // Move back avatar
     if (m_avatar->GetState().direction.compare("Left") == 0) {
-      D3DXVECTOR3 tile_position = (*out_colliding_floor_tiles->begin())->GetBottomRightPostion();
+      float tile_right_position = (*out_colliding_floor_tiles->begin())->GetBottomRightPostion().x;
+      float avatar_collision_block_left_position = (&CollisionBlockToBitmapComponent(GetNamedCollisionBlock("Avatar", m_avatar->GetState().collision_blocks)))->GetTopLeftPostion().x;
       D3DXVECTOR3 avatar_position = m_avatar->GetPosition();
-      float foot_x_offset = GetLowestCollisionBlock().offset_from_avatar_centre.x + (GetNamedCollisionBlock("Avatar", m_avatar->GetState().collision_blocks).size.x / 2);
-      avatar_position.x = tile_position.x + foot_x_offset;
+      float x_offset = tile_right_position + (GetNamedCollisionBlock("Avatar", m_avatar->GetState().collision_blocks).size.x / 2);
+      avatar_position.x = x_offset;
       m_avatar->SetPosition(avatar_position);
     }
     if (m_avatar->GetState().direction.compare("Right") == 0) {

@@ -190,16 +190,16 @@ void Debug_Data_Display_Controller::UpdateFPSDisplay() {
                           m_game_settings->GetResolution().y / 2;
   Game_Metrics_Component::FPS_Data fps_data = m_game_metrics->GetFPSData();
   std::string fps = std::to_string(static_cast<long double>(fps_data.fps));
-  m_fps_display->GetText()->text = "fps: " + fps;
+  m_fps_display->GetText()->text = "F.P.S: " + fps;
   m_fps_display->GetFrame()->index_buffer = 0;
   m_fps_display->GetTexture()->texture = 0;
   m_fps_display->GetFrame()->vertex_buffer = 0;
   float m_fps_display_x = top_left_window_x +
-                            m_fps_display->GetSize().x / 2 +
-                            10;  // This is the offset from the top
+                          m_fps_display->GetSize().x / 2 +
+                          10;  // This is the offset from the top
   float m_fps_display_y = top_left_window_y -
-                            m_fps_display->GetSize().y / 2 -
-                            m_heading->GetSize().y;
+                          m_fps_display->GetSize().y / 2 -
+                          m_heading->GetSize().y;
   m_fps_display->SetPosition(D3DXVECTOR3(m_fps_display_x,
                                          m_fps_display_y,
                                          z_position));
@@ -222,15 +222,22 @@ void Debug_Data_Display_Controller::UpdateAvatarPositionDisplay() {
                             m_game_settings->GetResolution().y / 2;
   std::string avatar_position_x = std::to_string(static_cast<long double>(m_avatar->GetPosition().x));
   std::string avatar_position_y = std::to_string(static_cast<long double>(m_avatar->GetPosition().y));
-  m_avatar_position_display->GetText()->text = "x:" + avatar_position_x  +
-                                               ",y:" + avatar_position_y;
+  m_avatar_position_display->GetText()->text = "Avatar Pos: x:" + avatar_position_x  +
+                                                          ",y:" + avatar_position_y;
   m_avatar_position_display->GetFrame()->index_buffer = 0;
   m_avatar_position_display->GetTexture()->texture = 0;
   m_avatar_position_display->GetFrame()->vertex_buffer = 0;
-  D3DXVECTOR3 m_avatar_position_display_position;
-  m_avatar_position_display_position = m_avatar->GetPosition();
-  m_avatar_position_display_position.z = z_position;
-  m_avatar_position_display->SetPosition(m_avatar_position_display_position);
+
+  float m_avatar_display_x = top_left_window_x +
+                             m_avatar_position_display->GetSize().x / 2 +
+                             10;  // This is the offset from the top
+  float m_avatar_display_y = m_fps_display->GetBottomRightPostion().y -
+                             m_avatar_position_display->GetSize().y / 2;
+
+  m_avatar_position_display->SetPosition(D3DXVECTOR3(m_avatar_display_x,
+                                                     m_avatar_display_y,
+                                                     z_position));
+
   m_avatar_position_display->Init();
 }
 }  // Tunnelour
