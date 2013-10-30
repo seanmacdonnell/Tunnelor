@@ -42,9 +42,11 @@ Game_Settings_Component::~Game_Settings_Component() {
 //------------------------------------------------------------------------------
 void Game_Settings_Component::Init() {
   //Default Values
-  m_resolution = D3DXVECTOR2(1280, 720);
+  
+  m_resolution = D3DXVECTOR2(640, 480);
+//m_resolution = D3DXVECTOR2(1280, 720);
   m_is_full_screen = false;
-  m_vsync_enabled = true;
+  m_vsync_enabled = false;
   m_screen_depth = 1000.0f;
   m_screen_near = 0.1f;
   m_tileset_path = L"resource\\tilesets\\";

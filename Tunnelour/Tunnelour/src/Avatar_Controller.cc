@@ -647,7 +647,7 @@ bool Avatar_Controller::InitTimer() {
 
 //------------------------------------------------------------------------------
 void Avatar_Controller::UpdateTimer() {
-  int frames_per_millisecond = static_cast<int>(1000/24);///m_current_animation_fps); //m_current_animation_fps);
+  int frames_per_millisecond = static_cast<int>(1000/30);///m_current_animation_fps); //m_current_animation_fps);
 
   INT64 currentTime;
   float timeDifference;

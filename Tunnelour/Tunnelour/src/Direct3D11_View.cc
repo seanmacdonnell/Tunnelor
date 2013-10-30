@@ -155,6 +155,7 @@ Direct3D11_View::~Direct3D11_View() {
   m_renderables.Layer_00.clear();
   m_renderables.Layer_01.clear();
   m_renderables.Layer_02.clear();
+  m_renderables.Layer_03.clear();
 
   m_camera = 0;
   m_game_settings = 0;
@@ -229,12 +230,13 @@ void Direct3D11_View::Run() {
     Render_Camera(m_camera, viewmatrix);
 
     TurnOnAlphaBlending();
-
+    
     // Sort the Renderables by Z order.
     Render(m_renderables.Layer_00, viewmatrix);
     Render(m_renderables.Layer_01, viewmatrix);
     Render(m_renderables.Layer_02, viewmatrix);
-
+    Render(m_renderables.Layer_03, viewmatrix);
+    
     TurnOffAlphaBlending();
 
     // Present the rendered scene to the screen.
@@ -248,14 +250,14 @@ void Direct3D11_View::Run() {
     }
 
     if (m_game_metrics != 0 ) {
-    Game_Metrics_Component::FPS_Data fps_data = m_game_metrics->GetFPSData();
+      Game_Metrics_Component::FPS_Data fps_data = m_game_metrics->GetFPSData();
       fps_data.count++;
 
-    if(timeGetTime() >= (fps_data.startTime + 1000)) {
-      fps_data.fps = fps_data.count;
-      fps_data.count = 0;
-      fps_data.startTime = timeGetTime();
-    }
+      if(timeGetTime() >= (fps_data.startTime + 1000)) {
+        fps_data.fps = fps_data.count;
+        fps_data.count = 0;
+        fps_data.startTime = timeGetTime();
+      }
 
       m_game_metrics->SetFPSData(fps_data);
     }
@@ -283,15 +285,7 @@ void Direct3D11_View::HandleEventAdd(Tunnelour::Component * const component) {
     // Found Text_Component
     Tunnelour::Text_Component *text = 0;
     text = static_cast<Tunnelour::Text_Component*>(component);
-    if (text->GetPosition().z > -1) {
-      m_renderables.Layer_00.push_back(text);
-    }
-    if (text->GetPosition().z <= -1 && text->GetPosition().z > -2) {
-      m_renderables.Layer_01.push_back(text);
-    }
-    if (text->GetPosition().z <= -2) {
-      m_renderables.Layer_02.push_back(text);
-    }
+    m_renderables.Layer_03.push_back(text);
   }
 }
 
@@ -300,6 +294,7 @@ void Direct3D11_View::HandleEventRemove(Tunnelour::Component * const component){
   m_renderables.Layer_00.remove(component);
   m_renderables.Layer_01.remove(component);
   m_renderables.Layer_02.remove(component);
+  m_renderables.Layer_03.remove(component);
 }
 
 //------------------------------------------------------------------------------
@@ -510,7 +505,7 @@ void Direct3D11_View::Init_D3D11() {
     swap_chain_desc.BufferDesc.RefreshRate.Numerator = numerator;
     swap_chain_desc.BufferDesc.RefreshRate.Denominator = denominator;
   } else {
-      swap_chain_desc.BufferDesc.RefreshRate.Numerator = 0;
+    swap_chain_desc.BufferDesc.RefreshRate.Numerator = 0;
     swap_chain_desc.BufferDesc.RefreshRate.Denominator = 1;
   }
 

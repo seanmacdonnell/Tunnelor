@@ -62,6 +62,7 @@ class Direct3D11_View : public Tunnelour::View,
     std::list<Tunnelour::Component*> Layer_00;
     std::list<Tunnelour::Component*> Layer_01;
     std::list<Tunnelour::Component*> Layer_02;
+    std::list<Tunnelour::Component*> Layer_03;
   };
 
   //---------------------------------------------------------------------------

@@ -4,7 +4,7 @@
 //  you may not use this file except in compliance with the License.
 //  You may obtain a copy of the License at
 //
-//    http://www.apache.org/licenses/LICENSE-2.0
+//    http://www.apache.org/licenses/LICENSE-1
 //
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,6 +35,7 @@ Debug_Data_Display_Controller::Debug_Data_Display_Controller() : Controller() {
   m_avatar = 0;
   m_font_path = "";
   m_has_been_initialised = false;
+  z_position = -3;
 }
 
 //------------------------------------------------------------------------------
@@ -168,8 +169,8 @@ void Debug_Data_Display_Controller::UpdateDebugDataHeading() {
   float debug_data_text_title_y = top_left_window_y -
                                   m_heading->GetSize().y / 2;
   m_heading->SetPosition(D3DXVECTOR3(debug_data_text_title_x,
-                                                   debug_data_text_title_y,
-                                                   -3));
+                                     debug_data_text_title_y,
+                                     z_position));
   m_heading->Init();
 }
 
@@ -200,8 +201,8 @@ void Debug_Data_Display_Controller::UpdateFPSDisplay() {
                             m_fps_display->GetSize().y / 2 -
                             m_heading->GetSize().y;
   m_fps_display->SetPosition(D3DXVECTOR3(m_fps_display_x,
-                                          m_fps_display_y,
-                                          -3.0));
+                                         m_fps_display_y,
+                                         z_position));
   m_fps_display->Init();
 }
 
@@ -222,13 +223,13 @@ void Debug_Data_Display_Controller::UpdateAvatarPositionDisplay() {
   std::string avatar_position_x = std::to_string(static_cast<long double>(m_avatar->GetPosition().x));
   std::string avatar_position_y = std::to_string(static_cast<long double>(m_avatar->GetPosition().y));
   m_avatar_position_display->GetText()->text = "x:" + avatar_position_x  +
-                                                    ",y:" + avatar_position_y;
+                                               ",y:" + avatar_position_y;
   m_avatar_position_display->GetFrame()->index_buffer = 0;
   m_avatar_position_display->GetTexture()->texture = 0;
   m_avatar_position_display->GetFrame()->vertex_buffer = 0;
   D3DXVECTOR3 m_avatar_position_display_position;
   m_avatar_position_display_position = m_avatar->GetPosition();
-  m_avatar_position_display_position.z = -3;
+  m_avatar_position_display_position.z = z_position;
   m_avatar_position_display->SetPosition(m_avatar_position_display_position);
   m_avatar_position_display->Init();
 }
