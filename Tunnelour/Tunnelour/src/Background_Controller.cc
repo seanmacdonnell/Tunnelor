@@ -381,22 +381,21 @@ void Background_Controller::TileRight(float camera_right) {
   float rem = (m_background_top - m_background_bottom) / 128;
   number_of_y_tiles = static_cast<unsigned int>(std::ceil(rem));
 
-  std::vector<Tile_Bitmap*>::iterator edge_tile;
-  for (edge_tile = m_right_edge_tiles.begin(); edge_tile != m_right_edge_tiles.end(); edge_tile++) {
-    (*edge_tile)->SetIsRightEdge(false);
-    if (m_is_debug_mode) {
-      ResetTileTexture((*edge_tile));
-    }
-  }
-  m_right_edge_tiles.clear();
-
   while (camera_right > m_background_right) {
+    std::vector<Tile_Bitmap*>::iterator edge_tile;
+    for (edge_tile = m_right_edge_tiles.begin(); edge_tile != m_right_edge_tiles.end(); edge_tile++) {
+      (*edge_tile)->SetIsRightEdge(false);
+      if (m_is_debug_mode) {
+        ResetTileTexture((*edge_tile));
+      }
+    }
+    m_right_edge_tiles.clear();
     for (unsigned int x = 0; x < number_of_y_tiles; x++) {
     Tile_Bitmap* tile = CreateTile(128,
-                                              false,
-                                              false,
-                                              true,
-                                              false);
+                                   false,
+                                   false,
+                                   true,
+                                   false);
       D3DXVECTOR3 position;
       position.x = m_background_right + (tile->GetSize().y / 2);
       position.y = m_background_top - (x * 128) - (128 / 2);
@@ -417,16 +416,15 @@ void Background_Controller::TileLeft(float camera_left) {
   float rem = (m_background_top - m_background_bottom) / 128;
   number_of_y_tiles = static_cast<unsigned int>(std::ceil(rem));
 
-  std::vector<Tile_Bitmap*>::iterator edge_tile;
-  for (edge_tile = m_left_edge_tiles.begin(); edge_tile != m_left_edge_tiles.end(); edge_tile++) {
-    (*edge_tile)->SetIsLeftEdge(false);
-    if (m_is_debug_mode) {
-      ResetTileTexture((*edge_tile));
-    }
-  }
-  m_left_edge_tiles.clear();
-
   while (camera_left < m_background_left) {
+    std::vector<Tile_Bitmap*>::iterator edge_tile;
+    for (edge_tile = m_left_edge_tiles.begin(); edge_tile != m_left_edge_tiles.end(); edge_tile++) {
+      (*edge_tile)->SetIsLeftEdge(false);
+      if (m_is_debug_mode) {
+        ResetTileTexture((*edge_tile));
+      }
+    }
+    m_left_edge_tiles.clear();
     for (unsigned int x = 0; x < number_of_y_tiles; x++) {
     Tile_Bitmap* tile = CreateTile(128,
                                               false,
@@ -492,7 +490,7 @@ void Background_Controller::ResetTileTexture(Tile_Bitmap *out_tile) {
   if (m_is_debug_mode) {
     random_variable = 0;
   } else {
-    int random_variable = rand() % middleground_line.number_of_tiles;
+    random_variable = rand() % middleground_line.number_of_tiles;
   }
 
   float left = random_variable * middleground_line.tile_size_x + middleground_line.top_left_x;
