@@ -32,6 +32,7 @@ namespace Tunnelour {
 Avatar_Controller::Avatar_Controller() : Controller() {
   m_avatar = 0;
   m_game_settings = 0;
+  m_level = 0;
   m_has_avatar_been_generated = false;
   m_animation_tick = false;
   m_world_settings = 0;
@@ -42,6 +43,12 @@ Avatar_Controller::~Avatar_Controller() {
   m_model->IgnoreType(this, "Bitmap_Component");
   m_floor_tiles.clear();
   m_wall_tiles.clear();
+  m_avatar = 0;
+  m_game_settings = 0;
+  m_level = 0;
+  m_has_avatar_been_generated = false;
+  m_animation_tick = false;
+  m_world_settings = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -53,6 +60,7 @@ bool Avatar_Controller::Init(Component_Composite * const model) {
   if (mutator.WasSuccessful()) {
     m_game_settings = mutator.GetGameSettings();
     m_world_settings = mutator.GetWorldSettings();
+    m_level = mutator.GetLevel();
     LoadTilesets(m_game_settings->GetTilesetPath());
     GenerateAvatarTile();
     m_model->Add(m_avatar);
@@ -113,7 +121,9 @@ void Avatar_Controller::GenerateAvatarTile() {
   Avatar_Component::Avatar_State initial_state;
   initial_state.direction = "Right";
   m_avatar->SetState(initial_state);
-  m_avatar->SetPosition(D3DXVECTOR3(192, -448, -2));  // Middleground Z Space is -1
+  m_avatar->SetPosition(D3DXVECTOR3(m_level->GetCurrentLevel().avatar_top_left_x, 
+                                    m_level->GetCurrentLevel().avatar_top_left_y,
+                                    -2));  // Middleground Z Space is -1
   ChangeAvatarState("Standing", initial_state.direction);
 }
 

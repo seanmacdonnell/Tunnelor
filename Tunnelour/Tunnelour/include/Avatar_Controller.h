@@ -28,6 +28,7 @@
 #include "Game_Settings_Component.h"
 #include "Tile_Bitmap.h"
 #include "Tileset_Helper.h"
+#include "Level_Component.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -189,6 +190,7 @@ class Avatar_Controller: public Controller,
   //---------------------------------------------------------------------------
   Avatar_Component *m_avatar;
   Game_Settings_Component* m_game_settings;
+  Level_Component *m_level;
   bool m_has_avatar_been_generated;
   std::string m_running_metadata_file_path;
   std::string m_walking_metadata_file_path;

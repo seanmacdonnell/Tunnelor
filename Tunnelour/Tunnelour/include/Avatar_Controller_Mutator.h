@@ -22,6 +22,7 @@
 #include "Game_Settings_Component.h"
 #include "Tile_Bitmap.h"
 #include "World_Settings_Component.h"
+#include "Level_Component.h"
 
 namespace Tunnelour {
 class Avatar_Controller_Mutator: public Component::Component_Mutator  {
@@ -67,6 +68,11 @@ class Avatar_Controller_Mutator: public Component::Component_Mutator  {
   World_Settings_Component* GetWorldSettings();
 
   //-------------------------------------------------------------------------
+  // Description : Accessor for the Level_Component
+  //-------------------------------------------------------------------------
+  Level_Component* GetLevel();
+
+  //-------------------------------------------------------------------------
   // Description : Has this mutator completed successfully?
   //-------------------------------------------------------------------------
   bool WasSuccessful();
@@ -76,10 +82,13 @@ class Avatar_Controller_Mutator: public Component::Component_Mutator  {
   bool m_found_floor_tiles;
   bool m_found_world_settings;
   bool m_found_wall_tiles;
+  bool m_found_level;
+
   Game_Settings_Component *m_game_settings;
   std::list<Tile_Bitmap*> m_floor_tiles;
   std::list<Tile_Bitmap*> m_wall_tiles;
   World_Settings_Component *m_world_settings;
+  Level_Component *m_level;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_MUTATOR_H_

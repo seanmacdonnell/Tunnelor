@@ -27,6 +27,8 @@ Avatar_Controller_Mutator::Avatar_Controller_Mutator() {
   m_floor_tiles.clear();
   m_found_world_settings = false;
   m_world_settings = 0;
+  m_found_level = false;
+  m_level = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -37,6 +39,8 @@ Avatar_Controller_Mutator::~Avatar_Controller_Mutator() {
   m_floor_tiles.clear();
   m_found_world_settings = false;
   m_world_settings = 0;
+  m_found_level = false;
+  m_level = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -57,11 +61,12 @@ void Avatar_Controller_Mutator::Mutate(Component * const component) {
       m_wall_tiles.push_back(tile);
       m_found_wall_tiles = true;
     }
-  } else if (!m_found_world_settings) {
-    if (component->GetType().compare("World_Settings_Component") == 0) {
-      m_world_settings = static_cast<World_Settings_Component*>(component);
-      m_found_world_settings = true;
-    }
+  } else if (component->GetType().compare("World_Settings_Component") == 0) {
+    m_world_settings = static_cast<World_Settings_Component*>(component);
+    m_found_world_settings = true;
+  } else if (component->GetType().compare("Level_Component") == 0) {
+    m_level = static_cast<Level_Component*>(component);
+    m_found_level = true;
   }
 }
 
@@ -86,8 +91,13 @@ World_Settings_Component* Avatar_Controller_Mutator::GetWorldSettings() {
 }
 
 //------------------------------------------------------------------------------
+Level_Component* Avatar_Controller_Mutator::GetLevel() {
+  return m_level;
+}
+
+//------------------------------------------------------------------------------
 bool Avatar_Controller_Mutator::WasSuccessful() {
-  return m_found_game_settings && m_found_world_settings;
+  return m_found_game_settings && m_found_world_settings && m_found_level;
 }
 
 }  // namespace Tunnelour

@@ -56,6 +56,6 @@ Avatar_Component* const Level_Controller_Mutator::GetAvatarComponent() {
 
 //------------------------------------------------------------------------------
 bool Level_Controller_Mutator::WasSuccessful() {
-  return (m_found_game_settings && m_found_avatar_component);
+  return (m_found_game_settings);
 }
 }  // namespace Tunnelour
