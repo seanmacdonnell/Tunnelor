@@ -21,6 +21,7 @@
 #include "Input_Controller.h"
 #include "Debug_Data_Display_Controller.h"
 #include "Camera_Controller.h"
+#include "Level_Controller.h"
 
 namespace Tunnelour {
 
@@ -58,6 +59,9 @@ bool Tunnelour_Controller::Init(Tunnelour::Component_Composite *const model) {
   controller->Init(m_model);
 
   controller = Add(new Tunnelour::Debug_Data_Display_Controller());
+  controller->Init(m_model);
+
+  controller = Add(new Tunnelour::Level_Controller());
   controller->Init(m_model);
 
   return true;

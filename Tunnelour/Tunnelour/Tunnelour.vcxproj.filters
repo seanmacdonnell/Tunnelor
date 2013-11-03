@@ -180,6 +180,15 @@
     <ClCompile Include="src\Camera_Controller_Mutator.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
+    <ClCompile Include="src\Level_Controller.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Level_Controller_Mutator.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Level_Component.cc">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Init_Controller.h">
@@ -313,6 +322,15 @@
     </ClInclude>
     <ClInclude Include="include\String_Helper.h">
       <Filter>Include Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Level_Controller.h">
+      <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Level_Controller_Mutator.h">
+      <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Level_Component.h">
+      <Filter>Include Files\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

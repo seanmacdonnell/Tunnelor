@@ -31,6 +31,7 @@ namespace Tunnelour {
 Middleground_Controller::Middleground_Controller() : Controller() {
   m_game_settings = 0;
   m_camera = 0;
+  m_level = 0;
   m_tileset_filename = "";
   m_is_debug_mode = false;
   m_debug_metadata_file_path = "";
@@ -41,6 +42,7 @@ Middleground_Controller::Middleground_Controller() : Controller() {
 Middleground_Controller::~Middleground_Controller() {
   m_game_settings = 0;
   m_camera = 0;
+  m_level = 0;
   m_tileset_filename = "";
   m_is_debug_mode = false;
   m_debug_metadata_file_path = "";
@@ -57,6 +59,7 @@ bool Middleground_Controller::Init(Component_Composite * const model) {
   if (mutator.WasSuccessful()) {
     m_game_settings = mutator.GetGameSettings();
     m_camera = mutator.GetCamera();
+    m_level = mutator.GetLevel();
     m_is_debug_mode = m_game_settings->IsDebugMode();
 
     m_is_debug_mode = m_game_settings->IsDebugMode();
@@ -138,8 +141,7 @@ bool Middleground_Controller::Run() {
 // private:
 //------------------------------------------------------------------------------
 void Middleground_Controller::CreateLevel() {
-  LoadLevelMetadata();
-  std::vector<Tile_Bitmap*> tiles = GenerateTunnelFromMetadata((*m_level_metadata.begin()));
+  std::vector<Tile_Bitmap*> tiles = GenerateTunnelFromMetadata(m_level->GetCurrentLevel());
 
   // Add tiles to Model
   for (std::vector<Tile_Bitmap*>::iterator tile = tiles.begin(); tile != tiles.end(); ++tile) {
@@ -148,184 +150,16 @@ void Middleground_Controller::CreateLevel() {
   }
 }
 
-//---------------------------------------------------------------------------
-void Middleground_Controller::LoadLevelMetadata() {
-  Level_Metadata level_0_metadata;
-  std::string level_0_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_0.txt");
-  level_0_metadata = LoadLevelMetadataIntoStruct(level_0_metadata_file_path);
-  std::string level_0_csv_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_0.csv");
-  LoadLevelCSVIntoStruct(level_0_csv_file_path, &level_0_metadata);
-  m_level_metadata.push_back(level_0_metadata);
-}
-
 //------------------------------------------------------------------------------
-Middleground_Controller::Level_Metadata Middleground_Controller::LoadLevelMetadataIntoStruct(std::string metadata_path) {
-  Level_Metadata level_metadata;
-
-  FILE * pFile;
-  int lSize;
-
-  // Open Font File as a text file
-  if (fopen_s(&pFile, metadata_path.c_str(), "r") != 0) {
-    std::string error = "Open Tileset Metadata Failed! " +  metadata_path;
-    throw Tunnelour::Exceptions::init_error(error);
-  }
-
-  // obtain file size:
-  fseek(pFile, 0, SEEK_END);
-  lSize = ftell(pFile);
-  rewind(pFile);
-
-  char * token;
-  char * next_token;
-
-  char line[255];
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Level_Name") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      level_metadata.level_name = token;
-    } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_Name");
-    }
-  }
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Level_Blurb") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      level_metadata.blurb = token;
-    } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_Blurb");
-    }
-  }
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Level_CSV_Filename") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      level_metadata.filename = token;
-    } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_CSV_Filename");
-    }
-  }
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Level_TilesetName") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      level_metadata.tileset_name = token;
-    } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_TilesetName");
-    }
-  }
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Level_TunnelStartTopLeftX") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      level_metadata.tunnel_top_left_x = static_cast<float>(atof(token));
-    } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Tileset_TopLeftX");
-    }
-  }
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Level_TunnelStartTopLeftY") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      level_metadata.tunnel_top_left_y = static_cast<float>(atof(token));
-    } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Tileset_TopLeftX");
-    }
-  }
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Level_AvatarStartTopLeftX") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      level_metadata.avatar_top_left_x = static_cast<float>(atof(token));
-    } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Tileset_TopLeftX");
-    }
-  }
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Level_AvatarStartTopLeftY") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      level_metadata.avatar_top_left_y = static_cast<float>(atof(token));
-    } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Tileset_TopLeftX");
-    }
-  }
-  fclose(pFile);
-
-  return level_metadata;
-}
-
-//------------------------------------------------------------------------------
-void Middleground_Controller::LoadLevelCSVIntoStruct(std::string metadata_path, Level_Metadata *out_metadata) {
-  if (out_metadata == 0) { throw Tunnelour::Exceptions::run_error("Need an initialized strut"); }
-  if (out_metadata->filename.compare("") == 0) { throw Tunnelour::Exceptions::run_error("Need a struct with a filename"); }
-  Level_Metadata level_metadata;
-
-  FILE * pFile;
-  int lSize;
-
-  // Open Font File as a text file
-  if (fopen_s(&pFile, metadata_path.c_str(), "r") != 0) {
-    std::string error = "Open Tileset Metadata Failed! " +  metadata_path;
-    throw Tunnelour::Exceptions::init_error(error);
-  }
-
-  // obtain file size:
-  fseek(pFile, 0, SEEK_END);
-  lSize = ftell(pFile);
-  rewind(pFile);
-
-  char * token;
-  char * next_token;
-
-  //This is string::max_size
-  unsigned int max_size = 10000;
-  char line[10000];
-  while (fgets(line, max_size, pFile) != NULL) {
-    std::vector<Tile_Metadata> line_metadata;
-    std::vector<std::string> split_line = String_Helper::Split(line, ',');
-    std::vector<std::string>::iterator line_tile;
-    for (line_tile = split_line.begin(); line_tile != split_line.end(); line_tile++) {
-      Tile_Metadata tile_metadata;
-      std::vector<std::string> quote_stripper = String_Helper::Split((*line_tile), '\'');
-      std::vector<std::string> split_tile = String_Helper::Split(quote_stripper[0], ';');
-      std::vector<std::string>::iterator line_tile_data;
-      for (line_tile_data = split_tile.begin(); line_tile_data != split_tile.end(); line_tile_data++) {
-        std::vector<std::string> split_tile_data = String_Helper::Split((*line_tile_data), ' ');
-        if (split_tile_data.begin()->compare("Size") == 0) {
-          tile_metadata.size = static_cast<float>(atof(split_tile_data[1].c_str()));
-        } else if (split_tile_data.begin()->compare("Type") == 0) {
-          tile_metadata.type = split_tile_data[1];
-        }
-      }
-      line_metadata.push_back(tile_metadata);
-    }
-    out_metadata->level.push_back(line_metadata);
-  }
-
-  fclose (pFile);
-}
-
-//------------------------------------------------------------------------------
-std::vector<Tile_Bitmap*> Middleground_Controller::GenerateTunnelFromMetadata(Level_Metadata level_metadata) {
+std::vector<Tile_Bitmap*> Middleground_Controller::GenerateTunnelFromMetadata(Level_Component::Level_Metadata level_metadata) {
   LoadTilesetMetadata();
 
   std::vector<Tile_Bitmap*> tiles;
   std::vector<std::vector<Tile_Bitmap*>> middleground_lines;
   
-  std::vector<std::vector<Tile_Metadata>>::iterator line;
+  std::vector<std::vector<Level_Component::Tile_Metadata>>::iterator line;
   for (line = level_metadata.level.begin(); line != level_metadata.level.end(); line++) {
-    std::vector<Tile_Metadata>::iterator tile;
+    std::vector<Level_Component::Tile_Metadata>::iterator tile;
     std::vector<Tile_Bitmap*> middleground_line;
     for (tile = (*line).begin(); tile != (*line).end(); tile++) {
       Tile_Bitmap* new_tile = new_tile = CreateTile((*tile).size);
@@ -350,7 +184,7 @@ std::vector<Tile_Bitmap*> Middleground_Controller::GenerateTunnelFromMetadata(Le
       float position_y = 0;
       float position_z = -1;
       // X position is the sum of all the tile sizes before it.
-      std::vector<Tile_Metadata>::iterator x_sum_iterator;
+      std::vector<Level_Component::Tile_Metadata>::iterator x_sum_iterator;
       for (x_sum_iterator = (*line).begin(); x_sum_iterator != tile; x_sum_iterator++) {
         position_x += (*x_sum_iterator).size;
       }
@@ -521,20 +355,6 @@ Tileset_Helper::Line Middleground_Controller::GetCurrentSizedLine(float size) {
     }
   }
   return middleground_line;
-}
-
-//---------------------------------------------------------------------------
-Middleground_Controller::Level_Metadata Middleground_Controller::GetNamedLevel(std::string name) {
-  Level_Metadata found_level_metadata;
-
-  std::list<Level_Metadata>::iterator level_metadata;
-  for (level_metadata = m_level_metadata.begin(); level_metadata != m_level_metadata.end(); level_metadata++) {
-    if (level_metadata->level_name.compare(name) == 0) {
-      found_level_metadata = (*level_metadata);
-    }
-  }
-
-  return found_level_metadata;
 }
 
 //---------------------------------------------------------------------------

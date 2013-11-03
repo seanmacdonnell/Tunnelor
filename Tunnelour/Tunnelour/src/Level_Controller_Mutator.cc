@@ -13,64 +13,49 @@
 //  limitations under the License.
 //
 
-#include "Middleground_Controller_Mutator.h"
+#include "Level_Controller_Mutator.h"
 
 namespace Tunnelour {
 
 //------------------------------------------------------------------------------
 // public:
 //------------------------------------------------------------------------------
-Middleground_Controller_Mutator::Middleground_Controller_Mutator() {
+Level_Controller_Mutator::Level_Controller_Mutator() {
   m_found_game_settings = false;
-  m_found_camera = false;
-  m_found_level = false;
+  m_found_avatar_component = false;
   m_game_settings = 0;
-  m_camera = 0;
-  m_level = 0;
+  m_avatar_controller = 0;
 }
 
 //------------------------------------------------------------------------------
-Middleground_Controller_Mutator::~Middleground_Controller_Mutator() {
+Level_Controller_Mutator::~Level_Controller_Mutator() {
   m_found_game_settings = false;
-  m_found_camera = false;
-  m_found_level = false;
   m_game_settings = 0;
-  m_camera = 0;
-  m_level = 0;
 }
 
 //------------------------------------------------------------------------------
-void Middleground_Controller_Mutator::Mutate(Component * const component) {
+void Level_Controller_Mutator::Mutate(Tunnelour::Component * const component) {
   if (component->GetType().compare("Game_Settings_Component") == 0) {
     m_game_settings = static_cast<Game_Settings_Component*>(component);
     m_found_game_settings = true;
-  } else  if (component->GetType().compare("Camera_Component") == 0) {
-    m_camera = static_cast<Camera_Component*>(component);
-    m_found_camera = true;
-  } else  if (component->GetType().compare("Level_Component") == 0) {
-    m_level = static_cast<Level_Component*>(component);
-    m_found_level = true;
+  } else if (component->GetType().compare("Avatar_Component") == 0) {
+    m_avatar_controller = static_cast<Avatar_Component*>(component);
+    m_found_avatar_component = true;
   }
 }
 
 //------------------------------------------------------------------------------
-Game_Settings_Component *const Middleground_Controller_Mutator::GetGameSettings() {
+Game_Settings_Component* const Level_Controller_Mutator::GetGameSettings() {
   return m_game_settings;
 }
 
 //------------------------------------------------------------------------------
-Camera_Component *const Middleground_Controller_Mutator::GetCamera() {
-  return m_camera;
+Avatar_Component* const Level_Controller_Mutator::GetAvatarComponent() {
+  return m_avatar_controller;
 }
 
 //------------------------------------------------------------------------------
-Level_Component *const Middleground_Controller_Mutator::GetLevel() {
-  return m_level;
+bool Level_Controller_Mutator::WasSuccessful() {
+  return (m_found_game_settings && m_found_avatar_component);
 }
-
-//------------------------------------------------------------------------------
-bool Middleground_Controller_Mutator::WasSuccessful() {
-  return m_found_camera && m_found_game_settings && m_found_level;
-}
-
 }  // namespace Tunnelour
