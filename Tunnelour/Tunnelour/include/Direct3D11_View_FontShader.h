@@ -41,6 +41,8 @@ class Direct3D11_View_FontShader {
 
   struct PixelBufferType {
     D3DXCOLOR pixelColor;
+    float blendAmount;
+    D3DXVECTOR3 padding;
   };
 
   //---------------------------------------------------------------------------
@@ -67,7 +69,8 @@ class Direct3D11_View_FontShader {
               D3DXMATRIX view,
               D3DXMATRIX projection,
               ID3D11ShaderResourceView* texture,
-              D3DXCOLOR pixelcolor);
+              D3DXCOLOR pixelcolor,
+              float blend);
 
   //---------------------------------------------------------------------------
   // Description : Returns whether this class has been initalised

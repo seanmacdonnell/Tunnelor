@@ -3,6 +3,7 @@ SamplerState SampleType;
 
 cbuffer PixelBuffer {
     float4 pixelColor;
+    float blendAmount;
 };
 
 struct PixelInputType {
@@ -13,6 +14,11 @@ struct PixelInputType {
 float4 FontPixelShader(PixelInputType input) : SV_TARGET {
   float4 color = shaderTexture.Sample(SampleType, input.tex);
   
+  // Set the alpha value of this pixel to the blending amount to create the alpha blending effect.
+  if (blendAmount != 1.0f && color.a != 0.0) {
+    color.a = blendAmount;
+  }
+
   // If the color is white it is text, color it.
   if(color.r == 1.0f && color.g == 1.0f && color.b == 1.0f)  {
     color.rgb = pixelColor.rgb;

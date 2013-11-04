@@ -1101,7 +1101,8 @@ void Direct3D11_View::Render_Text(Text_Component *text,
                         *viewmatrix,
                         m_ortho,
                         text->GetTexture()->texture,
-                        pixelColor);
+                        pixelColor,
+                        text->GetTexture()->transparency);
 }
 
 void Direct3D11_View::TurnOnAlphaBlending() {

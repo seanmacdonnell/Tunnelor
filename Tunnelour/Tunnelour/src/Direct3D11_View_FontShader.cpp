@@ -284,7 +284,8 @@ void Direct3D11_View_FontShader::Render(ID3D11DeviceContext* devicecontext,
                                            D3DXMATRIX view,
                                            D3DXMATRIX projection,
                                            ID3D11ShaderResourceView* texture,
-                                           D3DXCOLOR pixelcolor) {
+                                           D3DXCOLOR pixelcolor,
+                                           float blend) {
   // Set the shader parameters that it will use for rendering.
   D3D11_MAPPED_SUBRESOURCE mappedresource;
   MatrixBufferType* dataptr;
@@ -340,6 +341,9 @@ void Direct3D11_View_FontShader::Render(ID3D11DeviceContext* devicecontext,
 
   // Copy the pixel color into the pixel constant buffer.
   dataPtr2->pixelColor = pixelcolor;
+
+  // Copy the blend amount value into the transparent constant buffer.
+  dataPtr2->blendAmount = blend;
 
   // Unlock the pixel constant buffer.
   devicecontext->Unmap(m_pixelbuffer, 0);
