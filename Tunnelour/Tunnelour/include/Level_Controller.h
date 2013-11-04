@@ -21,6 +21,8 @@
 #include "Avatar_Component.h"
 #include "Controller.h"
 #include "Level_Component.h"
+#include "Text_Component.h"
+#include "Camera_Component.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -54,6 +56,7 @@ class Level_Controller: public Controller {
 
  private:
   Avatar_Component *m_avatar;
+  Camera_Component *m_camera;
   Game_Settings_Component *m_game_settings;
   Level_Component *m_level;
 
@@ -66,8 +69,9 @@ class Level_Controller: public Controller {
 
   Avatar_Component::Collision_Block GetNamedCollisionBlock(std::string id, std::list<Avatar_Component::Collision_Block> collision_blocks);
   
-  
-  
+  Text_Component *m_level_name_heading;
+  Text_Component *m_level_blurb;
+  std::string m_font_path;
 
 };
 }  // namespace Tunnelour

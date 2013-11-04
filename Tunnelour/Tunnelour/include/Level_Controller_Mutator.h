@@ -18,7 +18,7 @@
 
 #include "Component.h"
 #include "Game_Settings_Component.h"
-#include "Avatar_Component.h"
+#include "Camera_Component.h"
 
 namespace Tunnelour {
 class Level_Controller_Mutator: public Component::Component_Mutator  {
@@ -51,7 +51,7 @@ class Level_Controller_Mutator: public Component::Component_Mutator  {
   //-------------------------------------------------------------------------
   // Description : Accessors for the Game_Settings_Component
   //-------------------------------------------------------------------------
-  Avatar_Component* const GetAvatarComponent();
+  Camera_Component* const GetCamera();
 
   //-------------------------------------------------------------------------
   // Description : Accessors for the Game_Settings_Component
@@ -60,9 +60,9 @@ class Level_Controller_Mutator: public Component::Component_Mutator  {
 
  private:
   bool m_found_game_settings;
-  bool m_found_avatar_component;
+  bool m_found_camera;
   Game_Settings_Component * m_game_settings;
-  Avatar_Component * m_avatar_controller;
+  Camera_Component * m_camera;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_LEVEL_CONTROLLER_MUTATOR_H_

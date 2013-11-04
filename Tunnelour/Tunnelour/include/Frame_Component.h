@@ -82,6 +82,11 @@ class Frame_Component: public Tunnelour::Component {
   void SetPosition(D3DXVECTOR3 position);
 
   //---------------------------------------------------------------------------
+  // Description : Mutator for the Position
+  //---------------------------------------------------------------------------
+  void SetPosition(float x, float y, float z);
+
+  //---------------------------------------------------------------------------
   // Description : Accessor for the Scale
   //---------------------------------------------------------------------------
   D3DXVECTOR3 * const GetScale();

@@ -22,15 +22,17 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 Level_Controller_Mutator::Level_Controller_Mutator() {
   m_found_game_settings = false;
-  m_found_avatar_component = false;
+  m_found_camera = false;
   m_game_settings = 0;
-  m_avatar_controller = 0;
+  m_camera = 0;
 }
 
 //------------------------------------------------------------------------------
 Level_Controller_Mutator::~Level_Controller_Mutator() {
   m_found_game_settings = false;
+  m_found_camera = false;
   m_game_settings = 0;
+  m_camera = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -38,9 +40,9 @@ void Level_Controller_Mutator::Mutate(Tunnelour::Component * const component) {
   if (component->GetType().compare("Game_Settings_Component") == 0) {
     m_game_settings = static_cast<Game_Settings_Component*>(component);
     m_found_game_settings = true;
-  } else if (component->GetType().compare("Avatar_Component") == 0) {
-    m_avatar_controller = static_cast<Avatar_Component*>(component);
-    m_found_avatar_component = true;
+  } else if (component->GetType().compare("Camera_Component") == 0) {
+    m_camera = static_cast<Camera_Component*>(component);
+    m_found_camera = true;
   }
 }
 
@@ -50,12 +52,12 @@ Game_Settings_Component* const Level_Controller_Mutator::GetGameSettings() {
 }
 
 //------------------------------------------------------------------------------
-Avatar_Component* const Level_Controller_Mutator::GetAvatarComponent() {
-  return m_avatar_controller;
+Camera_Component* const Level_Controller_Mutator::GetCamera() {
+  return m_camera;
 }
 
 //------------------------------------------------------------------------------
 bool Level_Controller_Mutator::WasSuccessful() {
-  return (m_found_game_settings);
+  return m_found_game_settings && m_found_camera;
 }
 }  // namespace Tunnelour

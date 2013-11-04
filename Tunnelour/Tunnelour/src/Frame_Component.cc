@@ -87,6 +87,11 @@ void Frame_Component::SetPosition(D3DXVECTOR3 position) {
 }
 
 //---------------------------------------------------------------------------
+void Frame_Component::SetPosition(float x, float y, float z) {
+  m_position = D3DXVECTOR3(x, y, z);
+}
+
+//---------------------------------------------------------------------------
 D3DXVECTOR3 * const Frame_Component::GetScale() {
   return &m_scale;
 }

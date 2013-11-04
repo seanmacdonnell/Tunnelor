@@ -171,7 +171,7 @@ void Debug_Data_Display_Controller::UpdateDebugDataHeading() {
   m_heading->SetPosition(D3DXVECTOR3(debug_data_text_title_x,
                                      debug_data_text_title_y,
                                      z_position));
-  m_heading->Init();
+  
 }
 
 //------------------------------------------------------------------------------
