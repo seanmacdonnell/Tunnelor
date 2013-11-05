@@ -109,8 +109,10 @@ bool Background_Controller::Run() {
   if (camera_top > m_background_top) {
     TileUp(camera_top + (game_resolution.y / 2));
   }
-  if  (camera_bottom < m_background_bottom) {
-    TileDown(camera_bottom  - (game_resolution.y / 2));
+  if  (camera_bottom < (m_background_bottom + (game_resolution.y / 2))) {
+    while ((camera_bottom - game_resolution.y) < m_background_bottom) {
+      TileDown();
+    }
   }
   if (camera_right > m_background_right) {
     TileRight(camera_right + (game_resolution.x / 2));
@@ -345,7 +347,7 @@ void Background_Controller::TileUp(float camera_top) {
 }
 
 //---------------------------------------------------------------------------
-void Background_Controller::TileDown(float camera_bottom) {
+void Background_Controller::TileDown() {
   unsigned int number_of_x_tiles = 0;
   float rem = (m_background_right - m_background_left) / 128;
   number_of_x_tiles = static_cast<unsigned int>(std::ceil(rem));

@@ -19,6 +19,7 @@
 #include "Direct3D11_View_Mutator.h"
 #include "Direct3D11_View_FontShader.h"
 #include "String_Helper.h"
+#include "Bitmap_Helper.h"
 
 namespace Tunnelour {
 
@@ -291,10 +292,10 @@ void Direct3D11_View::HandleEventAdd(Tunnelour::Component * const component) {
 
 //------------------------------------------------------------------------------
 void Direct3D11_View::HandleEventRemove(Tunnelour::Component * const component){
-  m_renderables.Layer_00.remove(component);
-  m_renderables.Layer_01.remove(component);
-  m_renderables.Layer_02.remove(component);
-  m_renderables.Layer_03.remove(component);
+  //m_renderables.Layer_00.remove(component);
+  //m_renderables.Layer_01.remove(component);
+  //m_renderables.Layer_02.remove(component);
+  //m_renderables.Layer_03.remove(component);
 }
 
 //------------------------------------------------------------------------------
@@ -767,96 +768,98 @@ void Direct3D11_View::Init_D3D11() {
 }
 
 //------------------------------------------------------------------------------
-void Direct3D11_View::Render(std::list<Component*> layer, D3DXMATRIX *viewmatrix) {
+void Direct3D11_View::Render(std::vector<Component*> layer, D3DXMATRIX *viewmatrix) {
   if (layer.empty()) { return; }
-  for (std::list<Component*>::const_iterator iterator = layer.begin(), end = layer.end(); iterator != end; ++iterator) {
+  for (std::vector<Component*>::const_iterator iterator = layer.begin(), end = layer.end(); iterator != end; ++iterator) {
     if ((*iterator)->GetType().compare("Bitmap_Component") == 0 || (*iterator)->GetType().compare("Avatar_Component") == 0) {
       Bitmap_Component *bitmap = static_cast<Bitmap_Component*>(*iterator);
-      if (!bitmap->IsInitialised()) {  bitmap->Init(); }
-      if (bitmap->GetFrame()->vertex_buffer == 0) {
-        D3D11_BUFFER_DESC vertexBufferDesc;
-        D3D11_SUBRESOURCE_DATA vertexData;
+      if (true) {//IsThisBitmapComponentVisable(bitmap)) {
+        if (!bitmap->IsInitialised()) {  bitmap->Init(); }
+        if (bitmap->GetFrame()->vertex_buffer == 0) {
+          D3D11_BUFFER_DESC vertexBufferDesc;
+          D3D11_SUBRESOURCE_DATA vertexData;
 
-        // Set up the description of the static vertex buffer.
-        vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-        vertexBufferDesc.ByteWidth = sizeof(Frame_Component::Vertex_Type) * bitmap->GetFrame()->vertex_count;
-        vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-        vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-        vertexBufferDesc.MiscFlags = 0;
-        vertexBufferDesc.StructureByteStride = 0;
+          // Set up the description of the static vertex buffer.
+          vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+          vertexBufferDesc.ByteWidth = sizeof(Frame_Component::Vertex_Type) * bitmap->GetFrame()->vertex_count;
+          vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+          vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+          vertexBufferDesc.MiscFlags = 0;
+          vertexBufferDesc.StructureByteStride = 0;
 
-        // Give the subresource structure a pointer to the vertex data.
-        vertexData.pSysMem = bitmap->GetFrame()->vertices;
-        vertexData.SysMemPitch = 0;
-        vertexData.SysMemSlicePitch = 0;
+          // Give the subresource structure a pointer to the vertex data.
+          vertexData.pSysMem = bitmap->GetFrame()->vertices;
+          vertexData.SysMemPitch = 0;
+          vertexData.SysMemSlicePitch = 0;
 
-        // Now create the vertex buffer.
-        if (FAILED(m_device->CreateBuffer(&vertexBufferDesc,
-                                          &vertexData,
-                                          &(bitmap->GetFrame()->vertex_buffer)))) {
-          throw Exceptions::init_error("CreateBuffer (vertex_buffer) Failed!");
-        }
-      }
-      if (bitmap->GetFrame()->index_buffer == 0) {
-        D3D11_BUFFER_DESC indexBufferDesc;
-        D3D11_SUBRESOURCE_DATA indexData;
-
-        // Set up the description of the static index buffer.
-        indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-        indexBufferDesc.ByteWidth = sizeof(unsigned int) * bitmap->GetFrame()->index_count;
-        indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-        indexBufferDesc.CPUAccessFlags = 0;
-        indexBufferDesc.MiscFlags = 0;
-        indexBufferDesc.StructureByteStride = 0;
-
-        // Give the subresource structure a pointer to the index data.
-        indexData.pSysMem = bitmap->GetFrame()->indices;
-        indexData.SysMemPitch = 0;
-        indexData.SysMemSlicePitch = 0;
-
-        // Create the index buffer.
-        if (FAILED(m_device->CreateBuffer(&indexBufferDesc,
-                                          &indexData,
-                                          &(bitmap->GetFrame()->index_buffer)))) {
-          throw Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
-        }
-      }
-      if (bitmap->GetTexture()->texture == 0) { 
-        std::map<std::wstring, ID3D11ShaderResourceView*>::iterator stored_texture;
-        stored_texture = m_texture_map.find(bitmap->GetTexture()->texture_path);
-        if (stored_texture == m_texture_map.end()) {
-          D3DX11_IMAGE_LOAD_INFO imageLoadInfo;
-          imageLoadInfo.Width = D3DX11_DEFAULT;
-          imageLoadInfo.Height = D3DX11_DEFAULT;
-          imageLoadInfo.Depth = D3DX11_DEFAULT;
-          imageLoadInfo.FirstMipLevel = D3DX11_DEFAULT;
-          imageLoadInfo.MipLevels = D3DX11_DEFAULT;
-          imageLoadInfo.Usage = (D3D11_USAGE) D3DX11_DEFAULT;
-          imageLoadInfo.BindFlags = D3DX11_DEFAULT;
-          imageLoadInfo.CpuAccessFlags = D3DX11_DEFAULT;
-          imageLoadInfo.MiscFlags = D3DX11_DEFAULT;
-          imageLoadInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-          imageLoadInfo.Filter = D3DX11_DEFAULT;
-          imageLoadInfo.MipFilter = D3DX11_DEFAULT;
-          imageLoadInfo.pSrcInfo = NULL;
-          ID3D11ShaderResourceView* texture;
-          if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_device,
-                                                            bitmap->GetTexture()->texture_path.c_str(),
-                                                            &imageLoadInfo,
-                                                            NULL,
-                                                            &texture,
-                                                            NULL)))  {
-            std::string error = "Loading bitmap file failed! :" + String_Helper::WStringToString(bitmap->GetTexture()->texture_path);
-            throw Exceptions::init_error(error);
+          // Now create the vertex buffer.
+          if (FAILED(m_device->CreateBuffer(&vertexBufferDesc,
+                                            &vertexData,
+                                            &(bitmap->GetFrame()->vertex_buffer)))) {
+            throw Exceptions::init_error("CreateBuffer (vertex_buffer) Failed!");
           }
-          m_texture_map[bitmap->GetTexture()->texture_path] = texture;
-          bitmap->GetTexture()->texture = texture;
-        } else {
-          bitmap->GetTexture()->texture = (*stored_texture).second;
         }
-      }
-      if (bitmap->GetTexture()->transparency != 0.0) {
-        Render_Bitmap(bitmap, viewmatrix);
+        if (bitmap->GetFrame()->index_buffer == 0) {
+          D3D11_BUFFER_DESC indexBufferDesc;
+          D3D11_SUBRESOURCE_DATA indexData;
+
+          // Set up the description of the static index buffer.
+          indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+          indexBufferDesc.ByteWidth = sizeof(unsigned int) * bitmap->GetFrame()->index_count;
+          indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+          indexBufferDesc.CPUAccessFlags = 0;
+          indexBufferDesc.MiscFlags = 0;
+          indexBufferDesc.StructureByteStride = 0;
+
+          // Give the subresource structure a pointer to the index data.
+          indexData.pSysMem = bitmap->GetFrame()->indices;
+          indexData.SysMemPitch = 0;
+          indexData.SysMemSlicePitch = 0;
+
+          // Create the index buffer.
+          if (FAILED(m_device->CreateBuffer(&indexBufferDesc,
+                                            &indexData,
+                                            &(bitmap->GetFrame()->index_buffer)))) {
+            throw Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
+          }
+        }
+        if (bitmap->GetTexture()->texture == 0) { 
+          std::map<std::wstring, ID3D11ShaderResourceView*>::iterator stored_texture;
+          stored_texture = m_texture_map.find(bitmap->GetTexture()->texture_path);
+          if (stored_texture == m_texture_map.end()) {
+            D3DX11_IMAGE_LOAD_INFO imageLoadInfo;
+            imageLoadInfo.Width = D3DX11_DEFAULT;
+            imageLoadInfo.Height = D3DX11_DEFAULT;
+            imageLoadInfo.Depth = D3DX11_DEFAULT;
+            imageLoadInfo.FirstMipLevel = D3DX11_DEFAULT;
+            imageLoadInfo.MipLevels = D3DX11_DEFAULT;
+            imageLoadInfo.Usage = (D3D11_USAGE) D3DX11_DEFAULT;
+            imageLoadInfo.BindFlags = D3DX11_DEFAULT;
+            imageLoadInfo.CpuAccessFlags = D3DX11_DEFAULT;
+            imageLoadInfo.MiscFlags = D3DX11_DEFAULT;
+            imageLoadInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+            imageLoadInfo.Filter = D3DX11_DEFAULT;
+            imageLoadInfo.MipFilter = D3DX11_DEFAULT;
+            imageLoadInfo.pSrcInfo = NULL;
+            ID3D11ShaderResourceView* texture;
+            if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_device,
+                                                              bitmap->GetTexture()->texture_path.c_str(),
+                                                              &imageLoadInfo,
+                                                              NULL,
+                                                              &texture,
+                                                              NULL)))  {
+              std::string error = "Loading bitmap file failed! :" + String_Helper::WStringToString(bitmap->GetTexture()->texture_path);
+              throw Exceptions::init_error(error);
+            }
+            m_texture_map[bitmap->GetTexture()->texture_path] = texture;
+            bitmap->GetTexture()->texture = texture;
+          } else {
+            bitmap->GetTexture()->texture = (*stored_texture).second;
+          }
+        }
+        if (bitmap->GetTexture()->transparency != 0.0) {
+          Render_Bitmap(bitmap, viewmatrix);
+        }
       }
     }
     if ((*iterator)->GetType().compare("Text_Component") == 0) {
@@ -1147,6 +1150,60 @@ void Direct3D11_View::TurnZBufferOn() {
 void Direct3D11_View::TurnZBufferOff() {
   m_device_context->OMSetDepthStencilState(m_depthDisabledStencilState, 1);
   return;
+}
+
+bool Direct3D11_View::IsThisBitmapComponentVisable(Bitmap_Component *bitmap) {
+  // At least one vertex in TileA is contained in the TileB.
+  bool y_collision = false;
+
+  float a_tile_top, a_tile_bottom;
+  a_tile_top = bitmap->GetPosition().y + static_cast<float>(bitmap->GetSize().y / 2);
+  a_tile_bottom = bitmap->GetPosition().y - static_cast<float>(bitmap->GetSize().y / 2);
+
+  float b_tile_top, b_tile_bottom;
+  b_tile_top = m_camera->GetPosition().y + static_cast<float>(m_game_settings->GetResolution().y / 2);
+  b_tile_bottom = m_camera->GetPosition().y - static_cast<float>(m_game_settings->GetResolution().y / 2);
+
+  if (b_tile_top < a_tile_top && b_tile_top > a_tile_bottom) {
+    y_collision = true;
+  }
+
+  if (a_tile_top < b_tile_top && a_tile_bottom > b_tile_bottom) {
+    y_collision = true;
+  }
+
+  if (b_tile_bottom < a_tile_top && b_tile_bottom > a_tile_bottom) {
+    y_collision = true;
+  }
+
+  if (a_tile_top == b_tile_top  && a_tile_bottom == b_tile_bottom) {
+    y_collision = true;
+  }
+
+  // At least one vertex in TileA is contained in the TileB.
+  bool x_collision = false;
+
+  float a_tile_left, a_tile_right;
+  a_tile_left = bitmap->GetPosition().x - static_cast<float>(bitmap->GetSize().x / 2);
+  a_tile_right = bitmap->GetPosition().x + static_cast<float>(bitmap->GetSize().x / 2);
+
+  float b_tile_left, b_tile_right;
+  b_tile_left = m_camera->GetPosition().x - static_cast<float>(m_game_settings->GetResolution().x / 2);
+  b_tile_right = m_camera->GetPosition().x + static_cast<float>(m_game_settings->GetResolution().x / 2);
+
+  if (b_tile_left > a_tile_left && b_tile_left < a_tile_right) {
+    x_collision = true;
+  }
+
+  if (b_tile_right > a_tile_left && b_tile_right < a_tile_right) {
+    x_collision = true;
+  }
+
+  if (b_tile_left == a_tile_left && b_tile_right == a_tile_right) {
+    x_collision = true;
+  }
+
+  return (x_collision || y_collision);
 }
 
 }  // namespace Tunnelour

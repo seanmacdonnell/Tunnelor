@@ -96,7 +96,7 @@ class Background_Controller: public Controller {
   //---------------------------------------------------------------------------
   // Description : Tiles down from the current background edge
   //---------------------------------------------------------------------------
-  void TileDown(float camera_bottom);
+  void TileDown();
 
   //---------------------------------------------------------------------------
   // Description : Tiles right from the current background edge

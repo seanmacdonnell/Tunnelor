@@ -62,7 +62,6 @@ Frame_Component::~Frame_Component() {
 
 //------------------------------------------------------------------------------
 void Frame_Component::Init() {
-
   m_is_initialised = true;
 }
 
@@ -119,19 +118,7 @@ void Frame_Component::SetSize(const float size_x, const float size_y) {
 
 //---------------------------------------------------------------------------
 D3DXVECTOR3 const Frame_Component::GetFrameCentre() {
-  D3DXVECTOR3 centre = D3DXVECTOR3(0, 0, 0);
-
-  for (int i = 0; i < m_frame->vertex_count; i++) {
-    centre.x += m_frame->vertices[i].position.x;
-    centre.y += m_frame->vertices[i].position.y;
-    centre.z += m_frame->vertices[i].position.z;
-  }
-
-  centre.x = centre.x / m_frame->vertex_count;
-  centre.y = centre.y / m_frame->vertex_count;
-  centre.z = centre.z / m_frame->vertex_count;
-
-  return centre;
+  return m_centre;
 }
 
 

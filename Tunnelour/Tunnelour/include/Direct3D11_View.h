@@ -31,6 +31,7 @@
 #include <mmsystem.h>
 #include <list>
 #include <map>
+#include <vector>
 
 #include "Component_Composite.h"
 #include "View.h"
@@ -45,6 +46,8 @@
 #include "Game_Metrics_Component.h"
 #include "Direct3D11_View_DebugShader.h"
 #include "Avatar_Component.h"
+#include "Frame_Component.h"
+#include "Bitmap_Component.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -59,10 +62,15 @@ class Direct3D11_View : public Tunnelour::View,
                         public Component_Composite::Component_Composite_Type_Observer {
  public:
   struct Renderables {
-    std::list<Tunnelour::Component*> Layer_00;
-    std::list<Tunnelour::Component*> Layer_01;
-    std::list<Tunnelour::Component*> Layer_02;
-    std::list<Tunnelour::Component*> Layer_03;
+    std::vector<Tunnelour::Component*> Layer_00;
+    std::vector<Tunnelour::Component*> Layer_01;
+    std::vector<Tunnelour::Component*> Layer_02;
+    std::vector<Tunnelour::Component*> Layer_03;
+  };
+
+  struct Renderable {
+    Frame_Component::Frame *frame;
+    Bitmap_Component::Texture *texture;
   };
 
   //---------------------------------------------------------------------------
@@ -104,7 +112,7 @@ class Direct3D11_View : public Tunnelour::View,
   //---------------------------------------------------------------------------
   // Description : Render the components
   //---------------------------------------------------------------------------
-  void Render(std::list<Tunnelour::Component*> layer,
+  void Render(std::vector<Tunnelour::Component*>,
               D3DXMATRIX *viewmatrix);
 
   //---------------------------------------------------------------------------
@@ -138,6 +146,8 @@ class Direct3D11_View : public Tunnelour::View,
   void TurnZBufferOn();
 
   void TurnZBufferOff();
+
+  bool IsThisBitmapComponentVisable(Bitmap_Component *bitmap);
 
   //---------------------------------------------------------------------------
   // Description : Class Variables

@@ -137,6 +137,8 @@ class Frame_Component: public Tunnelour::Component {
 
   Frame  * m_frame;
 
+  D3DXVECTOR3 m_centre;
+
  private:
 };  // class Frame_Component
 }  // namespace Tunnelour

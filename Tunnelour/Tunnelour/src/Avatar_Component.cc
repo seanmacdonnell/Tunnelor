@@ -194,6 +194,19 @@ void Avatar_Component::Init_Frame() {
   // Bottom right
   m_frame->vertices[5].position = D3DXVECTOR3(right, bottom, 0.0f);
   m_frame->vertices[5].texture = m_frame->vertices[1].texture;
+
+  m_centre = D3DXVECTOR3(0, 0, 0);
+
+  for (int i = 0; i < m_frame->vertex_count; i++) {
+    m_centre.x += m_frame->vertices[i].position.x;
+    m_centre.y += m_frame->vertices[i].position.y;
+    m_centre.z += m_frame->vertices[i].position.z;
+  }
+
+  m_centre.x = m_centre.x / m_frame->vertex_count;
+  m_centre.y = m_centre.y / m_frame->vertex_count;
+  m_centre.z = m_centre.z / m_frame->vertex_count;
+
 }
 
 }  // namespace Tunnelour

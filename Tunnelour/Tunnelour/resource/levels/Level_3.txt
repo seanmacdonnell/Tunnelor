@@ -1,0 +1,8 @@
+Level_Name "Level 3"
+Level_Blurb "Testing Far Falling"
+Level_CSV_Filename "Level_2.csv"
+Level_TilesetName "Dirt"
+Level_TunnelStartTopLeftX "0"
+Level_TunnelStartTopLeftY "0"
+Level_AvatarStartTopLeftX "1600"
+Level_AvatarStartTopLeftY "-704"
