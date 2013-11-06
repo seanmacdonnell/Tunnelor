@@ -847,42 +847,6 @@ void Direct3D11_View::Render_Bitmaps(std::vector<Direct3D11_View::Bitmap_Rendera
         throw Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
       }
     }
-    /*
-    if (renderables[i]->texture == 0) { 
-      std::map<std::wstring, ID3D11ShaderResourceView*>::iterator stored_texture;
-      stored_texture = m_texture_map.find(renderables[i]->texture->texture_path);
-      if (stored_texture == m_texture_map.end()) {
-        D3DX11_IMAGE_LOAD_INFO imageLoadInfo;
-        imageLoadInfo.Width = D3DX11_DEFAULT;
-        imageLoadInfo.Height = D3DX11_DEFAULT;
-        imageLoadInfo.Depth = D3DX11_DEFAULT;
-        imageLoadInfo.FirstMipLevel = D3DX11_DEFAULT;
-        imageLoadInfo.MipLevels = D3DX11_DEFAULT;
-        imageLoadInfo.Usage = (D3D11_USAGE) D3DX11_DEFAULT;
-        imageLoadInfo.BindFlags = D3DX11_DEFAULT;
-        imageLoadInfo.CpuAccessFlags = D3DX11_DEFAULT;
-        imageLoadInfo.MiscFlags = D3DX11_DEFAULT;
-        imageLoadInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-        imageLoadInfo.Filter = D3DX11_DEFAULT;
-        imageLoadInfo.MipFilter = D3DX11_DEFAULT;
-        imageLoadInfo.pSrcInfo = NULL;
-        ID3D11ShaderResourceView* texture;
-        if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_device,
-                                                          renderables[i]->texture->texture_path.c_str(),
-                                                          &imageLoadInfo,
-                                                          NULL,
-                                                          &texture,
-                                                          NULL)))  {
-          std::string error = "Loading bitmap file failed! :" + String_Helper::WStringToString(renderables[i]->texture->texture_path);
-          throw Exceptions::init_error(error);
-        }
-        m_texture_map[renderables[i]->texture->texture_path] = texture;
-        renderables[i]->texture->texture = texture;
-      } else {
-        renderables[i]->texture->texture = (*stored_texture).second;
-      }
-    }
-    */
     if (renderables[i]->texture->texture == 0) { 
       std::map<std::wstring, ID3D11ShaderResourceView*>::iterator stored_texture;
       stored_texture = m_texture_map.find(renderables[i]->texture->texture_path);
@@ -901,7 +865,9 @@ void Direct3D11_View::Render_Bitmaps(std::vector<Direct3D11_View::Bitmap_Rendera
         renderables[i]->texture->texture = (*stored_texture).second;
       }
     }
-    Render_Bitmap(renderables[i], viewmatrix);
+    if (IsThisBitmapComponentVisable(renderables[i])) {
+      Render_Bitmap(renderables[i], viewmatrix);
+    }
   }
 }
 
@@ -1193,58 +1159,54 @@ void Direct3D11_View::TurnZBufferOff() {
   return;
 }
 
-bool Direct3D11_View::IsThisBitmapComponentVisable(Bitmap_Component *bitmap) {
+bool Direct3D11_View::IsThisBitmapComponentVisable(Bitmap_Renderable *bitmap) {
   // At least one vertex in TileA is contained in the TileB.
-  bool y_collision = false;
-
   float a_tile_top, a_tile_bottom;
-  a_tile_top = bitmap->GetPosition()->y + static_cast<float>(bitmap->GetSize().y / 2);
-  a_tile_bottom = bitmap->GetPosition()->y - static_cast<float>(bitmap->GetSize().y / 2);
+  a_tile_top = bitmap->position->y + static_cast<float>(bitmap->bitmap->GetSize().y / 2);
+  a_tile_bottom = bitmap->position->y - static_cast<float>(bitmap->bitmap->GetSize().y / 2);
 
   float b_tile_top, b_tile_bottom;
   b_tile_top = m_camera->GetPosition().y + static_cast<float>(m_game_settings->GetResolution().y / 2);
   b_tile_bottom = m_camera->GetPosition().y - static_cast<float>(m_game_settings->GetResolution().y / 2);
 
   if (b_tile_top < a_tile_top && b_tile_top > a_tile_bottom) {
-    y_collision = true;
+    return true;
   }
 
   if (a_tile_top < b_tile_top && a_tile_bottom > b_tile_bottom) {
-    y_collision = true;
+    return true;
   }
 
   if (b_tile_bottom < a_tile_top && b_tile_bottom > a_tile_bottom) {
-    y_collision = true;
+    return true;
   }
 
   if (a_tile_top == b_tile_top  && a_tile_bottom == b_tile_bottom) {
-    y_collision = true;
+    return true;
   }
 
   // At least one vertex in TileA is contained in the TileB.
-  bool x_collision = false;
-
   float a_tile_left, a_tile_right;
-  a_tile_left = bitmap->GetPosition()->x - static_cast<float>(bitmap->GetSize().x / 2);
-  a_tile_right = bitmap->GetPosition()->x + static_cast<float>(bitmap->GetSize().x / 2);
+  a_tile_left = bitmap->position->x - static_cast<float>(bitmap->bitmap->GetSize().x / 2);
+  a_tile_right = bitmap->position->x + static_cast<float>(bitmap->bitmap->GetSize().x / 2);
 
   float b_tile_left, b_tile_right;
   b_tile_left = m_camera->GetPosition().x - static_cast<float>(m_game_settings->GetResolution().x / 2);
   b_tile_right = m_camera->GetPosition().x + static_cast<float>(m_game_settings->GetResolution().x / 2);
 
   if (b_tile_left > a_tile_left && b_tile_left < a_tile_right) {
-    x_collision = true;
+    return true;
   }
 
   if (b_tile_right > a_tile_left && b_tile_right < a_tile_right) {
-    x_collision = true;
+    return true;
   }
 
   if (b_tile_left == a_tile_left && b_tile_right == a_tile_right) {
-    x_collision = true;
+    return true;
   }
 
-  return (x_collision || y_collision);
+  return false;
 }
 
 }  // namespace Tunnelour

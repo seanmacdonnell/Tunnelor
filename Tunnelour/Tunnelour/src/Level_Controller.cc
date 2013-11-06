@@ -107,9 +107,9 @@ bool Level_Controller::Run() {
 //---------------------------------------------------------------------------
 void Level_Controller::LoadLevelMetadata() {
   Level_Component::Level_Metadata level_0_metadata;
-  std::string level_0_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_0.txt");
+  std::string level_0_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_3.txt");
   level_0_metadata = LoadLevelMetadataIntoStruct(level_0_metadata_file_path);
-  std::string level_0_csv_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_0.csv");
+  std::string level_0_csv_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_3.csv");
   LoadLevelCSVIntoStruct(level_0_csv_file_path, &level_0_metadata);
   m_level->SetCurrentLevel(level_0_metadata);
 }

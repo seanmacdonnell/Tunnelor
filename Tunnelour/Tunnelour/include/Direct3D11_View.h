@@ -168,7 +168,7 @@ class Direct3D11_View : public Tunnelour::View,
 
   void TurnZBufferOff();
 
-  bool IsThisBitmapComponentVisable(Bitmap_Component *bitmap);
+  bool IsThisBitmapComponentVisable(Bitmap_Renderable *bitmap);
 
   //---------------------------------------------------------------------------
   // Description : Class Variables
