@@ -209,7 +209,7 @@ void Avatar_Controller::RunWalkingState() {
       UpdateAvatarState(state_index);
       AlignAvatarOnAvatarCollisionBlock();
 
-      D3DXVECTOR3 position = m_avatar->GetPosition();
+      D3DXVECTOR3 position = *m_avatar->GetPosition();
       if (current_state.direction.compare("Right") == 0) {
         position += m_avatar->GetVelocity();
       } else {  // Left
@@ -238,14 +238,14 @@ void Avatar_Controller::RunWalkingState() {
     if (m_avatar->GetState().direction.compare("Left") == 0) {
       float tile_right_position = (*out_colliding_floor_tiles->begin())->GetBottomRightPostion().x;
       float avatar_collision_block_left_position = (&CollisionBlockToBitmapComponent(GetNamedCollisionBlock("Avatar", m_avatar->GetState().collision_blocks)))->GetTopLeftPostion().x;
-      D3DXVECTOR3 avatar_position = m_avatar->GetPosition();
+      D3DXVECTOR3 avatar_position = *m_avatar->GetPosition();
       float x_offset = tile_right_position + (GetNamedCollisionBlock("Avatar", m_avatar->GetState().collision_blocks).size.x / 2);
       avatar_position.x = x_offset;
       m_avatar->SetPosition(avatar_position);
     }
     if (m_avatar->GetState().direction.compare("Right") == 0) {
       D3DXVECTOR3 tile_position = (*out_colliding_floor_tiles->begin())->GetTopLeftPostion();
-      D3DXVECTOR3 avatar_position = m_avatar->GetPosition();
+      D3DXVECTOR3 avatar_position = *m_avatar->GetPosition();
       float foot_x_offset = GetLowestCollisionBlock().offset_from_avatar_centre.x + (GetNamedCollisionBlock("Avatar", m_avatar->GetState().collision_blocks).size.x / 2);
       avatar_position.x = tile_position.x + (foot_x_offset * -1);
       m_avatar->SetPosition(avatar_position);
@@ -284,7 +284,7 @@ void Avatar_Controller::RunFallingState() {
         }
       }
 
-      D3DXVECTOR3 avatar_position = m_avatar->GetPosition();
+      D3DXVECTOR3 avatar_position = *m_avatar->GetPosition();
       float foot_bottom = out_collision_block->GetBottomRightPostion().y;
       float foot_bottom_centre_offset = foot_bottom - avatar_position.y;
 
@@ -293,7 +293,7 @@ void Avatar_Controller::RunFallingState() {
 
       ChangeAvatarState("Standing", m_avatar->GetState().direction);
     } else {
-      D3DXVECTOR3 position = m_avatar->GetPosition();
+      D3DXVECTOR3 position = *m_avatar->GetPosition();
       position.y -= 32;
       m_avatar->SetPosition(position);
     }
@@ -315,7 +315,7 @@ void Avatar_Controller::RunFallingState() {
         m_avatar->SetVelocity(new_velocity);
       }
     } else {
-      D3DXVECTOR3 position = m_avatar->GetPosition();
+      D3DXVECTOR3 position = *m_avatar->GetPosition();
 
       unsigned int state_index = current_state.state_index;
       state_index++;
@@ -361,7 +361,7 @@ void Avatar_Controller::RunFallingState() {
       } else if (current_state.state.compare("Falling_To_Death") == 0 || current_state.state.compare("Death") == 0 ) {
         AlignAvatarOnAvatarCollisionBlock();
       } else {
-        position = m_avatar->GetPosition();
+        position = *m_avatar->GetPosition();
         D3DXVECTOR3 new_velocity = D3DXVECTOR3(0, 0 , 0);
         new_velocity.y = m_avatar->GetVelocity().y + m_world_settings->GetGravity();
         new_velocity.x = m_avatar->GetVelocity().x;
@@ -536,7 +536,7 @@ void Avatar_Controller::AlignAvatarOnRightFoot() {
     right_foot_size_offset.z  = 0;
   }
 
-  D3DXVECTOR3 current_avatar_position = m_avatar->GetPosition();
+  D3DXVECTOR3 current_avatar_position = *m_avatar->GetPosition();
   new_avatar_position = current_avatar_position + (right_foot_offset - right_foot_size_offset);
   m_avatar->SetPosition(new_avatar_position);
 }
@@ -567,7 +567,7 @@ void Avatar_Controller::AlignAvatarOnLeftFoot() {
     right_foot_size_offset.z  = 0;
   }
 
-  D3DXVECTOR3 current_avatar_position = m_avatar->GetPosition();
+  D3DXVECTOR3 current_avatar_position = *m_avatar->GetPosition();
   new_avatar_position = current_avatar_position + (right_foot_offset + right_foot_size_offset);
   m_avatar->SetPosition(new_avatar_position);
 }
@@ -596,7 +596,7 @@ void Avatar_Controller::AlignAvatarOnAvatarCollisionBlock() {
                                              current_collision_block.size.y);
     right_foot_offset.z = 0;
 
-    D3DXVECTOR3 current_avatar_position = m_avatar->GetPosition();
+    D3DXVECTOR3 current_avatar_position = *m_avatar->GetPosition();
     new_avatar_position.x = current_avatar_position.x;
     new_avatar_position.y = current_avatar_position.y - (right_foot_offset.y / 2);
     new_avatar_position.z = current_avatar_position.z;
@@ -610,7 +610,7 @@ void Avatar_Controller::MoveAvatarWallAdjacent(std::string direction) {
   std::list<Bitmap_Component*> out_colliding_wall_tiles;
   bool is_wall_colliding = IsAvatarWallColliding(&out_colliding_wall_tiles, &CollisionBlockToBitmapComponent(GetNamedCollisionBlock("Avatar", m_avatar->GetState().collision_blocks)));
   if (is_wall_colliding) {
-    D3DXVECTOR3 new_avatar_position = m_avatar->GetPosition();
+    D3DXVECTOR3 new_avatar_position = *m_avatar->GetPosition();
     if (direction.compare("Left") == 0) {
       D3DXVECTOR3 tile_position = (*out_colliding_wall_tiles.begin())->GetBottomRightPostion();
       Avatar_Component::Collision_Block collision_block = GetNamedCollisionBlock("Avatar", m_avatar->GetState().collision_blocks);
@@ -631,7 +631,7 @@ void Avatar_Controller::MoveAvatarFloorAdjacent() {
   std::list<Bitmap_Component*> out_colliding_wall_tiles;
   bool is_floor_colliding = IsAvatarFloorColliding(&out_colliding_wall_tiles, &CollisionBlockToBitmapComponent(GetNamedCollisionBlock("Avatar", m_avatar->GetState().collision_blocks)));
   if (is_floor_colliding) {
-    D3DXVECTOR3 new_avatar_position = m_avatar->GetPosition();
+    D3DXVECTOR3 new_avatar_position = *m_avatar->GetPosition();
     D3DXVECTOR3 tile_position = (*out_colliding_wall_tiles.begin())->GetTopLeftPostion();
     Avatar_Component::Collision_Block collision_block = GetNamedCollisionBlock("Avatar", m_avatar->GetState().collision_blocks);
     float foot_x_offset = collision_block.offset_from_avatar_centre.y + (collision_block.size.y / 2);
@@ -858,9 +858,9 @@ Bitmap_Component Avatar_Controller::CollisionBlockToBitmapComponent(Avatar_Compo
   Bitmap_Component collision_bitmap;
 
   D3DXVECTOR3 collision_bitmap_position;
-  collision_bitmap_position.x = m_avatar->GetPosition().x + collision_block.offset_from_avatar_centre.x;
-  collision_bitmap_position.y = m_avatar->GetPosition().y + collision_block.offset_from_avatar_centre.y;
-  collision_bitmap_position.z = m_avatar->GetPosition().z;
+  collision_bitmap_position.x = m_avatar->GetPosition()->x + collision_block.offset_from_avatar_centre.x;
+  collision_bitmap_position.y = m_avatar->GetPosition()->y + collision_block.offset_from_avatar_centre.y;
+  collision_bitmap_position.z = m_avatar->GetPosition()->z;
 
   collision_bitmap.SetPosition(collision_bitmap_position);
 

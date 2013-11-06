@@ -59,15 +59,15 @@ bool Camera_Controller::Run() {
   if (!m_has_been_initialised) { return false; }
   if (m_game_settings->IsCameraFollowing()) {
     // Currently the camera is locked to the avatar.
-    D3DXVECTOR3 avatar_position = m_avatar->GetPosition();
+    D3DXVECTOR3 avatar_position = *m_avatar->GetPosition();
     D3DXVECTOR3 camera_position = m_camera->GetPosition();
 
     // Get the avatar collision block
     Avatar_Component::Collision_Block collision_block = GetNamedCollisionBlock("Avatar", m_avatar->GetState().collision_blocks);
 
-    avatar_position.x = m_avatar->GetPosition().x + collision_block.offset_from_avatar_centre.x;
-    avatar_position.y = m_avatar->GetPosition().y + collision_block.offset_from_avatar_centre.y;
-    avatar_position.z = m_avatar->GetPosition().z;
+    avatar_position.x = m_avatar->GetPosition()->x + collision_block.offset_from_avatar_centre.x;
+    avatar_position.y = m_avatar->GetPosition()->y + collision_block.offset_from_avatar_centre.y;
+    avatar_position.z = m_avatar->GetPosition()->z;
 
     camera_position.x = avatar_position.x;
     camera_position.y = avatar_position.y - (collision_block.size.y / 2);

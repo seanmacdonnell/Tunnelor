@@ -74,7 +74,7 @@ class Frame_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   // Description : Accessor for the Position
   //---------------------------------------------------------------------------
-  D3DXVECTOR3 GetPosition();
+  D3DXVECTOR3 * const GetPosition();
 
   //---------------------------------------------------------------------------
   // Description : Mutator for the Position
@@ -114,7 +114,7 @@ class Frame_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   // Description : Returns the calculated centre point of the frame
   //---------------------------------------------------------------------------
-  D3DXVECTOR3 const GetFrameCentre();
+  D3DXVECTOR3 * const GetFrameCentre();
 
   //---------------------------------------------------------------------------
   // Description : Returns the calculated Top Left Position of the frame

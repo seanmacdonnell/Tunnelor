@@ -97,7 +97,7 @@ bool Middleground_Controller::Run() {
   float middleground_left = (*m_left_edge_tiles.begin())->GetTopLeftPostion().x;
   float middleground_bottom = (*m_bottom_edge_tiles.begin())->GetBottomRightPostion().y;
   float middleground_right = (*m_right_edge_tiles.begin())->GetBottomRightPostion().x;
-
+  
   if ((camera_right + game_resolution.x) > middleground_right) {
     while ((camera_right + game_resolution.x) > middleground_right) {
       TileRight(camera_right, middleground_right);
@@ -198,7 +198,7 @@ std::vector<Tile_Bitmap*> Middleground_Controller::GenerateTunnelFromMetadata(Le
         for (y_sum_iterator = middleground_lines.back().begin(); y_sum_iterator != middleground_lines.back().end(); y_sum_iterator++) {
           if (Bitmap_Helper::DoTheseTilesXCollide((*y_sum_iterator), new_tile) ||
             Bitmap_Helper::AreTheseTilesXAdjacent((*y_sum_iterator), new_tile)) {
-            position_y = (*y_sum_iterator)->GetPosition().y;
+            position_y = (*y_sum_iterator)->GetPosition()->y;
           }
         }
         position_y -= ((*tile).size);
@@ -411,8 +411,8 @@ void Middleground_Controller::TileUp(float camera_top, float middleground_top) {
   for (edge_tile = m_top_edge_tiles.begin(); edge_tile != m_top_edge_tiles.end(); edge_tile++) {
     Tile_Bitmap* tile = CreateTile(128);
     D3DXVECTOR3 position;
-    position.x = (*edge_tile)->GetPosition().x;
-    position.y = (*edge_tile)->GetPosition().y + tile->GetSize().y;
+    position.x = (*edge_tile)->GetPosition()->x;
+    position.y = (*edge_tile)->GetPosition()->y + tile->GetSize().y;
     position.z = -1.0; // Middleground Z Space is -1
     tile->SetPosition(position);
     tile->SetIsTopEdge((*edge_tile)->IsTopEdge());
@@ -451,8 +451,8 @@ void Middleground_Controller::TileDown(float camera_bottom, float middleground_b
   for (edge_tile = m_bottom_edge_tiles.begin(); edge_tile != m_bottom_edge_tiles.end(); edge_tile++) {
     Tile_Bitmap* tile = CreateTile(128);
     D3DXVECTOR3 position;
-    position.x = (*edge_tile)->GetPosition().x;
-    position.y = (*edge_tile)->GetPosition().y - tile->GetSize().y;
+    position.x = (*edge_tile)->GetPosition()->x;
+    position.y = (*edge_tile)->GetPosition()->y - tile->GetSize().y;
     position.z = -1.0; // Middleground Z Space is -1
     tile->SetPosition(position);
     tile->SetIsTopEdge((*edge_tile)->IsTopEdge());
@@ -491,8 +491,8 @@ void Middleground_Controller::TileRight(float camera_right, float middleground_r
   for (edge_tile = m_right_edge_tiles.begin(); edge_tile != m_right_edge_tiles.end(); edge_tile++) {
     Tile_Bitmap* tile = CreateTile(128);
     D3DXVECTOR3 position;
-    position.x = (*edge_tile)->GetPosition().x + tile->GetSize().x;
-    position.y = (*edge_tile)->GetPosition().y;
+    position.x = (*edge_tile)->GetPosition()->x + tile->GetSize().x;
+    position.y = (*edge_tile)->GetPosition()->y;
     position.z = -1.0; // Middleground Z Space is -1
     tile->SetPosition(position);
     tile->SetIsTopEdge((*edge_tile)->IsTopEdge());
@@ -531,8 +531,8 @@ void Middleground_Controller::TileLeft(float camera_left, float middleground_lef
   for (edge_tile = m_left_edge_tiles.begin(); edge_tile != m_left_edge_tiles.end(); edge_tile++) {
     Tile_Bitmap* tile = CreateTile(128);
     D3DXVECTOR3 position;
-    position.x = (*edge_tile)->GetPosition().x - tile->GetSize().x;
-    position.y = (*edge_tile)->GetPosition().y;
+    position.x = (*edge_tile)->GetPosition()->x - tile->GetSize().x;
+    position.y = (*edge_tile)->GetPosition()->y;
     position.z = -1.0; // Middleground Z Space is -1
     tile->SetPosition(position);
     tile->SetIsTopEdge((*edge_tile)->IsTopEdge());

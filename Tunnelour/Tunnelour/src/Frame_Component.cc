@@ -76,8 +76,8 @@ void Frame_Component::SetFrame(Tunnelour::Frame_Component::Frame * frame) {
 }
 
 //---------------------------------------------------------------------------
-D3DXVECTOR3 Frame_Component::GetPosition() {
-  return m_position;
+D3DXVECTOR3 * const Frame_Component::GetPosition() {
+  return &m_position;
 }
 
 //---------------------------------------------------------------------------
@@ -117,8 +117,8 @@ void Frame_Component::SetSize(const float size_x, const float size_y) {
 }
 
 //---------------------------------------------------------------------------
-D3DXVECTOR3 const Frame_Component::GetFrameCentre() {
-  return m_centre;
+D3DXVECTOR3 * const Frame_Component::GetFrameCentre() {
+  return &m_centre;
 }
 
 

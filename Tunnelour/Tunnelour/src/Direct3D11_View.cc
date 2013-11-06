@@ -179,14 +179,22 @@ void Direct3D11_View::Init(Component_Composite * const model) {
     m_game_metrics = mutator.GetGameMetrics();
     m_game_settings = mutator.GetGameSettings();
 
-    if (m_avatar->GetPosition().z > -1) {
-      m_renderables.Layer_00.push_back(m_avatar);
+    Bitmap_Renderable *bitmap_renderable = new Bitmap_Renderable();
+    bitmap_renderable->bitmap = m_avatar;
+    bitmap_renderable->frame = m_avatar->GetFrame();
+    bitmap_renderable->texture = m_avatar->GetTexture();
+    bitmap_renderable->frame_centre = m_avatar->GetFrameCentre();
+    bitmap_renderable->scale = m_avatar->GetScale();
+    bitmap_renderable->position = m_avatar->GetPosition();
+
+    if (m_avatar->GetPosition()->z > -1) {
+      m_renderables.Layer_00.push_back(bitmap_renderable);
     }
-    if (m_avatar->GetPosition().z <= -1 && m_avatar->GetPosition().z > -2) {
-      m_renderables.Layer_01.push_back(m_avatar);
+    if (m_avatar->GetPosition()->z <= -1 && m_avatar->GetPosition()->z > -2) {
+      m_renderables.Layer_01.push_back(bitmap_renderable);
     }
-    if (m_avatar->GetPosition().z <= -2) {
-      m_renderables.Layer_02.push_back(m_avatar);
+    if (m_avatar->GetPosition()->z <= -2) {
+      m_renderables.Layer_02.push_back(bitmap_renderable);
     }
 
     m_is_initialised = true;
@@ -233,10 +241,10 @@ void Direct3D11_View::Run() {
     TurnOnAlphaBlending();
     
     // Sort the Renderables by Z order.
-    Render(m_renderables.Layer_00, viewmatrix);
-    Render(m_renderables.Layer_01, viewmatrix);
-    Render(m_renderables.Layer_02, viewmatrix);
-    Render(m_renderables.Layer_03, viewmatrix);
+    Render_Bitmaps(m_renderables.Layer_00, viewmatrix);
+    Render_Bitmaps(m_renderables.Layer_01, viewmatrix);
+    Render_Bitmaps(m_renderables.Layer_02, viewmatrix);
+    Render_Texts(m_renderables.Layer_03, viewmatrix);
     
     TurnOffAlphaBlending();
 
@@ -271,14 +279,25 @@ void Direct3D11_View::HandleEventAdd(Tunnelour::Component * const component) {
     // Found Bitmap_Component
     Tunnelour::Bitmap_Component *bitmap = 0;
     bitmap = static_cast<Tunnelour::Bitmap_Component*>(component);
-    if (bitmap->GetPosition().z > -1) {
-      m_renderables.Layer_00.push_back(bitmap);
+    if (!bitmap->IsInitialised()) {
+      bitmap->Init(); 
     }
-    if (bitmap->GetPosition().z <= -1 && bitmap->GetPosition().z > -2) {
-      m_renderables.Layer_01.push_back(bitmap);
+    Bitmap_Renderable *bitmap_renderable = new Bitmap_Renderable();
+    bitmap_renderable->bitmap = bitmap;
+    bitmap_renderable->frame = bitmap->GetFrame();
+    bitmap_renderable->texture = bitmap->GetTexture();
+    bitmap_renderable->frame_centre = bitmap->GetFrameCentre();
+    bitmap_renderable->scale = bitmap->GetScale();
+    bitmap_renderable->position = bitmap->GetPosition();
+
+    if (bitmap->GetPosition()->z > -1) {
+      m_renderables.Layer_00.push_back(bitmap_renderable);
     }
-    if (bitmap->GetPosition().z <= -2) {
-      m_renderables.Layer_02.push_back(bitmap);
+    if (bitmap->GetPosition()->z <= -1 && bitmap->GetPosition()->z > -2) {
+      m_renderables.Layer_01.push_back(bitmap_renderable);
+    }
+    if (bitmap->GetPosition()->z <= -2) {
+      m_renderables.Layer_02.push_back(bitmap_renderable);
     }
   }
 
@@ -286,7 +305,16 @@ void Direct3D11_View::HandleEventAdd(Tunnelour::Component * const component) {
     // Found Text_Component
     Tunnelour::Text_Component *text = 0;
     text = static_cast<Tunnelour::Text_Component*>(component);
-    m_renderables.Layer_03.push_back(text);
+    if (!text->IsInitialised()) {  text->Init(); }
+    Text_Renderable *text_renderable = new Text_Renderable();
+    text_renderable->text = text;
+    text_renderable->frame = text->GetFrame();
+    text_renderable->texture = text->GetTexture();
+    text_renderable->frame_centre = text->GetFrameCentre();
+    text_renderable->scale = text->GetScale();
+    text_renderable->position = text->GetPosition();
+    text_renderable->font = text->GetFont();
+    m_renderables.Layer_03.push_back(text_renderable);
   }
 }
 
@@ -768,172 +796,185 @@ void Direct3D11_View::Init_D3D11() {
 }
 
 //------------------------------------------------------------------------------
-void Direct3D11_View::Render(std::vector<Component*> layer, D3DXMATRIX *viewmatrix) {
-  if (layer.empty()) { return; }
-  for (std::vector<Component*>::const_iterator iterator = layer.begin(), end = layer.end(); iterator != end; ++iterator) {
-    if ((*iterator)->GetType().compare("Bitmap_Component") == 0 || (*iterator)->GetType().compare("Avatar_Component") == 0) {
-      Bitmap_Component *bitmap = static_cast<Bitmap_Component*>(*iterator);
-      if (true) {//IsThisBitmapComponentVisable(bitmap)) {
-        if (!bitmap->IsInitialised()) {  bitmap->Init(); }
-        if (bitmap->GetFrame()->vertex_buffer == 0) {
-          D3D11_BUFFER_DESC vertexBufferDesc;
-          D3D11_SUBRESOURCE_DATA vertexData;
+void Direct3D11_View::Render_Bitmaps(std::vector<Direct3D11_View::Bitmap_Renderable*> renderables, D3DXMATRIX *viewmatrix) {
+  std::vector<Bitmap_Renderable*>::size_type layer_size = renderables.size();
+  for (unsigned int i = 0; i < layer_size; i++) {
+    if (renderables[i]->frame->vertex_buffer == 0) {
+      D3D11_BUFFER_DESC vertexBufferDesc;
+      D3D11_SUBRESOURCE_DATA vertexData;
 
-          // Set up the description of the static vertex buffer.
-          vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-          vertexBufferDesc.ByteWidth = sizeof(Frame_Component::Vertex_Type) * bitmap->GetFrame()->vertex_count;
-          vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-          vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-          vertexBufferDesc.MiscFlags = 0;
-          vertexBufferDesc.StructureByteStride = 0;
+      // Set up the description of the static vertex buffer.
+      vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+      vertexBufferDesc.ByteWidth = sizeof(Frame_Component::Vertex_Type) * renderables[i]->frame->vertex_count;
+      vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+      vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+      vertexBufferDesc.MiscFlags = 0;
+      vertexBufferDesc.StructureByteStride = 0;
 
-          // Give the subresource structure a pointer to the vertex data.
-          vertexData.pSysMem = bitmap->GetFrame()->vertices;
-          vertexData.SysMemPitch = 0;
-          vertexData.SysMemSlicePitch = 0;
+      // Give the subresource structure a pointer to the vertex data.
+      vertexData.pSysMem = renderables[i]->frame->vertices;
+      vertexData.SysMemPitch = 0;
+      vertexData.SysMemSlicePitch = 0;
 
-          // Now create the vertex buffer.
-          if (FAILED(m_device->CreateBuffer(&vertexBufferDesc,
-                                            &vertexData,
-                                            &(bitmap->GetFrame()->vertex_buffer)))) {
-            throw Exceptions::init_error("CreateBuffer (vertex_buffer) Failed!");
-          }
-        }
-        if (bitmap->GetFrame()->index_buffer == 0) {
-          D3D11_BUFFER_DESC indexBufferDesc;
-          D3D11_SUBRESOURCE_DATA indexData;
-
-          // Set up the description of the static index buffer.
-          indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-          indexBufferDesc.ByteWidth = sizeof(unsigned int) * bitmap->GetFrame()->index_count;
-          indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-          indexBufferDesc.CPUAccessFlags = 0;
-          indexBufferDesc.MiscFlags = 0;
-          indexBufferDesc.StructureByteStride = 0;
-
-          // Give the subresource structure a pointer to the index data.
-          indexData.pSysMem = bitmap->GetFrame()->indices;
-          indexData.SysMemPitch = 0;
-          indexData.SysMemSlicePitch = 0;
-
-          // Create the index buffer.
-          if (FAILED(m_device->CreateBuffer(&indexBufferDesc,
-                                            &indexData,
-                                            &(bitmap->GetFrame()->index_buffer)))) {
-            throw Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
-          }
-        }
-        if (bitmap->GetTexture()->texture == 0) { 
-          std::map<std::wstring, ID3D11ShaderResourceView*>::iterator stored_texture;
-          stored_texture = m_texture_map.find(bitmap->GetTexture()->texture_path);
-          if (stored_texture == m_texture_map.end()) {
-            D3DX11_IMAGE_LOAD_INFO imageLoadInfo;
-            imageLoadInfo.Width = D3DX11_DEFAULT;
-            imageLoadInfo.Height = D3DX11_DEFAULT;
-            imageLoadInfo.Depth = D3DX11_DEFAULT;
-            imageLoadInfo.FirstMipLevel = D3DX11_DEFAULT;
-            imageLoadInfo.MipLevels = D3DX11_DEFAULT;
-            imageLoadInfo.Usage = (D3D11_USAGE) D3DX11_DEFAULT;
-            imageLoadInfo.BindFlags = D3DX11_DEFAULT;
-            imageLoadInfo.CpuAccessFlags = D3DX11_DEFAULT;
-            imageLoadInfo.MiscFlags = D3DX11_DEFAULT;
-            imageLoadInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-            imageLoadInfo.Filter = D3DX11_DEFAULT;
-            imageLoadInfo.MipFilter = D3DX11_DEFAULT;
-            imageLoadInfo.pSrcInfo = NULL;
-            ID3D11ShaderResourceView* texture;
-            if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_device,
-                                                              bitmap->GetTexture()->texture_path.c_str(),
-                                                              &imageLoadInfo,
-                                                              NULL,
-                                                              &texture,
-                                                              NULL)))  {
-              std::string error = "Loading bitmap file failed! :" + String_Helper::WStringToString(bitmap->GetTexture()->texture_path);
-              throw Exceptions::init_error(error);
-            }
-            m_texture_map[bitmap->GetTexture()->texture_path] = texture;
-            bitmap->GetTexture()->texture = texture;
-          } else {
-            bitmap->GetTexture()->texture = (*stored_texture).second;
-          }
-        }
-        if (bitmap->GetTexture()->transparency != 0.0) {
-          Render_Bitmap(bitmap, viewmatrix);
-        }
+      // Now create the vertex buffer.
+      if (FAILED(m_device->CreateBuffer(&vertexBufferDesc,
+                                        &vertexData,
+                                        &(renderables[i]->frame->vertex_buffer)))) {
+        throw Exceptions::init_error("CreateBuffer (vertex_buffer) Failed!");
       }
     }
-    if ((*iterator)->GetType().compare("Text_Component") == 0) {
-      Text_Component *text = static_cast<Text_Component*>(*iterator);
-      if (!text->IsInitialised()) {  text->Init(); }
-      if (text->GetFrame()->vertex_buffer == 0) {
-        D3D11_BUFFER_DESC vertexBufferDesc;
-        D3D11_SUBRESOURCE_DATA vertexData;
+    if (renderables[i]->frame->index_buffer == 0) {
+      D3D11_BUFFER_DESC indexBufferDesc;
+      D3D11_SUBRESOURCE_DATA indexData;
 
-        // Set up the description of the static vertex buffer.
-        vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-        vertexBufferDesc.ByteWidth = sizeof(Text_Component::Vertex_Type) * text->GetFrame()->vertex_count;
-        vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-        vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-        vertexBufferDesc.MiscFlags = 0;
-        vertexBufferDesc.StructureByteStride = 0;
+      // Set up the description of the static index buffer.
+      indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+      indexBufferDesc.ByteWidth = sizeof(unsigned int) * renderables[i]->frame->index_count;
+      indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+      indexBufferDesc.CPUAccessFlags = 0;
+      indexBufferDesc.MiscFlags = 0;
+      indexBufferDesc.StructureByteStride = 0;
 
-        // Give the subresource structure a pointer to the vertex data.
-        vertexData.pSysMem = text->GetFrame()->vertices;
-        vertexData.SysMemPitch = 0;
-        vertexData.SysMemSlicePitch = 0;
+      // Give the subresource structure a pointer to the index data.
+      indexData.pSysMem = renderables[i]->frame->indices;
+      indexData.SysMemPitch = 0;
+      indexData.SysMemSlicePitch = 0;
 
-        // Now create the vertex buffer.
-        if (FAILED(m_device->CreateBuffer(&vertexBufferDesc,
-                                          &vertexData,
-                                          &(text->GetFrame()->vertex_buffer)))) {
-          throw Exceptions::init_error("CreateBuffer (vertex_buffer) Failed!");
-        }
-      }
-      if (text->GetFrame()->index_buffer == 0) {
-        D3D11_BUFFER_DESC indexBufferDesc;
-        D3D11_SUBRESOURCE_DATA indexData;
-        // Set up the description of the static index buffer.
-        indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-        indexBufferDesc.ByteWidth = sizeof(unsigned int) * text->GetFrame()->index_count;
-        indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-        indexBufferDesc.CPUAccessFlags = 0;
-        indexBufferDesc.MiscFlags = 0;
-        indexBufferDesc.StructureByteStride = 0;
-
-        // Give the subresource structure a pointer to the index data.
-        indexData.pSysMem = text->GetFrame()->indices;
-        indexData.SysMemPitch = 0;
-        indexData.SysMemSlicePitch = 0;
-
-        // Create the index buffer.
-        if (FAILED(m_device->CreateBuffer(&indexBufferDesc,
-                                                &indexData,
-                                                &(text->GetFrame()->index_buffer)))) {
-          throw Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
-        }
-      }
-      if (text->GetTexture()->texture == 0) { 
-        std::map<std::wstring, ID3D11ShaderResourceView*>::iterator stored_texture;
-        stored_texture = m_texture_map.find(text->GetTexture()->texture_path);
-        if (stored_texture == m_texture_map.end()) {
-          ID3D11ShaderResourceView* texture;
-          if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_device,
-                                                            text->GetTexture()->texture_path.c_str(),
-                                                            NULL,
-                                                            NULL,
-                                                            &texture,
-                                                            NULL)))  {
-            throw Exceptions::init_error("Loading font file failed!");
-          }
-          m_texture_map[text->GetTexture()->texture_path]=texture;
-        } else {
-          text->GetTexture()->texture = (*stored_texture).second;
-        }
-      }
-      if (text->GetTexture()->transparency != 0.0) {
-        Render_Text(text, viewmatrix);
+      // Create the index buffer.
+      if (FAILED(m_device->CreateBuffer(&indexBufferDesc,
+                                        &indexData,
+                                        &(renderables[i]->frame->index_buffer)))) {
+        throw Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
       }
     }
+    /*
+    if (renderables[i]->texture == 0) { 
+      std::map<std::wstring, ID3D11ShaderResourceView*>::iterator stored_texture;
+      stored_texture = m_texture_map.find(renderables[i]->texture->texture_path);
+      if (stored_texture == m_texture_map.end()) {
+        D3DX11_IMAGE_LOAD_INFO imageLoadInfo;
+        imageLoadInfo.Width = D3DX11_DEFAULT;
+        imageLoadInfo.Height = D3DX11_DEFAULT;
+        imageLoadInfo.Depth = D3DX11_DEFAULT;
+        imageLoadInfo.FirstMipLevel = D3DX11_DEFAULT;
+        imageLoadInfo.MipLevels = D3DX11_DEFAULT;
+        imageLoadInfo.Usage = (D3D11_USAGE) D3DX11_DEFAULT;
+        imageLoadInfo.BindFlags = D3DX11_DEFAULT;
+        imageLoadInfo.CpuAccessFlags = D3DX11_DEFAULT;
+        imageLoadInfo.MiscFlags = D3DX11_DEFAULT;
+        imageLoadInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        imageLoadInfo.Filter = D3DX11_DEFAULT;
+        imageLoadInfo.MipFilter = D3DX11_DEFAULT;
+        imageLoadInfo.pSrcInfo = NULL;
+        ID3D11ShaderResourceView* texture;
+        if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_device,
+                                                          renderables[i]->texture->texture_path.c_str(),
+                                                          &imageLoadInfo,
+                                                          NULL,
+                                                          &texture,
+                                                          NULL)))  {
+          std::string error = "Loading bitmap file failed! :" + String_Helper::WStringToString(renderables[i]->texture->texture_path);
+          throw Exceptions::init_error(error);
+        }
+        m_texture_map[renderables[i]->texture->texture_path] = texture;
+        renderables[i]->texture->texture = texture;
+      } else {
+        renderables[i]->texture->texture = (*stored_texture).second;
+      }
+    }
+    */
+    if (renderables[i]->texture->texture == 0) { 
+      std::map<std::wstring, ID3D11ShaderResourceView*>::iterator stored_texture;
+      stored_texture = m_texture_map.find(renderables[i]->texture->texture_path);
+      if (stored_texture == m_texture_map.end()) {
+        ID3D11ShaderResourceView* texture;
+        if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_device,
+                                                          renderables[i]->texture->texture_path.c_str(),
+                                                          NULL,
+                                                          NULL,
+                                                          &texture,
+                                                          NULL)))  {
+          throw Exceptions::init_error("Loading font file failed!");
+        }
+        m_texture_map[renderables[i]->texture->texture_path]=texture;
+      } else {
+        renderables[i]->texture->texture = (*stored_texture).second;
+      }
+    }
+    Render_Bitmap(renderables[i], viewmatrix);
+  }
+}
+
+//------------------------------------------------------------------------------
+void Direct3D11_View::Render_Texts(std::vector<Direct3D11_View::Text_Renderable*> renderables, D3DXMATRIX *viewmatrix) {
+  std::vector<Bitmap_Renderable*>::size_type layer_size = renderables.size();
+  for (unsigned int i = 0; i < layer_size; i++) {
+    if (renderables[i]->frame->vertex_buffer == 0) {
+      D3D11_BUFFER_DESC vertexBufferDesc;
+      D3D11_SUBRESOURCE_DATA vertexData;
+
+      // Set up the description of the static vertex buffer.
+      vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+      vertexBufferDesc.ByteWidth = sizeof(Text_Component::Vertex_Type) * renderables[i]->frame->vertex_count;
+      vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+      vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+      vertexBufferDesc.MiscFlags = 0;
+      vertexBufferDesc.StructureByteStride = 0;
+
+      // Give the subresource structure a pointer to the vertex data.
+      vertexData.pSysMem = renderables[i]->frame->vertices;
+      vertexData.SysMemPitch = 0;
+      vertexData.SysMemSlicePitch = 0;
+
+      // Now create the vertex buffer.
+      if (FAILED(m_device->CreateBuffer(&vertexBufferDesc,
+                                        &vertexData,
+                                        &(renderables[i]->frame->vertex_buffer)))) {
+        throw Exceptions::init_error("CreateBuffer (vertex_buffer) Failed!");
+      }
+    }
+    if (renderables[i]->frame->index_buffer == 0) {
+      D3D11_BUFFER_DESC indexBufferDesc;
+      D3D11_SUBRESOURCE_DATA indexData;
+      // Set up the description of the static index buffer.
+      indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+      indexBufferDesc.ByteWidth = sizeof(unsigned int) * renderables[i]->frame->index_count;
+      indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+      indexBufferDesc.CPUAccessFlags = 0;
+      indexBufferDesc.MiscFlags = 0;
+      indexBufferDesc.StructureByteStride = 0;
+
+      // Give the subresource structure a pointer to the index data.
+      indexData.pSysMem = renderables[i]->frame->indices;
+      indexData.SysMemPitch = 0;
+      indexData.SysMemSlicePitch = 0;
+
+      // Create the index buffer.
+      if (FAILED(m_device->CreateBuffer(&indexBufferDesc,
+                                              &indexData,
+                                              &(renderables[i]->frame->index_buffer)))) {
+        throw Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
+      }
+    }
+    if (renderables[i]->texture->texture == 0) { 
+      std::map<std::wstring, ID3D11ShaderResourceView*>::iterator stored_texture;
+      stored_texture = m_texture_map.find(renderables[i]->texture->texture_path);
+      if (stored_texture == m_texture_map.end()) {
+        ID3D11ShaderResourceView* texture;
+        if (FAILED(D3DX11CreateShaderResourceViewFromFile(m_device,
+                                                          renderables[i]->texture->texture_path.c_str(),
+                                                          NULL,
+                                                          NULL,
+                                                          &texture,
+                                                          NULL)))  {
+          throw Exceptions::init_error("Loading font file failed!");
+        }
+        m_texture_map[renderables[i]->texture->texture_path]=texture;
+      } else {
+        renderables[i]->texture->texture = (*stored_texture).second;
+      }
+    }
+    Render_Text(renderables[i], viewmatrix);
   }
 }
 
@@ -964,7 +1005,7 @@ void Direct3D11_View::Render_Camera(Camera_Component *camera, D3DXMATRIX *viewma
 }
 
 //------------------------------------------------------------------------------
-void Direct3D11_View::Render_Bitmap(Bitmap_Component* bitmap,
+void Direct3D11_View::Render_Bitmap(Bitmap_Renderable* bitmap,
                                     D3DXMATRIX *viewmatrix) {
   // Put the model vertex and index buffers on the graphics pipeline to
   // prepare them for drawing.
@@ -977,7 +1018,7 @@ void Direct3D11_View::Render_Bitmap(Bitmap_Component* bitmap,
   D3DXMatrixIdentity(&ScaleMatrix);
 
   // Offset from centre
-  D3DXVECTOR3 SubsetOffsetMatrix = bitmap->GetFrameCentre();
+  D3DXVECTOR3 SubsetOffsetMatrix = *bitmap->frame_centre;
   D3DXMatrixTranslation(&OffsetMatrix,
                         -1 * SubsetOffsetMatrix.x,
                         -1 * SubsetOffsetMatrix.y,
@@ -988,21 +1029,21 @@ void Direct3D11_View::Render_Bitmap(Bitmap_Component* bitmap,
 
   // Scale
   D3DXMatrixScaling(&ScaleMatrix,
-                    bitmap->GetScale()->x,
-                    bitmap->GetScale()->y,
-                    bitmap->GetScale()->z);
+                    bitmap->scale->x,
+                    bitmap->scale->y,
+                    bitmap->scale->z);
 
   // Translate
   D3DXMatrixTranslation(&TranslateMatrix,
-                        bitmap->GetPosition().x,
-                        bitmap->GetPosition().y,
-                        bitmap->GetPosition().z);
+                        bitmap->position->x,
+                        bitmap->position->y,
+                        bitmap->position->z);
 
 
   m_world = OffsetMatrix * ScaleMatrix * TranslateMatrix;
 
-  ID3D11Buffer *vertexbuffer = bitmap->GetFrame()->vertex_buffer;
-  ID3D11Buffer *indexbuffer = bitmap->GetFrame()->index_buffer;
+  ID3D11Buffer *vertexbuffer = bitmap->frame->vertex_buffer;
+  ID3D11Buffer *indexbuffer = bitmap->frame->index_buffer;
 
   // Set vertex buffer stride and offset.
   stride = sizeof(Bitmap_Component::Vertex_Type);
@@ -1023,26 +1064,26 @@ void Direct3D11_View::Render_Bitmap(Bitmap_Component* bitmap,
   if (m_game_settings->IsDebugMode()) {
     // Render the model using the color shader.
     m_debug_shader->Render(m_device_context,
-                           bitmap->GetFrame()->index_count,
+                           bitmap->frame->index_count,
                            m_world,
                            *viewmatrix,
                            m_ortho,
-                           bitmap->GetTexture()->texture,
-                           bitmap->GetTexture()->transparency);
+                           bitmap->texture->texture,
+                           bitmap->texture->transparency);
   } else {
     // Render the model using the color shader.
     m_transparent_shader->Render(m_device_context,
-                             bitmap->GetFrame()->index_count,
-                             m_world,
-                             *viewmatrix,
-                             m_ortho,
-                             bitmap->GetTexture()->texture,
-                             bitmap->GetTexture()->transparency);
+                                 bitmap->frame->index_count,
+                                 m_world,
+                                 *viewmatrix,
+                                 m_ortho,
+                                 bitmap->texture->texture,
+                                 bitmap->texture->transparency);
   }
 }
 
 //------------------------------------------------------------------------------
-void Direct3D11_View::Render_Text(Text_Component *text,
+void Direct3D11_View::Render_Text(Text_Renderable *text,
                                   D3DXMATRIX *viewmatrix) {
   unsigned int stride, offset;
   D3DXCOLOR pixelColor;
@@ -1054,7 +1095,7 @@ void Direct3D11_View::Render_Text(Text_Component *text,
   D3DXMATRIX ScaleMatrix;
   D3DXMatrixIdentity(&ScaleMatrix);
 
-  D3DXVECTOR3 SubsetOffsetMatrix = text->GetFrameCentre();
+  D3DXVECTOR3 SubsetOffsetMatrix = *text->frame_centre;
   D3DXMatrixTranslation(&OffsetMatrix,
                         -1 * SubsetOffsetMatrix.x,
                         -1 * SubsetOffsetMatrix.y,
@@ -1065,20 +1106,20 @@ void Direct3D11_View::Render_Text(Text_Component *text,
 
   // Translate
   D3DXMatrixTranslation(&TranslateMatrix,
-                        text->GetPosition().x,
-                        text->GetPosition().y,
-                        text->GetPosition().z);
+                        text->position->x,
+                        text->position->y,
+                        text->position->z);
 
   // Scale
   D3DXMatrixScaling(&ScaleMatrix,
-                    text->GetScale()->x,
-                    text->GetScale()->y,
-                    text->GetScale()->z);
+                    text->scale->x,
+                    text->scale->y,
+                    text->scale->z);
 
   m_world = ((OffsetMatrix) * TranslateMatrix) * ScaleMatrix;
 
-  vertexbuffer = text->GetFrame()->vertex_buffer;
-  indexbuffer = text->GetFrame()->index_buffer;
+  vertexbuffer = text->frame->vertex_buffer;
+  indexbuffer = text->frame->index_buffer;
 
   // Set vertex buffer stride and offset.
   stride = sizeof(Text_Component::Vertex_Type);
@@ -1095,17 +1136,17 @@ void Direct3D11_View::Render_Text(Text_Component *text,
   m_device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
   // Create a pixel color vector with the input sentence color.
-  pixelColor = text->GetFont()->font_color;
+  pixelColor = text->font->font_color;
 
   // Render the text using the font shader.
   m_font_shader->Render(m_device_context,
-                        text->GetFrame()->index_count,
+                        text->frame->index_count,
                         m_world,
                         *viewmatrix,
                         m_ortho,
-                        text->GetTexture()->texture,
+                        text->texture->texture,
                         pixelColor,
-                        text->GetTexture()->transparency);
+                        text->texture->transparency);
 }
 
 void Direct3D11_View::TurnOnAlphaBlending() {
@@ -1157,8 +1198,8 @@ bool Direct3D11_View::IsThisBitmapComponentVisable(Bitmap_Component *bitmap) {
   bool y_collision = false;
 
   float a_tile_top, a_tile_bottom;
-  a_tile_top = bitmap->GetPosition().y + static_cast<float>(bitmap->GetSize().y / 2);
-  a_tile_bottom = bitmap->GetPosition().y - static_cast<float>(bitmap->GetSize().y / 2);
+  a_tile_top = bitmap->GetPosition()->y + static_cast<float>(bitmap->GetSize().y / 2);
+  a_tile_bottom = bitmap->GetPosition()->y - static_cast<float>(bitmap->GetSize().y / 2);
 
   float b_tile_top, b_tile_bottom;
   b_tile_top = m_camera->GetPosition().y + static_cast<float>(m_game_settings->GetResolution().y / 2);
@@ -1184,8 +1225,8 @@ bool Direct3D11_View::IsThisBitmapComponentVisable(Bitmap_Component *bitmap) {
   bool x_collision = false;
 
   float a_tile_left, a_tile_right;
-  a_tile_left = bitmap->GetPosition().x - static_cast<float>(bitmap->GetSize().x / 2);
-  a_tile_right = bitmap->GetPosition().x + static_cast<float>(bitmap->GetSize().x / 2);
+  a_tile_left = bitmap->GetPosition()->x - static_cast<float>(bitmap->GetSize().x / 2);
+  a_tile_right = bitmap->GetPosition()->x + static_cast<float>(bitmap->GetSize().x / 2);
 
   float b_tile_left, b_tile_right;
   b_tile_left = m_camera->GetPosition().x - static_cast<float>(m_game_settings->GetResolution().x / 2);

@@ -220,8 +220,8 @@ void Debug_Data_Display_Controller::UpdateAvatarPositionDisplay() {
                             m_game_settings->GetResolution().x / 2;
   float top_left_window_y = m_camera->GetPosition().y +
                             m_game_settings->GetResolution().y / 2;
-  std::string avatar_position_x = std::to_string(static_cast<long double>(m_avatar->GetPosition().x));
-  std::string avatar_position_y = std::to_string(static_cast<long double>(m_avatar->GetPosition().y));
+  std::string avatar_position_x = std::to_string(static_cast<long double>(m_avatar->GetPosition()->x));
+  std::string avatar_position_y = std::to_string(static_cast<long double>(m_avatar->GetPosition()->y));
   m_avatar_position_display->GetText()->text = "Avatar Pos: x:" + avatar_position_x  +
                                                           ",y:" + avatar_position_y;
   m_avatar_position_display->GetFrame()->index_buffer = 0;

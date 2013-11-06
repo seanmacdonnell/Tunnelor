@@ -48,6 +48,7 @@
 #include "Avatar_Component.h"
 #include "Frame_Component.h"
 #include "Bitmap_Component.h"
+#include "Text_Component.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -61,16 +62,30 @@ namespace Tunnelour {
 class Direct3D11_View : public Tunnelour::View,
                         public Component_Composite::Component_Composite_Type_Observer {
  public:
-  struct Renderables {
-    std::vector<Tunnelour::Component*> Layer_00;
-    std::vector<Tunnelour::Component*> Layer_01;
-    std::vector<Tunnelour::Component*> Layer_02;
-    std::vector<Tunnelour::Component*> Layer_03;
-  };
-
-  struct Renderable {
+  struct Bitmap_Renderable {
+    Tunnelour::Bitmap_Component* bitmap;
     Frame_Component::Frame *frame;
     Bitmap_Component::Texture *texture;
+    D3DXVECTOR3 *frame_centre;
+    D3DXVECTOR3 *scale;
+    D3DXVECTOR3 *position;
+  };
+
+  struct Text_Renderable {
+    Tunnelour::Text_Component* text;
+    Frame_Component::Frame *frame;
+    Bitmap_Component::Texture *texture;
+    D3DXVECTOR3 *frame_centre;
+    D3DXVECTOR3 *scale;
+    D3DXVECTOR3 *position;
+    Text_Component::Font *font;
+  };
+
+  struct Renderables {
+    std::vector<Bitmap_Renderable*> Layer_00;
+    std::vector<Bitmap_Renderable*> Layer_01;
+    std::vector<Bitmap_Renderable*> Layer_02;
+    std::vector<Text_Renderable*> Layer_03;
   };
 
   //---------------------------------------------------------------------------
@@ -112,8 +127,14 @@ class Direct3D11_View : public Tunnelour::View,
   //---------------------------------------------------------------------------
   // Description : Render the components
   //---------------------------------------------------------------------------
-  void Render(std::vector<Tunnelour::Component*>,
-              D3DXMATRIX *viewmatrix);
+  void Render_Bitmaps(std::vector<Bitmap_Renderable*> renderables,
+                      D3DXMATRIX *viewmatrix);
+
+  //---------------------------------------------------------------------------
+  // Description : Render the components
+  //---------------------------------------------------------------------------
+  void Render_Texts(std::vector<Text_Renderable*> renderables, 
+                    D3DXMATRIX *viewmatrix);
 
   //---------------------------------------------------------------------------
   // Description : Render the Camera
@@ -124,13 +145,13 @@ class Direct3D11_View : public Tunnelour::View,
   //---------------------------------------------------------------------------
   // Description : Render a Bitmap
   //---------------------------------------------------------------------------
-  void Render_Bitmap(Tunnelour::Bitmap_Component *bitmap,
+  void Render_Bitmap(Bitmap_Renderable *bitmap,
                      D3DXMATRIX *viewmatrix);
 
   //---------------------------------------------------------------------------
   // Description : Render Text
   //---------------------------------------------------------------------------
-  void Render_Text(Tunnelour::Text_Component *text,
+  void Render_Text(Text_Renderable *text,
                    D3DXMATRIX *viewmatrix);
 
   //---------------------------------------------------------------------------

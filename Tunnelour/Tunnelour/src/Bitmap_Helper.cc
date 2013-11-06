@@ -42,12 +42,12 @@ bool Bitmap_Helper::DoTheseTilesYCollide(Tunnelour::Bitmap_Component* TileA, Tun
   // At least one vertex in TileA is contained in the TileB.
 
   float a_tile_top, a_tile_bottom;
-  a_tile_top = TileA->GetPosition().y + static_cast<float>(TileA->GetSize().y / 2);
-  a_tile_bottom = TileA->GetPosition().y - static_cast<float>(TileA->GetSize().y / 2);
+  a_tile_top = TileA->GetPosition()->y + static_cast<float>(TileA->GetSize().y / 2);
+  a_tile_bottom = TileA->GetPosition()->y - static_cast<float>(TileA->GetSize().y / 2);
 
   float b_tile_top, b_tile_bottom;
-  b_tile_top = TileB->GetPosition().y + static_cast<float>(TileB->GetSize().y / 2);
-  b_tile_bottom = TileB->GetPosition().y - static_cast<float>(TileB->GetSize().y / 2);
+  b_tile_top = TileB->GetPosition()->y + static_cast<float>(TileB->GetSize().y / 2);
+  b_tile_bottom = TileB->GetPosition()->y - static_cast<float>(TileB->GetSize().y / 2);
 
   if (b_tile_top < a_tile_top && b_tile_top > a_tile_bottom) {
     return true;
@@ -92,12 +92,12 @@ bool Bitmap_Helper::DoTheseTilesXCollide(Tunnelour::Bitmap_Component* TileA, Tun
   // At least one vertex in TileA is contained in the TileB.
 
   float a_tile_left, a_tile_right;
-  a_tile_left = TileA->GetPosition().x - static_cast<float>(TileA->GetSize().x / 2);
-  a_tile_right = TileA->GetPosition().x + static_cast<float>(TileA->GetSize().x / 2);
+  a_tile_left = TileA->GetPosition()->x - static_cast<float>(TileA->GetSize().x / 2);
+  a_tile_right = TileA->GetPosition()->x + static_cast<float>(TileA->GetSize().x / 2);
 
   float b_tile_left, b_tile_right;
-  b_tile_left = TileB->GetPosition().x - static_cast<float>(TileB->GetSize().x / 2);
-  b_tile_right = TileB->GetPosition().x + static_cast<float>(TileB->GetSize().x / 2);
+  b_tile_left = TileB->GetPosition()->x - static_cast<float>(TileB->GetSize().x / 2);
+  b_tile_right = TileB->GetPosition()->x + static_cast<float>(TileB->GetSize().x / 2);
 
   if (b_tile_left > a_tile_left && b_tile_left < a_tile_right) {
     return true;
@@ -119,12 +119,12 @@ bool Bitmap_Helper::AreTheseTilesXAdjacent(Tunnelour::Bitmap_Component* TileA, T
   // At least one vertex in TileA is contained in the TileB.
 
   float a_tile_left, a_tile_right;
-  a_tile_left = TileA->GetPosition().x - static_cast<float>(TileA->GetSize().x / 2);
-  a_tile_right = TileA->GetPosition().x + static_cast<float>(TileA->GetSize().x / 2);
+  a_tile_left = TileA->GetPosition()->x - static_cast<float>(TileA->GetSize().x / 2);
+  a_tile_right = TileA->GetPosition()->x + static_cast<float>(TileA->GetSize().x / 2);
 
   float b_tile_left, b_tile_right;
-  b_tile_left = TileB->GetPosition().x - static_cast<float>(TileB->GetSize().x / 2);
-  b_tile_right = TileB->GetPosition().x + static_cast<float>(TileB->GetSize().x / 2);
+  b_tile_left = TileB->GetPosition()->x - static_cast<float>(TileB->GetSize().x / 2);
+  b_tile_right = TileB->GetPosition()->x + static_cast<float>(TileB->GetSize().x / 2);
 
   if (b_tile_left == a_tile_left  || b_tile_left == a_tile_right) {
     return true;
@@ -140,10 +140,10 @@ bool Bitmap_Helper::AreTheseTilesXAdjacent(Tunnelour::Bitmap_Component* TileA, T
 //------------------------------------------------------------------------------
 bool Bitmap_Helper::AreTheseTilesLeftXAdjacent(Tunnelour::Bitmap_Component* TileA, Tunnelour::Bitmap_Component* TileB) {
   float a_tile_left;
-  a_tile_left = TileA->GetPosition().x - static_cast<float>(TileA->GetSize().x / 2);
+  a_tile_left = TileA->GetPosition()->x - static_cast<float>(TileA->GetSize().x / 2);
 
   float b_tile_left;
-  b_tile_left = TileB->GetPosition().x - static_cast<float>(TileB->GetSize().x / 2);
+  b_tile_left = TileB->GetPosition()->x - static_cast<float>(TileB->GetSize().x / 2);
 
   if (b_tile_left == a_tile_left) {
     return true;
@@ -155,10 +155,10 @@ bool Bitmap_Helper::AreTheseTilesLeftXAdjacent(Tunnelour::Bitmap_Component* Tile
 //------------------------------------------------------------------------------
 bool Bitmap_Helper::AreTheseTilesRightXAdjacent(Tunnelour::Bitmap_Component* TileA, Tunnelour::Bitmap_Component* TileB) {
   float a_tile_right;
-  a_tile_right = TileA->GetPosition().x + static_cast<float>(TileA->GetSize().x / 2);
+  a_tile_right = TileA->GetPosition()->x + static_cast<float>(TileA->GetSize().x / 2);
 
   float b_tile_right;
-  b_tile_right = TileB->GetPosition().x + static_cast<float>(TileB->GetSize().x / 2);
+  b_tile_right = TileB->GetPosition()->x + static_cast<float>(TileB->GetSize().x / 2);
 
   if (b_tile_right == a_tile_right) {
     return true;
@@ -184,8 +184,8 @@ Tile_Bitmap* Bitmap_Helper::CollisionBlockToBitmapComponent(Avatar_Component::Co
                                                           middleground_line.tile_size_y);
 
   D3DXVECTOR3 collision_bitmap_position;
-  collision_bitmap_position.x = avatar->GetPosition().x + collision_block.offset_from_avatar_centre.x;
-  collision_bitmap_position.y = avatar->GetPosition().y + collision_block.offset_from_avatar_centre.y;
+  collision_bitmap_position.x = avatar->GetPosition()->x + collision_block.offset_from_avatar_centre.x;
+  collision_bitmap_position.y = avatar->GetPosition()->y + collision_block.offset_from_avatar_centre.y;
   
   float random_line_tile = 0;
   if (collision_block.id.compare("Left_Foot") == 0) {
