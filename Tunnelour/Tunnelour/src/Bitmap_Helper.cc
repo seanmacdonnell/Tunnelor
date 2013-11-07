@@ -190,11 +190,11 @@ Tile_Bitmap* Bitmap_Helper::CollisionBlockToBitmapComponent(Avatar_Component::Co
   float random_line_tile = 0;
   if (collision_block.id.compare("Left_Foot") == 0) {
     random_line_tile = 2;
-    collision_bitmap_position.z = -3.0;
+    collision_bitmap_position.z = -2.0;
   }
   if (collision_block.id.compare("Right_Foot") == 0) {
     random_line_tile = 3;
-    collision_bitmap_position.z = -3.0;
+    collision_bitmap_position.z = -2.0;
   }
   if (collision_block.id.compare("Avatar") == 0) {
     if (collision_block.is_contacting) {
@@ -202,7 +202,7 @@ Tile_Bitmap* Bitmap_Helper::CollisionBlockToBitmapComponent(Avatar_Component::Co
     } else {
       random_line_tile = 0;
     }
-    collision_bitmap_position.z = -1.0;
+    collision_bitmap_position.z = 0;
   }
 
   collision_bitmap->SetPosition(collision_bitmap_position);

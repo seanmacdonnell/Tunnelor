@@ -145,8 +145,10 @@ void Middleground_Controller::CreateLevel() {
 
   // Add tiles to Model
   for (std::vector<Tile_Bitmap*>::iterator tile = tiles.begin(); tile != tiles.end(); ++tile) {
-    m_model->Add(*tile);
-    m_middleground_tiles.push_back(*tile);
+    if ((*tile)->GetTexture()->transparency != 0.0f) {
+      m_model->Add(*tile);
+      m_middleground_tiles.push_back(*tile);
+    }
   }
 }
 

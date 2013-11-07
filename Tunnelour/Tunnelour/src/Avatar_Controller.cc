@@ -123,7 +123,7 @@ void Avatar_Controller::GenerateAvatarTile() {
   m_avatar->SetState(initial_state);
   m_avatar->SetPosition(D3DXVECTOR3(m_level->GetCurrentLevel().avatar_top_left_x, 
                                     m_level->GetCurrentLevel().avatar_top_left_y,
-                                    -2));  // Middleground Z Space is -1
+                                    -1));  // Middleground Z Space is -1
   ChangeAvatarState("Standing", initial_state.direction);
 }
 

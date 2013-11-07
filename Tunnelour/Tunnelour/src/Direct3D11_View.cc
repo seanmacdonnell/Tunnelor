@@ -320,10 +320,49 @@ void Direct3D11_View::HandleEventAdd(Tunnelour::Component * const component) {
 
 //------------------------------------------------------------------------------
 void Direct3D11_View::HandleEventRemove(Tunnelour::Component * const component){
-  //m_renderables.Layer_00.remove(component);
-  //m_renderables.Layer_01.remove(component);
-  //m_renderables.Layer_02.remove(component);
-  //m_renderables.Layer_03.remove(component);
+  if (component->GetType().compare("Bitmap_Component") == 0) {
+    // Found Bitmap_Component
+    Tunnelour::Bitmap_Component *bitmap_component = 0;
+    bitmap_component = static_cast<Tunnelour::Bitmap_Component*>(component);
+    std::vector<Bitmap_Renderable*>::iterator found_bitmap_renderable;
+    if (bitmap_component->GetPosition()->z > -1) {
+      std::vector<Bitmap_Renderable*>::iterator bitmap_renderable;
+      for (bitmap_renderable = m_renderables.Layer_00.begin(); bitmap_renderable != m_renderables.Layer_00.end(); bitmap_renderable++) {
+        if ((*bitmap_renderable)->bitmap->GetID() == bitmap_component->GetID()) {
+          found_bitmap_renderable = bitmap_renderable; 
+        }
+      }
+      m_renderables.Layer_00.erase(found_bitmap_renderable);
+    } else  if (bitmap_component->GetPosition()->z <= -1 && bitmap_component->GetPosition()->z > -2) {
+      std::vector<Bitmap_Renderable*>::iterator bitmap_renderable;
+      for (bitmap_renderable = m_renderables.Layer_01.begin(); bitmap_renderable != m_renderables.Layer_01.end(); bitmap_renderable++) {
+        if ((*bitmap_renderable)->bitmap->GetID() == bitmap_component->GetID()) {
+          found_bitmap_renderable = bitmap_renderable; 
+        }
+      }
+      m_renderables.Layer_01.erase(found_bitmap_renderable);
+    } else  if (bitmap_component->GetPosition()->z <= -2) {
+      std::vector<Bitmap_Renderable*>::iterator bitmap_renderable;
+      for (bitmap_renderable = m_renderables.Layer_02.begin(); bitmap_renderable != m_renderables.Layer_02.end(); bitmap_renderable++) {
+        if ((*bitmap_renderable)->bitmap->GetID() == bitmap_component->GetID()) {
+          found_bitmap_renderable = bitmap_renderable; 
+        }
+      }
+      m_renderables.Layer_02.erase(found_bitmap_renderable);
+    }
+  } else if (component->GetType().compare("Text_Component") == 0) {
+    // Found Text_Component
+    Tunnelour::Text_Component *text_component = 0;
+    text_component = static_cast<Tunnelour::Text_Component*>(component);
+    std::vector<Text_Renderable*>::iterator found_text_renderable;
+    std::vector<Text_Renderable*>::iterator text_renderable;
+    for (text_renderable = m_renderables.Layer_03.begin(); text_renderable != m_renderables.Layer_03.end(); text_renderable++) {
+      if ((*text_renderable)->text->GetID() == text_component->GetID()) {
+        found_text_renderable = text_renderable;
+      }
+    }
+    m_renderables.Layer_03.erase(found_text_renderable);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -1160,6 +1199,11 @@ void Direct3D11_View::TurnZBufferOff() {
 }
 
 bool Direct3D11_View::IsThisBitmapComponentVisable(Bitmap_Renderable *bitmap) {
+
+  if (bitmap->texture->transparency == 0.0f) {
+    return true;
+  }
+
   // At least one vertex in TileA is contained in the TileB.
   float a_tile_top, a_tile_bottom;
   a_tile_top = bitmap->position->y + static_cast<float>(bitmap->bitmap->GetSize().y / 2);
