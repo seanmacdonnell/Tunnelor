@@ -316,12 +316,12 @@ void Avatar_Controller::RunFallingState() {
       }
     } else {
       D3DXVECTOR3 position = *m_avatar->GetPosition();
-
       unsigned int state_index = current_state.state_index;
       state_index++;
       if (state_index > (m_current_animation_subset.number_of_frames - 1)) {
         if (m_current_animation_subset.is_repeatable) {
           state_index = 0;
+          UpdateAvatarState(state_index);
         } else {
           if (current_state.state.compare("Walking_To_Falling") == 0) {
             ChangeAvatarState("Falling_Flip", m_avatar->GetState().direction);
