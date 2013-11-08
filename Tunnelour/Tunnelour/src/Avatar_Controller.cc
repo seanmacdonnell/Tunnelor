@@ -364,6 +364,7 @@ void Avatar_Controller::RunFallingState() {
         position = *m_avatar->GetPosition();
         D3DXVECTOR3 new_velocity = D3DXVECTOR3(0, 0 , 0);
         new_velocity.y = m_avatar->GetVelocity().y + m_world_settings->GetGravity();
+        if (new_velocity.y > 128) { new_velocity.y = 128; }
         new_velocity.x = m_avatar->GetVelocity().x;
 
         m_avatar->SetVelocity(new_velocity);
