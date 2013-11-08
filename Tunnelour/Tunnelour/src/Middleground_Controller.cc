@@ -330,6 +330,7 @@ Tile_Bitmap* Middleground_Controller::CreateTile(float base_tile_size) {
                                                  m_current_tileset.size_y);
   tile->GetTexture()->tile_size = D3DXVECTOR2(middleground_line.tile_size_x,
                                               middleground_line.tile_size_y);
+  tile->SetIsCollidable(true);
 
   int random_line_tile = rand() % middleground_line.number_of_tiles;
 

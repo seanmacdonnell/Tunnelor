@@ -39,7 +39,7 @@ bool Bitmap_Helper::DoTheseTilesIntersect(Tunnelour::Bitmap_Component* TileA, Tu
 
 //------------------------------------------------------------------------------
 bool Bitmap_Helper::DoTheseTilesYCollide(Tunnelour::Bitmap_Component* TileA, Tunnelour::Bitmap_Component* TileB) {
-  // At least one vertex in TileA is contained in the TileB.
+  // At least one y vertex in TileA is contained in the TileB.
 
   float a_tile_top, a_tile_bottom;
   a_tile_top = TileA->GetPosition()->y + static_cast<float>(TileA->GetSize().y / 2);
@@ -57,9 +57,19 @@ bool Bitmap_Helper::DoTheseTilesYCollide(Tunnelour::Bitmap_Component* TileA, Tun
     return true;
   }
 
+  if (a_tile_top < b_tile_top && a_tile_top > b_tile_bottom) {
+    return true;
+  }
+
+  if (a_tile_bottom < b_tile_top && a_tile_bottom > b_tile_bottom) {
+    return true;
+  }
+
   if (a_tile_top == b_tile_top  && a_tile_bottom == b_tile_bottom) {
     return true;
   }
+
+
 
   return false;
 }
@@ -79,7 +89,7 @@ bool Bitmap_Helper::AreTheseTilesYAdjacent(Tunnelour::Bitmap_Component* TileA, T
   if (b_tile_top == a_tile_top  || b_tile_top == a_tile_bottom) {
     return true;
   }
-    
+   
   if (b_tile_bottom == a_tile_top  || b_tile_bottom == a_tile_bottom) {
     return true;
   }
@@ -103,7 +113,15 @@ bool Bitmap_Helper::DoTheseTilesXCollide(Tunnelour::Bitmap_Component* TileA, Tun
     return true;
   }
 
-  if (b_tile_right > a_tile_left && b_tile_right < a_tile_right) {
+  if (b_tile_right < a_tile_right && b_tile_right > a_tile_left) {
+    return true;
+  }
+
+  if (a_tile_left > b_tile_left && a_tile_left < b_tile_right) {
+    return true;
+  }
+
+  if (a_tile_right < b_tile_right && a_tile_right > b_tile_left) {
     return true;
   }
 

@@ -73,6 +73,10 @@ class Tile_Bitmap: public Tunnelour::Bitmap_Component {
 
   bool IsEdge();
 
+  bool IsCollidable();
+
+  void SetIsCollidable(bool is_collidable);
+
  protected:
 
  private:
@@ -87,6 +91,7 @@ class Tile_Bitmap: public Tunnelour::Bitmap_Component {
   bool m_is_bottom_edge;
   bool m_is_right_edge;
   bool m_is_left_edge;
+  bool m_is_collidable;
 };  // class Tile_Bitmap
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_TILE_BITMAP_H_

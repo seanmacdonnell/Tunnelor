@@ -1199,9 +1199,8 @@ void Direct3D11_View::TurnZBufferOff() {
 }
 
 bool Direct3D11_View::IsThisBitmapComponentVisable(Bitmap_Renderable *bitmap) {
-
   if (bitmap->texture->transparency == 0.0f) {
-    return true;
+    return false;
   }
 
   // At least one vertex in TileA is contained in the TileB.
@@ -1239,6 +1238,10 @@ bool Direct3D11_View::IsThisBitmapComponentVisable(Bitmap_Renderable *bitmap) {
   b_tile_right = m_camera->GetPosition().x + static_cast<float>(m_game_settings->GetResolution().x / 2);
 
   if (b_tile_left > a_tile_left && b_tile_left < a_tile_right) {
+    return true;
+  }
+
+  if (b_tile_left > a_tile_left && b_tile_left > b_tile_right) {
     return true;
   }
 

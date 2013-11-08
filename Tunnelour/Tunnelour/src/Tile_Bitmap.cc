@@ -32,6 +32,7 @@ Tile_Bitmap::Tile_Bitmap(): Bitmap_Component() {
   m_is_bottom_edge = false;
   m_is_right_edge = false;
   m_is_left_edge = false;
+  m_is_collidable = false;
 }
 
 //------------------------------------------------------------------------------
@@ -202,6 +203,16 @@ bool Tile_Bitmap::IsLeftEdge() {
 //------------------------------------------------------------------------------
 void Tile_Bitmap::SetIsLeftEdge(bool is_left_edge) {
   m_is_left_edge = is_left_edge;
+}
+
+//------------------------------------------------------------------------------
+bool Tile_Bitmap::IsCollidable() {
+  return m_is_collidable;
+}
+
+//------------------------------------------------------------------------------
+void Tile_Bitmap::SetIsCollidable(bool is_collidable) {
+  m_is_collidable = is_collidable;
 }
 
 //------------------------------------------------------------------------------
