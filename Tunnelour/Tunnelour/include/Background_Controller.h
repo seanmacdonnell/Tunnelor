@@ -23,8 +23,10 @@
 #include "Controller.h"
 #include "Tile_Bitmap.h"
 #include "Game_Settings_Component.h"
+#include "Background_Controller_Mutator.h"
 #include "Camera_Component.h"
 #include "Tileset_Helper.h"
+#include "Level_Component.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -44,7 +46,7 @@ class Background_Controller: public Controller {
   //---------------------------------------------------------------------------
   virtual ~Background_Controller();
 
-  //---------------------------------------------------------------------------
+  //--------------------------------------------------------------------------
   // Description : Initialisation function for the Controller
   //---------------------------------------------------------------------------
   virtual bool Init(Component_Composite * const model);
@@ -57,93 +59,65 @@ class Background_Controller: public Controller {
  protected:
 
  private:
-  //---------------------------------------------------------------------------
-  // Description : Creates a new bitmap tile of the given tile size.
-  //---------------------------------------------------------------------------
-  Tile_Bitmap* CreateTile(float base_tile_size,
-                          bool is_top_edge,
-                          bool is_bottom_edge,
-                          bool is_right_edge,
-                          bool is_left_edge);
+  void CreateLevel();
 
-  //---------------------------------------------------------------------------
-  // Description : Loads the tileset metadata from file into the variables
-  //---------------------------------------------------------------------------
+  std::vector<Tile_Bitmap*> GenerateTunnelFromMetadata(Level_Component::Level_Metadata level_metadata);
+  std::list<Tileset_Helper::Tileset_Metadata> m_tilesets;
+  Tileset_Helper::Tileset_Metadata m_current_tileset;
+  Tileset_Helper::Subset m_current_background_subset;
   void LoadTilesetMetadata();
-
-  //---------------------------------------------------------------------------
-  // Description : Returns the tileset from the current tileset metadata
-  //             : that matches the given name.
-  //---------------------------------------------------------------------------
   Tileset_Helper::Tileset_Metadata GetNamedTileset(std::string name);
-
-  //---------------------------------------------------------------------------
-  // Description : Return the current subset with the background type
-  //---------------------------------------------------------------------------
   Tileset_Helper::Subset GetCurrentBackgroundSubset();
-
+  Tile_Bitmap* CreateTile(float base_tile_size);
+  Tileset_Helper::Line GetCurrentSizedLine(float size);
+  
   //---------------------------------------------------------------------------
-  // Description : Tiles within the current camera bounds with background
-  //             : tiles
+  // Description : Resets a tiles texture to 0 for switching tilesets.
   //---------------------------------------------------------------------------
-  void TileCurrentWindow();
+  void ResetTileTexture(Tile_Bitmap *out_tile);
+  std::vector<Tile_Bitmap*> m_left_edge_tiles;
+  std::vector<Tile_Bitmap*> m_right_edge_tiles;
+  std::vector<Tile_Bitmap*> m_bottom_edge_tiles;
+  std::vector<Tile_Bitmap*> m_top_edge_tiles;
+  std::vector<Tile_Bitmap*> m_tunnel_edge_tiles;
 
   //---------------------------------------------------------------------------
   // Description : Tiles up from the current background edge
   //---------------------------------------------------------------------------
-  void TileUp(float camera_top);
+  void TileUp(float camera_top, float background_top);
 
   //---------------------------------------------------------------------------
   // Description : Tiles down from the current background edge
   //---------------------------------------------------------------------------
-  void TileDown();
+  void TileDown(float camera_bottom, float background_bottom);
 
   //---------------------------------------------------------------------------
   // Description : Tiles right from the current background edge
   //---------------------------------------------------------------------------
-  void TileRight(float camera_right);
+  void TileRight(float camera_right, float background_right);
 
   //---------------------------------------------------------------------------
   // Description : Tiles left from the current background edge
   //---------------------------------------------------------------------------
-  void TileLeft(float camera_left);
+  void TileLeft(float camera_left, float background_left);
 
   //---------------------------------------------------------------------------
   // Description : Switches the tileset from Debug to Dirt and vise versa
   //---------------------------------------------------------------------------
   void SwitchTileset();
 
-  //---------------------------------------------------------------------------
-  // Description : Returns the appropriately sized line from the current
-  //             : background tileset.
-  //---------------------------------------------------------------------------
-  Tileset_Helper::Line GetCurrentSizedLine(D3DXVECTOR2 size);
-
-  //---------------------------------------------------------------------------
-  // Description : Resets a tiles texture to 0 for switching tilesets.
-  //---------------------------------------------------------------------------
-  void ResetTileTexture(Tile_Bitmap *out_tile);
-
-  //---------------------------------------------------------------------------
-  // Member Variables
-  //---------------------------------------------------------------------------
-  std::list<Tileset_Helper::Tileset_Metadata> m_tilesets;
-  Tileset_Helper::Tileset_Metadata m_current_tileset;
-  Tileset_Helper::Subset m_current_background_subset;
   std::vector<Tile_Bitmap*> m_background_tiles;
-  std::vector<Tile_Bitmap*> m_top_edge_tiles;
-  std::vector<Tile_Bitmap*> m_bottom_edge_tiles;
-  std::vector<Tile_Bitmap*> m_right_edge_tiles;
-  std::vector<Tile_Bitmap*> m_left_edge_tiles;
+
   Game_Settings_Component* m_game_settings;
-  Camera_Component* m_camera;
-  float m_background_top;
-  float m_background_bottom;
-  float m_background_left;
-  float m_background_right;
+
+  Camera_Component *m_camera;
+  Level_Component *m_level;
+  std::string m_tileset_filename;
+  bool m_is_debug_mode;
+  
   std::string m_debug_metadata_file_path;
   std::string m_dirt_metadata_file_path;
-  bool m_is_debug_mode;
+
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_CONTROLLER_H_

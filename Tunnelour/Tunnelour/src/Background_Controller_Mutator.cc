@@ -23,46 +23,54 @@ namespace Tunnelour {
 Background_Controller_Mutator::Background_Controller_Mutator() {
   m_found_game_settings = false;
   m_found_camera = false;
+  m_found_level = false;
   m_game_settings = 0;
   m_camera = 0;
+  m_level = 0;
 }
 
 //------------------------------------------------------------------------------
 Background_Controller_Mutator::~Background_Controller_Mutator() {
   m_found_game_settings = false;
   m_found_camera = false;
+  m_found_level = false;
   m_game_settings = 0;
   m_camera = 0;
+  m_level = 0;
 }
 
 //------------------------------------------------------------------------------
 void Background_Controller_Mutator::Mutate(Component * const component) {
   if (component->GetType().compare("Game_Settings_Component") == 0) {
-    Game_Settings_Component *game_settings = 0;
-    game_settings = static_cast<Game_Settings_Component*>(component);
-    m_game_settings = game_settings;
+    m_game_settings = static_cast<Game_Settings_Component*>(component);
     m_found_game_settings = true;
   } else  if (component->GetType().compare("Camera_Component") == 0) {
-    Camera_Component *camera = 0;
-    camera = static_cast<Camera_Component*>(component);
-    m_camera = camera;
+    m_camera = static_cast<Camera_Component*>(component);
     m_found_camera = true;
+  } else  if (component->GetType().compare("Level_Component") == 0) {
+    m_level = static_cast<Level_Component*>(component);
+    m_found_level = true;
   }
 }
 
 //------------------------------------------------------------------------------
-Game_Settings_Component* const Background_Controller_Mutator::GetGameSettings() {
+Game_Settings_Component *const Background_Controller_Mutator::GetGameSettings() {
   return m_game_settings;
 }
 
 //------------------------------------------------------------------------------
-bool Background_Controller_Mutator::WasSuccessful() {
-  return m_found_camera && m_found_game_settings;
+Camera_Component *const Background_Controller_Mutator::GetCamera() {
+  return m_camera;
 }
 
 //------------------------------------------------------------------------------
-Camera_Component* const Background_Controller_Mutator::GetCamera() {
-  return m_camera;
+Level_Component *const Background_Controller_Mutator::GetLevel() {
+  return m_level;
+}
+
+//------------------------------------------------------------------------------
+bool Background_Controller_Mutator::WasSuccessful() {
+  return m_found_camera && m_found_game_settings && m_found_level;
 }
 
 }  // namespace Tunnelour

@@ -220,7 +220,7 @@ Tile_Bitmap* Bitmap_Helper::CollisionBlockToBitmapComponent(Avatar_Component::Co
     } else {
       random_line_tile = 0;
     }
-    collision_bitmap_position.z = 0;
+    collision_bitmap_position.z = -0.5;
   }
 
   collision_bitmap->SetPosition(collision_bitmap_position);
