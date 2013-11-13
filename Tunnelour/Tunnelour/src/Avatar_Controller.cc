@@ -30,48 +30,50 @@ namespace Tunnelour {
 // public:
 //------------------------------------------------------------------------------
 Avatar_Controller::Avatar_Controller() : Controller() {
+  m_model = 0;
   m_avatar = 0;
   m_game_settings = 0;
   m_level = 0;
-  m_has_avatar_been_generated = false;
   m_animation_tick = false;
   m_world_settings = 0;
+  m_avatar_z_position = -1; // Middleground Z Space is -1
 }
 
 //------------------------------------------------------------------------------
 Avatar_Controller::~Avatar_Controller() {
-  m_model->IgnoreType(this, "Bitmap_Component");
-  m_floor_tiles.clear();
-  m_wall_tiles.clear();
+  m_model = 0;
   m_avatar = 0;
   m_game_settings = 0;
   m_level = 0;
-  m_has_avatar_been_generated = false;
   m_animation_tick = false;
   m_world_settings = 0;
+  m_model->IgnoreType(this, "Bitmap_Component");
+  m_floor_tiles.clear();
+  m_wall_tiles.clear();
 }
 
 //------------------------------------------------------------------------------
 bool Avatar_Controller::Init(Component_Composite * const model) {
-  Controller::Init(model);
-  InitTimer();
+  if (m_model == 0) {
+    m_model = model; 
+  }
   Avatar_Controller_Mutator mutator;
   m_model->Apply(&mutator);
   if (mutator.WasSuccessful()) {
+    InitTimer();
     m_game_settings = mutator.GetGameSettings();
     m_world_settings = mutator.GetWorldSettings();
     m_level = mutator.GetLevel();
     LoadTilesets(m_game_settings->GetTilesetPath());
-    GenerateAvatarTile();
+    CreateAvatarComponent();
     m_model->Add(m_avatar);
-    m_floor_tiles.merge(mutator.GetFloorTiles());
-    m_wall_tiles.merge(mutator.GetWallTiles());
+    m_floor_tiles = mutator.GetFloorTiles();
+    m_wall_tiles = mutator.GetWallTiles();
     m_model->ObserveType(this, "Bitmap_Component");
-  } else {
-    return false;
+    m_has_been_initialised = true;
   }
-  m_has_been_initialised = true;
-  return true;
+
+  return m_has_been_initialised;
 }
 
 //------------------------------------------------------------------------------
@@ -101,8 +103,27 @@ void Avatar_Controller::HandleEventAdd(Tunnelour::Component * const component) {
 
 //------------------------------------------------------------------------------
 void Avatar_Controller::HandleEventRemove(Tunnelour::Component * const component){
-  m_wall_tiles.remove(static_cast<Tile_Bitmap*>(component));
-  m_wall_tiles.remove(static_cast<Tile_Bitmap*>(component));
+  Tunnelour::Tile_Bitmap *target_bitmap = 0;
+  target_bitmap = static_cast<Tunnelour::Tile_Bitmap*>(component);
+  std::vector<Tile_Bitmap*>::iterator found_bitmap;
+  if (target_bitmap->IsWall()) {
+    std::vector<Tile_Bitmap*>::iterator bitmap;
+    for (bitmap = m_wall_tiles.begin(); bitmap != m_wall_tiles.end(); bitmap++) {
+      if ((*bitmap)->GetID() == target_bitmap->GetID()) {
+        found_bitmap = bitmap; 
+      }
+    }
+    m_wall_tiles.erase(found_bitmap);
+  }
+  if (target_bitmap->IsFloor()) {
+    std::vector<Tile_Bitmap*>::iterator bitmap;
+    for (bitmap = m_floor_tiles.begin(); bitmap != m_floor_tiles.end(); bitmap++) {
+      if ((*bitmap)->GetID() == target_bitmap->GetID()) {
+        found_bitmap = bitmap; 
+      }
+    }
+    m_floor_tiles.erase(found_bitmap);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -112,19 +133,18 @@ void Avatar_Controller::HandleEventRemove(Tunnelour::Component * const component
 //------------------------------------------------------------------------------
 // private:
 //------------------------------------------------------------------------------
-void Avatar_Controller::GenerateAvatar() {
-}
-
-void Avatar_Controller::GenerateAvatarTile() {
+void Avatar_Controller::CreateAvatarComponent() {
   m_avatar = new Avatar_Component();
   m_avatar->GetTexture()->transparency = 1.0f;
   Avatar_Component::Avatar_State initial_state;
   initial_state.direction = "Right";
+  float avatar_x_position = m_level->GetCurrentLevel().avatar_top_left_x;
+  float avatar_y_position = m_level->GetCurrentLevel().avatar_top_left_y;
   m_avatar->SetState(initial_state);
-  m_avatar->SetPosition(D3DXVECTOR3(m_level->GetCurrentLevel().avatar_top_left_x, 
-                                    m_level->GetCurrentLevel().avatar_top_left_y,
-                                    -1));  // Middleground Z Space is -1
-  ChangeAvatarState("Standing", initial_state.direction);
+  m_avatar->SetPosition(D3DXVECTOR3(avatar_x_position, 
+                                    avatar_y_position,
+                                  m_avatar_z_position));  
+  SetAvatarState("Standing", initial_state.direction);
 }
 
 //------------------------------------------------------------------------------
@@ -152,7 +172,7 @@ void Avatar_Controller::RunStandingState() {
   Avatar_Component::Avatar_State current_command = m_avatar->GetCommand();
 
   if (current_command.state.compare("") != 0) {
-    ChangeAvatarState(current_command.state, current_command.direction);
+    SetAvatarState(current_command.state, current_command.direction);
     if (current_command.state.compare("Walking") == 0) {
       RunWalkingState();
     }
@@ -173,7 +193,7 @@ void Avatar_Controller::RunStandingState() {
   }
   
   if (!IsAvatarFloorAdjacent()) {
-    ChangeAvatarState("Falling_To_Standing", m_avatar->GetState().direction);
+    SetAvatarState("Falling_To_Standing", m_avatar->GetState().direction);
   }
 }
 
@@ -190,7 +210,7 @@ void Avatar_Controller::RunWalkingState() {
     if (current_state.state.compare(current_command.state) != 0 ||
         current_state.direction != current_command.direction) {
       // New State
-      ChangeAvatarState(current_command.state, current_command.direction);
+      SetAvatarState(current_command.state, current_command.direction);
       AlignAvatarOnAvatarCollisionBlock();
     } else {
       // Continue State
@@ -225,14 +245,14 @@ void Avatar_Controller::RunWalkingState() {
     m_avatar->SetCommand(cleared_state);
   } else {
     // No Command, Change to standing
-    ChangeAvatarState("Standing", m_avatar->GetState().direction);
+    SetAvatarState("Standing", m_avatar->GetState().direction);
     AlignAvatarOnAvatarCollisionBlock();
   }
   
   // Detect if the avatar is intersecting with a wall
-  std::list<Bitmap_Component*> *out_colliding_floor_tiles = new std::list<Bitmap_Component*>();
+  std::vector<Bitmap_Component*> *out_colliding_floor_tiles = new std::vector<Bitmap_Component*>();
   if (IsAvatarWallColliding(out_colliding_floor_tiles, &CollisionBlockToBitmapComponent(GetNamedCollisionBlock("Avatar", m_avatar->GetState().collision_blocks)))) {
-    ChangeAvatarState("Standing", m_avatar->GetState().direction);
+    SetAvatarState("Standing", m_avatar->GetState().direction);
     AlignAvatarOnAvatarCollisionBlock();
     // Move back avatar
     if (m_avatar->GetState().direction.compare("Left") == 0) {
@@ -254,7 +274,7 @@ void Avatar_Controller::RunWalkingState() {
   
   // Detect if the avatar is overbalancing from walking
   if (!IsAvatarFloorAdjacent()) {
-    ChangeAvatarState("Walking_To_Falling", m_avatar->GetState().direction);
+    SetAvatarState("Walking_To_Falling", m_avatar->GetState().direction);
     AlignAvatarOnAvatarCollisionBlock();
   }
   
@@ -264,7 +284,7 @@ void Avatar_Controller::RunWalkingState() {
 void Avatar_Controller::RunFallingState() {
   Avatar_Component::Avatar_State current_state = m_avatar->GetState();
 
-  std::list<Bitmap_Component*> out_colliding_floor_tiles;
+  std::vector<Bitmap_Component*> out_colliding_floor_tiles;
   Bitmap_Component* out_collision_block = new Bitmap_Component();
   if (current_state.state.compare("Falling_To_Standing") == 0) {
     bool is_colliding = IsAvatarFloorColliding(&out_colliding_floor_tiles,
@@ -274,7 +294,7 @@ void Avatar_Controller::RunFallingState() {
       bool is_tangent = false;
       float tile_top = 0;
 
-      std::list<Bitmap_Component*>::iterator it;
+      std::vector<Bitmap_Component*>::iterator it;
       it = out_colliding_floor_tiles.begin();
       for (; it != out_colliding_floor_tiles.end(); it++) {
         tile_top = (*it)->GetTopLeftPostion().y;
@@ -291,7 +311,7 @@ void Avatar_Controller::RunFallingState() {
       avatar_position.y = tile_top - foot_bottom_centre_offset;
       m_avatar->SetPosition(avatar_position);
 
-      ChangeAvatarState("Standing", m_avatar->GetState().direction);
+      SetAvatarState("Standing", m_avatar->GetState().direction);
     } else {
       D3DXVECTOR3 position = *m_avatar->GetPosition();
       position.y -= 32;
@@ -300,16 +320,16 @@ void Avatar_Controller::RunFallingState() {
   } else {
     bool is_colliding = IsAvatarFloorColliding(&out_colliding_floor_tiles,
                                                out_collision_block);
-    std::list<Bitmap_Component*> out_colliding_wall_tiles;
+    std::vector<Bitmap_Component*> out_colliding_wall_tiles;
     bool is_wall_colliding = IsAvatarWallColliding(&out_colliding_wall_tiles, &CollisionBlockToBitmapComponent(GetNamedCollisionBlock("Avatar", m_avatar->GetState().collision_blocks)));
     if (is_wall_colliding && (current_state.state.compare("Walking_To_Falling") != 0)) {
       if (m_avatar->GetState().direction.compare("Right") == 0) {
-        ChangeAvatarState("Falling_Flip", "Left");
+        SetAvatarState("Falling_Flip", "Left");
         MoveAvatarWallAdjacent("Right");
         D3DXVECTOR3 new_velocity = D3DXVECTOR3(2, 0 , 0);
         m_avatar->SetVelocity(new_velocity);
       } else {
-        ChangeAvatarState("Falling_Flip", "Right");
+        SetAvatarState("Falling_Flip", "Right");
         MoveAvatarWallAdjacent("Left");
         D3DXVECTOR3 new_velocity = D3DXVECTOR3(2, 0 , 0);
         m_avatar->SetVelocity(new_velocity);
@@ -324,7 +344,7 @@ void Avatar_Controller::RunFallingState() {
           UpdateAvatarState(state_index);
         } else {
           if (current_state.state.compare("Walking_To_Falling") == 0) {
-            ChangeAvatarState("Falling_Flip", m_avatar->GetState().direction);
+            SetAvatarState("Falling_Flip", m_avatar->GetState().direction);
             state_index = 0;
             current_state = m_avatar->GetState();
             if (m_avatar->GetState().direction.compare("Right") == 0) {
@@ -333,11 +353,11 @@ void Avatar_Controller::RunFallingState() {
               MoveAvatarWallAdjacent("Right");
             }
           } else if (current_state.state.compare("Falling_Flip") == 0) {
-            ChangeAvatarState("Falling", m_avatar->GetState().direction);
+            SetAvatarState("Falling", m_avatar->GetState().direction);
             state_index = 0;
             current_state = m_avatar->GetState();
           } else if (current_state.state.compare("Falling_To_Death") == 0) {
-            ChangeAvatarState("Death", m_avatar->GetState().direction);
+            SetAvatarState("Death", m_avatar->GetState().direction);
             state_index = 0;
             current_state = m_avatar->GetState();
           } else {
@@ -379,7 +399,7 @@ void Avatar_Controller::RunFallingState() {
       out_colliding_floor_tiles.clear();
       is_colliding = IsAvatarFloorColliding(&out_colliding_floor_tiles, out_collision_block);
       if (is_colliding && (m_avatar->GetState().state.compare("Walking_To_Falling") != 0)) {
-        ChangeAvatarState("Falling_To_Death", m_avatar->GetState().direction);
+        SetAvatarState("Falling_To_Death", m_avatar->GetState().direction);
         MoveAvatarFloorAdjacent();
       } 
     }
@@ -403,8 +423,8 @@ bool Avatar_Controller::IsAvatarFloorAdjacent() {
     avatar_collision_block_bitmap = CollisionBlockToBitmapComponent(avatar_collision_block);
 
     // Create a list of floor tiles which are adjacent with the collision block
-    std::list<Tile_Bitmap*> adjacent_tiles;
-    std::list<Tile_Bitmap*>::iterator floor_tile;
+    std::vector<Tile_Bitmap*> adjacent_tiles;
+    std::vector<Tile_Bitmap*>::iterator floor_tile;
     for (floor_tile = m_floor_tiles.begin(); floor_tile != m_floor_tiles.end(); floor_tile++) {
       if (Bitmap_Helper::DoTheseTilesXCollide(*floor_tile, &avatar_collision_block_bitmap)) {
         if (Bitmap_Helper::AreTheseTilesYAdjacent(*floor_tile, &avatar_collision_block_bitmap)) {
@@ -425,7 +445,7 @@ bool Avatar_Controller::IsAvatarFloorAdjacent() {
 }
 
 //------------------------------------------------------------------------------
-bool Avatar_Controller::IsAvatarFloorColliding(std::list<Bitmap_Component*> *out_colliding_floor_tiles, Bitmap_Component *out_collision_block) {
+bool Avatar_Controller::IsAvatarFloorColliding(std::vector<Bitmap_Component*> *out_colliding_floor_tiles, Bitmap_Component *out_collision_block) {
   // Going to deal only with gravity only
   // Also only dealing with the lowest foot
   if (!m_floor_tiles.empty()) {
@@ -438,7 +458,7 @@ bool Avatar_Controller::IsAvatarFloorColliding(std::list<Bitmap_Component*> *out
     (*out_collision_block) = CollisionBlockToBitmapComponent(avatar_collision_block);
 
     // Create a list of floor tiles which are colliding with the collision block
-    std::list<Tile_Bitmap*>::iterator border_tile;
+    std::vector<Tile_Bitmap*>::iterator border_tile;
     for (border_tile = m_floor_tiles.begin(); border_tile != m_floor_tiles.end(); border_tile++) {
       if (Bitmap_Helper::DoTheseTilesYCollide(*border_tile, out_collision_block)) {
         if (Bitmap_Helper::DoTheseTilesXCollide(*border_tile, out_collision_block)) {
@@ -459,7 +479,7 @@ bool Avatar_Controller::IsAvatarFloorColliding(std::list<Bitmap_Component*> *out
 }
 
 //------------------------------------------------------------------------------
-bool Avatar_Controller::IsAvatarWallColliding(std::list<Bitmap_Component*> *out_colliding_floor_tiles, Bitmap_Component *out_collision_block) {
+bool Avatar_Controller::IsAvatarWallColliding(std::vector<Bitmap_Component*> *out_colliding_floor_tiles, Bitmap_Component *out_collision_block) {
   // Going to deal only with gravity only
   // Also only dealing with the lowest foot
   if (!m_wall_tiles.empty()) {
@@ -471,7 +491,7 @@ bool Avatar_Controller::IsAvatarWallColliding(std::list<Bitmap_Component*> *out_
     (*out_collision_block) = CollisionBlockToBitmapComponent(lowest_collision_block);
 
     // Create a list of floor tiles which are colliding with the collision block
-    std::list<Tile_Bitmap*>::iterator border_tile;
+    std::vector<Tile_Bitmap*>::iterator border_tile;
     for (border_tile = m_wall_tiles.begin(); border_tile != m_wall_tiles.end(); border_tile++) {
       if (Bitmap_Helper::DoTheseTilesIntersect(*border_tile, out_collision_block)) {
         out_colliding_floor_tiles->push_back(*border_tile);
@@ -608,7 +628,7 @@ void Avatar_Controller::AlignAvatarOnAvatarCollisionBlock() {
 
 //------------------------------------------------------------------------------
 void Avatar_Controller::MoveAvatarWallAdjacent(std::string direction) {
-  std::list<Bitmap_Component*> out_colliding_wall_tiles;
+  std::vector<Bitmap_Component*> out_colliding_wall_tiles;
   bool is_wall_colliding = IsAvatarWallColliding(&out_colliding_wall_tiles, &CollisionBlockToBitmapComponent(GetNamedCollisionBlock("Avatar", m_avatar->GetState().collision_blocks)));
   if (is_wall_colliding) {
     D3DXVECTOR3 new_avatar_position = *m_avatar->GetPosition();
@@ -629,7 +649,7 @@ void Avatar_Controller::MoveAvatarWallAdjacent(std::string direction) {
 
 //------------------------------------------------------------------------------
 void Avatar_Controller::MoveAvatarFloorAdjacent() {
-  std::list<Bitmap_Component*> out_colliding_wall_tiles;
+  std::vector<Bitmap_Component*> out_colliding_wall_tiles;
   bool is_floor_colliding = IsAvatarFloorColliding(&out_colliding_wall_tiles, &CollisionBlockToBitmapComponent(GetNamedCollisionBlock("Avatar", m_avatar->GetState().collision_blocks)));
   if (is_floor_colliding) {
     D3DXVECTOR3 new_avatar_position = *m_avatar->GetPosition();
@@ -679,16 +699,16 @@ void Avatar_Controller::UpdateTimer() {
 }
 
 //------------------------------------------------------------------------------
-void Avatar_Controller::ChangeAvatarState(std::string new_state_name, std::string direction) {
+void Avatar_Controller::SetAvatarState(std::string new_state_name, std::string direction) {
   Avatar_Component::Avatar_State new_state;
   Tileset_Helper::Animation_Tileset_Metadata new_state_metadata;
   Tileset_Helper::Animation_Subset new_animation_subset;
 
   Avatar_Component::Avatar_State current_state = m_avatar->GetState();
 
-  std::list<Tileset_Helper::Animation_Tileset_Metadata>::iterator metadata;
+  std::vector<Tileset_Helper::Animation_Tileset_Metadata>::iterator metadata;
   for (metadata = m_animation_metadata.begin(); metadata != m_animation_metadata.end(); metadata++) {
-    std::list<Tileset_Helper::Animation_Subset>::iterator tileset;
+    std::vector<Tileset_Helper::Animation_Subset>::iterator tileset;
     for (tileset = (*metadata).subsets.begin(); tileset != (*metadata).subsets.end(); tileset++) {
       if (tileset->name.compare(new_state_name) == 0) {
         new_animation_subset = *tileset;
@@ -722,7 +742,7 @@ void Avatar_Controller::ChangeAvatarState(std::string new_state_name, std::strin
 
   // Find the initial frame of the new tile set state
   Tileset_Helper::Frame_Metadata initial_frame;
-  std::list<Tileset_Helper::Frame_Metadata>::iterator frame;
+  std::vector<Tileset_Helper::Frame_Metadata>::iterator frame;
   for (frame = new_animation_subset.frames.begin(); frame != new_animation_subset.frames.end(); frame++) {
     if (frame->id == 1) {
       initial_frame = (*frame);
@@ -730,7 +750,7 @@ void Avatar_Controller::ChangeAvatarState(std::string new_state_name, std::strin
   }
 
     // Create new collision block from the initial frame collision block
-  std::list<Tileset_Helper::Collision_Block>::iterator collision_block;
+  std::vector<Tileset_Helper::Collision_Block>::iterator collision_block;
   for (collision_block = initial_frame.collision_blocks.begin(); collision_block != initial_frame.collision_blocks.end(); collision_block++) {
     Avatar_Component::Collision_Block new_collision_block;
     new_collision_block = TilesetCollisionBlockToAvatarCollisionBlock((*collision_block),
@@ -767,7 +787,7 @@ void Avatar_Controller::UpdateAvatarState(int new_state_index) {
 
   // Find the new frame of the current tile set
   Tileset_Helper::Frame_Metadata new_frame;
-  std::list<Tileset_Helper::Frame_Metadata>::iterator frame;
+  std::vector<Tileset_Helper::Frame_Metadata>::iterator frame;
   for (frame = m_current_animation_subset.frames.begin(); frame != m_current_animation_subset.frames.end(); frame++) {
     if (frame->id == (new_state_index + 1)) {
       new_frame = (*frame);
@@ -775,7 +795,7 @@ void Avatar_Controller::UpdateAvatarState(int new_state_index) {
   }
 
   // Create new collision block from the initial frame collision block
-  std::list<Tileset_Helper::Collision_Block>::iterator collision_block;
+  std::vector<Tileset_Helper::Collision_Block>::iterator collision_block;
   for (collision_block = new_frame.collision_blocks.begin(); collision_block != new_frame.collision_blocks.end(); collision_block++) {
     Avatar_Component::Collision_Block new_collision_block;
     new_collision_block = TilesetCollisionBlockToAvatarCollisionBlock((*collision_block),
@@ -796,12 +816,12 @@ void Avatar_Controller::UpdateAvatarState(int new_state_index) {
 Avatar_Component::Collision_Block Avatar_Controller::GetLowestCollisionBlock() {
   Avatar_Component::Collision_Block lowest_collision_block;
 
-  std::list<Avatar_Component::Collision_Block> collision_blocks;
+  std::vector<Avatar_Component::Collision_Block> collision_blocks;
   collision_blocks = m_avatar->GetState().collision_blocks;
 
   lowest_collision_block = (*collision_blocks.begin());
 
-  std::list<Avatar_Component::Collision_Block>::iterator collision_block;
+  std::vector<Avatar_Component::Collision_Block>::iterator collision_block;
   for (collision_block = collision_blocks.begin(); collision_block != collision_blocks.end(); collision_block++) {
     float collision_block_bottom = collision_block->offset_from_avatar_centre.y - collision_block->size.y;
     float lowest_collision_block_bottom = lowest_collision_block.offset_from_avatar_centre.y - lowest_collision_block.size.y;
@@ -817,10 +837,10 @@ Avatar_Component::Collision_Block Avatar_Controller::GetLowestCollisionBlock() {
 Avatar_Component::Collision_Block Avatar_Controller::GetLowestMostForwardFootCollisionBlock(std::string direction) {
   Avatar_Component::Collision_Block lowest_collision_block;
 
-  std::list<Avatar_Component::Collision_Block> collision_blocks;
+  std::vector<Avatar_Component::Collision_Block> collision_blocks;
   collision_blocks = m_avatar->GetState().collision_blocks;
 
-  std::list<Avatar_Component::Collision_Block>::iterator collision_block;
+  std::vector<Avatar_Component::Collision_Block>::iterator collision_block;
   for (collision_block = collision_blocks.begin(); collision_block != collision_blocks.end(); collision_block++) {
     if ((collision_block->id.compare("Right_Foot") == 0 || collision_block->id.compare("Left_Foot") == 0) && collision_block->is_contacting) {
       if (lowest_collision_block.id.compare("") == 0) { 
@@ -872,12 +892,12 @@ Bitmap_Component Avatar_Controller::CollisionBlockToBitmapComponent(Avatar_Compo
 }
 
 //---------------------------------------------------------------------------
-Avatar_Component::Collision_Block Avatar_Controller::GetNamedCollisionBlock(std::string id, std::list<Avatar_Component::Collision_Block> collision_blocks) {
+Avatar_Component::Collision_Block Avatar_Controller::GetNamedCollisionBlock(std::string id, std::vector<Avatar_Component::Collision_Block> collision_blocks) {
   Avatar_Component::Collision_Block found_collision_block;
 
   Avatar_Component::Collision_Block* current_right_foot_collision_block = 0;
 
-  std::list<Avatar_Component::Collision_Block>::iterator collision_block;
+  std::vector<Avatar_Component::Collision_Block>::iterator collision_block;
   for (collision_block = collision_blocks.begin(); collision_block != collision_blocks.end(); collision_block++) {
     if (collision_block->id.compare(id) == 0) {
       found_collision_block = (*collision_block);

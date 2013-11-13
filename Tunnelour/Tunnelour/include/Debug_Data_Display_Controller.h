@@ -103,7 +103,7 @@ class Debug_Data_Display_Controller: public Controller {
   bool m_is_debug_mode;
   Tileset_Helper::Tileset_Metadata m_debug_tileset_metadata;
   std::string m_debug_metadata_file_path;
-  std::list<Tile_Bitmap*> m_collision_bitmaps;
+  std::vector<Tile_Bitmap*> m_collision_bitmaps;
   int z_position;
 };
 }  // namespace Tunnelour

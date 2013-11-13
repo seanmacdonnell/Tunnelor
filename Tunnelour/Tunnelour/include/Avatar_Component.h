@@ -21,6 +21,7 @@
 #include <d3dx11tex.h>
 #include "Bitmap_Component.h"
 #include <string>
+#include <vector>
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -41,7 +42,7 @@ class Avatar_Component: public Tunnelour::Bitmap_Component {
     std::string state;
     unsigned int state_index;
     std::string direction;
-    std::list<Collision_Block> collision_blocks;
+    std::vector<Collision_Block> collision_blocks;
   };
 
   //---------------------------------------------------------------------------

@@ -283,7 +283,7 @@ void Middleground_Controller::LoadTilesetMetadata() {
 Tileset_Helper::Tileset_Metadata Middleground_Controller::GetNamedTileset(std::string name) {
   Tileset_Helper::Tileset_Metadata found_tileset_metadata;
 
-  std::list<Tileset_Helper::Tileset_Metadata>::iterator tileset_metadata;
+  std::vector<Tileset_Helper::Tileset_Metadata>::iterator tileset_metadata;
   for (tileset_metadata = m_tilesets.begin(); tileset_metadata != m_tilesets.end(); tileset_metadata++) {
     if (tileset_metadata->name.compare(name) == 0) {
       found_tileset_metadata = (*tileset_metadata);
@@ -297,7 +297,7 @@ Tileset_Helper::Tileset_Metadata Middleground_Controller::GetNamedTileset(std::s
 Tileset_Helper::Subset Middleground_Controller::GetCurrentMiddlegroundSubset() {
   Tileset_Helper::Subset found_subset;
 
-  std::list<Tileset_Helper::Subset>::iterator tileset;
+  std::vector<Tileset_Helper::Subset>::iterator tileset;
   for (tileset = m_current_tileset.tilesets.begin(); tileset != m_current_tileset.tilesets.end(); tileset++) {
     if (tileset->type.compare("Middleground") == 0) {
       found_subset = *tileset;
@@ -310,7 +310,7 @@ Tileset_Helper::Subset Middleground_Controller::GetCurrentMiddlegroundSubset() {
 //------------------------------------------------------------------------------
 Tile_Bitmap* Middleground_Controller::CreateTile(float base_tile_size) {
   Tileset_Helper::Line middleground_line;
-  std::list<Tileset_Helper::Line>::iterator line;
+  std::vector<Tileset_Helper::Line>::iterator line;
   for (line = m_current_middleground_subset.lines.begin(); line != m_current_middleground_subset.lines.end(); line++) {
     if (line->tile_size_x == base_tile_size) {
       if (line->tile_size_y == base_tile_size) {
@@ -349,7 +349,7 @@ Tile_Bitmap* Middleground_Controller::CreateTile(float base_tile_size) {
 //---------------------------------------------------------------------------
 Tileset_Helper::Line Middleground_Controller::GetCurrentSizedLine(float size) {
   Tileset_Helper::Line middleground_line;
-  std::list<Tileset_Helper::Line>::iterator line;
+  std::vector<Tileset_Helper::Line>::iterator line;
   for (line = m_current_middleground_subset.lines.begin(); line != m_current_middleground_subset.lines.end(); line++) {
     if (line->tile_size_x == size) {
       if (line->tile_size_y == size) {

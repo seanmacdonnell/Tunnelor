@@ -19,7 +19,7 @@
 #include <windows.h>
 #include <vector>
 #include <string>
-#include <list>
+#include <vector>
 
 #include "Avatar_Component.h"
 #include "Avatar_Controller_Mutator.h"
@@ -66,7 +66,14 @@ class Avatar_Controller: public Controller,
   //---------------------------------------------------------------------------
   virtual bool Run();
 
+  //---------------------------------------------------------------------------
+  // Description : Called when handling an "Add" call in the model
+  //---------------------------------------------------------------------------
   virtual void HandleEventAdd(Tunnelour::Component * const component);
+
+  //---------------------------------------------------------------------------
+  // Description : Called when handling a "Remove" call in the model
+  //---------------------------------------------------------------------------
   virtual void HandleEventRemove(Tunnelour::Component * const component);
 
  protected:
@@ -75,7 +82,7 @@ class Avatar_Controller: public Controller,
   //---------------------------------------------------------------------------
   // Description : Generates the Avatar_Component tile
   //---------------------------------------------------------------------------
-  void GenerateAvatarTile();
+  void CreateAvatarComponent();
 
   //---------------------------------------------------------------------------
   // Description : Creates the Avatar_Component and adds it to the model
@@ -110,13 +117,13 @@ class Avatar_Controller: public Controller,
   //---------------------------------------------------------------------------
   // Description : Returns true if the avatar is colliding with a floor
   //---------------------------------------------------------------------------
-  bool IsAvatarFloorColliding(std::list<Bitmap_Component*> *out_colliding_floor_tiles,
-                                 Bitmap_Component *out_collision_block);
+  bool IsAvatarFloorColliding(std::vector<Bitmap_Component*> *out_colliding_floor_tiles,
+                              Bitmap_Component *out_collision_block);
 
   //---------------------------------------------------------------------------
   // Description : Returns true if the avatar is colliding with a floor
   //---------------------------------------------------------------------------
-  bool IsAvatarWallColliding(std::list<Bitmap_Component*> *out_colliding_floor_tiles,
+  bool IsAvatarWallColliding(std::vector<Bitmap_Component*> *out_colliding_floor_tiles,
                              Bitmap_Component *out_collision_block);
 
   //---------------------------------------------------------------------------
@@ -129,13 +136,31 @@ class Avatar_Controller: public Controller,
   //             : of the last avatar animation frame.
   //---------------------------------------------------------------------------
   void AlignAvatarOnRightFoot();
+
+  //---------------------------------------------------------------------------
+  // Description : Syncs the avatar tile position with the left foot position
+  //             : of the last avatar animation frame.
+  //---------------------------------------------------------------------------
   void AlignAvatarOnLeftFoot();
 
+  //---------------------------------------------------------------------------
+  // Description : Syncs the avatar tile position with avatar collision block
+  //             : of the last avatar animation frame.
+  //---------------------------------------------------------------------------
   void AlignAvatarOnAvatarCollisionBlock();
 
+  //---------------------------------------------------------------------------
+  // Description : Repositions the avatar so he is standing adjacent to
+  //             : a colliding wall tile.
+  //---------------------------------------------------------------------------
   void MoveAvatarWallAdjacent(std::string direction);
 
+  //---------------------------------------------------------------------------
+  // Description : Repositions the avatar so he is standing adjacent to
+  //             : a colliding floor tile.
+  //---------------------------------------------------------------------------
   void MoveAvatarFloorAdjacent();
+
   //---------------------------------------------------------------------------
   // Description : Initialises the timer used for the animation ticks
   //---------------------------------------------------------------------------
@@ -149,7 +174,7 @@ class Avatar_Controller: public Controller,
   //---------------------------------------------------------------------------
   // Description : Changes the avatar animation and state and/or direction
   //---------------------------------------------------------------------------
-  void ChangeAvatarState(std::string new_state_name, std::string direction);
+  void SetAvatarState(std::string new_state_name, std::string direction);
 
   //---------------------------------------------------------------------------
   // Description : Updates the avatar state animation
@@ -175,7 +200,7 @@ class Avatar_Controller: public Controller,
   //---------------------------------------------------------------------------
   // Description : Creates a Bitmap Component using the given collision block
   //---------------------------------------------------------------------------
-  Avatar_Component::Collision_Block GetNamedCollisionBlock(std::string id, std::list<Avatar_Component::Collision_Block> collision_blocks);
+  Avatar_Component::Collision_Block GetNamedCollisionBlock(std::string id, std::vector<Avatar_Component::Collision_Block> collision_blocks);
 
   //---------------------------------------------------------------------------
   // Description : Creates an Avatar_Component::Collision_Block from a
@@ -191,7 +216,8 @@ class Avatar_Controller: public Controller,
   Avatar_Component *m_avatar;
   Game_Settings_Component* m_game_settings;
   Level_Component *m_level;
-  bool m_has_avatar_been_generated;
+  World_Settings_Component *m_world_settings;
+
   std::string m_running_metadata_file_path;
   std::string m_walking_metadata_file_path;
   std::string m_standing_metadata_file_path;
@@ -203,17 +229,19 @@ class Avatar_Controller: public Controller,
   Tileset_Helper::Animation_Tileset_Metadata m_falling_metadata;
   Tileset_Helper::Animation_Tileset_Metadata m_current_metadata;
   Tileset_Helper::Animation_Subset m_current_animation_subset;
-  std::list<Tileset_Helper::Animation_Tileset_Metadata> m_animation_metadata;
+  std::vector<Tileset_Helper::Animation_Tileset_Metadata> m_animation_metadata;
+
   INT64 m_frequency;
   float m_ticksPerMs;
   INT64 m_startTime;
   float m_frameTime;
   bool m_animation_tick;
   int m_current_animation_fps;
-  World_Settings_Component *m_world_settings;
+  
+  std::vector<Tile_Bitmap*> m_floor_tiles;
+  std::vector<Tile_Bitmap*> m_wall_tiles;
 
-  std::list<Tile_Bitmap*> m_floor_tiles;
-  std::list<Tile_Bitmap*> m_wall_tiles;
+  float m_avatar_z_position;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_H_

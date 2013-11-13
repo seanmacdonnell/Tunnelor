@@ -17,7 +17,7 @@
 #define TUNNELOUR_TILESET_HELPER_H_
 
 #include <string>
-#include <list>
+#include <vector>
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -37,7 +37,7 @@ class Tileset_Helper {
   struct Frame_Metadata {
     unsigned int id;
     unsigned int number_of_collision_blocks;
-    std::list<Collision_Block> collision_blocks;
+    std::vector<Collision_Block> collision_blocks;
   };
 
   struct Animation_Subset {
@@ -49,7 +49,7 @@ class Tileset_Helper {
     unsigned int number_of_frames;
     unsigned int frames_per_second;
     bool is_repeatable;
-    std::list<Frame_Metadata> frames;
+    std::vector<Frame_Metadata> frames;
   };
 
   struct Animation_Tileset_Metadata {
@@ -59,7 +59,7 @@ class Tileset_Helper {
     float top_left_x, top_left_y;
     float size_x, size_y;
     int number_of_subsets;
-    std::list<Animation_Subset> subsets;
+    std::vector<Animation_Subset> subsets;
   };
 
   struct Line {
@@ -74,7 +74,7 @@ class Tileset_Helper {
     float top_left_x, top_left_y;
     float size_x, size_y;
     int number_of_lines;
-    std::list<Line> lines;
+    std::vector<Line> lines;
   };
 
   struct Tileset_Metadata {
@@ -84,7 +84,7 @@ class Tileset_Helper {
     float top_left_x, top_left_y;
     float size_x, size_y;
     int number_of_subsets;
-    std::list<Subset> tilesets;
+    std::vector<Subset> tilesets;
   };
 
   //---------------------------------------------------------------------------

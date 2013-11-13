@@ -78,12 +78,12 @@ bool Camera_Controller::Run() {
 }
 
 //---------------------------------------------------------------------------
-Avatar_Component::Collision_Block Camera_Controller::GetNamedCollisionBlock(std::string id, std::list<Avatar_Component::Collision_Block> collision_blocks) {
+Avatar_Component::Collision_Block Camera_Controller::GetNamedCollisionBlock(std::string id, std::vector<Avatar_Component::Collision_Block> collision_blocks) {
   Avatar_Component::Collision_Block found_collision_block;
 
   Avatar_Component::Collision_Block* current_right_foot_collision_block = 0;
 
-  std::list<Avatar_Component::Collision_Block>::iterator collision_block;
+  std::vector<Avatar_Component::Collision_Block>::iterator collision_block;
   for (collision_block = collision_blocks.begin(); collision_block != collision_blocks.end(); collision_block++) {
     if (collision_block->id.compare(id) == 0) {
       found_collision_block = (*collision_block);

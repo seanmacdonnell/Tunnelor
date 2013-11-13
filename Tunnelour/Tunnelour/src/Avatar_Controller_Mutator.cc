@@ -76,12 +76,12 @@ Game_Settings_Component* const Avatar_Controller_Mutator::GetGameSettings() {
 }
 
 //------------------------------------------------------------------------------
-std::list<Tile_Bitmap*> Avatar_Controller_Mutator::GetFloorTiles() {
+std::vector<Tile_Bitmap*> Avatar_Controller_Mutator::GetFloorTiles() {
   return m_floor_tiles;
 }
 
 //------------------------------------------------------------------------------
-std::list<Tile_Bitmap*> Avatar_Controller_Mutator::GetWallTiles() {
+std::vector<Tile_Bitmap*> Avatar_Controller_Mutator::GetWallTiles() {
   return m_wall_tiles;
 }
 

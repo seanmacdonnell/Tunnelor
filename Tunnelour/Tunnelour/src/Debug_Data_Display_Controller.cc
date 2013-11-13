@@ -92,14 +92,14 @@ bool Debug_Data_Display_Controller::Run() {
     }
 
     if (!m_avatar->GetState().collision_blocks.empty()) {
-      std::list<Tile_Bitmap*>::iterator collision_bitmap;
+      std::vector<Tile_Bitmap*>::iterator collision_bitmap;
       for (collision_bitmap = m_collision_bitmaps.begin(); collision_bitmap != m_collision_bitmaps.end(); collision_bitmap++) {
         m_model->Remove((*collision_bitmap));
       }
       m_collision_bitmaps.clear();
 
-      std::list<Avatar_Component::Collision_Block>::iterator collision_block;
-      std::list<Avatar_Component::Collision_Block> collision_blocks = m_avatar->GetState().collision_blocks;
+      std::vector<Avatar_Component::Collision_Block>::iterator collision_block;
+      std::vector<Avatar_Component::Collision_Block> collision_blocks = m_avatar->GetState().collision_blocks;
       for (collision_block = collision_blocks.begin(); collision_block != collision_blocks.end(); collision_block++) {
         Tile_Bitmap *collision_block_bitmap = Bitmap_Helper::CollisionBlockToBitmapComponent((*collision_block), m_avatar, m_debug_tileset_metadata, m_game_settings->GetTilesetPath());
         m_collision_bitmaps.push_back(collision_block_bitmap);
@@ -115,7 +115,7 @@ bool Debug_Data_Display_Controller::Run() {
         m_heading->GetTexture()->transparency = 0.0f;
         m_fps_display->GetTexture()->transparency = 0.0f;
         m_avatar_position_display->GetTexture()->transparency = 0.0f;
-        std::list<Tile_Bitmap*>::iterator collision_bitmap;
+        std::vector<Tile_Bitmap*>::iterator collision_bitmap;
         for (collision_bitmap = m_collision_bitmaps.begin(); collision_bitmap != m_collision_bitmaps.end(); collision_bitmap++) {
           (*collision_bitmap)->GetTexture()->transparency = 0.0f;
           (*collision_bitmap)->Init();
@@ -126,7 +126,7 @@ bool Debug_Data_Display_Controller::Run() {
         m_heading->GetTexture()->transparency = 1.0f;
         m_fps_display->GetTexture()->transparency = 1.0f;
         m_avatar_position_display->GetTexture()->transparency = 1.0f;
-        std::list<Tile_Bitmap*>::iterator collision_bitmap;
+        std::vector<Tile_Bitmap*>::iterator collision_bitmap;
         for (collision_bitmap = m_collision_bitmaps.begin(); collision_bitmap != m_collision_bitmaps.end(); collision_bitmap++) {
           (*collision_bitmap)->GetTexture()->transparency = 1.0f;
           (*collision_bitmap)->Init();

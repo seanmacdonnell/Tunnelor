@@ -62,7 +62,7 @@ class Middleground_Controller: public Controller {
   void CreateLevel();
 
   std::vector<Tile_Bitmap*> GenerateTunnelFromMetadata(Level_Component::Level_Metadata level_metadata);
-  std::list<Tileset_Helper::Tileset_Metadata> m_tilesets;
+  std::vector<Tileset_Helper::Tileset_Metadata> m_tilesets;
   Tileset_Helper::Tileset_Metadata m_current_tileset;
   Tileset_Helper::Subset m_current_middleground_subset;
   void LoadTilesetMetadata();
