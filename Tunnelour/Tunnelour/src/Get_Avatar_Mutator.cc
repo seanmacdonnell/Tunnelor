@@ -1,4 +1,4 @@
-//  Copyright 2013 Sean MacDonnell
+//  Copyright 2012 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -13,44 +13,39 @@
 //  limitations under the License.
 //
 
-#include "World_Settings_Component.h"
+#include "Get_Avatar_Mutator.h"
 
 namespace Tunnelour {
 
 //------------------------------------------------------------------------------
 // public:
 //------------------------------------------------------------------------------
-World_Settings_Component::World_Settings_Component(): Component() {
-  m_type = "World_Settings_Component";
-  m_gravity = 0;
+Get_Avatar_Mutator::Get_Avatar_Mutator() {
+  m_found_avatar_component = false;
+  m_avatar_controller = 0;
 }
 
 //------------------------------------------------------------------------------
-World_Settings_Component::~World_Settings_Component() {
+Get_Avatar_Mutator::~Get_Avatar_Mutator() {
+  m_found_avatar_component = false;
+  m_avatar_controller = 0;
 }
 
 //------------------------------------------------------------------------------
-void World_Settings_Component::Init() {
-  //Default Values
-  m_gravity = 55;
+void Get_Avatar_Mutator::Mutate(Tunnelour::Component * const component) {
+  if (component->GetType().compare("Avatar_Component") == 0) {
+    m_avatar_controller = static_cast<Avatar_Component*>(component);
+    m_found_avatar_component = true;
+  }
 }
 
 //------------------------------------------------------------------------------
-int World_Settings_Component::GetGravity() {
-  return m_gravity;
+Avatar_Component* const Get_Avatar_Mutator::GetAvatarComponent() {
+  return m_avatar_controller;
 }
 
 //------------------------------------------------------------------------------
-void World_Settings_Component::SetGravity(int gravity) {
-  m_gravity = gravity;
+bool Get_Avatar_Mutator::WasSuccessful() {
+  return m_found_avatar_component;
 }
-
-//------------------------------------------------------------------------------
-// protected:
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-// private:
-//------------------------------------------------------------------------------
-
 }  // namespace Tunnelour

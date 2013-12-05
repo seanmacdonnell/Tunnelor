@@ -60,6 +60,7 @@ class Middleground_Controller: public Controller {
 
  private:
   void CreateLevel();
+  void DestroyLevel();
 
   std::vector<Tile_Bitmap*> GenerateTunnelFromMetadata(Level_Component::Level_Metadata level_metadata);
   std::vector<Tileset_Helper::Tileset_Metadata> m_tilesets;
@@ -117,6 +118,8 @@ class Middleground_Controller: public Controller {
   
   std::string m_debug_metadata_file_path;
   std::string m_dirt_metadata_file_path;
+
+  std::string m_current_level_name;
 
 };
 }  // namespace Tunnelour

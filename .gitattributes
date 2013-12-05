@@ -36,6 +36,7 @@ Tunnelour/Tunnelour/include/Exceptions.h -text
 Tunnelour/Tunnelour/include/Frame_Component.h -text
 Tunnelour/Tunnelour/include/Game_Metrics_Component.h -text
 Tunnelour/Tunnelour/include/Game_Settings_Component.h -text
+Tunnelour/Tunnelour/include/Get_Avatar_Mutator.h -text
 Tunnelour/Tunnelour/include/Init_Controller.h -text
 Tunnelour/Tunnelour/include/Input_Controller.h -text
 Tunnelour/Tunnelour/include/Input_Controller_Mutator.h -text
@@ -70,6 +71,8 @@ Tunnelour/Tunnelour/resource/levels/Level_2.csv -text
 Tunnelour/Tunnelour/resource/levels/Level_2.txt -text
 Tunnelour/Tunnelour/resource/levels/Level_3.csv -text
 Tunnelour/Tunnelour/resource/levels/Level_3.txt -text
+Tunnelour/Tunnelour/resource/levels/Level_4.csv -text
+Tunnelour/Tunnelour/resource/levels/Level_4.txt -text
 Tunnelour/Tunnelour/resource/tilesets/Ariel.fnt -text
 Tunnelour/Tunnelour/resource/tilesets/Ariel_0.png -text
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Falling_Animation_Tileset_1_2.png -text
@@ -118,6 +121,7 @@ Tunnelour/Tunnelour/src/Engine.cc -text
 Tunnelour/Tunnelour/src/Frame_Component.cc -text
 Tunnelour/Tunnelour/src/Game_Metrics_Component.cc -text
 Tunnelour/Tunnelour/src/Game_Settings_Component.cc -text
+Tunnelour/Tunnelour/src/Get_Avatar_Mutator.cc -text
 Tunnelour/Tunnelour/src/Init_Controller.cc -text
 Tunnelour/Tunnelour/src/Input_Controller.cc -text
 Tunnelour/Tunnelour/src/Input_Controller_Mutator.cc -text

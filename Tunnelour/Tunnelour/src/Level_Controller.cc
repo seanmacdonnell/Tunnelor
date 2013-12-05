@@ -16,6 +16,7 @@
 #include "Level_Controller.h"
 #include "String_Helper.h"
 #include "Exceptions.h"
+#include "Get_Avatar_Mutator.h"
 
 namespace Tunnelour {
 
@@ -89,6 +90,13 @@ bool Level_Controller::Run() {
       m_level_name_heading->GetTexture()->transparency = transparency;
       m_level_blurb->GetTexture()->transparency = transparency;
     }
+    if (m_avatar == 0) {
+      Get_Avatar_Mutator mutator;
+      m_model->Apply(&mutator);
+      if (mutator.WasSuccessful()) {
+        m_avatar = mutator.GetAvatarComponent();
+      }
+    }
 
     m_level_name_heading->SetPosition(m_camera->GetPosition().x,
                                       m_camera->GetPosition().y + m_level_name_heading->GetSize().y, -3);
@@ -97,6 +105,31 @@ bool Level_Controller::Run() {
     m_level_blurb->SetPosition(m_camera->GetPosition().x,
                                m_camera->GetPosition().y - m_level_name_heading->GetSize().y, -3);
     m_level_blurb->Init();
+
+    // Check if the level end conditions are met
+    if (m_level->GetCurrentLevel().end_conditions.size() != 0) {
+      std::vector<Level_Component::End_Condition*> end_conditions = m_level->GetCurrentLevel().end_conditions;
+      std::vector<Level_Component::End_Condition*>::iterator end_condition;
+      for (end_condition = end_conditions.begin(); end_condition != end_conditions.end(); end_condition++) {
+        if ((*end_condition)->type.compare("State") == 0) {
+          Level_Component::End_Condition_Avatar_State *state_end_condition = static_cast<Level_Component::End_Condition_Avatar_State*>((*end_condition));
+          if (m_avatar != 0) {
+            if (m_avatar->GetState().state.compare(state_end_condition->avatar_state) == 0) {
+              m_model->Remove(m_level_name_heading);
+              m_level_name_heading = 0;
+              m_model->Remove(m_level_blurb);
+              m_level_blurb = 0;
+              if (state_end_condition->next_level.compare("None") != 0) {
+                m_level->SetCurrentLevel(GetNamedLevel(state_end_condition->next_level));
+              } else {
+                throw Tunnelour::Exceptions::run_error("QUIT");
+              }
+            }
+          }
+        }
+      }
+    }
+
   } else {
     return false;
   }
@@ -106,12 +139,34 @@ bool Level_Controller::Run() {
 
 //---------------------------------------------------------------------------
 void Level_Controller::LoadLevelMetadata() {
-  Level_Component::Level_Metadata level_0_metadata;
-  std::string level_0_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_2.txt");
-  level_0_metadata = LoadLevelMetadataIntoStruct(level_0_metadata_file_path);
-  std::string level_0_csv_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_2.csv");
-  LoadLevelCSVIntoStruct(level_0_csv_file_path, &level_0_metadata);
-  m_level->SetCurrentLevel(level_0_metadata);
+  Level_Component::Level_Metadata level_metadata;
+  std::string level_metadata_file_path;
+  level_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_0.txt");
+  level_metadata = LoadLevelMetadataIntoStruct(level_metadata_file_path);
+  std::string level_csv_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_0.csv");
+  LoadLevelCSVIntoStruct(level_csv_file_path, &level_metadata);
+  m_level->SetCurrentLevel(level_metadata);
+  m_levels.push_back(level_metadata);
+  level_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_1.txt");
+  level_metadata = LoadLevelMetadataIntoStruct(level_metadata_file_path);
+  level_csv_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_1.csv");
+  LoadLevelCSVIntoStruct(level_csv_file_path, &level_metadata);
+  m_levels.push_back(level_metadata);
+  level_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_2.txt");
+  level_metadata = LoadLevelMetadataIntoStruct(level_metadata_file_path);
+  level_csv_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_2.csv");
+  LoadLevelCSVIntoStruct(level_csv_file_path, &level_metadata);
+  m_levels.push_back(level_metadata);
+  level_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_3.txt");
+  level_metadata = LoadLevelMetadataIntoStruct(level_metadata_file_path);
+  level_csv_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_3.csv");
+  LoadLevelCSVIntoStruct(level_csv_file_path, &level_metadata);
+  m_levels.push_back(level_metadata);
+  level_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_4.txt");
+  level_metadata = LoadLevelMetadataIntoStruct(level_metadata_file_path);
+  level_csv_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_4.csv");
+  LoadLevelCSVIntoStruct(level_csv_file_path, &level_metadata);
+  m_levels.push_back(level_metadata);
 }
 
 //------------------------------------------------------------------------------
@@ -183,7 +238,7 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
       token = strtok_s(NULL, " =\"", &next_token);
       level_metadata.tunnel_top_left_x = static_cast<float>(atof(token));
     } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Tileset_TopLeftX");
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_TunnelStartTopLeftX");
     }
   }
   fgets(line, 225, pFile);
@@ -199,9 +254,9 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
   fgets(line, 225, pFile);
   if (line != NULL) {
     token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Level_AvatarStartTopLeftX") == 0)   {
+    if (strcmp(token, "Level_Start_AvatarX") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
-      level_metadata.avatar_top_left_x = static_cast<float>(atof(token));
+      level_metadata.start_avatar_top_left_x = static_cast<float>(atof(token));
     } else {
       throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Tileset_TopLeftX");
     }
@@ -209,13 +264,72 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
   fgets(line, 225, pFile);
   if (line != NULL) {
     token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Level_AvatarStartTopLeftY") == 0)   {
+    if (strcmp(token, "Level_Start_AvatarY") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
-      level_metadata.avatar_top_left_y = static_cast<float>(atof(token));
+      level_metadata.start_avatar_top_left_y = static_cast<float>(atof(token));
     } else {
       throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Tileset_TopLeftX");
     }
   }
+  fgets(line, 225, pFile);
+  if (line != NULL) {
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token, "Level_Start_AvatarState") == 0)   {
+      token = strtok_s(NULL, " =\"", &next_token);
+      level_metadata.start_avatar_state = token;
+    } else {
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_Start_AvatarState");
+    }
+  }
+  Level_Component::End_Condition *condition = 0;
+  fgets(line, 225, pFile);
+  if (line != NULL) {
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token, "Level_EndCondition_Type") == 0)   {
+      token = strtok_s(NULL, " =\"", &next_token);
+      if (strcmp(token,"State") == 0) {
+        condition = new Level_Component::End_Condition_Avatar_State();
+      } else {
+         throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Level_EndCondition_Type type was not recognized");
+      }
+      condition->type = token;
+    } else {
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_Type");
+    }
+  }
+  fgets(line, 225, pFile);
+  if (line != NULL) {
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token, "Level_EndCondition_ID") == 0)   {
+      token = strtok_s(NULL, " =\"", &next_token);
+      condition->ID = token;
+    } else {
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_ID");
+    }
+  }
+  if (condition->type.compare("State") == 0) {
+    fgets(line, 225, pFile);
+    if (line != NULL) {
+      token = strtok_s(line, " ", &next_token);
+      if (strcmp(token, "Level_EndCondition_WhenAvatarState") == 0)   {
+        token = strtok_s(NULL, " =\"", &next_token);
+        static_cast<Level_Component::End_Condition_Avatar_State*>(condition)->avatar_state = token;
+      } else {
+        throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_WhenAvatarState");
+      }
+    }
+  }
+  fgets(line, 225, pFile);
+  if (line != NULL) {
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token, "Level_EndCondition_NextLevel") == 0)   {
+      token = strtok_s(NULL, "\"", &next_token);
+      condition->next_level = token;
+    } else {
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_NextLevel");
+    }
+  }
+  level_metadata.end_conditions.push_back(condition);
   fclose(pFile);
 
   return level_metadata;
@@ -273,19 +387,33 @@ void Level_Controller::LoadLevelCSVIntoStruct(std::string metadata_path, Level_C
 }
 
 //---------------------------------------------------------------------------
-Avatar_Component::Collision_Block Level_Controller::GetNamedCollisionBlock(std::string id, std::list<Avatar_Component::Collision_Block> collision_blocks) {
-  Avatar_Component::Collision_Block found_collision_block;
+Avatar_Component::Avatar_Collision_Block Level_Controller::GetNamedCollisionBlock(std::string id, std::list<Avatar_Component::Avatar_Collision_Block> avatar_collision_blocks) {
+  Avatar_Component::Avatar_Collision_Block found_avatar_collision_block;
 
-  Avatar_Component::Collision_Block* current_right_foot_collision_block = 0;
+  Avatar_Component::Avatar_Collision_Block* current_right_foot_avatar_collision_block = 0;
 
-  std::list<Avatar_Component::Collision_Block>::iterator collision_block;
-  for (collision_block = collision_blocks.begin(); collision_block != collision_blocks.end(); collision_block++) {
-    if (collision_block->id.compare(id) == 0) {
-      found_collision_block = (*collision_block);
+  std::list<Avatar_Component::Avatar_Collision_Block>::iterator avatar_collision_block;
+  for (avatar_collision_block = avatar_collision_blocks.begin(); avatar_collision_block != avatar_collision_blocks.end(); avatar_collision_block++) {
+    if (avatar_collision_block->id.compare(id) == 0) {
+      found_avatar_collision_block = (*avatar_collision_block);
     }
   }
 
-  return found_collision_block;
+  return found_avatar_collision_block;
+}
+
+//---------------------------------------------------------------------------
+Level_Component::Level_Metadata Level_Controller::GetNamedLevel(std::string level_name) {
+  Level_Component::Level_Metadata found_level;
+
+  std::vector<Level_Component::Level_Metadata>::iterator level;
+  for (level = m_levels.begin(); level != m_levels.end(); level++) {
+    if (level->level_name.compare(level_name) == 0) {
+      found_level = *level;
+    }
+  }
+
+  return found_level;
 }
 
 //------------------------------------------------------------------------------

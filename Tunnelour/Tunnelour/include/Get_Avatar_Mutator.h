@@ -13,42 +13,34 @@
 //  limitations under the License.
 //
 
-#ifndef TUNNELOUR_DEBUG_DATA_DISPLAY_CONTROLLER_MUTATOR_H_
-#define TUNNELOUR_DEBUG_DATA_DISPLAY_CONTROLLER_MUTATOR_H_
+#ifndef TUNNELOUR_GET_AVATAR_MUTATOR_H_
+#define TUNNELOUR_GET_AVATAR_MUTATOR_H_
 
 #include "Component.h"
-#include "Game_Settings_Component.h"
 #include "Avatar_Component.h"
-#include "Camera_Component.h"
-#include "Bitmap_Component.h"
 
 namespace Tunnelour {
-class Debug_Data_Display_Controller_Mutator: public Component::Component_Mutator  {
+class Get_Avatar_Mutator: public Component::Component_Mutator  {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
-//  Description : Debug_Data_Display_Controller_Mutator is a mutator run on
-//                the model which collects the game settings component.
+//  Description : Get_Avatar_Mutator is a mutator run on the model
+//                which collects the relevant camera components
 //-----------------------------------------------------------------------------
  public:
   //-------------------------------------------------------------------------
   // Description : Constructor
   //-------------------------------------------------------------------------
-  Debug_Data_Display_Controller_Mutator();
+  Get_Avatar_Mutator();
 
   //-------------------------------------------------------------------------
   // Description : Deconstructor
   //-------------------------------------------------------------------------
-  virtual ~Debug_Data_Display_Controller_Mutator();
+  virtual ~Get_Avatar_Mutator();
 
   //-------------------------------------------------------------------------
   // Description : Mutator function, pass it a component to mutate.
   //-------------------------------------------------------------------------
-  void Mutate(Component * const component);
-
-  //-------------------------------------------------------------------------
-  // Description : Accessors for the Game_Settings_Component
-  //-------------------------------------------------------------------------
-  Game_Settings_Component* const GetGameSettings();
+  void Mutate(Tunnelour::Component * const component);
 
   //-------------------------------------------------------------------------
   // Description : Accessors for the Game_Settings_Component
@@ -56,21 +48,13 @@ class Debug_Data_Display_Controller_Mutator: public Component::Component_Mutator
   Avatar_Component* const GetAvatarComponent();
 
   //-------------------------------------------------------------------------
-  // Description : Accessors for the Camera Component
-  //-------------------------------------------------------------------------
-  Camera_Component* const GetCamera();
-
-  //-------------------------------------------------------------------------
-  // Description : Did the mutator complete successfully?
+  // Description : Accessors for the Game_Settings_Component
   //-------------------------------------------------------------------------
   bool WasSuccessful();
 
  private:
-  bool m_found_game_settings, m_found_avatar_component, m_found_camera;
-  Game_Settings_Component *m_game_settings;
-  Avatar_Component *m_avatar_component;
-  Camera_Component * m_camera;
-  std::vector<Bitmap_Component*> m_avatar_collision_blocks;
+  bool m_found_avatar_component;
+  Avatar_Component * m_avatar_controller;
 };
 }  // namespace Tunnelour
-#endif  // TUNNELOUR_DEBUG_DATA_DISPLAY_CONTROLLER_MUTATOR_H_
+#endif  // TUNNELOUR_GET_AVATAR_MUTATOR_H_

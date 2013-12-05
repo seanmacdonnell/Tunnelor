@@ -39,7 +39,7 @@ Bitmap_Component::~Bitmap_Component()  {
   m_texture = new Tunnelour::Bitmap_Component::Texture();
   m_texture->texture = 0;
   m_texture->texture_path;
-  m_texture->transparency = 1.0f;
+  m_texture->transparency = 0.0f;
   m_texture->top_left_position = D3DXVECTOR2(0, 0);
   m_texture->tile_size = D3DXVECTOR2(0, 0);
   m_texture->texture_size = D3DXVECTOR2(0, 0);
@@ -81,6 +81,16 @@ float Bitmap_Component::GetAngle() {
 //---------------------------------------------------------------------------
 void Bitmap_Component::SetAngle(float angle) {
   m_angle = angle;
+}
+
+//---------------------------------------------------------------------------
+float Bitmap_Component::GetTransparency() {
+  return m_texture->transparency;
+}
+
+//---------------------------------------------------------------------------
+void Bitmap_Component::SetTransparency(float transparency) {
+  m_texture->transparency = transparency;
 }
 
 //------------------------------------------------------------------------------

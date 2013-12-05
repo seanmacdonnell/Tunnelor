@@ -84,6 +84,11 @@ bool Background_Controller::Run() {
   // Get game settings component from the model with the Mutator.
   if (!m_has_been_initialised) { return false; }
  
+  if (m_current_level_name.compare(m_level->GetCurrentLevel().level_name) != 0) {
+    DestroyLevel();
+    CreateLevel();
+  }
+
   if (m_is_debug_mode != m_game_settings->IsDebugMode()) {
     SwitchTileset();
   }
@@ -100,6 +105,7 @@ bool Background_Controller::Run() {
 //------------------------------------------------------------------------------
 void Background_Controller::CreateLevel() {
   std::vector<Tile_Bitmap*> tiles = GenerateTunnelFromMetadata(m_level->GetCurrentLevel());
+  m_current_level_name = m_level->GetCurrentLevel().level_name;
 
   // Add tiles to Model
   for (std::vector<Tile_Bitmap*>::iterator tile = tiles.begin(); tile != tiles.end(); ++tile) {
@@ -108,6 +114,15 @@ void Background_Controller::CreateLevel() {
       m_background_tiles.push_back(*tile);
     }
   }
+}
+
+//------------------------------------------------------------------------------
+void Background_Controller::DestroyLevel() {
+  // Add tiles to Model
+  for (std::vector<Tile_Bitmap*>::iterator tile = m_background_tiles.begin(); tile != m_background_tiles.end(); ++tile) {
+    m_model->Remove(*tile);
+  }
+  m_background_tiles.clear();
 }
 
 //------------------------------------------------------------------------------

@@ -91,21 +91,21 @@ bool Debug_Data_Display_Controller::Run() {
       CreateAvatarPositionDisplay();
     }
 
-    if (!m_avatar->GetState().collision_blocks.empty()) {
+    if (!m_avatar->GetState().avatar_collision_blocks.empty()) {
       std::vector<Tile_Bitmap*>::iterator collision_bitmap;
       for (collision_bitmap = m_collision_bitmaps.begin(); collision_bitmap != m_collision_bitmaps.end(); collision_bitmap++) {
         m_model->Remove((*collision_bitmap));
       }
       m_collision_bitmaps.clear();
 
-      std::vector<Avatar_Component::Collision_Block>::iterator collision_block;
-      std::vector<Avatar_Component::Collision_Block> collision_blocks = m_avatar->GetState().collision_blocks;
-      for (collision_block = collision_blocks.begin(); collision_block != collision_blocks.end(); collision_block++) {
-        Tile_Bitmap *collision_block_bitmap = Bitmap_Helper::CollisionBlockToBitmapComponent((*collision_block), m_avatar, m_debug_tileset_metadata, m_game_settings->GetTilesetPath());
-        m_collision_bitmaps.push_back(collision_block_bitmap);
-        m_model->Add(collision_block_bitmap);
+      std::vector<Avatar_Component::Avatar_Collision_Block>::iterator avatar_collision_block;
+      std::vector<Avatar_Component::Avatar_Collision_Block> avatar_collision_blocks = m_avatar->GetState().avatar_collision_blocks;
+      for (avatar_collision_block = avatar_collision_blocks.begin(); avatar_collision_block != avatar_collision_blocks.end(); avatar_collision_block++) {
+        Tile_Bitmap *avatar_collision_block_bitmap = Bitmap_Helper::CollisionBlockToBitmapComponent((*avatar_collision_block), m_avatar, m_debug_tileset_metadata, m_game_settings->GetTilesetPath());
+        m_collision_bitmaps.push_back(avatar_collision_block_bitmap);
+        m_model->Add(avatar_collision_block_bitmap);
         if (m_is_debug_mode) {
-          collision_block_bitmap->GetTexture()->transparency = 1.0f;
+          avatar_collision_block_bitmap->GetTexture()->transparency = 1.0f;
         }
       }
     }

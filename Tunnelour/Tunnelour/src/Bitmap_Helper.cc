@@ -186,7 +186,7 @@ bool Bitmap_Helper::AreTheseTilesRightXAdjacent(Tunnelour::Bitmap_Component* Til
 }
 
 //------------------------------------------------------------------------------
-Tile_Bitmap* Bitmap_Helper::CollisionBlockToBitmapComponent(Avatar_Component::Collision_Block collision_block, Bitmap_Component *avatar, Tileset_Helper::Tileset_Metadata debug_tileset_metadata, std::wstring tileset_path) {
+Tile_Bitmap* Bitmap_Helper::CollisionBlockToBitmapComponent(Avatar_Component::Avatar_Collision_Block avatar_collision_block, Bitmap_Component *avatar, Tileset_Helper::Tileset_Metadata debug_tileset_metadata, std::wstring tileset_path) {
   Tile_Bitmap *collision_bitmap = new Tile_Bitmap();
 
   Tileset_Helper::Line middleground_line = (*debug_tileset_metadata.tilesets.begin()->lines.begin());
@@ -202,20 +202,20 @@ Tile_Bitmap* Bitmap_Helper::CollisionBlockToBitmapComponent(Avatar_Component::Co
                                                           middleground_line.tile_size_y);
 
   D3DXVECTOR3 collision_bitmap_position;
-  collision_bitmap_position.x = avatar->GetPosition()->x + collision_block.offset_from_avatar_centre.x;
-  collision_bitmap_position.y = avatar->GetPosition()->y + collision_block.offset_from_avatar_centre.y;
+  collision_bitmap_position.x = avatar->GetPosition()->x + avatar_collision_block.offset_from_avatar_centre.x;
+  collision_bitmap_position.y = avatar->GetPosition()->y + avatar_collision_block.offset_from_avatar_centre.y;
   
   float random_line_tile = 0;
-  if (collision_block.id.compare("Left_Foot") == 0) {
+  if (avatar_collision_block.id.compare("Left_Foot") == 0) {
     random_line_tile = 2;
     collision_bitmap_position.z = -2.0;
   }
-  if (collision_block.id.compare("Right_Foot") == 0) {
+  if (avatar_collision_block.id.compare("Right_Foot") == 0) {
     random_line_tile = 3;
     collision_bitmap_position.z = -2.0;
   }
-  if (collision_block.id.compare("Avatar") == 0) {
-    if (collision_block.is_contacting) {
+  if (avatar_collision_block.id.compare("Avatar") == 0) {
+    if (avatar_collision_block.is_contacting) {
       random_line_tile = 1;
     } else {
       random_line_tile = 0;
@@ -232,9 +232,9 @@ Tile_Bitmap* Bitmap_Helper::CollisionBlockToBitmapComponent(Avatar_Component::Co
 
   collision_bitmap->GetTexture()->top_left_position = D3DXVECTOR2(random_tile_x, random_tile_y);
 
-  D3DXVECTOR2 size = collision_block.size;
+  D3DXVECTOR2 size = avatar_collision_block.size;
   collision_bitmap->SetSize(D3DXVECTOR2(middleground_line.tile_size_x, middleground_line.tile_size_y));
-  collision_bitmap->SetScale(new D3DXVECTOR3((collision_block.size.x/128), (collision_block.size.y/128), 1.0f));
+  collision_bitmap->SetScale(new D3DXVECTOR3((avatar_collision_block.size.x/128), (avatar_collision_block.size.y/128), 1.0f));
   //collision_bitmap->SetSize(middleground_line.tile_size_x, middleground_line.tile_size_x);
 
   return collision_bitmap;

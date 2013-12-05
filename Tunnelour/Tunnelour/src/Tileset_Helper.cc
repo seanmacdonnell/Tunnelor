@@ -310,22 +310,22 @@ bool Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(std::string metadata
           token = strtok_s(line, " ", &next_token);
           if (strcmp(token, "Frame_CollisionBlock_NumOfBlocks") == 0)   {
             token = strtok_s(NULL, " =\"", &next_token);
-            temp_frame_metadata.number_of_collision_blocks = atoi(token);
+            temp_frame_metadata.number_of_avatar_collision_blocks = atoi(token);
           } else {
             throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: Frame_CollisionBlock_NumOfBlocks");
             return false;
           }
         }
 
-        for (unsigned int i = 0; i <  temp_frame_metadata.number_of_collision_blocks; i++) {
-          Collision_Block temp_collision_block;
+        for (unsigned int i = 0; i <  temp_frame_metadata.number_of_avatar_collision_blocks; i++) {
+          Avatar_Collision_Block temp_avatar_collision_block;
 
           fgets(line, 225, pFile);
           if (line != NULL) {
             token = strtok_s(line, " ", &next_token);
             if (strcmp(token, "Frame_CollisionBlock_ID") == 0)   {
               token = strtok_s(NULL, " =\"", &next_token);
-              temp_collision_block.id = token;
+              temp_avatar_collision_block.id = token;
             } else {
               throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: Frame_CollisionBlock_ID");
               return false;
@@ -337,7 +337,7 @@ bool Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(std::string metadata
             token = strtok_s(line, " ", &next_token);
             if (strcmp(token, "Frame_CollisionBlock_TopLeftX") == 0)   {
               token = strtok_s(NULL, " =\"", &next_token);
-              temp_collision_block.top_left_x = static_cast<float>(atof(token));
+              temp_avatar_collision_block.top_left_x = static_cast<float>(atof(token));
             } else {
               throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: Frame_CollisionBlock_TopLeftX");
               return false;
@@ -349,7 +349,7 @@ bool Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(std::string metadata
             token = strtok_s(line, " ", &next_token);
             if (strcmp(token, "Frame_CollisionBlock_TopLeftY") == 0)   {
               token = strtok_s(NULL, " =\"", &next_token);
-              temp_collision_block.top_left_y = static_cast<float>(atof(token));
+              temp_avatar_collision_block.top_left_y = static_cast<float>(atof(token));
             } else {
               throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: Frame_CollisionBlock_TopLeftY");
               return false;
@@ -361,7 +361,7 @@ bool Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(std::string metadata
             token = strtok_s(line, " ", &next_token);
             if (strcmp(token, "Frame_CollisionBlock_SizeX") == 0)   {
               token = strtok_s(NULL, " =\"", &next_token);
-              temp_collision_block.size_x = static_cast<float>(atof(token));
+              temp_avatar_collision_block.size_x = static_cast<float>(atof(token));
             } else {
               throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: Frame_CollisionBlock_SizeX");
               return false;
@@ -373,7 +373,7 @@ bool Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(std::string metadata
             token = strtok_s(line, " ", &next_token);
             if (strcmp(token, "Frame_CollisionBlock_SizeY") == 0)   {
               token = strtok_s(NULL, " =\"", &next_token);
-              temp_collision_block.size_y = static_cast<float>(atof(token));
+              temp_avatar_collision_block.size_y = static_cast<float>(atof(token));
             } else {
               throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: Frame_CollisionBlock_SizeY");
               return false;
@@ -386,9 +386,9 @@ bool Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(std::string metadata
             if (strcmp(token, "Frame_CollisionBlock_Contact") == 0)   {
               token = strtok_s(NULL, " =\"", &next_token);
               if (strcmp(token,"Y") == 0) {
-                temp_collision_block.is_contacting = true;
+                temp_avatar_collision_block.is_contacting = true;
               } else {
-                temp_collision_block.is_contacting = false;
+                temp_avatar_collision_block.is_contacting = false;
               }
             } else {
               throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! Expected: Frame_CollisionBlock_Contact");
@@ -396,7 +396,7 @@ bool Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(std::string metadata
             }
           }
 
-          temp_frame_metadata.collision_blocks.push_back(temp_collision_block);
+          temp_frame_metadata.avatar_collision_blocks.push_back(temp_avatar_collision_block);
         }
 
         temp_subset.frames.push_back(temp_frame_metadata);

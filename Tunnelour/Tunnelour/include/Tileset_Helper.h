@@ -27,7 +27,7 @@ namespace Tunnelour {
 //-----------------------------------------------------------------------------
 class Tileset_Helper {
  public:
-   struct Collision_Block {
+   struct Avatar_Collision_Block {
      std::string id;
      bool is_contacting;
      float top_left_x, top_left_y;
@@ -36,8 +36,8 @@ class Tileset_Helper {
 
   struct Frame_Metadata {
     unsigned int id;
-    unsigned int number_of_collision_blocks;
-    std::vector<Collision_Block> collision_blocks;
+    unsigned int number_of_avatar_collision_blocks;
+    std::vector<Avatar_Collision_Block> avatar_collision_blocks;
   };
 
   struct Animation_Subset {

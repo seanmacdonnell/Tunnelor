@@ -60,7 +60,7 @@ class Camera_Controller: public Controller {
   //---------------------------------------------------------------------------
   // Description : Creates a Bitmap Component using the given collision block
   //---------------------------------------------------------------------------
-  Avatar_Component::Collision_Block GetNamedCollisionBlock(std::string id, std::vector<Avatar_Component::Collision_Block> collision_blocks);
+  Avatar_Component::Avatar_Collision_Block GetNamedCollisionBlock(std::string id, std::vector<Avatar_Component::Avatar_Collision_Block> avatar_collision_blocks);
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_CAMERA_CONTROLLER_H_

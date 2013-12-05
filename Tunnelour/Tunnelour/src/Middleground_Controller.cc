@@ -84,52 +84,56 @@ bool Middleground_Controller::Run() {
   // Get game settings component from the model with the Mutator.
   if (!m_has_been_initialised) { return false; }
 
-  // If Camera is over an area with no tiles
-  D3DXVECTOR2 game_resolution = m_game_settings->GetResolution();
-  D3DXVECTOR3 camera_position = m_camera->GetPosition();
+  if (m_current_level_name.compare(m_level->GetCurrentLevel().level_name) != 0) {
+    DestroyLevel();
+    CreateLevel();
+  } else {
+    // If Camera is over an area with no tiles
+    D3DXVECTOR2 game_resolution = m_game_settings->GetResolution();
+    D3DXVECTOR3 camera_position = m_camera->GetPosition();
 
-  float camera_top = (camera_position.y + (game_resolution.y / 2));
-  float camera_bottom = (camera_position.y - (game_resolution.y / 2));
-  float camera_left = (camera_position.x - (game_resolution.x / 2));
-  float camera_right = (camera_position.x + (game_resolution.x / 2));
+    float camera_top = (camera_position.y + (game_resolution.y / 2));
+    float camera_bottom = (camera_position.y - (game_resolution.y / 2));
+    float camera_left = (camera_position.x - (game_resolution.x / 2));
+    float camera_right = (camera_position.x + (game_resolution.x / 2));
 
-  float middleground_top = (*m_top_edge_tiles.begin())->GetTopLeftPostion().y;
-  float middleground_left = (*m_left_edge_tiles.begin())->GetTopLeftPostion().x;
-  float middleground_bottom = (*m_bottom_edge_tiles.begin())->GetBottomRightPostion().y;
-  float middleground_right = (*m_right_edge_tiles.begin())->GetBottomRightPostion().x;
+    float middleground_top = (*m_top_edge_tiles.begin())->GetTopLeftPostion().y;
+    float middleground_left = (*m_left_edge_tiles.begin())->GetTopLeftPostion().x;
+    float middleground_bottom = (*m_bottom_edge_tiles.begin())->GetBottomRightPostion().y;
+    float middleground_right = (*m_right_edge_tiles.begin())->GetBottomRightPostion().x;
   
-  if ((camera_right + game_resolution.x) > middleground_right) {
-    while ((camera_right + game_resolution.x) > middleground_right) {
-      TileRight(camera_right, middleground_right);
-      middleground_right = (*m_right_edge_tiles.begin())->GetBottomRightPostion().x;
+    if ((camera_right + game_resolution.x) > middleground_right) {
+      while ((camera_right + game_resolution.x) > middleground_right) {
+        TileRight(camera_right, middleground_right);
+        middleground_right = (*m_right_edge_tiles.begin())->GetBottomRightPostion().x;
+      }
     }
-  }
   
-  if (camera_left - (game_resolution.x) < middleground_left) {
-    while ((camera_left - game_resolution.x) < middleground_left) {
-      TileLeft(camera_left, middleground_left);
-      middleground_left = (*m_left_edge_tiles.begin())->GetTopLeftPostion().x;
+    if (camera_left - (game_resolution.x) < middleground_left) {
+      while ((camera_left - game_resolution.x) < middleground_left) {
+        TileLeft(camera_left, middleground_left);
+        middleground_left = (*m_left_edge_tiles.begin())->GetTopLeftPostion().x;
+      }
     }
-  }
 
-  if (camera_top + (game_resolution.y) > middleground_top) {
-    while ((camera_top + game_resolution.y) > middleground_top) {
-      TileUp(camera_top, middleground_top);
-      middleground_top = (*m_top_edge_tiles.begin())->GetTopLeftPostion().y;
+    if (camera_top + (game_resolution.y) > middleground_top) {
+      while ((camera_top + game_resolution.y) > middleground_top) {
+        TileUp(camera_top, middleground_top);
+        middleground_top = (*m_top_edge_tiles.begin())->GetTopLeftPostion().y;
+      }
     }
-  }
 
-  if (camera_bottom - (game_resolution.y) < middleground_bottom) {
-    while ((camera_bottom - game_resolution.y) < middleground_bottom) {
-      TileDown(camera_bottom, middleground_bottom);
-      middleground_bottom = (*m_bottom_edge_tiles.begin())->GetBottomRightPostion().y;
+    if (camera_bottom - (game_resolution.y) < middleground_bottom) {
+      while ((camera_bottom - game_resolution.y) < middleground_bottom) {
+        TileDown(camera_bottom, middleground_bottom);
+        middleground_bottom = (*m_bottom_edge_tiles.begin())->GetBottomRightPostion().y;
+      }
     }
-  }
   
-  if (m_is_debug_mode != m_game_settings->IsDebugMode()) {
-    SwitchTileset();
+    if (m_is_debug_mode != m_game_settings->IsDebugMode()) {
+      SwitchTileset();
+    }
   }
-
   return true;
 }
 
@@ -141,6 +145,7 @@ bool Middleground_Controller::Run() {
 // private:
 //------------------------------------------------------------------------------
 void Middleground_Controller::CreateLevel() {
+  m_current_level_name = m_level->GetCurrentLevel().level_name;
   std::vector<Tile_Bitmap*> tiles = GenerateTunnelFromMetadata(m_level->GetCurrentLevel());
 
   // Add tiles to Model
@@ -150,6 +155,19 @@ void Middleground_Controller::CreateLevel() {
       m_middleground_tiles.push_back(*tile);
     }
   }
+}
+
+//------------------------------------------------------------------------------
+void Middleground_Controller::DestroyLevel() {
+  // Add tiles to Model
+  for (std::vector<Tile_Bitmap*>::iterator tile = m_middleground_tiles.begin(); tile != m_middleground_tiles.end(); ++tile) {
+    m_model->Remove(*tile);
+  }
+  m_middleground_tiles.clear();
+  m_top_edge_tiles.clear();
+  m_bottom_edge_tiles.clear();
+  m_left_edge_tiles.clear();
+  m_right_edge_tiles.clear();
 }
 
 //------------------------------------------------------------------------------

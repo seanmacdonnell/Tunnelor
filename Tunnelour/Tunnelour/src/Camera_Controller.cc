@@ -63,14 +63,14 @@ bool Camera_Controller::Run() {
     D3DXVECTOR3 camera_position = m_camera->GetPosition();
 
     // Get the avatar collision block
-    Avatar_Component::Collision_Block collision_block = GetNamedCollisionBlock("Avatar", m_avatar->GetState().collision_blocks);
+    Avatar_Component::Avatar_Collision_Block avatar_collision_block = GetNamedCollisionBlock("Avatar", m_avatar->GetState().avatar_collision_blocks);
 
-    avatar_position.x = m_avatar->GetPosition()->x + collision_block.offset_from_avatar_centre.x;
-    avatar_position.y = m_avatar->GetPosition()->y + collision_block.offset_from_avatar_centre.y;
+    avatar_position.x = m_avatar->GetPosition()->x + avatar_collision_block.offset_from_avatar_centre.x;
+    avatar_position.y = m_avatar->GetPosition()->y + avatar_collision_block.offset_from_avatar_centre.y;
     avatar_position.z = m_avatar->GetPosition()->z;
 
     camera_position.x = avatar_position.x;
-    camera_position.y = avatar_position.y - (collision_block.size.y / 2);
+    camera_position.y = avatar_position.y - (avatar_collision_block.size.y / 2);
 
     m_camera->SetPosition(camera_position);
   }
@@ -78,19 +78,19 @@ bool Camera_Controller::Run() {
 }
 
 //---------------------------------------------------------------------------
-Avatar_Component::Collision_Block Camera_Controller::GetNamedCollisionBlock(std::string id, std::vector<Avatar_Component::Collision_Block> collision_blocks) {
-  Avatar_Component::Collision_Block found_collision_block;
+Avatar_Component::Avatar_Collision_Block Camera_Controller::GetNamedCollisionBlock(std::string id, std::vector<Avatar_Component::Avatar_Collision_Block> avatar_collision_blocks) {
+  Avatar_Component::Avatar_Collision_Block found_avatar_collision_block;
 
-  Avatar_Component::Collision_Block* current_right_foot_collision_block = 0;
+  Avatar_Component::Avatar_Collision_Block* current_right_foot_avatar_collision_block = 0;
 
-  std::vector<Avatar_Component::Collision_Block>::iterator collision_block;
-  for (collision_block = collision_blocks.begin(); collision_block != collision_blocks.end(); collision_block++) {
-    if (collision_block->id.compare(id) == 0) {
-      found_collision_block = (*collision_block);
+  std::vector<Avatar_Component::Avatar_Collision_Block>::iterator avatar_collision_block;
+  for (avatar_collision_block = avatar_collision_blocks.begin(); avatar_collision_block != avatar_collision_blocks.end(); avatar_collision_block++) {
+    if (avatar_collision_block->id.compare(id) == 0) {
+      found_avatar_collision_block = (*avatar_collision_block);
     }
   }
 
-  return found_collision_block;
+  return found_avatar_collision_block;
 }
 
 //------------------------------------------------------------------------------

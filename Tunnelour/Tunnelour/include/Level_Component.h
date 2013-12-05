@@ -36,6 +36,22 @@ class Level_Component: public Tunnelour::Component {
     float size;
   };
 
+  struct End_Condition {
+    std::string type;
+    std::string ID;
+    std::string next_level;
+  };
+
+  struct End_Condition_Block_Intersect: public End_Condition {
+    float avatar_intersecting_tile_top_left_x;
+    float avatar_intersecting_tile_top_left_y;
+    float avatar_intersecting_tile_size;
+  };
+
+  struct End_Condition_Avatar_State: public End_Condition {
+    std::string avatar_state;
+  };
+
   /* Example
   Level_Name "Level 0"
   Level_Blurb "Testing Walking"
@@ -53,8 +69,10 @@ class Level_Component: public Tunnelour::Component {
     std::string tileset_name;
     float tunnel_top_left_x;
     float tunnel_top_left_y;
-    float avatar_top_left_x;
-    float avatar_top_left_y;
+    float start_avatar_top_left_x;
+    float start_avatar_top_left_y;
+    std::string start_avatar_state;
+    std::vector<End_Condition*> end_conditions;
     std::vector<std::vector<Tile_Metadata>> level;
   };
 

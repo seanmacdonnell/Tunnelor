@@ -82,7 +82,12 @@ class Avatar_Controller: public Controller,
   //---------------------------------------------------------------------------
   // Description : Generates the Avatar_Component tile
   //---------------------------------------------------------------------------
-  void CreateAvatarComponent();
+  void CreateAvatar();
+
+  //---------------------------------------------------------------------------
+  // Description : Resets the Avatar_Component tile to level defaults
+  //---------------------------------------------------------------------------
+  void ResetAvatar();
 
   //---------------------------------------------------------------------------
   // Description : Creates the Avatar_Component and adds it to the model
@@ -118,13 +123,13 @@ class Avatar_Controller: public Controller,
   // Description : Returns true if the avatar is colliding with a floor
   //---------------------------------------------------------------------------
   bool IsAvatarFloorColliding(std::vector<Bitmap_Component*> *out_colliding_floor_tiles,
-                              Bitmap_Component *out_collision_block);
+                              Bitmap_Component *out_avatar_collision_block);
 
   //---------------------------------------------------------------------------
   // Description : Returns true if the avatar is colliding with a floor
   //---------------------------------------------------------------------------
   bool IsAvatarWallColliding(std::vector<Bitmap_Component*> *out_colliding_floor_tiles,
-                             Bitmap_Component *out_collision_block);
+                             Bitmap_Component *out_avatar_collision_block);
 
   //---------------------------------------------------------------------------
   // Description : Loads all the tile animations into the controller
@@ -147,7 +152,7 @@ class Avatar_Controller: public Controller,
   // Description : Syncs the avatar tile position with avatar collision block
   //             : of the last avatar animation frame.
   //---------------------------------------------------------------------------
-  void AlignAvatarOnAvatarCollisionBlock();
+  void AlignAvatarOnLastAvatarCollisionBlock();
 
   //---------------------------------------------------------------------------
   // Description : Repositions the avatar so he is standing adjacent to
@@ -179,36 +184,38 @@ class Avatar_Controller: public Controller,
   //---------------------------------------------------------------------------
   // Description : Updates the avatar state animation
   //---------------------------------------------------------------------------
-  void UpdateAvatarState(int new_state_index);
+  void SetAvatarStateAnimationFrame(int new_state_index);
 
   //---------------------------------------------------------------------------
   // Description : Returns the lowest collision block on the avatar
   //---------------------------------------------------------------------------
-  Avatar_Component::Collision_Block GetLowestCollisionBlock();
+  Avatar_Component::Avatar_Collision_Block GetLowestCollisionBlock();
 
   //---------------------------------------------------------------------------
   // Description : Returns the lowest and most towards the direction 
   //             : collision block on the avatar
   //---------------------------------------------------------------------------
-  Avatar_Component::Collision_Block GetLowestMostForwardFootCollisionBlock(std::string direction);
+  Avatar_Component::Avatar_Collision_Block GetLowestMostForwardFootCollisionBlock(std::string direction);
 
   //---------------------------------------------------------------------------
   // Description : Creates a Bitmap Component using the given collision block
   //---------------------------------------------------------------------------
-  Bitmap_Component CollisionBlockToBitmapComponent(Avatar_Component::Collision_Block collision_block);
+  Bitmap_Component CollisionBlockToBitmapComponent(Avatar_Component::Avatar_Collision_Block avatar_collision_block);
 
   //---------------------------------------------------------------------------
   // Description : Creates a Bitmap Component using the given collision block
   //---------------------------------------------------------------------------
-  Avatar_Component::Collision_Block GetNamedCollisionBlock(std::string id, std::vector<Avatar_Component::Collision_Block> collision_blocks);
+  Avatar_Component::Avatar_Collision_Block GetNamedCollisionBlock(std::string id, std::vector<Avatar_Component::Avatar_Collision_Block> avatar_collision_blocks);
 
   //---------------------------------------------------------------------------
-  // Description : Creates an Avatar_Component::Collision_Block from a
-  //             : Tileset_Helper::Collision_Block
+  // Description : Creates an Avatar_Component::Avatar_Collision_Block from a
+  //             : Tileset_Helper::Avatar_Collision_Block
   //---------------------------------------------------------------------------
-  Avatar_Component::Collision_Block TilesetCollisionBlockToAvatarCollisionBlock(Tileset_Helper::Collision_Block tileset_collision_block,
+  Avatar_Component::Avatar_Collision_Block TilesetCollisionBlockToAvatarCollisionBlock(Tileset_Helper::Avatar_Collision_Block tileset_avatar_collision_block,
                                                                                 float tileset_animation_top_left_y,
                                                                                 int state_index);
+
+  void ClearAvatarState();
 
   //---------------------------------------------------------------------------
   // Member Variables
@@ -242,6 +249,8 @@ class Avatar_Controller: public Controller,
   std::vector<Tile_Bitmap*> m_wall_tiles;
 
   float m_avatar_z_position;
+
+  std::string m_current_level_name;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_H_

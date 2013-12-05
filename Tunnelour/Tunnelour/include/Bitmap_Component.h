@@ -82,6 +82,17 @@ class Bitmap_Component: public Tunnelour::Frame_Component {
   //---------------------------------------------------------------------------
   void SetAngle(float angle);
 
+  //---------------------------------------------------------------------------
+  // Description : Accessor for the Angle in radians!
+  //---------------------------------------------------------------------------
+  float GetTransparency();
+
+  //---------------------------------------------------------------------------
+  // Description : Mutator for the Angle
+  //---------------------------------------------------------------------------
+  void SetTransparency(float transparency);
+
+
  protected:
   //---------------------------------------------------------------------------
   // Description : Class variables

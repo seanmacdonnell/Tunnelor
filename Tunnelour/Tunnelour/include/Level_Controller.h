@@ -60,15 +60,17 @@ class Level_Controller: public Controller {
   Game_Settings_Component *m_game_settings;
   Level_Component *m_level;
 
+  std::vector<Level_Component::Level_Metadata> m_levels;
+
   //---------------------------------------------------------------------------
   // Description : Creates a Bitmap Component using the given collision block
   //--------------------------------------------------------------------------
   void LoadLevelMetadata();
   Level_Component::Level_Metadata LoadLevelMetadataIntoStruct(std::string metadata_path);
   void LoadLevelCSVIntoStruct(std::string metadata_path, Level_Component::Level_Metadata *out_struct);
+  Avatar_Component::Avatar_Collision_Block GetNamedCollisionBlock(std::string id, std::list<Avatar_Component::Avatar_Collision_Block> avatar_collision_blocks);
+  Level_Component::Level_Metadata GetNamedLevel(std::string level_name);
 
-  Avatar_Component::Collision_Block GetNamedCollisionBlock(std::string id, std::list<Avatar_Component::Collision_Block> collision_blocks);
-  
   Text_Component *m_level_name_heading;
   Text_Component *m_level_blurb;
   std::string m_font_path;

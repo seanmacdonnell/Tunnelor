@@ -30,7 +30,7 @@ namespace Tunnelour {
 //-----------------------------------------------------------------------------
 class Avatar_Component: public Tunnelour::Bitmap_Component {
  public:
-   struct Collision_Block {
+   struct Avatar_Collision_Block {
      std::string id;
      bool is_contacting;
      D3DXVECTOR3 offset_from_avatar_centre;
@@ -42,7 +42,7 @@ class Avatar_Component: public Tunnelour::Bitmap_Component {
     std::string state;
     unsigned int state_index;
     std::string direction;
-    std::vector<Collision_Block> collision_blocks;
+    std::vector<Avatar_Collision_Block> avatar_collision_blocks;
   };
 
   //---------------------------------------------------------------------------
