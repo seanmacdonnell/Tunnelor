@@ -90,7 +90,7 @@ void Component_Composite::NotifyOnAddType(Tunnelour::Component * component) {
 void Component_Composite::NotifyOnRemoveType(Tunnelour::Component * component) {
   for each(std::pair<std::string, Component_Composite_Type_Observer*> observer in m_type_observers) {
     if (observer.first.compare(component->GetType()) == 0) {
-      observer.second->HandleEventRemove(component);
+      if (observer.second != 0) { observer.second->HandleEventRemove(component); }
     }
   }
 }

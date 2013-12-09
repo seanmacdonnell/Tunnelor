@@ -107,29 +107,68 @@ bool Level_Controller::Run() {
     m_level_blurb->Init();
 
     // Check if the level end conditions are met
-    if (m_level->GetCurrentLevel().end_conditions.size() != 0) {
-      std::vector<Level_Component::End_Condition*> end_conditions = m_level->GetCurrentLevel().end_conditions;
-      std::vector<Level_Component::End_Condition*>::iterator end_condition;
-      for (end_condition = end_conditions.begin(); end_condition != end_conditions.end(); end_condition++) {
-        if ((*end_condition)->type.compare("State") == 0) {
-          Level_Component::End_Condition_Avatar_State *state_end_condition = static_cast<Level_Component::End_Condition_Avatar_State*>((*end_condition));
-          if (m_avatar != 0) {
-            if (m_avatar->GetState().state.compare(state_end_condition->avatar_state) == 0) {
-              m_model->Remove(m_level_name_heading);
-              m_level_name_heading = 0;
-              m_model->Remove(m_level_blurb);
-              m_level_blurb = 0;
-              if (state_end_condition->next_level.compare("None") != 0) {
-                m_level->SetCurrentLevel(GetNamedLevel(state_end_condition->next_level));
+    if (m_avatar != 0) {
+      if (m_level->GetCurrentLevel().end_conditions.size() != 0) {
+        std::vector<Level_Component::End_Condition*> end_conditions = m_level->GetCurrentLevel().end_conditions;
+        std::vector<Level_Component::End_Condition*>::iterator end_condition;
+        for (end_condition = end_conditions.begin(); end_condition != end_conditions.end(); end_condition++) {
+          bool and = true;
+          bool or = false;
+          std::vector<Level_Component::Condition*>::iterator condition;
+          for (condition = (*end_condition)->conditions.begin(); condition != (*end_condition)->conditions.end(); condition++) {
+            if ((*end_condition)->and) {
+              if ((*condition)->type.compare("State") == 0) {
+                Level_Component::End_Condition_Avatar_State *state_end_condition = static_cast<Level_Component::End_Condition_Avatar_State*>((*condition));
+                if ((m_avatar->GetLastState().state.compare(state_end_condition->avatar_state) == 0 && m_avatar->GetLastState().direction.compare(state_end_condition->avatar_direction) != 0) || (*condition)->has_been_met == true) {
+                  if (m_avatar->GetLastState().state.compare(m_avatar->GetState().state) != 0 || m_avatar->GetLastState().direction.compare(m_avatar->GetState().direction) != 0) {
+                    (*condition)->has_been_met = true;
+                  } else {
+                    and = false;
+                  }
+                } else {
+                  and = false;
+                }
               } else {
-                throw Tunnelour::Exceptions::run_error("QUIT");
+                throw Tunnelour::Exceptions::run_error("Level_Controller: Unhandled State");
               }
+            } else if ((*end_condition)->or) {
+              if ((*condition)->type.compare("State") == 0) {
+                Level_Component::End_Condition_Avatar_State *state_end_condition = static_cast<Level_Component::End_Condition_Avatar_State*>((*condition));
+                if (m_avatar->GetLastState().state.compare(state_end_condition->avatar_state) == 0) {
+                  if (m_avatar->GetLastState().direction.compare(state_end_condition->avatar_direction) == 0 || (*condition)->has_been_met == true) {
+                    (*condition)->has_been_met = true;
+                    or = true;
+                  }
+                }
+              }
+            }
+          }
+          if ((*end_condition)->and && and) {
+            m_model->Remove(m_level_name_heading);
+            m_level_name_heading = 0;
+            m_model->Remove(m_level_blurb);
+            m_level_blurb = 0;
+            if ((*end_condition)->next_level.compare("QUIT") != 0) {
+              m_level->SetCurrentLevel(GetNamedLevel((*end_condition)->next_level));
+            } else {
+              ///throw Tunnelour::Exceptions::run_error("QUIT");
+              PostQuitMessage(0);
+            }
+          } else if ((*end_condition)->or && or) {
+            m_model->Remove(m_level_name_heading);
+            m_level_name_heading = 0;
+            m_model->Remove(m_level_blurb);
+            m_level_blurb = 0;
+            if ((*end_condition)->next_level.compare("QUIT") != 0) {
+              m_level->SetCurrentLevel(GetNamedLevel((*end_condition)->next_level));
+            } else {
+              //throw Tunnelour::Exceptions::run_error("QUIT");
+              PostQuitMessage(0);
             }
           }
         }
       }
     }
-
   } else {
     return false;
   }
@@ -248,7 +287,7 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
       token = strtok_s(NULL, " =\"", &next_token);
       level_metadata.tunnel_top_left_y = static_cast<float>(atof(token));
     } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Tileset_TopLeftX");
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_TunnelStartTopLeftY");
     }
   }
   fgets(line, 225, pFile);
@@ -258,7 +297,7 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
       token = strtok_s(NULL, " =\"", &next_token);
       level_metadata.start_avatar_top_left_x = static_cast<float>(atof(token));
     } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Tileset_TopLeftX");
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_Start_AvatarX");
     }
   }
   fgets(line, 225, pFile);
@@ -268,7 +307,7 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
       token = strtok_s(NULL, " =\"", &next_token);
       level_metadata.start_avatar_top_left_y = static_cast<float>(atof(token));
     } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Tileset_TopLeftX");
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_Start_AvatarY");
     }
   }
   fgets(line, 225, pFile);
@@ -281,42 +320,111 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
       throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_Start_AvatarState");
     }
   }
-  Level_Component::End_Condition *condition = 0;
-  fgets(line, 225, pFile);
-  if (line != NULL) {
-    token = strtok_s(line, " ", &next_token);
-    if (strcmp(token, "Level_EndCondition_Type") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
-      if (strcmp(token,"State") == 0) {
-        condition = new Level_Component::End_Condition_Avatar_State();
-      } else {
-         throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Level_EndCondition_Type type was not recognized");
-      }
-      condition->type = token;
-    } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_Type");
-    }
-  }
+  Level_Component::End_Condition *conditions = 0;
+  conditions = new Level_Component::End_Condition();
   fgets(line, 225, pFile);
   if (line != NULL) {
     token = strtok_s(line, " ", &next_token);
     if (strcmp(token, "Level_EndCondition_ID") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
-      condition->ID = token;
+      conditions->ID = token;
     } else {
       throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_ID");
     }
   }
-  if (condition->type.compare("State") == 0) {
+  fgets(line, 225, pFile);
+  if (line != NULL) {
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token, "Level_EndCondition_IsAnd") == 0)   {
+      token = strtok_s(NULL, " =\"", &next_token);
+      if (strcmp(token, "True") == 0) {
+        conditions->and = true;
+      } else {
+        conditions->and = false;
+      }
+    } else {
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_IsAnd");
+    }
+  }
+  fgets(line, 225, pFile);
+  if (line != NULL) {
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token, "Level_EndCondition_IsOr") == 0)   {
+      token = strtok_s(NULL, " =\"", &next_token);
+      if (strcmp(token, "True") == 0) {
+        conditions->or = true;
+      } else {
+        conditions->or = false;
+      }
+    } else {
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_IsOr");
+    }
+  }
+  int NoOfConditions = 0;
+  fgets(line, 225, pFile);
+  if (line != NULL) {
+    token = strtok_s(line, " ", &next_token);
+    if (strcmp(token, "Level_EndCondition_NoOfConditions") == 0)   {
+      token = strtok_s(NULL, " =\"", &next_token);
+      NoOfConditions = static_cast<int>(atof(token));
+    } else {
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_NoOfConditions");
+    }
+  }
+  for (int i = 0; i < NoOfConditions; i++) {
+    Level_Component::Condition *condition = 0;
     fgets(line, 225, pFile);
     if (line != NULL) {
       token = strtok_s(line, " ", &next_token);
-      if (strcmp(token, "Level_EndCondition_WhenAvatarState") == 0)   {
+      if (strcmp(token, "Level_EndCondition_Type") == 0)   {
         token = strtok_s(NULL, " =\"", &next_token);
-        static_cast<Level_Component::End_Condition_Avatar_State*>(condition)->avatar_state = token;
+        if (strcmp(token,"State") == 0) {
+          condition = new Level_Component::End_Condition_Avatar_State();
+        } else {
+           throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Level_EndCondition_Type type was not recognized");
+        }
+        condition->type = token;
       } else {
-        throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_WhenAvatarState");
+        throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_Type");
       }
+    }
+    if (condition->type.compare("State") == 0) {
+      fgets(line, 225, pFile);
+      if (line != NULL) {
+        token = strtok_s(line, " ", &next_token);
+        if (strcmp(token, "Level_EndCondition_WhenAvatarState") == 0)   {
+          token = strtok_s(NULL, " =\"", &next_token);
+          static_cast<Level_Component::End_Condition_Avatar_State*>(condition)->avatar_state = token;
+        } else {
+          throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_WhenAvatarState");
+        }
+      }
+      fgets(line, 225, pFile);
+      if (line != NULL) {
+        token = strtok_s(line, " ", &next_token);
+        if (strcmp(token, "Level_EndCondition_WhenAvatarStateComplete") == 0)   {
+          token = strtok_s(NULL, " =\"", &next_token);
+          if (strcmp(token, "True") == 0) {
+            static_cast<Level_Component::End_Condition_Avatar_State*>(condition)->when_state_complete = true;
+          } else {
+            static_cast<Level_Component::End_Condition_Avatar_State*>(condition)->when_state_complete = false;
+          }
+        } else {
+          throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_WhenAvatarStateComplete");
+        }
+      }
+      fgets(line, 225, pFile);
+      if (line != NULL) {
+        token = strtok_s(line, " ", &next_token);
+        if (strcmp(token, "Level_EndCondition_WhenAvatarDirection") == 0)   {
+          token = strtok_s(NULL, " =\"", &next_token);
+          static_cast<Level_Component::End_Condition_Avatar_State*>(condition)->avatar_direction = token;
+        } else {
+          throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_WhenAvatarDirection");
+        }
+      }
+      condition->has_been_met = false;
+      conditions->conditions.push_back(condition);
     }
   }
   fgets(line, 225, pFile);
@@ -324,12 +432,13 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
     token = strtok_s(line, " ", &next_token);
     if (strcmp(token, "Level_EndCondition_NextLevel") == 0)   {
       token = strtok_s(NULL, "\"", &next_token);
-      condition->next_level = token;
+      conditions->next_level = token;
     } else {
       throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_NextLevel");
     }
   }
-  level_metadata.end_conditions.push_back(condition);
+  level_metadata.end_conditions.push_back(conditions);
+
   fclose(pFile);
 
   return level_metadata;

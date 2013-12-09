@@ -41,13 +41,13 @@ Avatar_Controller::Avatar_Controller() : Controller() {
 
 //------------------------------------------------------------------------------
 Avatar_Controller::~Avatar_Controller() {
+  m_model->IgnoreType(this, "Bitmap_Component");
   m_model = 0;
   m_avatar = 0;
   m_game_settings = 0;
   m_level = 0;
   m_animation_tick = false;
   m_world_settings = 0;
-  m_model->IgnoreType(this, "Bitmap_Component");
   m_floor_tiles.clear();
   m_wall_tiles.clear();
 }
@@ -735,6 +735,7 @@ void Avatar_Controller::SetAvatarState(std::string new_state_name, std::string d
         new_state.direction = direction;
         new_state.state = new_state_name;
         new_state.parent_state = metadata->name;
+        new_state.max_state_index = tileset->number_of_frames;
       }
     }
   }

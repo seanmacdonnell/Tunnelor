@@ -36,31 +36,54 @@ class Level_Component: public Tunnelour::Component {
     float size;
   };
 
-  struct End_Condition {
+  struct Condition {
     std::string type;
-    std::string ID;
-    std::string next_level;
+    bool has_been_met;
   };
 
-  struct End_Condition_Block_Intersect: public End_Condition {
+  struct End_Condition_Block_Intersect: public Condition {
     float avatar_intersecting_tile_top_left_x;
     float avatar_intersecting_tile_top_left_y;
     float avatar_intersecting_tile_size;
   };
 
-  struct End_Condition_Avatar_State: public End_Condition {
+  struct End_Condition_Avatar_State: public Condition {
     std::string avatar_state;
+    bool when_state_complete;
+    std::string avatar_direction;
+  };
+
+  struct End_Condition {
+    std::string ID;
+    bool and;
+    bool or;
+    std::vector<Condition*> conditions;
+    std::string next_level;
   };
 
   /* Example
   Level_Name "Level 0"
-  Level_Blurb "Testing Walking"
+  Level_Blurb "Testing Walking Animation. Walk Right and Left"
   Level_CSV_Filename "Level_0.csv"
   Level_TilesetName "Dirt"
   Level_TunnelStartTopLeftX "0"
   Level_TunnelStartTopLeftY "0"
-  Level_AvatarStartTopLeftY "64"
-  Level_AvatarStartTopLeftX "-64"
+  Level_Start_AvatarX "192"
+  Level_Start_AvatarY "-448"
+  Level_Start_AvatarState "Standing"
+  Level_EndCondition_ID "1"
+  Level_EndCondition_IsAnd "True"
+  Level_EndCondition_IsOr "False"
+  Level_EndCondition_NoOfConditions "2"
+  Level_EndCondition_Type "State"
+  Level_EndCondition_WhenAvatarState "Walking"
+  Level_EndCondition_WhenAvatarStateComplete "True"
+  Level_EndCondition_WhenAvatarDirection "Right"
+  Level_EndCondition_Type "State"
+  Level_EndCondition_WhenAvatarState "Walking"
+  Level_EndCondition_WhenAvatarStateComplete "True"
+  Level_EndCondition_WhenAvatarDirection "Left"
+  Level_EndCondition_NextLevel "Level 1"
   */
   struct Level_Metadata {
     std::string level_name;
