@@ -192,6 +192,12 @@
     <ClCompile Include="src\Get_Avatar_Mutator.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
+    <ClCompile Include="src\Introduction_Controller.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Introduction_Controller_Mutator.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Init_Controller.h">
@@ -336,6 +342,12 @@
       <Filter>Include Files\Model</Filter>
     </ClInclude>
     <ClInclude Include="include\Get_Avatar_Mutator.h">
+      <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Introduction_Controller.h">
+      <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Introduction_Controller_Mutator.h">
       <Filter>Include Files\Controllers</Filter>
     </ClInclude>
   </ItemGroup>

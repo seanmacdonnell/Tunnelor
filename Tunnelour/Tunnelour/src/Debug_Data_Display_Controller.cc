@@ -155,6 +155,7 @@ void Debug_Data_Display_Controller::CreateDebugDataHeading() {
   m_heading->GetText()->font_csv_file = m_font_path;
   m_heading->GetText()->text = "DEBUG MODE";
   m_heading->GetTexture()->transparency = 0.0f;
+  m_heading->SetPosition(D3DXVECTOR3(0, 0, z_position));
   m_model->Add(m_heading);
 }
 
@@ -180,6 +181,7 @@ void Debug_Data_Display_Controller::CreateFPSDisplay() {
   m_fps_display = new Text_Component();
   m_fps_display->GetText()->font_csv_file = m_font_path;
   m_fps_display->GetTexture()->transparency = 0.0f;
+  m_fps_display->SetPosition(D3DXVECTOR3(0, 0, z_position));
   m_model->Add(m_fps_display);
 }
 
@@ -212,6 +214,7 @@ void Debug_Data_Display_Controller::CreateAvatarPositionDisplay() {
   m_avatar_position_display = new Text_Component();
   m_avatar_position_display->GetText()->font_csv_file = m_font_path;
   m_avatar_position_display->GetTexture()->transparency = 0.0f;
+  m_avatar_position_display->SetPosition(D3DXVECTOR3(0, 0, z_position));
   m_model->Add(m_avatar_position_display);
 }
 

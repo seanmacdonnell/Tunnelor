@@ -40,6 +40,8 @@ Tunnelour/Tunnelour/include/Get_Avatar_Mutator.h -text
 Tunnelour/Tunnelour/include/Init_Controller.h -text
 Tunnelour/Tunnelour/include/Input_Controller.h -text
 Tunnelour/Tunnelour/include/Input_Controller_Mutator.h -text
+Tunnelour/Tunnelour/include/Introduction_Controller.h -text
+Tunnelour/Tunnelour/include/Introduction_Controller_Mutator.h -text
 Tunnelour/Tunnelour/include/Level_Component.h -text
 Tunnelour/Tunnelour/include/Level_Controller.h -text
 Tunnelour/Tunnelour/include/Level_Controller_Mutator.h -text
@@ -75,6 +77,8 @@ Tunnelour/Tunnelour/resource/levels/Level_4.csv -text
 Tunnelour/Tunnelour/resource/levels/Level_4.txt -text
 Tunnelour/Tunnelour/resource/tilesets/Ariel.fnt -text
 Tunnelour/Tunnelour/resource/tilesets/Ariel_0.png -text
+Tunnelour/Tunnelour/resource/tilesets/Black_Tileset_0_0.png -text
+Tunnelour/Tunnelour/resource/tilesets/Black_Tileset_0_0.txt -text
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Falling_Animation_Tileset_1_2.png -text
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Falling_Animation_Tileset_1_2.txt -text
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Running_Animation_Tileset_1_1.png -text
@@ -91,6 +95,8 @@ Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_5.png -text
 Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_5.txt -text
 Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_5.png -text
 Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_5.txt -text
+Tunnelour/Tunnelour/resource/tilesets/White_Tileset_0_0.png -text
+Tunnelour/Tunnelour/resource/tilesets/White_Tileset_0_0.txt -text
 Tunnelour/Tunnelour/src/Avatar_Component.cc -text
 Tunnelour/Tunnelour/src/Avatar_Controller.cc -text
 Tunnelour/Tunnelour/src/Avatar_Controller_Mutator.cc -text
@@ -125,6 +131,8 @@ Tunnelour/Tunnelour/src/Get_Avatar_Mutator.cc -text
 Tunnelour/Tunnelour/src/Init_Controller.cc -text
 Tunnelour/Tunnelour/src/Input_Controller.cc -text
 Tunnelour/Tunnelour/src/Input_Controller_Mutator.cc -text
+Tunnelour/Tunnelour/src/Introduction_Controller.cc -text
+Tunnelour/Tunnelour/src/Introduction_Controller_Mutator.cc -text
 Tunnelour/Tunnelour/src/Level_Component.cc -text
 Tunnelour/Tunnelour/src/Level_Controller.cc -text
 Tunnelour/Tunnelour/src/Level_Controller_Mutator.cc -text

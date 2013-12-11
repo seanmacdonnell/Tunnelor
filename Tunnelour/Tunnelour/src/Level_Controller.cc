@@ -30,6 +30,7 @@ Level_Controller::Level_Controller() : Controller() {
   m_level_name_heading = 0;
   m_level_blurb = 0;
   m_camera = 0;
+  m_z_position = -5;
 }
 
 //------------------------------------------------------------------------------
@@ -73,6 +74,7 @@ bool Level_Controller::Run() {
       m_level_name_heading->GetText()->font_csv_file = m_font_path;
       m_level_name_heading->GetText()->text = m_level->GetCurrentLevel().level_name;
       m_level_name_heading->GetTexture()->transparency = 1.0f;
+      m_level_name_heading->SetPosition(0, 0, m_z_position);
       m_model->Add(m_level_name_heading);
     }
     if (m_level_blurb == 0) {
@@ -80,6 +82,7 @@ bool Level_Controller::Run() {
       m_level_blurb->GetText()->font_csv_file = m_font_path;
       m_level_blurb->GetText()->text = m_level->GetCurrentLevel().blurb;
       m_level_blurb->GetTexture()->transparency = 1.0f;
+      m_level_blurb->SetPosition(0, 0, m_z_position);
       m_model->Add(m_level_blurb);
       m_level_blurb->Init();
     }
@@ -99,11 +102,11 @@ bool Level_Controller::Run() {
     }
 
     m_level_name_heading->SetPosition(m_camera->GetPosition().x,
-                                      m_camera->GetPosition().y + m_level_name_heading->GetSize().y, -3);
+                                      m_camera->GetPosition().y + m_level_name_heading->GetSize().y, m_z_position);
     m_level_name_heading->Init();
 
     m_level_blurb->SetPosition(m_camera->GetPosition().x,
-                               m_camera->GetPosition().y - m_level_name_heading->GetSize().y, -3);
+                               m_camera->GetPosition().y - m_level_name_heading->GetSize().y, m_z_position);
     m_level_blurb->Init();
 
     // Check if the level end conditions are met

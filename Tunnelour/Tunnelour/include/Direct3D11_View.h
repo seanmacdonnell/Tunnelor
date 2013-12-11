@@ -82,10 +82,13 @@ class Direct3D11_View : public Tunnelour::View,
   };
 
   struct Renderables {
-    std::vector<Bitmap_Renderable*> Layer_00;
-    std::vector<Bitmap_Renderable*> Layer_01;
-    std::vector<Bitmap_Renderable*> Layer_02;
-    std::vector<Text_Renderable*> Layer_03;
+    std::vector<Bitmap_Renderable*> Layer_00; // Background (0)
+    std::vector<Bitmap_Renderable*> Layer_01; // Middleground (-1)
+    std::vector<Bitmap_Renderable*> Avatars;  // Avatars (-1.5)
+    std::vector<Bitmap_Renderable*> Layer_02; // Foreground (-2)
+    std::vector<Text_Renderable*> Layer_03;   // Foreground Text (-3)
+    std::vector<Bitmap_Renderable*> Layer_04; // Splash, Loading, Menu (-4)
+    std::vector<Text_Renderable*> Layer_05;   // Splash, Loading, Menu Text (-5)
   };
 
   //---------------------------------------------------------------------------

@@ -157,6 +157,8 @@ Direct3D11_View::~Direct3D11_View() {
   m_renderables.Layer_01.clear();
   m_renderables.Layer_02.clear();
   m_renderables.Layer_03.clear();
+  m_renderables.Layer_04.clear();
+  m_renderables.Layer_05.clear();
 
   m_camera = 0;
   m_game_settings = 0;
@@ -187,15 +189,7 @@ void Direct3D11_View::Init(Component_Composite * const model) {
     bitmap_renderable->scale = m_avatar->GetScale();
     bitmap_renderable->position = m_avatar->GetPosition();
 
-    if (m_avatar->GetPosition()->z > -1) {
-      m_renderables.Layer_00.push_back(bitmap_renderable);
-    }
-    if (m_avatar->GetPosition()->z <= -1 && m_avatar->GetPosition()->z > -2) {
-      m_renderables.Layer_01.push_back(bitmap_renderable);
-    }
-    if (m_avatar->GetPosition()->z <= -2) {
-      m_renderables.Layer_02.push_back(bitmap_renderable);
-    }
+    m_renderables.Avatars.push_back(bitmap_renderable);
 
     m_is_initialised = true;
   }
@@ -243,8 +237,11 @@ void Direct3D11_View::Run() {
     // Sort the Renderables by Z order.
     Render_Bitmaps(m_renderables.Layer_00, viewmatrix);
     Render_Bitmaps(m_renderables.Layer_01, viewmatrix);
+    Render_Bitmaps(m_renderables.Avatars, viewmatrix);
     Render_Bitmaps(m_renderables.Layer_02, viewmatrix);
     Render_Texts(m_renderables.Layer_03, viewmatrix);
+    Render_Bitmaps(m_renderables.Layer_04, viewmatrix);
+    Render_Texts(m_renderables.Layer_05, viewmatrix);
     
     TurnOffAlphaBlending();
 
@@ -296,8 +293,11 @@ void Direct3D11_View::HandleEventAdd(Tunnelour::Component * const component) {
     if (bitmap->GetPosition()->z <= -1 && bitmap->GetPosition()->z > -2) {
       m_renderables.Layer_01.push_back(bitmap_renderable);
     }
-    if (bitmap->GetPosition()->z <= -2) {
+    if (bitmap->GetPosition()->z <= -2 && bitmap->GetPosition()->z > -4) {
       m_renderables.Layer_02.push_back(bitmap_renderable);
+    }
+    if (bitmap->GetPosition()->z <= -4) {
+      m_renderables.Layer_04.push_back(bitmap_renderable);
     }
   }
 
@@ -314,7 +314,12 @@ void Direct3D11_View::HandleEventAdd(Tunnelour::Component * const component) {
     text_renderable->scale = text->GetScale();
     text_renderable->position = text->GetPosition();
     text_renderable->font = text->GetFont();
-    m_renderables.Layer_03.push_back(text_renderable);
+
+    if (text->GetPosition()->z <= -3) {
+      m_renderables.Layer_03.push_back(text_renderable);
+    } else {
+      m_renderables.Layer_05.push_back(text_renderable);
+    }
   }
 }
 
@@ -341,7 +346,7 @@ void Direct3D11_View::HandleEventRemove(Tunnelour::Component * const component){
         }
       }
       m_renderables.Layer_01.erase(found_bitmap_renderable);
-    } else  if (bitmap_component->GetPosition()->z <= -2) {
+    } else  if (bitmap_component->GetPosition()->z <= -2 && bitmap_component->GetPosition()->z > -4) {
       std::vector<Bitmap_Renderable*>::iterator bitmap_renderable;
       for (bitmap_renderable = m_renderables.Layer_02.begin(); bitmap_renderable != m_renderables.Layer_02.end(); bitmap_renderable++) {
         if ((*bitmap_renderable)->bitmap->GetID() == bitmap_component->GetID()) {
@@ -349,6 +354,14 @@ void Direct3D11_View::HandleEventRemove(Tunnelour::Component * const component){
         }
       }
       m_renderables.Layer_02.erase(found_bitmap_renderable);
+    } else  if (bitmap_component->GetPosition()->z <= -4) {
+      std::vector<Bitmap_Renderable*>::iterator bitmap_renderable;
+      for (bitmap_renderable = m_renderables.Layer_02.begin(); bitmap_renderable != m_renderables.Layer_02.end(); bitmap_renderable++) {
+        if ((*bitmap_renderable)->bitmap->GetID() == bitmap_component->GetID()) {
+          found_bitmap_renderable = bitmap_renderable; 
+        }
+      }
+      m_renderables.Layer_04.erase(found_bitmap_renderable);
     }
   } else if (component->GetType().compare("Text_Component") == 0) {
     // Found Text_Component
@@ -356,12 +369,21 @@ void Direct3D11_View::HandleEventRemove(Tunnelour::Component * const component){
     text_component = static_cast<Tunnelour::Text_Component*>(component);
     std::vector<Text_Renderable*>::iterator found_text_renderable;
     std::vector<Text_Renderable*>::iterator text_renderable;
-    for (text_renderable = m_renderables.Layer_03.begin(); text_renderable != m_renderables.Layer_03.end(); text_renderable++) {
-      if ((*text_renderable)->text->GetID() == text_component->GetID()) {
-        found_text_renderable = text_renderable;
+    if (text_component->GetPosition()->z <= -3) {
+      for (text_renderable = m_renderables.Layer_03.begin(); text_renderable != m_renderables.Layer_03.end(); text_renderable++) {
+        if ((*text_renderable)->text->GetID() == text_component->GetID()) {
+          found_text_renderable = text_renderable;
+        }
       }
+      m_renderables.Layer_03.erase(found_text_renderable);
+    } else {
+      for (text_renderable = m_renderables.Layer_05.begin(); text_renderable != m_renderables.Layer_05.end(); text_renderable++) {
+        if ((*text_renderable)->text->GetID() == text_component->GetID()) {
+          found_text_renderable = text_renderable;
+        }
+      }
+      m_renderables.Layer_05.erase(found_text_renderable);
     }
-    m_renderables.Layer_03.erase(found_text_renderable);
   }
 }
 

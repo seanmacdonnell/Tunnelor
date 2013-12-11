@@ -13,39 +13,43 @@
 //  limitations under the License.
 //
 
-#ifndef TUNNELOUR_LEVEL_CONTROLLER_H_
-#define TUNNELOUR_LEVEL_CONTROLLER_H_
+#ifndef TUNNELOUR_INTRODUCTION_CONTROLLER_H_
+#define TUNNELOUR_INTRODUCTION_CONTROLLER_H_
 
-#include "Game_Settings_Component.h"
-#include "Level_Controller_Mutator.h"
-#include "Avatar_Component.h"
+#include <vector>
+#include <string>
+#include <list>
+#include "Component_Composite.h"
 #include "Controller.h"
-#include "Level_Component.h"
-#include "Text_Component.h"
+#include "Tile_Bitmap.h"
+#include "Game_Settings_Component.h"
+#include "Introduction_Controller_Mutator.h"
 #include "Camera_Component.h"
+#include "Tileset_Helper.h"
+#include "Level_Component.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
-//  Description : This controller is responsible for the generation
-//              : and movement of the camera_component.
+//  Description : This controller is responsible for the generation of the
+//                introduction to Tunnelor
 //-----------------------------------------------------------------------------
-class Level_Controller: public Controller {
+class Introduction_Controller: public Controller {
  public:
   //---------------------------------------------------------------------------
   // Description : Constructor
   //---------------------------------------------------------------------------
-  Level_Controller();
+  Introduction_Controller();
 
   //---------------------------------------------------------------------------
   // Description : Deconstructor
   //---------------------------------------------------------------------------
-  virtual ~Level_Controller();
+  virtual ~Introduction_Controller();
 
-  //---------------------------------------------------------------------------
+  //--------------------------------------------------------------------------
   // Description : Initialisation function for the Controller
   //---------------------------------------------------------------------------
-  virtual bool Init(Tunnelour::Component_Composite * const model);
+  virtual bool Init(Component_Composite * const model);
 
   //---------------------------------------------------------------------------
   // Description : Controller Runner
@@ -55,26 +59,27 @@ class Level_Controller: public Controller {
  protected:
 
  private:
-  Avatar_Component *m_avatar;
-  Camera_Component *m_camera;
-  Game_Settings_Component *m_game_settings;
-  Level_Component *m_level;
-
-  std::vector<Level_Component::Level_Metadata> m_levels;
+  std::vector<Tileset_Helper::Tileset_Metadata> m_tilesets;
+  Tileset_Helper::Tileset_Metadata m_current_tileset;
+  Tileset_Helper::Subset m_current_middleground_subset;
+  void LoadTilesetMetadata();
+  Tileset_Helper::Tileset_Metadata GetNamedTileset(std::string name);
+  Tileset_Helper::Subset GetCurrentForegroundSubset();
+  Tile_Bitmap* CreateTile(float base_tile_size);
+  Tileset_Helper::Line GetCurrentSizedLine(float size);
 
   //---------------------------------------------------------------------------
-  // Description : Creates a Bitmap Component using the given collision block
-  //--------------------------------------------------------------------------
-  void LoadLevelMetadata();
-  Level_Component::Level_Metadata LoadLevelMetadataIntoStruct(std::string metadata_path);
-  void LoadLevelCSVIntoStruct(std::string metadata_path, Level_Component::Level_Metadata *out_struct);
-  Avatar_Component::Avatar_Collision_Block GetNamedCollisionBlock(std::string id, std::list<Avatar_Component::Avatar_Collision_Block> avatar_collision_blocks);
-  Level_Component::Level_Metadata GetNamedLevel(std::string level_name);
+  // Description : Switches the tileset from Debug to Dirt and vise versa
+  //---------------------------------------------------------------------------
+  Game_Settings_Component* m_game_settings;
+  Camera_Component *m_camera;
+  Level_Component *m_level;
+  std::string m_tileset_filename;
+  bool m_is_debug_mode;
+  std::string m_debug_metadata_file_path;
+  std::string m_dirt_metadata_file_path;
+  std::string m_current_level_name;
 
-  Text_Component *m_level_name_heading;
-  Text_Component *m_level_blurb;
-  std::string m_font_path;
-  int m_z_position;
 };
 }  // namespace Tunnelour
-#endif  // TUNNELOUR_LEVEL_CONTROLLER_H_
+#endif  // TUNNELOUR_INTRODUCTION_CONTROLLER_H_
