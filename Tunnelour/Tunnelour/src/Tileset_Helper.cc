@@ -437,6 +437,10 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
     if (strcmp(token, "Tileset_Name") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
       out_metadata->name = token;
+    } else {
+      std::string error = "Parse Tileset Metadata Failed! Expected: Tileset_Name, got: ";
+      error += token;
+      throw Tunnelour::Exceptions::run_error(error);
     }
   }
 
@@ -446,6 +450,10 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
     if (strcmp(token, "Tileset_Type") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
       out_metadata->type = token;
+    } else {
+      std::string error = "Parse Tileset Metadata Failed! Expected: Tileset_Type, got: ";
+      error += token;
+      throw Tunnelour::Exceptions::run_error(error);
     }
   }
 
@@ -455,6 +463,10 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
     if (strcmp(token, "Tileset_FileName") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
       out_metadata->filename = token;
+    } else {
+      std::string error = "Parse Tileset Metadata Failed! Expected: Tileset_FileName, got: ";
+      error += token;
+      throw Tunnelour::Exceptions::run_error(error);
     }
   }
 
@@ -464,6 +476,10 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
     if (strcmp(token, "Tileset_TopLeftX") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
       out_metadata->top_left_x = static_cast<float>(atof(token));
+    } else {
+      std::string error = "Parse Tileset Metadata Failed! Expected: Tileset_TopLeftX, got: ";
+      error += token;
+      throw Tunnelour::Exceptions::run_error(error);
     }
   }
 
@@ -473,6 +489,10 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
     if (strcmp(token, "Tileset_TopLeftY") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
       out_metadata->top_left_y = static_cast<float>(atof(token));
+    } else {
+      std::string error = "Parse Tileset Metadata Failed! Expected: Tileset_TopLeftY, got: ";
+      error += token;
+      throw Tunnelour::Exceptions::run_error(error);
     }
   }
 
@@ -482,6 +502,10 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
     if (strcmp(token, "Tileset_SizeX") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
       out_metadata->size_x = static_cast<float>(atof(token));
+    } else {
+      std::string error = "Parse Tileset Metadata Failed! Expected: Tileset_SizeX, got: ";
+      error += token;
+      throw Tunnelour::Exceptions::run_error(error);
     }
   }
 
@@ -491,6 +515,10 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
     if (strcmp(token, "Tileset_SizeY") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
       out_metadata->size_y = static_cast<float>(atof(token));
+    } else {
+      std::string error = "Parse Tileset Metadata Failed! Expected: Tileset_SizeY, got: ";
+      error += token;
+      throw Tunnelour::Exceptions::run_error(error);
     }
   }
 
@@ -500,6 +528,10 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
     if (strcmp(token, "Tileset_NumOfSubSets") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
       out_metadata->number_of_subsets = atoi(token);
+    } else {
+      std::string error = "Parse Tileset Metadata Failed! Expected: Tileset_NumOfSubSets, got: ";
+      error += token;
+      throw Tunnelour::Exceptions::run_error(error);
     }
   }
 
@@ -511,6 +543,10 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
       if (line != NULL) {
         token = strtok_s(line, " ", &next_token);
         if (strcmp(token, "SubSet_Name") == 0)   {
+        } else {
+          std::string error = "Parse Tileset Metadata Failed! Expected: SubSet_Name, got: ";
+          error += token;
+          throw Tunnelour::Exceptions::run_error(error);
         }
       }
 
@@ -520,6 +556,10 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
         if (strcmp(token, "SubSet_Type") == 0)   {
           token = strtok_s(NULL, " =\"", &next_token);
           temp_tileset.type = token;
+        } else {
+          std::string error = "Parse Tileset Metadata Failed! Expected: SubSet_Type, got: ";
+          error += token;
+          throw Tunnelour::Exceptions::run_error(error);
         }
       }
 
@@ -529,6 +569,10 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
         if (strcmp(token, "SubSet_TopLeftX") == 0)   {
           token = strtok_s(NULL, " =\"", &next_token);
           temp_tileset.top_left_x = static_cast<float>(atof(token));
+        } else {
+          std::string error = "Parse Tileset Metadata Failed! Expected: SubSet_TopLeftX, got: ";
+          error += token;
+          throw Tunnelour::Exceptions::run_error(error);
         }
       }
 
@@ -538,6 +582,10 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
         if (strcmp(token, "SubSet_TopLeftY") == 0)   {
           token = strtok_s(NULL, " =\"", &next_token);
           temp_tileset.top_left_y = static_cast<float>(atof(token));
+        } else {
+          std::string error = "Parse Tileset Metadata Failed! Expected: SubSet_TopLeftY, got: ";
+          error += token;
+          throw Tunnelour::Exceptions::run_error(error);
         }
       }
 
@@ -547,6 +595,10 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
         if (strcmp(token, "SubSet_SizeX") == 0)   {
           token = strtok_s(NULL, " =\"", &next_token);
           temp_tileset.size_x = static_cast<float>(atof(token));
+        } else {
+          std::string error = "Parse Tileset Metadata Failed! Expected: SubSet_SizeX, got: ";
+          error += token;
+          throw Tunnelour::Exceptions::run_error(error);
         }
       }
 
@@ -556,6 +608,10 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
         if (strcmp(token, "SubSet_SizeY") == 0)   {
           token = strtok_s(NULL, " =\"", &next_token);
           temp_tileset.size_y = static_cast<float>(atof(token));
+        } else {
+          std::string error = "Parse Tileset Metadata Failed! Expected: SubSet_SizeY, got: ";
+          error += token;
+          throw Tunnelour::Exceptions::run_error(error);
         }
       }
 
@@ -565,6 +621,10 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
         if (strcmp(token, "SubSet_NumOfLines") == 0)   {
           token = strtok_s(NULL, " =\"", &next_token);
           temp_tileset.number_of_lines = atoi(token);
+        } else {
+          std::string error = "Parse Tileset Metadata Failed! Expected: SubSet_NumOfLines, got: ";
+          error += token;
+          throw Tunnelour::Exceptions::run_error(error);
         }
       }
 
@@ -578,6 +638,10 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
             if (strcmp(token, "Line_Name") == 0)   {
               token = strtok_s(NULL, " =\"", &next_token);
               temp_line.line_number = atoi(token);
+            } else {
+              std::string error = "Parse Tileset Metadata Failed! Expected: Line_Name, got: ";
+              error += token;
+              throw Tunnelour::Exceptions::run_error(error);
             }
           }
 
@@ -587,6 +651,10 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
             if (strcmp(token, "Line_TopLeftX") == 0)   {
               token = strtok_s(NULL, " =\"", &next_token);
               temp_line.top_left_x = static_cast<float>(atof(token));
+            } else {
+              std::string error = "Parse Tileset Metadata Failed! Expected: Line_TopLeftX, got: ";
+              error += token;
+              throw Tunnelour::Exceptions::run_error(error);
             }
           }
 
@@ -596,7 +664,12 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
             if (strcmp(token, "Line_TopLeftY") == 0)   {
               token = strtok_s(NULL, " =\"", &next_token);
               temp_line.top_left_y = static_cast<float>(atof(token));
+            } else {
+              std::string error = "Parse Tileset Metadata Failed! Expected: Line_TopLeftY, got: ";
+              error += token;
+              throw Tunnelour::Exceptions::run_error(error);
             }
+
           }
 
           fgets(line, 225, pFile);
@@ -605,6 +678,10 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
             if (strcmp(token, "Tile_SizeX") == 0)   {
               token = strtok_s(NULL, " =\"", &next_token);
               temp_line.tile_size_x = static_cast<float>(atof(token));
+            } else {
+              std::string error = "Parse Tileset Metadata Failed! Expected: Tile_SizeX, got: ";
+              error += token;
+              throw Tunnelour::Exceptions::run_error(error);
             }
           }
 
@@ -614,6 +691,10 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
             if (strcmp(token, "Tile_SizeY") == 0)   {
               token = strtok_s(NULL, " =\"", &next_token);
               temp_line.tile_size_y = static_cast<float>(atof(token));
+            } else {
+              std::string error = "Parse Tileset Metadata Failed! Expected: Tile_SizeY, got: ";
+              error += token;
+              throw Tunnelour::Exceptions::run_error(error);
             }
           }
 
@@ -623,6 +704,11 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
             if (strcmp(token, "Line_NumOfTiles") == 0)   {
               token = strtok_s(NULL, " =\"", &next_token);
               temp_line.number_of_tiles = atoi(token);
+            } else {
+              std::string error = "Metadata file: " + metadata_file;
+              error.append(" Failed Parsing! Expected: Line_NumOfTiles, got: ");
+              error.append(token);
+              throw Tunnelour::Exceptions::run_error(error);
             }
           }
           temp_tileset.lines.push_back(temp_line);

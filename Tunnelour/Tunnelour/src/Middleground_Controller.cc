@@ -280,7 +280,7 @@ std::vector<Tile_Bitmap*> Middleground_Controller::GenerateTunnelFromMetadata(Le
 //---------------------------------------------------------------------------
 void Middleground_Controller::LoadTilesetMetadata() {
   Tileset_Helper::Tileset_Metadata debug_tileset_metadata;
-  m_debug_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Debug_Tileset_0_4.txt");
+  m_debug_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Debug_Tileset_0_5.txt");
   Tileset_Helper::LoadTilesetMetadataIntoStruct(m_debug_metadata_file_path, &debug_tileset_metadata);
   m_tilesets.push_back(debug_tileset_metadata);
 

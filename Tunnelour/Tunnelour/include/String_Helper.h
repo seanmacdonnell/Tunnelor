@@ -36,11 +36,20 @@ namespace String_Helper {
 //  Description : Converts a char to a wchar
 //-----------------------------------------------------------------------------
 inline std::wstring CharToWChar(const char* pstrSrc) {
+  /*
     size_t origsize = strlen(pstrSrc) + 1;
     size_t convertedChars = 0;
     wchar_t wcstring[100];
     mbstowcs_s(&convertedChars, wcstring, origsize, pstrSrc, _TRUNCATE);
     return std::wstring(wcstring);
+    */
+
+
+    const size_t cSize = strlen(pstrSrc)+1;
+    std::wstring wc( cSize, L'#' );
+    mbstowcs( &wc[0], pstrSrc, cSize );
+
+    return wc;
 }
 
 //-----------------------------------------------------------------------------

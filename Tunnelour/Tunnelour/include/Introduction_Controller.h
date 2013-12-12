@@ -27,6 +27,7 @@
 #include "Camera_Component.h"
 #include "Tileset_Helper.h"
 #include "Level_Component.h"
+#include "Text_Component.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -61,7 +62,7 @@ class Introduction_Controller: public Controller {
  private:
   std::vector<Tileset_Helper::Tileset_Metadata> m_tilesets;
   Tileset_Helper::Tileset_Metadata m_current_tileset;
-  Tileset_Helper::Subset m_current_middleground_subset;
+  Tileset_Helper::Subset m_current_tileset_subset;
   void LoadTilesetMetadata();
   Tileset_Helper::Tileset_Metadata GetNamedTileset(std::string name);
   Tileset_Helper::Subset GetCurrentForegroundSubset();
@@ -76,10 +77,36 @@ class Introduction_Controller: public Controller {
   Level_Component *m_level;
   std::string m_tileset_filename;
   bool m_is_debug_mode;
-  std::string m_debug_metadata_file_path;
-  std::string m_dirt_metadata_file_path;
-  std::string m_current_level_name;
+  std::string m_black_metadata_file_path;
+  std::string m_white_metadata_file_path;
 
+  Tile_Bitmap* m_background;
+  std::string m_heading_font_path;
+  std::string m_text_font_path;
+  int m_z_bitmap_position;
+  int m_z_text_position;
+
+  Text_Component *m_game_name_heading;
+  Text_Component *m_author;
+  Text_Component *m_version;
+  Text_Component *m_loading;
+
+  //---------------------------------------------------------------------------
+  // Description : Initialises the timer used for the animation ticks
+  //---------------------------------------------------------------------------
+  bool InitTimer();
+
+  //---------------------------------------------------------------------------
+  // Description : Updates and determines if the animation needs to update
+  //---------------------------------------------------------------------------
+  void UpdateTimer();
+
+  INT64 m_frequency;
+  float m_ticksPerMs;
+  INT64 m_startTime;
+  float m_frameTime;
+  bool m_animation_tick;
+  int m_current_animation_fps;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_INTRODUCTION_CONTROLLER_H_

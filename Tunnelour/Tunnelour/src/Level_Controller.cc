@@ -30,7 +30,7 @@ Level_Controller::Level_Controller() : Controller() {
   m_level_name_heading = 0;
   m_level_blurb = 0;
   m_camera = 0;
-  m_z_position = -5;
+  m_z_position = -3;
 }
 
 //------------------------------------------------------------------------------
