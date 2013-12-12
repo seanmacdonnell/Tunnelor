@@ -23,6 +23,9 @@
 #include "Level_Component.h"
 #include "Text_Component.h"
 #include "Camera_Component.h"
+#include "Background_Controller.h"
+#include "Middleground_Controller.h"
+#include "Splash_Screen_Component.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -75,6 +78,10 @@ class Level_Controller: public Controller {
   Text_Component *m_level_blurb;
   std::string m_font_path;
   int m_z_position;
+
+  Tunnelour::Background_Controller *m_background_controller;
+  Tunnelour::Middleground_Controller *m_middleground_controller;
+  Tunnelour::Splash_Screen_Component *m_splash_screen_component;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_LEVEL_CONTROLLER_H_

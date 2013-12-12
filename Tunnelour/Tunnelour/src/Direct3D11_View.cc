@@ -1000,8 +1000,9 @@ void Direct3D11_View::Render_Texts(std::vector<Direct3D11_View::Text_Renderable*
       } else {
         renderables[i]->texture->texture = (*stored_texture).second;
       }
+    } else {
+      Render_Text(renderables[i], viewmatrix);
     }
-    Render_Text(renderables[i], viewmatrix);
   }
 }
 

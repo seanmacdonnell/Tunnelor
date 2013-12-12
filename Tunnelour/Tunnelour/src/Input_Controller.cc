@@ -259,6 +259,18 @@ void Input_Controller::ProcessInput() {
     }
   }
 
+  if (m_keyboardState[DIK_SPACE] & 0x80)  {
+    m_dik_grave_pressed = true;
+  } else {
+    if (m_dik_grave_pressed) {
+      m_game_settings->SetIsDebugMode(!m_game_settings->IsDebugMode());
+      m_dik_grave_pressed = false;
+    }
+  }
+
+
+  
+
   if (m_avatar_component != 0) {
     m_avatar_component->SetCommand(command);
   }

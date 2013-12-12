@@ -192,11 +192,14 @@
     <ClCompile Include="src\Get_Avatar_Mutator.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
-    <ClCompile Include="src\Introduction_Controller.cc">
+    <ClCompile Include="src\Splash_Screen_Controller.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
-    <ClCompile Include="src\Introduction_Controller_Mutator.cc">
+    <ClCompile Include="src\Splash_Screen_Controller_Mutator.cc">
       <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Splash_Screen_Component.cc">
+      <Filter>Source Files\Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -344,11 +347,14 @@
     <ClInclude Include="include\Get_Avatar_Mutator.h">
       <Filter>Include Files\Controllers</Filter>
     </ClInclude>
-    <ClInclude Include="include\Introduction_Controller.h">
+    <ClInclude Include="include\Splash_Screen_Controller.h">
       <Filter>Include Files\Controllers</Filter>
     </ClInclude>
-    <ClInclude Include="include\Introduction_Controller_Mutator.h">
+    <ClInclude Include="include\Splash_Screen_Controller_Mutator.h">
       <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Splash_Screen_Component.h">
+      <Filter>Include Files\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

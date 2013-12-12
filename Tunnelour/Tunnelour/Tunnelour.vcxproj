@@ -113,8 +113,6 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Init_Controller.cc" />
     <ClCompile Include="src\Input_Controller.cc" />
     <ClCompile Include="src\Input_Controller_Mutator.cc" />
-    <ClCompile Include="src\Introduction_Controller.cc" />
-    <ClCompile Include="src\Introduction_Controller_Mutator.cc" />
     <ClCompile Include="src\Level_Component.cc" />
     <ClCompile Include="src\Level_Controller.cc" />
     <ClCompile Include="src\Level_Controller_Mutator.cc" />
@@ -122,6 +120,9 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Bitmap_Component.cc" />
     <ClCompile Include="src\Middleground_Controller.cc" />
     <ClCompile Include="src\Middleground_Controller_Mutator.cc" />
+    <ClCompile Include="src\Splash_Screen_Component.cc" />
+    <ClCompile Include="src\Splash_Screen_Controller.cc" />
+    <ClCompile Include="src\Splash_Screen_Controller_Mutator.cc" />
     <ClCompile Include="src\Text_Component.cc" />
     <ClCompile Include="src\Tileset_Helper.cc" />
     <ClCompile Include="src\Tile_Bitmap.cc" />
@@ -164,8 +165,6 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Init_Controller.h" />
     <ClInclude Include="include\Input_Controller.h" />
     <ClInclude Include="include\Input_Controller_Mutator.h" />
-    <ClInclude Include="include\Introduction_Controller.h" />
-    <ClInclude Include="include\Introduction_Controller_Mutator.h" />
     <ClInclude Include="include\Level_Component.h" />
     <ClInclude Include="include\Level_Controller.h" />
     <ClInclude Include="include\Level_Controller_Mutator.h" />
@@ -173,6 +172,9 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Bitmap_Component.h" />
     <ClInclude Include="include\Middleground_Controller.h" />
     <ClInclude Include="include\Middleground_Controller_Mutator.h" />
+    <ClInclude Include="include\Splash_Screen_Component.h" />
+    <ClInclude Include="include\Splash_Screen_Controller.h" />
+    <ClInclude Include="include\Splash_Screen_Controller_Mutator.h" />
     <ClInclude Include="include\String_Helper.h" />
     <ClInclude Include="include\Text_Component.h" />
     <ClInclude Include="include\Tileset_Helper.h" />
