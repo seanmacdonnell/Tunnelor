@@ -13,8 +13,8 @@
 //  limitations under the License.
 //
 
-#ifndef TUNNELOUR_SPLASH_SCREEN_COMPONENT_H_
-#define TUNNELOUR_SPLASH_SCREEN_COMPONENT_H_
+#ifndef TUNNELOUR_INPUT_COMPONENT_H_
+#define TUNNELOUR_INPUT_COMPONENT_H_
 
 #include "Component.h"
 #include <vector>
@@ -22,37 +22,39 @@
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
-//  Description : Splash_Screen_Component contains all the data for the current 
+//  Description : Input_Component contains all the data for the current 
 //              : game level and the past game level.
 //-----------------------------------------------------------------------------
-class Splash_Screen_Component: public Tunnelour::Component {
+class Input_Component: public Tunnelour::Component {
  public:
+   struct Key_Input {
+     bool IsSpace;
+   };
   //---------------------------------------------------------------------------
   // Description : Constructor
   //---------------------------------------------------------------------------
-  Splash_Screen_Component();
+  Input_Component();
 
   //---------------------------------------------------------------------------
   // Description : Deconstructor
   //---------------------------------------------------------------------------
-  ~Splash_Screen_Component();
+  ~Input_Component();
 
   //---------------------------------------------------------------------------
   // Description : Initialise this Component
   //---------------------------------------------------------------------------
   void Init();
 
-  std::string GetFirstLevel();
+  Key_Input GetCurrentKeyInput();
+  void SetCurrentKeyInput(Key_Input key_input);
+  Key_Input GetLastKeyInput();
   
-  bool IsLoading();
-
-  void SetIsLoading(bool is_loading);
-
  protected:
 
  private:
- std::string m_first_level;
- bool m_is_loading;
+ Key_Input m_current_key_input;
+ Key_Input m_last_key_input;
+
 };
 }  // namespace Tunnelour
-#endif  //  TUNNELOUR_SPLASH_SCREEN_COMPONENT_H_
+#endif  //  TUNNELOUR_INPUT_COMPONENT_H_

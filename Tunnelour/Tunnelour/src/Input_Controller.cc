@@ -28,6 +28,7 @@ Input_Controller::Input_Controller() : Controller() {
   m_game_settings = 0;
   m_avatar_component = 0;
   m_dik_grave_pressed = false;
+  m_input_component = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -60,6 +61,12 @@ Input_Controller::~Input_Controller() {
 //------------------------------------------------------------------------------
 bool Input_Controller::Init(Component_Composite * const model) {
   Controller::Init(model);
+  if (m_input_component == 0) {
+    m_input_component = new Input_Component();
+    m_input_component->Init();
+    m_model->Add(m_input_component);
+  }
+
   Input_Controller_Mutator mutator;
   m_model->Apply(&mutator);
   if (mutator.WasSuccessful()) {
@@ -259,17 +266,14 @@ void Input_Controller::ProcessInput() {
     }
   }
 
+  Input_Component::Key_Input key_input;
+
   if (m_keyboardState[DIK_SPACE] & 0x80)  {
-    m_dik_grave_pressed = true;
+    key_input.IsSpace = true;
   } else {
-    if (m_dik_grave_pressed) {
-      m_game_settings->SetIsDebugMode(!m_game_settings->IsDebugMode());
-      m_dik_grave_pressed = false;
-    }
+    key_input.IsSpace = false;
   }
-
-
-  
+  m_input_component->SetCurrentKeyInput(key_input);
 
   if (m_avatar_component != 0) {
     m_avatar_component->SetCommand(command);

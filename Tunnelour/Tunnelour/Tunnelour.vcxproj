@@ -111,6 +111,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Game_Settings_Component.cc" />
     <ClCompile Include="src\Get_Avatar_Mutator.cc" />
     <ClCompile Include="src\Init_Controller.cc" />
+    <ClCompile Include="src\Input_Component.cc" />
     <ClCompile Include="src\Input_Controller.cc" />
     <ClCompile Include="src\Input_Controller_Mutator.cc" />
     <ClCompile Include="src\Level_Component.cc" />
@@ -163,6 +164,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Game_Settings_Component.h" />
     <ClInclude Include="include\Get_Avatar_Mutator.h" />
     <ClInclude Include="include\Init_Controller.h" />
+    <ClInclude Include="include\Input_Component.h" />
     <ClInclude Include="include\Input_Controller.h" />
     <ClInclude Include="include\Input_Controller_Mutator.h" />
     <ClInclude Include="include\Level_Component.h" />

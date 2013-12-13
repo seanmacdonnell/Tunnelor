@@ -26,6 +26,7 @@
 #include "Controller.h"
 #include "Game_Settings_Component.h"
 #include "Avatar_Component.h"
+#include "Input_Component.h"
 
 
 namespace Tunnelour {
@@ -91,6 +92,7 @@ class Input_Controller: public Controller {
   int m_mouseX, m_mouseY;
   Avatar_Component *m_avatar_component;
   bool m_dik_grave_pressed;  // Tilda
+  Input_Component *m_input_component;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_INPUT_CONTROLLER_H_

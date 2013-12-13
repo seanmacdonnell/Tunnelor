@@ -41,8 +41,6 @@ Tunnelour/Tunnelour/include/Init_Controller.h -text
 Tunnelour/Tunnelour/include/Input_Component.h -text
 Tunnelour/Tunnelour/include/Input_Controller.h -text
 Tunnelour/Tunnelour/include/Input_Controller_Mutator.h -text
-Tunnelour/Tunnelour/include/Introduction_Controller.h -text
-Tunnelour/Tunnelour/include/Introduction_Controller_Mutator.h -text
 Tunnelour/Tunnelour/include/Level_Component.h -text
 Tunnelour/Tunnelour/include/Level_Controller.h -text
 Tunnelour/Tunnelour/include/Level_Controller_Mutator.h -text
@@ -146,8 +144,6 @@ Tunnelour/Tunnelour/src/Init_Controller.cc -text
 Tunnelour/Tunnelour/src/Input_Component.cc -text
 Tunnelour/Tunnelour/src/Input_Controller.cc -text
 Tunnelour/Tunnelour/src/Input_Controller_Mutator.cc -text
-Tunnelour/Tunnelour/src/Introduction_Controller.cc -text
-Tunnelour/Tunnelour/src/Introduction_Controller_Mutator.cc -text
 Tunnelour/Tunnelour/src/Level_Component.cc -text
 Tunnelour/Tunnelour/src/Level_Controller.cc -text
 Tunnelour/Tunnelour/src/Level_Controller_Mutator.cc -text

@@ -29,6 +29,7 @@
 #include "Level_Component.h"
 #include "Text_Component.h"
 #include "Splash_Screen_Component.h"
+#include "Input_Component.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -110,6 +111,7 @@ class Splash_Screen_Controller: public Controller {
   int m_current_animation_fps;
 
   Splash_Screen_Component *m_splash_screen_component;
+  Input_Component *m_input;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_INTRODUCTION_CONTROLLER_H_

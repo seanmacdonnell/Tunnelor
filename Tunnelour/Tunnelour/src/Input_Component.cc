@@ -13,41 +13,42 @@
 //  limitations under the License.
 //
 
-#include "Splash_Screen_Component.h"
+#include "Input_Component.h"
 
 namespace Tunnelour {
 
 //------------------------------------------------------------------------------
 // public:
 //------------------------------------------------------------------------------
-Splash_Screen_Component::Splash_Screen_Component(): Component() {
-  m_type = "Splash_Screen_Component";
-  m_first_level = "Level 0";
-  m_is_loading = false;
+Input_Component::Input_Component(): Component() {
+  m_current_key_input.IsSpace = false;
+  m_last_key_input.IsSpace = false;
+  m_type = "Input_Component";
 }
 
 //------------------------------------------------------------------------------
-Splash_Screen_Component::~Splash_Screen_Component() {
+Input_Component::~Input_Component() {
 }
 
 //------------------------------------------------------------------------------
-void Splash_Screen_Component::Init() {
+void Input_Component::Init() {
   m_is_initialised = true;
 }
 
 //---------------------------------------------------------------------------
-std::string Splash_Screen_Component::GetFirstLevel() {
-  return m_first_level;
+Input_Component::Key_Input Input_Component::GetCurrentKeyInput() {
+  return m_current_key_input;
 }
 
 //---------------------------------------------------------------------------
-bool Splash_Screen_Component::IsLoading() {
-  return m_is_loading;
+void Input_Component::SetCurrentKeyInput(Key_Input key_input) {
+  m_last_key_input = m_current_key_input;
+  m_current_key_input = key_input;
 }
 
 //---------------------------------------------------------------------------
-void Splash_Screen_Component::SetIsLoading(bool is_loading) {
-  m_is_loading = is_loading;
+Input_Component::Key_Input Input_Component::GetLastKeyInput() {
+  return m_last_key_input;
 }
 
 }  // namespace Tunnelour

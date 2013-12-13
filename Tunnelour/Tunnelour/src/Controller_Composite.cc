@@ -55,10 +55,11 @@ void Controller_Composite::Remove(Tunnelour::Controller *controller) {
 bool Controller_Composite::Run() {
   // This algorithm was provided by John Barker
   // Run controllers who are not finished, and remove controllers that are.
+  std::list<std::list<Tunnelour::Controller*>::iterator> finished_controllers;
   std::list<Tunnelour::Controller*>::iterator it;
   for (it = m_controllers.begin(); it != m_controllers.end(); it++) {
     if ((*it)->IsFinished()) {
-      it = m_controllers.erase(it);
+      finished_controllers.push_back(it);
     } else {
       if ((*it)->HasBeenInitalised()) {
         if (!(*it)->Run()) {
@@ -69,6 +70,11 @@ bool Controller_Composite::Run() {
         (*it)->Init(m_model);
       }
     }
+  }
+
+  std::list<std::list<Tunnelour::Controller*>::iterator>::iterator finished_controller;
+  for (finished_controller = finished_controllers.begin(); finished_controller != finished_controllers.end(); finished_controller++) {
+    m_controllers.erase((*finished_controller));
   }
   return true;
 }

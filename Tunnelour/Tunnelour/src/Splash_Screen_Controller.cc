@@ -45,6 +45,7 @@ Splash_Screen_Controller::Splash_Screen_Controller() : Controller() {
   m_z_text_position = -5;
   m_animation_tick = false;
   m_splash_screen_component = 0;
+  m_input = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -69,6 +70,7 @@ bool Splash_Screen_Controller::Init(Component_Composite * const model) {
     m_game_settings = mutator.GetGameSettings();
     m_camera = mutator.GetCamera();
     m_level = mutator.GetLevel();
+    m_input = mutator.GetInput();
     LoadTilesetMetadata();
     m_current_tileset = GetNamedTileset("Black");
     m_current_tileset_subset = GetCurrentForegroundSubset();
@@ -174,9 +176,22 @@ bool Splash_Screen_Controller::Run() {
   }
 
   if (m_loading->GetText()->text.compare("Loading!") == 0) {
-    m_loading->GetTexture()->transparency = 1.0f;
-    m_loading->GetText()->text = "Loading Complete Press Space to Continue";
-    m_loading->Init();
+    if (!m_splash_screen_component->IsLoading()) {
+      m_loading->GetTexture()->transparency = 1.0f;
+      m_loading->GetText()->text = "Loading Complete Press Space to Continue";
+      m_loading->Init();
+    }
+  }
+
+  if (m_loading->GetText()->text.compare("Loading Complete Press Space to Continue") == 0) {
+    if (m_input->GetCurrentKeyInput().IsSpace) {
+      m_background->GetTexture()->transparency = 0.0f;
+      m_game_name_heading->GetTexture()->transparency = 0.0f;
+      m_author->GetTexture()->transparency = 0.0f;
+      m_version->GetTexture()->transparency = 0.0f;
+      m_loading->GetTexture()->transparency = 0.0f;
+      m_is_finished = true;
+    }
   }
 
 

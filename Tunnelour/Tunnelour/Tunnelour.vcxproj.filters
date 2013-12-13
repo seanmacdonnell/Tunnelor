@@ -201,6 +201,9 @@
     <ClCompile Include="src\Splash_Screen_Component.cc">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
+    <ClCompile Include="src\Input_Component.cc">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Init_Controller.h">
@@ -354,6 +357,9 @@
       <Filter>Include Files\Controllers</Filter>
     </ClInclude>
     <ClInclude Include="include\Splash_Screen_Component.h">
+      <Filter>Include Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Input_Component.h">
       <Filter>Include Files\Model</Filter>
     </ClInclude>
   </ItemGroup>

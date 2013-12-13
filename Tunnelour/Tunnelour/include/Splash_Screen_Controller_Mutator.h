@@ -20,6 +20,7 @@
 #include "Game_Settings_Component.h"
 #include "Camera_Component.h"
 #include "Level_Component.h"
+#include "Input_Component.h"
 
 namespace Tunnelour {
 class Splash_Screen_Controller_Mutator: public Component::Component_Mutator  {
@@ -60,16 +61,19 @@ class Splash_Screen_Controller_Mutator: public Component::Component_Mutator  {
   //-------------------------------------------------------------------------
   Level_Component *const GetLevel();
 
+  Input_Component *const GetInput();
+
   //-------------------------------------------------------------------------
   // Description : Has this mutator completed successfully?
   //-------------------------------------------------------------------------
   bool WasSuccessful();
 
  private:
-  bool m_found_game_settings, m_found_camera, m_found_level;
+  bool m_found_game_settings, m_found_camera, m_found_level, m_found_input;
   Game_Settings_Component *m_game_settings;
   Camera_Component *m_camera;
   Level_Component *m_level;
+  Input_Component *m_input;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_INTRODUCTION_CONTROLLER_MUTATOR_H_
