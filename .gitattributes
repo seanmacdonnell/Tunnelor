@@ -79,8 +79,6 @@ Tunnelour/Tunnelour/resource/levels/Level_4.csv -text
 Tunnelour/Tunnelour/resource/levels/Level_4.txt -text
 Tunnelour/Tunnelour/resource/tilesets/Ariel.fnt -text
 Tunnelour/Tunnelour/resource/tilesets/Ariel_0.png -text
-Tunnelour/Tunnelour/resource/tilesets/Assassins_Dub.fnt -text
-Tunnelour/Tunnelour/resource/tilesets/Assassins_Dub_0.png -text
 Tunnelour/Tunnelour/resource/tilesets/Black_Tileset_0_0.png -text
 Tunnelour/Tunnelour/resource/tilesets/Black_Tileset_0_0.txt -text
 Tunnelour/Tunnelour/resource/tilesets/CC-Red-Alert-LAN.fnt -text
@@ -95,18 +93,10 @@ Tunnelour/Tunnelour/resource/tilesets/Charlie_Standing_Animation_Tileset_1_2.png
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Standing_Animation_Tileset_1_2.txt -text
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Walking_Animation_Tileset_1_6.png -text
 Tunnelour/Tunnelour/resource/tilesets/Charlie_Walking_Animation_Tileset_1_6.txt -text
-Tunnelour/Tunnelour/resource/tilesets/Christiana.fnt -text
-Tunnelour/Tunnelour/resource/tilesets/Christiana_0.png -text
-Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_4.png -text
-Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_4.txt -text
 Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_5.png -text
 Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_5.txt -text
 Tunnelour/Tunnelour/resource/tilesets/DestroyEarthRoughBB.fnt -text
 Tunnelour/Tunnelour/resource/tilesets/DestroyEarthRoughBB_0.png -text
-Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_5.png -text
-Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_5.txt -text
-Tunnelour/Tunnelour/resource/tilesets/VTKSCaveirada.fnt -text
-Tunnelour/Tunnelour/resource/tilesets/VTKSCaveirada_0.png -text
 Tunnelour/Tunnelour/resource/tilesets/White_Tileset_0_0.png -text
 Tunnelour/Tunnelour/resource/tilesets/White_Tileset_0_0.txt -text
 Tunnelour/Tunnelour/src/Avatar_Component.cc -text
