@@ -44,6 +44,9 @@ Tunnelour/Tunnelour/include/Input_Controller_Mutator.h -text
 Tunnelour/Tunnelour/include/Level_Component.h -text
 Tunnelour/Tunnelour/include/Level_Controller.h -text
 Tunnelour/Tunnelour/include/Level_Controller_Mutator.h -text
+Tunnelour/Tunnelour/include/Level_Transition_Component.h -text
+Tunnelour/Tunnelour/include/Level_Transition_Controller.h -text
+Tunnelour/Tunnelour/include/Level_Transition_Controller_Mutator.h -text
 Tunnelour/Tunnelour/include/Message_Wrapper.h -text
 Tunnelour/Tunnelour/include/Middleground_Controller.h -text
 Tunnelour/Tunnelour/include/Middleground_Controller_Mutator.h -text
@@ -97,8 +100,13 @@ Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_5.png -text
 Tunnelour/Tunnelour/resource/tilesets/Debug_Tileset_0_5.txt -text
 Tunnelour/Tunnelour/resource/tilesets/DestroyEarthRoughBB.fnt -text
 Tunnelour/Tunnelour/resource/tilesets/DestroyEarthRoughBB_0.png -text
+Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_6_1.png -text
+Tunnelour/Tunnelour/resource/tilesets/Dirt_Tileset_6_1.txt -text
+Tunnelour/Tunnelour/resource/tilesets/The_Void_Tileset_0_0.txt -text
 Tunnelour/Tunnelour/resource/tilesets/White_Tileset_0_0.png -text
 Tunnelour/Tunnelour/resource/tilesets/White_Tileset_0_0.txt -text
+Tunnelour/Tunnelour/resource/tilesets/tnt_x_plosion.fnt -text
+Tunnelour/Tunnelour/resource/tilesets/tnt_x_plosion_0.png -text
 Tunnelour/Tunnelour/src/Avatar_Component.cc -text
 Tunnelour/Tunnelour/src/Avatar_Controller.cc -text
 Tunnelour/Tunnelour/src/Avatar_Controller_Mutator.cc -text
@@ -137,6 +145,9 @@ Tunnelour/Tunnelour/src/Input_Controller_Mutator.cc -text
 Tunnelour/Tunnelour/src/Level_Component.cc -text
 Tunnelour/Tunnelour/src/Level_Controller.cc -text
 Tunnelour/Tunnelour/src/Level_Controller_Mutator.cc -text
+Tunnelour/Tunnelour/src/Level_Transition_Component.cc -text
+Tunnelour/Tunnelour/src/Level_Transition_Controller.cc -text
+Tunnelour/Tunnelour/src/Level_Transition_Controller_Mutator.cc -text
 Tunnelour/Tunnelour/src/Message_Wrapper.cc -text
 Tunnelour/Tunnelour/src/Middleground_Controller.cc -text
 Tunnelour/Tunnelour/src/Middleground_Controller_Mutator.cc -text

@@ -61,8 +61,8 @@ bool Background_Controller::Init(Component_Composite * const model) {
     m_camera = mutator.GetCamera();
     m_level = mutator.GetLevel();
     m_is_debug_mode = m_game_settings->IsDebugMode();
-
-    m_is_debug_mode = m_game_settings->IsDebugMode();
+   
+    LoadTilesetMetadata();
     if (m_is_debug_mode) {
       m_current_tileset = GetNamedTileset("Debug");
     } else {
@@ -127,8 +127,6 @@ void Background_Controller::DestroyLevel() {
 
 //------------------------------------------------------------------------------
 std::vector<Tile_Bitmap*> Background_Controller::GenerateTunnelFromMetadata(Level_Component::Level_Metadata level_metadata) {
-  LoadTilesetMetadata();
-
   std::vector<Tile_Bitmap*> tiles;
   std::vector<std::vector<Tile_Bitmap*>> background_lines;
   
@@ -238,9 +236,14 @@ void Background_Controller::LoadTilesetMetadata() {
   m_tilesets.push_back(debug_tileset_metadata);
 
   Tileset_Helper::Tileset_Metadata dirt_tileset_metadata;
-  m_dirt_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Dirt_Tileset_5.txt");
+  m_dirt_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Dirt_Tileset_6_1.txt");
   Tileset_Helper::LoadTilesetMetadataIntoStruct(m_dirt_metadata_file_path, &dirt_tileset_metadata);
   m_tilesets.push_back(dirt_tileset_metadata);
+
+  Tileset_Helper::Tileset_Metadata the_void_tileset_metadata;
+  m_the_void_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"The_Void_Tileset_0_0.txt");
+  Tileset_Helper::LoadTilesetMetadataIntoStruct(m_the_void_metadata_file_path, &the_void_tileset_metadata);
+  m_tilesets.push_back(the_void_tileset_metadata);
 
   if (m_game_settings->IsDebugMode()) {
     m_current_tileset = GetNamedTileset("Debug");

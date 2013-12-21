@@ -13,7 +13,7 @@
 //  limitations under the License.
 //
 
-#include "Splash_Screen_Controller.h"
+#include "Level_Transition_Controller.h"
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -28,7 +28,7 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 // public:
 //------------------------------------------------------------------------------
-Splash_Screen_Controller::Splash_Screen_Controller() : Controller() {
+Level_Transition_Controller::Level_Transition_Controller() : Controller() {
   m_game_settings = 0;
   m_camera = 0;
   m_level = 0;
@@ -36,7 +36,8 @@ Splash_Screen_Controller::Splash_Screen_Controller() : Controller() {
   m_is_debug_mode = false;
   m_black_metadata_file_path = "";
   m_white_metadata_file_path = "";
-  m_background = 0;
+  m_top_slash = 0;
+  m_bottom_slash = 0;
   m_game_name_heading = 0;
   m_author = 0;
   m_version = 0;
@@ -44,12 +45,13 @@ Splash_Screen_Controller::Splash_Screen_Controller() : Controller() {
   m_z_bitmap_position = -4;
   m_z_text_position = -5;
   m_animation_tick = false;
-  m_splash_screen_component = 0;
+  m_level_transition_component = 0;
   m_input = 0;
+  m_background = 0;
 }
 
 //------------------------------------------------------------------------------
-Splash_Screen_Controller::~Splash_Screen_Controller() {
+Level_Transition_Controller::~Level_Transition_Controller() {
   m_game_settings = 0;
   m_camera = 0;
   m_level = 0;
@@ -60,11 +62,11 @@ Splash_Screen_Controller::~Splash_Screen_Controller() {
 }
 
 //------------------------------------------------------------------------------
-bool Splash_Screen_Controller::Init(Component_Composite * const model) {
+bool Level_Transition_Controller::Init(Component_Composite * const model) {
   Controller::Init(model);
   std::srand(static_cast<unsigned int>(std::time(0)));
 
-  Splash_Screen_Controller_Mutator mutator;
+  Level_Transition_Controller_Mutator mutator;
   m_model->Apply(&mutator);
   if (mutator.WasSuccessful()) {
     m_game_settings = mutator.GetGameSettings();
@@ -75,21 +77,27 @@ bool Splash_Screen_Controller::Init(Component_Composite * const model) {
     m_current_tileset = GetNamedTileset("Black");
     m_current_tileset_subset = GetCurrentForegroundSubset();
     m_has_been_initialised = true;
-    //m_heading_font_path = "resource\\tilesets\\DestroyEarthRoughBB.fnt";
-    m_heading_font_path = "resource\\tilesets\\tnt_x_plosion.fnt";
+    m_heading_font_path = "resource\\tilesets\\DestroyEarthRoughBB.fnt";
     m_text_font_path = "resource\\tilesets\\CC-Red-Alert-LAN.fnt";
     InitTimer();
-    if (m_splash_screen_component == 0) {
-      m_splash_screen_component = new Splash_Screen_Component();
-      m_splash_screen_component->Init();
-      m_model->Add(m_splash_screen_component);
+    if (m_level_transition_component == 0) {
+      m_level_transition_component = new Level_Transition_Component();
+      m_level_transition_component->Init();
+      m_model->Add(m_level_transition_component);
     }
-    if (m_background == 0) {
+    if (m_top_slash == 0) {
       // Create the Spash Black Tile
-      m_background = CreateTile(128);
-      m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
-      m_background->SetScale(new D3DXVECTOR3((m_game_settings->GetResolution().x/128), (m_game_settings->GetResolution().y/128), 1.0f));
-      m_model->Add(m_background);
+      m_top_slash = CreateTile(128);
+      m_top_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
+      m_top_slash->SetScale(new D3DXVECTOR3((m_game_settings->GetResolution().x/128), ((m_game_settings->GetResolution().y/128)/3), 1.0f));
+      m_model->Add(m_top_slash);
+    }
+    if (m_bottom_slash == 0) {
+      // Create the Spash Black Tile
+      m_bottom_slash = CreateTile(128);
+      m_bottom_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
+      m_bottom_slash->SetScale(new D3DXVECTOR3((m_game_settings->GetResolution().x/128), ((m_game_settings->GetResolution().y/128)/3), 1.0f));
+      m_model->Add(m_bottom_slash);
     }
     if (m_game_name_heading == 0) {
       m_game_name_heading = new Text_Component();
@@ -101,7 +109,7 @@ bool Splash_Screen_Controller::Init(Component_Composite * const model) {
       m_game_name_heading->GetFrame()->index_buffer = 0;
       m_game_name_heading->GetTexture()->texture = 0;
       m_game_name_heading->GetFrame()->vertex_buffer = 0;
-      m_model->Add(m_game_name_heading);
+      //m_model->Add(m_game_name_heading);
      }
     if (m_author == 0) {
       m_author = new Text_Component();
@@ -112,7 +120,7 @@ bool Splash_Screen_Controller::Init(Component_Composite * const model) {
       m_author->GetFrame()->index_buffer = 0;
       m_author->GetTexture()->texture = 0;
       m_author->GetFrame()->vertex_buffer = 0;
-      m_model->Add(m_author);
+      //m_model->Add(m_author);
     }
     if (m_version == 0) {
       m_version = new Text_Component();
@@ -123,7 +131,7 @@ bool Splash_Screen_Controller::Init(Component_Composite * const model) {
       m_version->GetFrame()->index_buffer = 0;
       m_version->GetTexture()->texture = 0;
       m_version->GetFrame()->vertex_buffer = 0;
-      m_model->Add(m_version);
+      //m_model->Add(m_version);
     }
     if (m_loading == 0) {
       m_loading = new Text_Component();
@@ -134,9 +142,9 @@ bool Splash_Screen_Controller::Init(Component_Composite * const model) {
       m_loading->GetFrame()->index_buffer = 0;
       m_loading->GetTexture()->texture = 0;
       m_loading->GetFrame()->vertex_buffer = 0;
-      m_model->Add(m_loading);
+      //m_model->Add(m_loading);
     } 
-    m_splash_screen_component->SetIsLoading(true);
+    m_level_transition_component->SetIsLoading(true);
   } else {
     return false;
   }
@@ -144,12 +152,37 @@ bool Splash_Screen_Controller::Init(Component_Composite * const model) {
 }
 
 //------------------------------------------------------------------------------
-bool Splash_Screen_Controller::Run() {
+bool Level_Transition_Controller::Run() {
   // Get game settings component from the model with the Mutator.
   if (!m_has_been_initialised) { return false; }
 
-  m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
+  if (m_top_slash != 0 && m_bottom_slash != 0) {
+    m_top_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y - (m_game_settings->GetResolution().y /2), m_z_bitmap_position);
+    m_bottom_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + (m_game_settings->GetResolution().y /2), m_z_bitmap_position);
+    float bottom = m_top_slash->GetBottomRightPostion().y;
+    float top = m_bottom_slash->GetTopLeftPostion().y;
+    if (bottom >= top) {
+      m_model->Remove(m_top_slash);
+      m_top_slash = 0;
+      m_model->Remove(m_bottom_slash);
+      m_bottom_slash = 0;
+      if (m_background == 0) {
+        // Create the Spash Black Tile
+        m_background = CreateTile(128);
+        m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
+        m_background->SetScale(new D3DXVECTOR3((m_game_settings->GetResolution().x/128), (m_game_settings->GetResolution().y/128), 1.0f));
+        m_model->Add(m_background);
+      }
+    } else {
+      m_top_slash->SetScale(new D3DXVECTOR3(m_top_slash->GetScale()->x,m_top_slash->GetScale()->y + 0.05, 1.0f));
+      m_bottom_slash->SetScale(new D3DXVECTOR3(m_bottom_slash->GetScale()->x,m_bottom_slash->GetScale()->y + 0.05, 1.0f));
+    }
+  }
 
+  if (m_background != 0) {
+    m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
+  }
+  
   m_game_name_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + 200, m_z_text_position);
   m_game_name_heading->GetTexture()->transparency = 1.0f;
 
@@ -177,7 +210,7 @@ bool Splash_Screen_Controller::Run() {
   }
 
   if (m_loading->GetText()->text.compare("Loading!") == 0) {
-    if (!m_splash_screen_component->IsLoading()) {
+    if (!m_level_transition_component->IsLoading()) {
       m_loading->GetTexture()->transparency = 1.0f;
       m_loading->GetText()->text = "Loading Complete Press Space to Continue";
       m_loading->Init();
@@ -186,7 +219,8 @@ bool Splash_Screen_Controller::Run() {
 
   if (m_loading->GetText()->text.compare("Loading Complete Press Space to Continue") == 0) {
     if (m_input->GetCurrentKeyInput().IsSpace) {
-      m_background->GetTexture()->transparency = 0.0f;
+      m_top_slash->GetTexture()->transparency = 0.0f;
+      m_bottom_slash->GetTexture()->transparency = 0.0f;
       m_game_name_heading->GetTexture()->transparency = 0.0f;
       m_author->GetTexture()->transparency = 0.0f;
       m_version->GetTexture()->transparency = 0.0f;
@@ -213,7 +247,7 @@ bool Splash_Screen_Controller::Run() {
 //------------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
-void Splash_Screen_Controller::LoadTilesetMetadata() {
+void Level_Transition_Controller::LoadTilesetMetadata() {
   Tileset_Helper::Tileset_Metadata debug_tileset_metadata;
   m_black_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Black_Tileset_0_0.txt");
   Tileset_Helper::LoadTilesetMetadataIntoStruct(m_black_metadata_file_path, &debug_tileset_metadata);
@@ -229,7 +263,7 @@ void Splash_Screen_Controller::LoadTilesetMetadata() {
 }
 
 //---------------------------------------------------------------------------
-Tileset_Helper::Tileset_Metadata Splash_Screen_Controller::GetNamedTileset(std::string name) {
+Tileset_Helper::Tileset_Metadata Level_Transition_Controller::GetNamedTileset(std::string name) {
   Tileset_Helper::Tileset_Metadata found_tileset_metadata;
 
   std::vector<Tileset_Helper::Tileset_Metadata>::iterator tileset_metadata;
@@ -243,7 +277,7 @@ Tileset_Helper::Tileset_Metadata Splash_Screen_Controller::GetNamedTileset(std::
 }
 
 //---------------------------------------------------------------------------
-Tileset_Helper::Subset Splash_Screen_Controller::GetCurrentForegroundSubset() {
+Tileset_Helper::Subset Level_Transition_Controller::GetCurrentForegroundSubset() {
   Tileset_Helper::Subset found_subset;
 
   std::vector<Tileset_Helper::Subset>::iterator tileset;
@@ -257,7 +291,7 @@ Tileset_Helper::Subset Splash_Screen_Controller::GetCurrentForegroundSubset() {
 }
 
 //------------------------------------------------------------------------------
-Tile_Bitmap* Splash_Screen_Controller::CreateTile(float base_tile_size) {
+Tile_Bitmap* Level_Transition_Controller::CreateTile(float base_tile_size) {
   Tileset_Helper::Line middleground_line;
   std::vector<Tileset_Helper::Line>::iterator line;
   for (line = m_current_tileset_subset.lines.begin(); line != m_current_tileset_subset.lines.end(); line++) {
@@ -295,7 +329,7 @@ Tile_Bitmap* Splash_Screen_Controller::CreateTile(float base_tile_size) {
 }
 
 //---------------------------------------------------------------------------
-Tileset_Helper::Line Splash_Screen_Controller::GetCurrentSizedLine(float size) {
+Tileset_Helper::Line Level_Transition_Controller::GetCurrentSizedLine(float size) {
   Tileset_Helper::Line middleground_line;
   std::vector<Tileset_Helper::Line>::iterator line;
   for (line = m_current_tileset_subset.lines.begin(); line != m_current_tileset_subset.lines.end(); line++) {
@@ -309,7 +343,7 @@ Tileset_Helper::Line Splash_Screen_Controller::GetCurrentSizedLine(float size) {
 }
 
 //------------------------------------------------------------------------------
-bool Splash_Screen_Controller::InitTimer() {
+bool Level_Transition_Controller::InitTimer() {
   // Check to see if this system supports high performance timers.
   QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&m_frequency));
 
@@ -326,7 +360,7 @@ bool Splash_Screen_Controller::InitTimer() {
 }
 
 //------------------------------------------------------------------------------
-void Splash_Screen_Controller::UpdateTimer() {
+void Level_Transition_Controller::UpdateTimer() {
   int frames_per_millisecond = static_cast<int>(1000/5);
 
   INT64 currentTime;

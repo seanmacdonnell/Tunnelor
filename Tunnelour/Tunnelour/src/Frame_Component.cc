@@ -125,8 +125,8 @@ D3DXVECTOR3 * const Frame_Component::GetFrameCentre() {
 //---------------------------------------------------------------------------
 D3DXVECTOR3 Frame_Component::GetTopLeftPostion() {
   D3DXVECTOR3 top_left_position;
-  top_left_position.x = m_position.x - (m_size.x / 2);
-  top_left_position.y = m_position.y + (m_size.y / 2);
+  top_left_position.x = (m_position.x - (m_size.x * m_scale.x) / 2);
+  top_left_position.y = (m_position.y + (m_size.y * m_scale.y) / 2);
   top_left_position.z = m_position.z;
 
   return top_left_position;
@@ -136,8 +136,8 @@ D3DXVECTOR3 Frame_Component::GetTopLeftPostion() {
 //---------------------------------------------------------------------------
 D3DXVECTOR3 Frame_Component::GetBottomRightPostion() {
   D3DXVECTOR3 bottom_right_position;
-  bottom_right_position.x = m_position.x + (m_size.x / 2);
-  bottom_right_position.y = m_position.y - (m_size.y / 2);
+  bottom_right_position.x = (m_position.x + (m_size.x * m_scale.x) / 2);
+  bottom_right_position.y = (m_position.y - (m_size.y * m_scale.y) / 2);
   bottom_right_position.z = m_position.z;
 
   return bottom_right_position;

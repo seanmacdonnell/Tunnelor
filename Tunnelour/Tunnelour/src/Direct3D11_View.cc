@@ -356,7 +356,7 @@ void Direct3D11_View::HandleEventRemove(Tunnelour::Component * const component){
       m_renderables.Layer_02.erase(found_bitmap_renderable);
     } else  if (bitmap_component->GetPosition()->z == -4) {
       std::vector<Bitmap_Renderable*>::iterator bitmap_renderable;
-      for (bitmap_renderable = m_renderables.Layer_02.begin(); bitmap_renderable != m_renderables.Layer_02.end(); bitmap_renderable++) {
+      for (bitmap_renderable = m_renderables.Layer_04.begin(); bitmap_renderable != m_renderables.Layer_04.end(); bitmap_renderable++) {
         if ((*bitmap_renderable)->bitmap->GetID() == bitmap_component->GetID()) {
           found_bitmap_renderable = bitmap_renderable; 
         }

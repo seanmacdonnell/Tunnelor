@@ -13,8 +13,8 @@
 //  limitations under the License.
 //
 
-#ifndef TUNNELOUR_MIDDLEGROUND_CONTROLLER_H_
-#define TUNNELOUR_MIDDLEGROUND_CONTROLLER_H_
+#ifndef LEVEL_TRANSITION_CONTROLLER_H_
+#define LEVEL_TRANSITION_CONTROLLER_H_
 
 #include <vector>
 #include <string>
@@ -23,28 +23,31 @@
 #include "Controller.h"
 #include "Tile_Bitmap.h"
 #include "Game_Settings_Component.h"
-#include "Middleground_Controller_Mutator.h"
+#include "Level_Transition_Controller_Mutator.h"
 #include "Camera_Component.h"
 #include "Tileset_Helper.h"
 #include "Level_Component.h"
+#include "Text_Component.h"
+#include "Level_Transition_Component.h"
+#include "Input_Component.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
 //  Description : This controller is responsible for the generation of the
-//                middleground (Layer 0)
+//                introduction to Tunnelor
 //-----------------------------------------------------------------------------
-class Middleground_Controller: public Controller {
+class Level_Transition_Controller: public Controller {
  public:
   //---------------------------------------------------------------------------
   // Description : Constructor
   //---------------------------------------------------------------------------
-  Middleground_Controller();
+  Level_Transition_Controller();
 
   //---------------------------------------------------------------------------
   // Description : Deconstructor
   //---------------------------------------------------------------------------
-  virtual ~Middleground_Controller();
+  virtual ~Level_Transition_Controller();
 
   //--------------------------------------------------------------------------
   // Description : Initialisation function for the Controller
@@ -59,70 +62,58 @@ class Middleground_Controller: public Controller {
  protected:
 
  private:
-  void CreateLevel();
-  void DestroyLevel();
-
-  std::vector<Tile_Bitmap*> GenerateTunnelFromMetadata(Level_Component::Level_Metadata level_metadata);
   std::vector<Tileset_Helper::Tileset_Metadata> m_tilesets;
   Tileset_Helper::Tileset_Metadata m_current_tileset;
-  Tileset_Helper::Subset m_current_middleground_subset;
+  Tileset_Helper::Subset m_current_tileset_subset;
   void LoadTilesetMetadata();
   Tileset_Helper::Tileset_Metadata GetNamedTileset(std::string name);
-  Tileset_Helper::Subset GetCurrentMiddlegroundSubset();
+  Tileset_Helper::Subset GetCurrentForegroundSubset();
   Tile_Bitmap* CreateTile(float base_tile_size);
   Tileset_Helper::Line GetCurrentSizedLine(float size);
-  
-  //---------------------------------------------------------------------------
-  // Description : Resets a tiles texture to 0 for switching tilesets.
-  //---------------------------------------------------------------------------
-  void ResetTileTexture(Tile_Bitmap *out_tile);
-  std::vector<Tile_Bitmap*> m_left_edge_tiles;
-  std::vector<Tile_Bitmap*> m_right_edge_tiles;
-  std::vector<Tile_Bitmap*> m_bottom_edge_tiles;
-  std::vector<Tile_Bitmap*> m_top_edge_tiles;
-  std::vector<Tile_Bitmap*> m_tunnel_edge_tiles;
-
-  //---------------------------------------------------------------------------
-  // Description : Tiles up from the current background edge
-  //---------------------------------------------------------------------------
-  void TileUp(float camera_top, float middleground_top);
-
-  //---------------------------------------------------------------------------
-  // Description : Tiles down from the current background edge
-  //---------------------------------------------------------------------------
-  void TileDown(float camera_bottom, float middleground_bottom);
-
-  //---------------------------------------------------------------------------
-  // Description : Tiles right from the current background edge
-  //---------------------------------------------------------------------------
-  void TileRight(float camera_right, float middleground_right);
-
-  //---------------------------------------------------------------------------
-  // Description : Tiles left from the current background edge
-  //---------------------------------------------------------------------------
-  void TileLeft(float camera_left, float middleground_left);
 
   //---------------------------------------------------------------------------
   // Description : Switches the tileset from Debug to Dirt and vise versa
   //---------------------------------------------------------------------------
-  void SwitchTileset();
-
-  std::vector<Tile_Bitmap*> m_middleground_tiles;
-
   Game_Settings_Component* m_game_settings;
-
   Camera_Component *m_camera;
   Level_Component *m_level;
   std::string m_tileset_filename;
   bool m_is_debug_mode;
-  
-  std::string m_debug_metadata_file_path;
-  std::string m_dirt_metadata_file_path;
-  std::string m_the_void_metadata_file_path;
+  std::string m_black_metadata_file_path;
+  std::string m_white_metadata_file_path;
 
+  Tile_Bitmap* m_top_slash;
+  Tile_Bitmap* m_bottom_slash;
+  Tile_Bitmap* m_background;
+  std::string m_heading_font_path;
+  std::string m_text_font_path;
+  int m_z_bitmap_position;
+  int m_z_text_position;
 
-  std::string m_current_level_name;
+  Text_Component *m_game_name_heading;
+  Text_Component *m_author;
+  Text_Component *m_version;
+  Text_Component *m_loading;
 
+  //---------------------------------------------------------------------------
+  // Description : Initialises the timer used for the animation ticks
+  //---------------------------------------------------------------------------
+  bool InitTimer();
+
+  //---------------------------------------------------------------------------
+  // Description : Updates and determines if the animation needs to update
+  //---------------------------------------------------------------------------
+  void UpdateTimer();
+
+  INT64 m_frequency;
+  float m_ticksPerMs;
+  INT64 m_startTime;
+  float m_frameTime;
+  bool m_animation_tick;
+  int m_current_animation_fps;
+
+  Level_Transition_Component *m_level_transition_component;
+  Input_Component *m_input;
 };
 }  // namespace Tunnelour
-#endif  // TUNNELOUR_MIDDLEGROUND_CONTROLLER_H_
+#endif  // LEVEL_TRANSITION_CONTROLLER_H_

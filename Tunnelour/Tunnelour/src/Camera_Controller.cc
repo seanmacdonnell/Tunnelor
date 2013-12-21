@@ -70,7 +70,7 @@ bool Camera_Controller::Run() {
     avatar_position.z = m_avatar->GetPosition()->z;
 
     camera_position.x = avatar_position.x;
-    camera_position.y = avatar_position.y - (avatar_collision_block.size.y / 2);
+    camera_position.y = avatar_position.y;// - (avatar_collision_block.size.y / 2) + 128;
 
     m_camera->SetPosition(camera_position);
   }

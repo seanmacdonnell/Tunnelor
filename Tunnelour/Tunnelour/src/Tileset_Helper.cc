@@ -435,7 +435,7 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
   if (line != NULL) {
     token = strtok_s(line, " ", &next_token);
     if (strcmp(token, "Tileset_Name") == 0)   {
-      token = strtok_s(NULL, " =\"", &next_token);
+      token = strtok_s(NULL, "\"", &next_token);
       out_metadata->name = token;
     } else {
       std::string error = "Parse Tileset Metadata Failed! Expected: Tileset_Name, got: ";

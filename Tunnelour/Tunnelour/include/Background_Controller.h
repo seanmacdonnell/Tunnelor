@@ -119,6 +119,7 @@ class Background_Controller: public Controller {
   std::string m_debug_metadata_file_path;
   std::string m_dirt_metadata_file_path;
   std::string m_current_level_name;
+  std::string m_the_void_metadata_file_path;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_CONTROLLER_H_

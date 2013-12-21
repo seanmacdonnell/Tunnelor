@@ -34,6 +34,7 @@ Level_Controller::Level_Controller() : Controller() {
   m_background_controller = 0;
   m_middleground_controller = 0;
   m_splash_screen_component = 0;
+  m_level_transition_controller = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -89,6 +90,7 @@ bool Level_Controller::Init(Component_Composite * const model) {
 //------------------------------------------------------------------------------
 bool Level_Controller::Run() {
   if (m_has_been_initialised) {
+    /*
     if (m_level_name_heading == 0 && m_level->GetCurrentLevel().level_name.size() != 0) {
       m_level_name_heading = new Text_Component();
       m_level_name_heading->GetText()->font_csv_file = m_font_path;
@@ -113,6 +115,7 @@ bool Level_Controller::Run() {
       m_level_name_heading->GetTexture()->transparency = transparency;
       m_level_blurb->GetTexture()->transparency = transparency;
     }
+    */
     if (m_avatar == 0) {
       Get_Avatar_Mutator mutator;
       m_model->Apply(&mutator);
@@ -120,7 +123,7 @@ bool Level_Controller::Run() {
         m_avatar = mutator.GetAvatarComponent();
       }
     }
-
+    /*
     m_level_name_heading->SetPosition(m_camera->GetPosition().x,
                                       m_camera->GetPosition().y + m_level_name_heading->GetSize().y, m_z_position);
     m_level_name_heading->Init();
@@ -128,7 +131,7 @@ bool Level_Controller::Run() {
     m_level_blurb->SetPosition(m_camera->GetPosition().x,
                                m_camera->GetPosition().y - m_level_name_heading->GetSize().y, m_z_position);
     m_level_blurb->Init();
-
+    */
     // Check if the level end conditions are met
     if (m_avatar != 0) {
       if (m_level->GetCurrentLevel().end_conditions.size() != 0) {
@@ -167,23 +170,27 @@ bool Level_Controller::Run() {
             }
           }
           if ((*end_condition)->and && and) {
-            m_model->Remove(m_level_name_heading);
-            m_level_name_heading = 0;
-            m_model->Remove(m_level_blurb);
-            m_level_blurb = 0;
+            //m_model->Remove(m_level_name_heading);
+            //m_level_name_heading = 0;
+            //m_model->Remove(m_level_blurb);
+            //m_level_blurb = 0;
             if ((*end_condition)->next_level.compare("QUIT") != 0) {
               m_level->SetCurrentLevel(GetNamedLevel((*end_condition)->next_level));
+              m_level_transition_controller = new Level_Transition_Controller();
+              m_level_transition_controller->Init(m_model);
+              m_level_transition_controller->Run();
             } else {
               ///throw Tunnelour::Exceptions::run_error("QUIT");
               PostQuitMessage(0);
             }
           } else if ((*end_condition)->or && or) {
-            m_model->Remove(m_level_name_heading);
-            m_level_name_heading = 0;
-            m_model->Remove(m_level_blurb);
-            m_level_blurb = 0;
+            //m_model->Remove(m_level_name_heading);
+            //m_level_name_heading = 0;
+            //m_model->Remove(m_level_blurb);
+            //m_level_blurb = 0;
             if ((*end_condition)->next_level.compare("QUIT") != 0) {
               m_level->SetCurrentLevel(GetNamedLevel((*end_condition)->next_level));
+              m_splash_screen_component->SetIsLoading(true);
             } else {
               //throw Tunnelour::Exceptions::run_error("QUIT");
               PostQuitMessage(0);
@@ -194,6 +201,9 @@ bool Level_Controller::Run() {
     }
     m_background_controller->Run();
     m_middleground_controller->Run();
+    if (m_level_transition_controller != 0) {
+      m_level_transition_controller->Run();
+    }
   } else {
     return false;
   }

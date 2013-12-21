@@ -117,6 +117,9 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Level_Component.cc" />
     <ClCompile Include="src\Level_Controller.cc" />
     <ClCompile Include="src\Level_Controller_Mutator.cc" />
+    <ClCompile Include="src\Level_Transition_Component.cc" />
+    <ClCompile Include="src\Level_Transition_Controller.cc" />
+    <ClCompile Include="src\Level_Transition_Controller_Mutator.cc" />
     <ClCompile Include="src\Message_Wrapper.cc" />
     <ClCompile Include="src\Bitmap_Component.cc" />
     <ClCompile Include="src\Middleground_Controller.cc" />
@@ -170,6 +173,9 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Level_Component.h" />
     <ClInclude Include="include\Level_Controller.h" />
     <ClInclude Include="include\Level_Controller_Mutator.h" />
+    <ClInclude Include="include\Level_Transition_Component.h" />
+    <ClInclude Include="include\Level_Transition_Controller.h" />
+    <ClInclude Include="include\Level_Transition_Controller_Mutator.h" />
     <ClInclude Include="include\Message_Wrapper.h" />
     <ClInclude Include="include\Bitmap_Component.h" />
     <ClInclude Include="include\Middleground_Controller.h" />
