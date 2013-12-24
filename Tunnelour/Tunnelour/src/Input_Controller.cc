@@ -76,8 +76,9 @@ bool Input_Controller::Init(Component_Composite * const model) {
     m_game_settings = mutator.GetGameSettings();
     if (m_game_settings->GetHInstance() != 0) {
       m_avatar_component = mutator.GetAvatarComponent();
-      InitDirectInput();
-      m_has_been_initialised = true;
+      if (InitDirectInput()) {
+        m_has_been_initialised = true;
+      }
     }
   } else {
     return false;
