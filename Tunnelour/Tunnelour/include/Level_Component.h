@@ -118,10 +118,15 @@ class Level_Component: public Tunnelour::Component {
 
   void SetCurrentLevel(Level_Metadata current_level);
 
+  bool IsComplete();
+
+  void SetIsComplete(bool is_complete);
+
  protected:
 
  private:
  Level_Metadata m_current_level_metadata;
+ bool m_is_complete;
 };
 }  // namespace Tunnelour
 #endif  //  TUNNELOUR_LEVEL_COMPONENT_H_

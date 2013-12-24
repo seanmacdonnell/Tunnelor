@@ -60,9 +60,6 @@
     <ClCompile Include="src\Init_Controller.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
-    <ClCompile Include="src\Background_Controller.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
     <ClCompile Include="src\Tile_Bitmap.cc">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
@@ -126,12 +123,6 @@
     <ClCompile Include="src\View_Composite.cc">
       <Filter>Source Files\View</Filter>
     </ClCompile>
-    <ClCompile Include="src\Middleground_Controller.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Middleground_Controller_Mutator.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
     <ClCompile Include="src\Text_Component.cc">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
@@ -163,9 +154,6 @@
       <Filter>Source Files\View</Filter>
     </ClCompile>
     <ClCompile Include="src\Debug_Data_Display_Controller_Mutator.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Background_Controller_Mutator.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
     <ClCompile Include="src\Tileset_Helper.cc">
@@ -213,6 +201,12 @@
     <ClCompile Include="src\Level_Transition_Controller_Mutator.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
+    <ClCompile Include="src\Level_Tile_Controller.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Level_Tile_Controller_Mutator.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Init_Controller.h">
@@ -220,9 +214,6 @@
     </ClInclude>
     <ClInclude Include="include\Direct3D11_View.h">
       <Filter>Include Files\View</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Background_Controller.h">
-      <Filter>Include Files\Controllers</Filter>
     </ClInclude>
     <ClInclude Include="include\Tile_Bitmap.h">
       <Filter>Include Files\Model</Filter>
@@ -244,9 +235,6 @@
     </ClInclude>
     <ClInclude Include="include\Component_ID.h">
       <Filter>Include Files\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Background_Controller_Mutator.h">
-      <Filter>Include Files\Controllers</Filter>
     </ClInclude>
     <ClInclude Include="include\Frame_Component.h">
       <Filter>Include Files\Model</Filter>
@@ -292,12 +280,6 @@
     </ClInclude>
     <ClInclude Include="include\View_Composite.h">
       <Filter>Include Files\View</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Middleground_Controller.h">
-      <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Middleground_Controller_Mutator.h">
-      <Filter>Include Files\Controllers</Filter>
     </ClInclude>
     <ClInclude Include="include\Text_Component.h">
       <Filter>Include Files\Model</Filter>
@@ -378,6 +360,12 @@
       <Filter>Include Files\Controllers</Filter>
     </ClInclude>
     <ClInclude Include="include\Level_Transition_Controller_Mutator.h">
+      <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Level_Tile_Controller.h">
+      <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Level_Tile_Controller_Mutator.h">
       <Filter>Include Files\Controllers</Filter>
     </ClInclude>
   </ItemGroup>

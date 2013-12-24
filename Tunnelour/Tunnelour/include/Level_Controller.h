@@ -26,6 +26,7 @@
 #include "Background_Controller.h"
 #include "Middleground_Controller.h"
 #include "Splash_Screen_Component.h"
+#include "Level_Tile_Controller.h"
 #include "Level_Transition_Controller.h"
 
 namespace Tunnelour {
@@ -82,6 +83,7 @@ class Level_Controller: public Controller {
 
   Tunnelour::Background_Controller *m_background_controller;
   Tunnelour::Middleground_Controller *m_middleground_controller;
+  Tunnelour::Level_Tile_Controller *m_level_tile_controller;
   Tunnelour::Splash_Screen_Component *m_splash_screen_component;
   Tunnelour::Level_Transition_Controller *m_level_transition_controller;
 };

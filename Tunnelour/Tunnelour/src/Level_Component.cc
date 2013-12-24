@@ -22,6 +22,7 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 Level_Component::Level_Component(): Component() {
   m_type = "Level_Component";
+  m_is_complete = false;
 }
 
 //------------------------------------------------------------------------------
@@ -41,6 +42,17 @@ Level_Component::Level_Metadata Level_Component::GetCurrentLevel() {
 //---------------------------------------------------------------------------
 void Level_Component::SetCurrentLevel(Level_Metadata current_level) {
   m_current_level_metadata = current_level;
+  m_is_complete = false;
+}
+
+//---------------------------------------------------------------------------
+bool Level_Component::IsComplete() {
+  return m_is_complete;
+}
+
+//---------------------------------------------------------------------------
+void Level_Component::SetIsComplete(bool is_complete) {
+  m_is_complete = is_complete;
 }
 
 }  // namespace Tunnelour

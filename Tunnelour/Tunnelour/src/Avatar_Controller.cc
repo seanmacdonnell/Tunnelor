@@ -171,12 +171,13 @@ void Avatar_Controller::RunAvatarState() {
 
   if (current_state.compare("Charlie_Standing") == 0) {
     RunStandingState();
-  } else if (current_state.compare("Charlie_Walking") == 0) {
+  } else if (current_state.compare("Charlie_Walking") == 0) { 
     RunWalkingState();
   } else if (current_state.compare("Charlie_Falling") == 0) {
     RunFallingState();
+  } else if (current_state.compare("Charlie_Level_Transitioning") == 0) {
+    RunLevelTransitioningState();
   }
-
   m_animation_tick = false;
 }
 
@@ -193,6 +194,9 @@ void Avatar_Controller::RunStandingState() {
     SetAvatarState(current_command.state, current_command.direction);
     AlignAvatarOnLastAvatarCollisionBlock();
   } else { // No command, run the standing animation,
+    if (m_level->IsComplete()) {
+      SetAvatarState("Standing_To_Thumbs_up", m_avatar->GetState().direction);
+    }
     unsigned int state_index = current_state.state_index;
     state_index++;
     if (state_index > (m_current_animation_subset.number_of_frames - 1)) {
@@ -425,6 +429,44 @@ void Avatar_Controller::RunFallingState() {
   }
 }
 
+//------------------------------------------------------------------------------
+void Avatar_Controller::RunLevelTransitioningState() {
+  m_avatar->SetAngle(static_cast<float>(0.0));  // in radians
+  m_avatar->SetVelocity(D3DXVECTOR3(0, 0, 0));
+
+  Avatar_Component::Avatar_State current_state = m_avatar->GetState();
+  Avatar_Component::Avatar_State current_command = m_avatar->GetCommand();
+
+  if (current_state.state.compare("Standing_To_Thumbs_up") == 0) {
+    unsigned int state_index = current_state.state_index;
+    state_index++;
+    if (state_index > (m_current_animation_subset.number_of_frames - 1)) {
+      if (m_current_animation_subset.is_repeatable) {
+        state_index = 0;
+      } else {
+        SetAvatarState("Thumbs_up", m_avatar->GetState().direction);
+        state_index = 0;
+        current_state = m_avatar->GetState();
+      }
+    }
+
+    SetAvatarStateAnimationFrame(state_index);
+  } else if (current_state.state.compare("Thumbs_up") == 0) {
+    unsigned int state_index = current_state.state_index;
+    state_index++;
+    if (state_index > (m_current_animation_subset.number_of_frames - 1)) {
+      if (m_current_animation_subset.is_repeatable) {
+        state_index = 0;
+      } else {
+        std::string error;
+        error = "No handling for this non-repeating animation: " + current_command.state;
+        throw Exceptions::init_error(error);
+      }
+    }
+
+    SetAvatarStateAnimationFrame(state_index);
+  }
+}
 
 
 //------------------------------------------------------------------------------
@@ -548,6 +590,11 @@ void Avatar_Controller::LoadTilesets(std::wstring wtileset_path) {
   m_falling_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Falling_Animation_Tileset_1_2.txt");
   Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(m_falling_metadata_file_path, &m_falling_metadata);
   m_animation_metadata.push_back(m_falling_metadata);
+
+  // Thumbs Up (Level Complete)
+  m_level_transitioning_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Level_Transition_Animation_Tileset_1_0.txt");
+  Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(m_level_transitioning_metadata_file_path, &m_level_transitioning_metadata);
+  m_animation_metadata.push_back(m_level_transitioning_metadata);
 }
 
 //------------------------------------------------------------------------------

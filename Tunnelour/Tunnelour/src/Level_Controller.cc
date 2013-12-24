@@ -33,6 +33,7 @@ Level_Controller::Level_Controller() : Controller() {
   m_z_position = -3;
   m_background_controller = 0;
   m_middleground_controller = 0;
+  m_level_tile_controller = 0;
   m_splash_screen_component = 0;
   m_level_transition_controller = 0;
 }
@@ -71,11 +72,14 @@ bool Level_Controller::Init(Component_Composite * const model) {
     if (m_splash_screen_component->IsLoading()) {
       LoadLevelMetadata();
       m_font_path = "resource\\tilesets\\Ariel.fnt";
-      m_background_controller = new Tunnelour::Background_Controller();
-      m_background_controller->Init(m_model);
+      //m_background_controller = new Tunnelour::Background_Controller();
+      //m_background_controller->Init(m_model);
   
-      m_middleground_controller = new Tunnelour::Middleground_Controller();
-      m_middleground_controller->Init(m_model);
+      //m_middleground_controller = new Tunnelour::Middleground_Controller();
+      //m_middleground_controller->Init(m_model);
+
+      m_level_tile_controller = new Level_Tile_Controller();
+      m_level_tile_controller->Init(m_model);
 
       m_has_been_initialised = true;
       m_splash_screen_component->SetIsLoading(false);
@@ -179,6 +183,7 @@ bool Level_Controller::Run() {
               m_level_transition_controller = new Level_Transition_Controller();
               m_level_transition_controller->Init(m_model);
               m_level_transition_controller->Run();
+              m_level->SetIsComplete(true);
             } else {
               ///throw Tunnelour::Exceptions::run_error("QUIT");
               PostQuitMessage(0);
@@ -191,6 +196,7 @@ bool Level_Controller::Run() {
             if ((*end_condition)->next_level.compare("QUIT") != 0) {
               m_level->SetCurrentLevel(GetNamedLevel((*end_condition)->next_level));
               m_splash_screen_component->SetIsLoading(true);
+              m_level->SetIsComplete(true);
             } else {
               //throw Tunnelour::Exceptions::run_error("QUIT");
               PostQuitMessage(0);
@@ -199,8 +205,10 @@ bool Level_Controller::Run() {
         }
       }
     }
-    m_background_controller->Run();
-    m_middleground_controller->Run();
+    //m_background_controller->Run();
+    //m_middleground_controller->Run();
+    m_level_tile_controller->Run();
+
     if (m_level_transition_controller != 0) {
       m_level_transition_controller->Run();
     }
