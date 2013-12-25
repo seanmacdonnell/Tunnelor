@@ -48,6 +48,7 @@ Direct3D11_View::Direct3D11_View() {
   m_debug_shader = 0;
   m_game_settings = 0;
   m_game_metrics = 0;
+  m_avatar = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -172,24 +173,30 @@ void Direct3D11_View::Init(Component_Composite * const model) {
 
   m_model->ObserveType(this, "Bitmap_Component");
   m_model->ObserveType(this, "Text_Component");
+  m_model->ObserveType(this, "Avatar_Component");
 
   Direct3D11_View_Mutator mutator;
   m_model->Apply(&mutator);
   if (mutator.WasSuccessful()) {
     m_camera = mutator.GetCamera();
-    m_avatar = mutator.GetAvatar();
-    m_game_metrics = mutator.GetGameMetrics();
+    if (mutator.GetGameSettings() != 0) {
+      m_game_metrics = mutator.GetGameMetrics();
+    }
     m_game_settings = mutator.GetGameSettings();
 
-    Bitmap_Renderable *bitmap_renderable = new Bitmap_Renderable();
-    bitmap_renderable->bitmap = m_avatar;
-    bitmap_renderable->frame = m_avatar->GetFrame();
-    bitmap_renderable->texture = m_avatar->GetTexture();
-    bitmap_renderable->frame_centre = m_avatar->GetFrameCentre();
-    bitmap_renderable->scale = m_avatar->GetScale();
-    bitmap_renderable->position = m_avatar->GetPosition();
+    if (mutator.GetAvatar() != 0) {
+      Bitmap_Renderable *bitmap_renderable = new Bitmap_Renderable();
+      m_avatar = mutator.GetAvatar();
+      bitmap_renderable->bitmap = m_avatar;
+      bitmap_renderable->frame = m_avatar->GetFrame();
+      bitmap_renderable->texture = m_avatar->GetTexture();
+      bitmap_renderable->frame_centre = m_avatar->GetFrameCentre();
+      bitmap_renderable->scale = m_avatar->GetScale();
+      bitmap_renderable->position = m_avatar->GetPosition();
 
-    m_renderables.Avatars.push_back(bitmap_renderable);
+      m_renderables.Avatars.push_back(bitmap_renderable);
+    }
+
 
     m_is_initialised = true;
   }
@@ -320,6 +327,25 @@ void Direct3D11_View::HandleEventAdd(Tunnelour::Component * const component) {
     } else if (text->GetPosition()->z == -5) {
       m_renderables.Layer_05.push_back(text_renderable);
     }
+  }
+
+  if (component->GetType().compare("Avatar_Component") == 0) {
+    if (m_avatar == 0) {
+      m_avatar = static_cast<Tunnelour::Avatar_Component*>(component);
+
+      Bitmap_Renderable *bitmap_renderable = new Bitmap_Renderable();
+      bitmap_renderable->bitmap = m_avatar;
+      bitmap_renderable->frame = m_avatar->GetFrame();
+      bitmap_renderable->texture = m_avatar->GetTexture();
+      bitmap_renderable->frame_centre = m_avatar->GetFrameCentre();
+      bitmap_renderable->scale = m_avatar->GetScale();
+      bitmap_renderable->position = m_avatar->GetPosition();
+
+      m_renderables.Avatars.push_back(bitmap_renderable);
+    }
+  }
+  if (component->GetType().compare("Game_Metrics_Component") == 0) {
+    m_game_metrics = static_cast<Tunnelour::Game_Metrics_Component*>(component);
   }
 }
 

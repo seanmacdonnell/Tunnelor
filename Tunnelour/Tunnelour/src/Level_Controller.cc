@@ -36,6 +36,7 @@ Level_Controller::Level_Controller() : Controller() {
   m_level_tile_controller = 0;
   m_splash_screen_component = 0;
   m_level_transition_controller = 0;
+  m_avatar_controller = 0; 
 }
 
 //------------------------------------------------------------------------------
@@ -69,17 +70,22 @@ bool Level_Controller::Init(Component_Composite * const model) {
     if (m_splash_screen_component == 0) {
       m_splash_screen_component = mutator.GetSplashScreen();
     }
+
     if (m_splash_screen_component->IsLoading()) {
       LoadLevelMetadata();
       m_font_path = "resource\\tilesets\\Ariel.fnt";
-      //m_background_controller = new Tunnelour::Background_Controller();
-      //m_background_controller->Init(m_model);
-  
-      //m_middleground_controller = new Tunnelour::Middleground_Controller();
-      //m_middleground_controller->Init(m_model);
 
-      m_level_tile_controller = new Level_Tile_Controller();
-      m_level_tile_controller->Init(m_model);
+      if (m_level_tile_controller == 0) {
+        m_level_tile_controller = new Level_Tile_Controller();
+        m_level_tile_controller->Init(m_model);
+        m_level_tile_controller->CreateLevel();
+        m_level_tile_controller->AddLevelToModel();
+      }
+
+      if (m_avatar_controller == 0) {
+        m_avatar_controller = new Tunnelour::Avatar_Controller();
+        m_avatar_controller->Init(m_model);
+      }
 
       m_has_been_initialised = true;
       m_splash_screen_component->SetIsLoading(false);
@@ -120,6 +126,7 @@ bool Level_Controller::Run() {
       m_level_blurb->GetTexture()->transparency = transparency;
     }
     */
+    m_avatar_controller->Run();
     if (m_avatar == 0) {
       Get_Avatar_Mutator mutator;
       m_model->Apply(&mutator);
@@ -207,11 +214,13 @@ bool Level_Controller::Run() {
     }
     //m_background_controller->Run();
     //m_middleground_controller->Run();
+    
     m_level_tile_controller->Run();
-
+    
     if (m_level_transition_controller != 0) {
       m_level_transition_controller->Run();
     }
+    
   } else {
     return false;
   }

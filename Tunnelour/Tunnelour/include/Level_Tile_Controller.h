@@ -56,12 +56,16 @@ class Level_Tile_Controller: public Controller {
   //---------------------------------------------------------------------------
   virtual bool Run();
 
+  //---------------------------------------------------------------------------
+  // Description : Create the tiles for the current level
+  //---------------------------------------------------------------------------
+  void CreateLevel();
+  void AddLevelToModel();
+  void DestroyLevel();
+
  protected:
 
  private:
-  void CreateLevel();
-  void DestroyLevel();
-
   std::vector<Tile_Bitmap*> GenerateTunnelFromMetadata(Level_Component::Level_Metadata level_metadata);
   std::vector<Tileset_Helper::Tileset_Metadata> m_tilesets;
   Tileset_Helper::Tileset_Metadata m_current_tileset;
@@ -126,7 +130,7 @@ class Level_Tile_Controller: public Controller {
 
 
   std::string m_current_level_name;
-
+  std::vector<Tile_Bitmap*> m_created_tiles;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_LEVEL_TILE_CONTROLLER_H_

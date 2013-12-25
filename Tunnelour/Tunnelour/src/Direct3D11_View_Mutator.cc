@@ -62,7 +62,7 @@ void Direct3D11_View_Mutator::Mutate(Tunnelour::Component * const component) {
 
 //------------------------------------------------------------------------------
 bool Direct3D11_View_Mutator::WasSuccessful() {
-  return m_found_camera && m_found_avatar && m_found_game_settings && m_found_game_metics;
+  return m_found_camera && m_found_game_settings;
 }
 
 //------------------------------------------------------------------------------

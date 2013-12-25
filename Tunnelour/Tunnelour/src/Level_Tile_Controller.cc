@@ -71,8 +71,6 @@ bool Level_Tile_Controller::Init(Component_Composite * const model) {
     m_current_background_subset = GetCurrentBackgroundSubset();
     m_current_middleground_subset = GetCurrentMiddlegroundSubset();
 
-    CreateLevel();
-
     m_has_been_initialised = true;
   } else {
     return false;
@@ -139,18 +137,14 @@ bool Level_Tile_Controller::Run() {
 }
 
 //------------------------------------------------------------------------------
-// protected:
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-// private:
-//------------------------------------------------------------------------------
 void Level_Tile_Controller::CreateLevel() {
   m_current_level_name = m_level->GetCurrentLevel().level_name;
-  std::vector<Tile_Bitmap*> tiles = GenerateTunnelFromMetadata(m_level->GetCurrentLevel());
+  m_created_tiles = GenerateTunnelFromMetadata(m_level->GetCurrentLevel());
+}
 
-  // Add tiles to Model
-  for (std::vector<Tile_Bitmap*>::iterator tile = tiles.begin(); tile != tiles.end(); ++tile) {
+//------------------------------------------------------------------------------
+void Level_Tile_Controller::AddLevelToModel() {
+  for (std::vector<Tile_Bitmap*>::iterator tile = m_created_tiles.begin(); tile != m_created_tiles.end(); ++tile) {
     if ((*tile)->GetTexture()->transparency != 0.0f) {
       m_model->Add(*tile);
       m_middleground_tiles.push_back(*tile);
@@ -170,6 +164,15 @@ void Level_Tile_Controller::DestroyLevel() {
   m_left_edge_tiles.clear();
   m_right_edge_tiles.clear();
 }
+
+//------------------------------------------------------------------------------
+// protected:
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+// private:
+//------------------------------------------------------------------------------
+
 
 //------------------------------------------------------------------------------
 std::vector<Tile_Bitmap*> Level_Tile_Controller::GenerateTunnelFromMetadata(Level_Component::Level_Metadata level_metadata) {

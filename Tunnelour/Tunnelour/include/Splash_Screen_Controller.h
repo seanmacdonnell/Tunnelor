@@ -112,6 +112,8 @@ class Splash_Screen_Controller: public Controller {
 
   Splash_Screen_Component *m_splash_screen_component;
   Input_Component *m_input;
+  bool m_has_space_been_pressed;
+  float m_loading_transparency;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_INTRODUCTION_CONTROLLER_H_

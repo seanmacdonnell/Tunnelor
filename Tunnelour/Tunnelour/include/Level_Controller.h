@@ -28,6 +28,7 @@
 #include "Splash_Screen_Component.h"
 #include "Level_Tile_Controller.h"
 #include "Level_Transition_Controller.h"
+#include "Avatar_Controller.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -60,6 +61,7 @@ class Level_Controller: public Controller {
  protected:
 
  private:
+  Avatar_Controller *m_avatar_controller;
   Avatar_Component *m_avatar;
   Camera_Component *m_camera;
   Game_Settings_Component *m_game_settings;
