@@ -48,11 +48,16 @@ class Splash_Screen_Component: public Tunnelour::Component {
 
   void SetIsLoading(bool is_loading);
 
+  bool HasSpaceBeenPressed();
+
+  void SetHasSpaceBeenPressed(bool has_space_been_pressed);
+
  protected:
 
  private:
  std::string m_first_level;
  bool m_is_loading;
+ bool m_has_space_been_pressed;
 };
 }  // namespace Tunnelour
 #endif  //  TUNNELOUR_SPLASH_SCREEN_COMPONENT_H_

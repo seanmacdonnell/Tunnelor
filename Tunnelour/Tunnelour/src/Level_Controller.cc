@@ -100,6 +100,9 @@ bool Level_Controller::Init(Component_Composite * const model) {
 //------------------------------------------------------------------------------
 bool Level_Controller::Run() {
   if (m_has_been_initialised) {
+    if (m_splash_screen_component->HasSpaceBeenPressed()) {
+      m_level_tile_controller->ShowLevel();
+    }
     /*
     if (m_level_name_heading == 0 && m_level->GetCurrentLevel().level_name.size() != 0) {
       m_level_name_heading = new Text_Component();

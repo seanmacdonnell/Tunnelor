@@ -249,7 +249,7 @@ void Direct3D11_View::Run() {
     Render_Texts(m_renderables.Layer_03, viewmatrix);
     Render_Bitmaps(m_renderables.Layer_04, viewmatrix);
     Render_Texts(m_renderables.Layer_05, viewmatrix);
-    
+
     TurnOffAlphaBlending();
 
     // Present the rendered scene to the screen.

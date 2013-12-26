@@ -24,6 +24,7 @@ Splash_Screen_Component::Splash_Screen_Component(): Component() {
   m_type = "Splash_Screen_Component";
   m_first_level = "Level 0";
   m_is_loading = false;
+  m_has_space_been_pressed = false;
 }
 
 //------------------------------------------------------------------------------
@@ -50,4 +51,13 @@ void Splash_Screen_Component::SetIsLoading(bool is_loading) {
   m_is_loading = is_loading;
 }
 
+//---------------------------------------------------------------------------
+bool Splash_Screen_Component::HasSpaceBeenPressed() {
+  return m_has_space_been_pressed;
+}
+
+//---------------------------------------------------------------------------
+void Splash_Screen_Component::SetHasSpaceBeenPressed(bool has_space_been_pressed) {
+  m_has_space_been_pressed = has_space_been_pressed;
+}
 }  // namespace Tunnelour

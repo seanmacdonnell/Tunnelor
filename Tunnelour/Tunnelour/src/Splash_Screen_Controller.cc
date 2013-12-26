@@ -197,6 +197,7 @@ bool Splash_Screen_Controller::Run() {
   if (m_loading->GetText()->text.compare("Loading Complete Press Space to Continue") == 0) {
     if (m_input->GetCurrentKeyInput().IsSpace) {
       m_has_space_been_pressed = true;
+      m_splash_screen_component->SetHasSpaceBeenPressed(m_has_space_been_pressed);
     }
     if (m_has_space_been_pressed) {
       m_background->GetTexture()->transparency = m_background->GetTexture()->transparency - 0.1f;

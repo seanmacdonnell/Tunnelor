@@ -61,6 +61,8 @@ class Level_Tile_Controller: public Controller {
   //---------------------------------------------------------------------------
   void CreateLevel();
   void AddLevelToModel();
+  void ShowLevel();
+  void HideLevel();
   void DestroyLevel();
 
  protected:

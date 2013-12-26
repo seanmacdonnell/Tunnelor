@@ -145,10 +145,22 @@ void Level_Tile_Controller::CreateLevel() {
 //------------------------------------------------------------------------------
 void Level_Tile_Controller::AddLevelToModel() {
   for (std::vector<Tile_Bitmap*>::iterator tile = m_created_tiles.begin(); tile != m_created_tiles.end(); ++tile) {
-    if ((*tile)->GetTexture()->transparency != 0.0f) {
-      m_model->Add(*tile);
-      m_middleground_tiles.push_back(*tile);
-    }
+    m_model->Add(*tile);
+    m_middleground_tiles.push_back(*tile);
+  }
+}
+
+//------------------------------------------------------------------------------
+void Level_Tile_Controller::ShowLevel() {
+  for (std::vector<Tile_Bitmap*>::iterator tile = m_created_tiles.begin(); tile != m_created_tiles.end(); ++tile) {
+    (*tile)->GetTexture()->transparency = 1.0f;      
+  }
+}
+
+//------------------------------------------------------------------------------
+void Level_Tile_Controller::HideLevel() {
+  for (std::vector<Tile_Bitmap*>::iterator tile = m_created_tiles.begin(); tile != m_created_tiles.end(); ++tile) {
+    (*tile)->GetTexture()->transparency = 0.0f;      
   }
 }
 
@@ -241,7 +253,7 @@ std::vector<Tile_Bitmap*> Level_Tile_Controller::GenerateTunnelFromMetadata(Leve
       new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
 
       if ((*tile).type.compare("Middleground") == 0) {
-        new_tile->GetTexture()->transparency = 1.0f;
+        new_tile->GetTexture()->transparency = 0.0f;
         if (!tile_line.empty()) {
           if (tile_line.back()->GetPosition()->z == 0) {
             new_tile->SetIsWall(true);
@@ -260,7 +272,7 @@ std::vector<Tile_Bitmap*> Level_Tile_Controller::GenerateTunnelFromMetadata(Leve
           }
         }
       } else { // TUNNEL
-        new_tile->GetTexture()->transparency = 1.0f; //TUNNEL
+        new_tile->GetTexture()->transparency = 0.0f; //TUNNEL
         if (tile_line.back()->GetPosition()->z != 0) {
           tile_line.back()->SetIsWall(true);
           m_tunnel_edge_tiles.push_back(tile_line.back());
@@ -371,7 +383,7 @@ Tile_Bitmap* Level_Tile_Controller::CreateMiddlegroundTile(float base_tile_size)
 
   Tile_Bitmap* tile = new Tile_Bitmap();
   tile->SetPosition(D3DXVECTOR3(0, 0, -1));
-  tile->GetTexture()->transparency = 1.0f;
+  tile->GetTexture()->transparency = 0.0f;
 
   std::wstring texture_path = m_game_settings->GetTilesetPath();
   texture_path += String_Helper::StringToWString(m_current_tileset.filename);
@@ -410,7 +422,7 @@ Tile_Bitmap* Level_Tile_Controller::CreateBackgroundTile(float base_tile_size) {
 
   Tile_Bitmap* tile = new Tile_Bitmap();
   tile->SetPosition(D3DXVECTOR3(0, 0, 0));
-  tile->GetTexture()->transparency = 1.0f;
+  tile->GetTexture()->transparency = 0.0f;
 
   std::wstring texture_path = m_game_settings->GetTilesetPath();
   texture_path += String_Helper::StringToWString(m_current_tileset.filename);
@@ -541,6 +553,7 @@ void Level_Tile_Controller::TileUp(float camera_top, float middleground_top) {
       ResetTileTexture((*edge_tile));
       ResetTileTexture(tile);
     }
+    m_created_tiles.push_back(tile);
   }
   m_top_edge_tiles.clear();
 
@@ -581,6 +594,7 @@ void Level_Tile_Controller::TileDown(float camera_bottom, float middleground_bot
       ResetTileTexture((*edge_tile));
       ResetTileTexture(tile);
     }
+    m_created_tiles.push_back(tile);
   }
   m_bottom_edge_tiles.clear();
 
@@ -621,6 +635,7 @@ void Level_Tile_Controller::TileRight(float camera_right, float middleground_rig
       ResetTileTexture((*edge_tile));
       ResetTileTexture(tile);
     }
+    m_created_tiles.push_back(tile);
   }
   m_right_edge_tiles.clear();
 
@@ -661,6 +676,7 @@ void Level_Tile_Controller::TileLeft(float camera_left, float middleground_left)
       ResetTileTexture((*edge_tile));
       ResetTileTexture(tile);
     }
+    m_created_tiles.push_back(tile);
   }
   m_left_edge_tiles.clear();
 
