@@ -189,10 +189,10 @@ bool Level_Controller::Run() {
             //m_model->Remove(m_level_blurb);
             //m_level_blurb = 0;
             if ((*end_condition)->next_level.compare("QUIT") != 0) {
-              m_level->SetCurrentLevel(GetNamedLevel((*end_condition)->next_level));
-              m_level_transition_controller = new Level_Transition_Controller();
-              m_level_transition_controller->Init(m_model);
-              m_level_transition_controller->Run();
+              //m_level->SetCurrentLevel(GetNamedLevel((*end_condition)->next_level));
+              //m_level_transition_controller = new Level_Transition_Controller();
+              //m_level_transition_controller->Init(m_model);
+              //m_level_transition_controller->Run();
               m_level->SetIsComplete(true);
             } else {
               ///throw Tunnelour::Exceptions::run_error("QUIT");
@@ -204,8 +204,8 @@ bool Level_Controller::Run() {
             //m_model->Remove(m_level_blurb);
             //m_level_blurb = 0;
             if ((*end_condition)->next_level.compare("QUIT") != 0) {
-              m_level->SetCurrentLevel(GetNamedLevel((*end_condition)->next_level));
-              m_splash_screen_component->SetIsLoading(true);
+              //m_level->SetCurrentLevel(GetNamedLevel((*end_condition)->next_level));
+              //m_splash_screen_component->SetIsLoading(true);
               m_level->SetIsComplete(true);
             } else {
               //throw Tunnelour::Exceptions::run_error("QUIT");

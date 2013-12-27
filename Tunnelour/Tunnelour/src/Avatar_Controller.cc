@@ -196,20 +196,22 @@ void Avatar_Controller::RunStandingState() {
   } else { // No command, run the standing animation,
     if (m_level->IsComplete()) {
       SetAvatarState("Standing_To_Thumbs_up", m_avatar->GetState().direction);
-    }
-    unsigned int state_index = current_state.state_index;
-    state_index++;
-    if (state_index > (m_current_animation_subset.number_of_frames - 1)) {
-      if (m_current_animation_subset.is_repeatable) {
-        state_index = 0;
-      } else {
-        std::string error;
-        error = "No handling for this non-repeating animation: " + current_command.state;
-        throw Exceptions::init_error(error);
+      AlignAvatarOnLastAvatarCollisionBlock();
+    } else {
+      unsigned int state_index = current_state.state_index;
+      state_index++;
+      if (state_index > (m_current_animation_subset.number_of_frames - 1)) {
+        if (m_current_animation_subset.is_repeatable) {
+          state_index = 0;
+        } else {
+          std::string error;
+          error = "No handling for this non-repeating animation: " + current_command.state;
+          throw Exceptions::init_error(error);
+        }
       }
-    }
 
-    SetAvatarStateAnimationFrame(state_index);
+      SetAvatarStateAnimationFrame(state_index);
+    }
   }
   
   // If the avatar is not adjacent to the floor, he should fall
@@ -683,13 +685,28 @@ void Avatar_Controller::AlignAvatarOnLastAvatarCollisionBlock() {
                                              current_avatar_collision_block.size.y);
     right_foot_offset.z = 0;
 
+
     D3DXVECTOR3 current_avatar_position = *m_avatar->GetPosition();
-    new_avatar_position.x = current_avatar_position.x;
+    new_avatar_position.x = current_avatar_position.x - (right_foot_offset.x / 2);
     new_avatar_position.y = current_avatar_position.y - (right_foot_offset.y / 2);
     new_avatar_position.z = current_avatar_position.z;
 
     m_avatar->SetPosition(new_avatar_position);
+
+    D3DXVECTOR3 avatar_position_offset;
+    avatar_position_offset.x = current_avatar_collision_block.offset_from_avatar_centre.x;
+    avatar_position_offset.y = current_avatar_collision_block.offset_from_avatar_centre.y;
+    avatar_position_offset.z = 0;
+
+    current_avatar_position = *m_avatar->GetPosition();
+    new_avatar_position.x = current_avatar_position.x + avatar_position_offset.x;
+    new_avatar_position.y = current_avatar_position.y - avatar_position_offset.y;
+    new_avatar_position.z = current_avatar_position.z;
+
+    m_avatar->SetPosition(new_avatar_position);
   }
+
+
 }
 
 //------------------------------------------------------------------------------
