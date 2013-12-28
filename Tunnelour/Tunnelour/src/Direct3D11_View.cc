@@ -947,7 +947,7 @@ void Direct3D11_View::Render_Bitmaps(std::vector<Direct3D11_View::Bitmap_Rendera
                                                           NULL)))  {
           throw Exceptions::init_error("Loading font file failed!");
         }
-        m_texture_map[renderables[i]->texture->texture_path]=texture;
+        m_texture_map[renderables[i]->texture->texture_path] = texture;
       } else {
         renderables[i]->texture->texture = (*stored_texture).second;
       }

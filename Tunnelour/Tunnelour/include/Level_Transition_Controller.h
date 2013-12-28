@@ -90,9 +90,10 @@ class Level_Transition_Controller: public Controller {
   int m_z_bitmap_position;
   int m_z_text_position;
 
-  Text_Component *m_game_name_heading;
-  Text_Component *m_author;
-  Text_Component *m_version;
+  Text_Component *m_level_complete_heading;
+  Text_Component *m_next_level_heading;
+  Text_Component *m_next_level_name;
+  Text_Component *m_next_level_blurb;
   Text_Component *m_loading;
 
   //---------------------------------------------------------------------------

@@ -59,11 +59,11 @@ Splash_Screen_Controller::~Splash_Screen_Controller() {
   m_is_debug_mode = false;
   m_black_metadata_file_path = "";
   m_white_metadata_file_path = "";
-  m_model->Remove(m_game_name_heading);
-  m_model->Remove(m_author);
-  m_model->Remove(m_version);
-  m_model->Remove(m_loading);
-  m_model->Remove(m_background);
+  if (m_game_name_heading != 0) { m_model->Remove(m_game_name_heading); }
+  if (m_author != 0) { m_model->Remove(m_author); }
+  if (m_version != 0) { m_model->Remove(m_version); }
+  if (m_loading != 0) { m_model->Remove(m_loading); }
+  if (m_background != 0) { m_model->Remove(m_background); }
   m_has_space_been_pressed = false;
 }
 
@@ -214,6 +214,11 @@ bool Splash_Screen_Controller::Run() {
         m_author->GetTexture()->transparency = 0.0f;
         m_version->GetTexture()->transparency = 0.0f;
         m_loading->GetTexture()->transparency = 0.0f;
+        if (m_game_name_heading != 0) { m_model->Remove(m_game_name_heading); }
+        if (m_author != 0) { m_model->Remove(m_author); }
+        if (m_version != 0) { m_model->Remove(m_version); }
+        if (m_loading != 0) { m_model->Remove(m_loading); }
+        if (m_background != 0) { m_model->Remove(m_background); }
         m_is_finished = true;
       }
     }

@@ -38,9 +38,10 @@ Level_Transition_Controller::Level_Transition_Controller() : Controller() {
   m_white_metadata_file_path = "";
   m_top_slash = 0;
   m_bottom_slash = 0;
-  m_game_name_heading = 0;
-  m_author = 0;
-  m_version = 0;
+  m_level_complete_heading = 0;
+  m_next_level_heading = 0;
+  m_next_level_name = 0;
+  m_next_level_blurb = 0;
   m_loading = 0;
   m_z_bitmap_position = -4;
   m_z_text_position = -5;
@@ -77,7 +78,7 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
     m_current_tileset = GetNamedTileset("Black");
     m_current_tileset_subset = GetCurrentForegroundSubset();
     m_has_been_initialised = true;
-    m_heading_font_path = "resource\\tilesets\\DestroyEarthRoughBB.fnt";
+    m_heading_font_path = "resource\\tilesets\\tnt_x_plosion_2.fnt";
     m_text_font_path = "resource\\tilesets\\CC-Red-Alert-LAN.fnt";
     InitTimer();
     if (m_level_transition_component == 0) {
@@ -99,51 +100,6 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
       m_bottom_slash->SetScale(new D3DXVECTOR3((m_game_settings->GetResolution().x/128), ((m_game_settings->GetResolution().y/128)/3), 1.0f));
       m_model->Add(m_bottom_slash);
     }
-    if (m_game_name_heading == 0) {
-      m_game_name_heading = new Text_Component();
-      m_game_name_heading->GetText()->font_csv_file = m_heading_font_path;
-      m_game_name_heading->GetText()->text = "TUNNELOR";
-      m_game_name_heading->GetTexture()->transparency = 0.0f;
-      m_game_name_heading->SetPosition(0, 0, m_z_text_position);
-      //m_game_name_heading->GetFont()->font_color = D3DXCOLOR(0.37, 0.15, 0.02, 1);
-      m_game_name_heading->GetFrame()->index_buffer = 0;
-      m_game_name_heading->GetTexture()->texture = 0;
-      m_game_name_heading->GetFrame()->vertex_buffer = 0;
-      //m_model->Add(m_game_name_heading);
-     }
-    if (m_author == 0) {
-      m_author = new Text_Component();
-      m_author->GetText()->font_csv_file = m_text_font_path;
-      m_author->GetText()->text = "Author: Sean.MacDonnell@Gmail.com";
-      m_author->GetTexture()->transparency = 0.0f;
-      m_author->SetPosition(0, 0, m_z_text_position);
-      m_author->GetFrame()->index_buffer = 0;
-      m_author->GetTexture()->texture = 0;
-      m_author->GetFrame()->vertex_buffer = 0;
-      //m_model->Add(m_author);
-    }
-    if (m_version == 0) {
-      m_version = new Text_Component();
-      m_version->GetText()->font_csv_file = m_text_font_path;
-      m_version->GetText()->text = "Version: ALPHA";
-      m_version->GetTexture()->transparency = 0.0f;
-      m_version->SetPosition(0, 0, m_z_text_position);
-      m_version->GetFrame()->index_buffer = 0;
-      m_version->GetTexture()->texture = 0;
-      m_version->GetFrame()->vertex_buffer = 0;
-      //m_model->Add(m_version);
-    }
-    if (m_loading == 0) {
-      m_loading = new Text_Component();
-      m_loading->GetText()->font_csv_file = m_text_font_path;
-      m_loading->GetText()->text = "Loading!";
-      m_loading->GetTexture()->transparency = 0.0f;
-      m_loading->SetPosition(0, 0, m_z_text_position);
-      m_loading->GetFrame()->index_buffer = 0;
-      m_loading->GetTexture()->texture = 0;
-      m_loading->GetFrame()->vertex_buffer = 0;
-      //m_model->Add(m_loading);
-    } 
     m_level_transition_component->SetIsLoading(true);
   } else {
     return false;
@@ -157,11 +113,11 @@ bool Level_Transition_Controller::Run() {
   if (!m_has_been_initialised) { return false; }
 
   if (m_top_slash != 0 && m_bottom_slash != 0) {
-    m_top_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y - (m_game_settings->GetResolution().y /2), m_z_bitmap_position);
-    m_bottom_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + (m_game_settings->GetResolution().y /2), m_z_bitmap_position);
+    m_top_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + (m_game_settings->GetResolution().y /2), m_z_bitmap_position);
+    m_bottom_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y - (m_game_settings->GetResolution().y /2), m_z_bitmap_position);
     float bottom = m_top_slash->GetBottomRightPostion().y;
     float top = m_bottom_slash->GetTopLeftPostion().y;
-    if (bottom >= top) {
+    if (bottom <= top) {
       m_model->Remove(m_top_slash);
       m_top_slash = 0;
       m_model->Remove(m_bottom_slash);
@@ -173,9 +129,69 @@ bool Level_Transition_Controller::Run() {
         m_background->SetScale(new D3DXVECTOR3((m_game_settings->GetResolution().x/128), (m_game_settings->GetResolution().y/128), 1.0f));
         m_model->Add(m_background);
       }
+      if (m_level_complete_heading == 0) {
+        m_level_complete_heading = new Text_Component();
+        m_level_complete_heading->GetText()->font_csv_file = m_heading_font_path;
+        m_level_complete_heading->GetText()->text = "LEVEL COMPLETE!";
+        m_level_complete_heading->GetTexture()->transparency = 0.0f;
+        m_level_complete_heading->SetPosition(0, 0, m_z_text_position);
+        m_level_complete_heading->GetFrame()->index_buffer = 0;
+        m_level_complete_heading->GetTexture()->texture = 0;
+        m_level_complete_heading->GetFrame()->vertex_buffer = 0;
+        m_model->Add(m_level_complete_heading);
+       }
+      if (m_next_level_heading == 0) {
+        m_next_level_heading = new Text_Component();
+        m_next_level_heading->GetText()->font_csv_file = m_text_font_path;
+        m_next_level_heading->GetText()->text = "Next Level is Loading!";
+        m_next_level_heading->GetTexture()->transparency = 0.0f;
+        m_next_level_heading->SetPosition(0, 0, m_z_text_position);
+        m_next_level_heading->GetFrame()->index_buffer = 0;
+        m_next_level_heading->GetTexture()->texture = 0;
+        m_next_level_heading->GetFrame()->vertex_buffer = 0;
+        m_model->Add(m_next_level_heading);
+      }
+      if (m_next_level_name == 0) {
+        m_next_level_name = new Text_Component();
+        m_next_level_name->GetText()->font_csv_file = m_text_font_path;
+        m_next_level_name->GetText()->text = m_level->GetCurrentLevel().level_name;
+        m_next_level_name->GetTexture()->transparency = 0.0f;
+        m_next_level_name->SetPosition(0, 0, m_z_text_position);
+        m_next_level_name->GetFrame()->index_buffer = 0;
+        m_next_level_name->GetTexture()->texture = 0;
+        m_next_level_name->GetFrame()->vertex_buffer = 0;
+        m_model->Add(m_next_level_name);
+      }
+      if (m_next_level_blurb == 0) {
+        m_next_level_blurb = new Text_Component();
+        m_next_level_blurb->GetText()->font_csv_file = m_text_font_path;
+        m_next_level_blurb->GetText()->text = m_level->GetCurrentLevel().blurb;
+        m_next_level_blurb->GetTexture()->transparency = 0.0f;
+        m_next_level_blurb->SetPosition(0, 0, m_z_text_position);
+        m_next_level_blurb->GetFrame()->index_buffer = 0;
+        m_next_level_blurb->GetTexture()->texture = 0;
+        m_next_level_blurb->GetFrame()->vertex_buffer = 0;
+        m_model->Add(m_next_level_blurb);
+      }
+      if (m_loading == 0) {
+        m_loading = new Text_Component();
+        m_loading->GetText()->font_csv_file = m_text_font_path;
+        m_loading->GetText()->text = "Loading!";
+        m_loading->GetTexture()->transparency = 0.0f;
+        m_loading->SetPosition(0, 0, m_z_text_position);
+        m_loading->GetFrame()->index_buffer = 0;
+        m_loading->GetTexture()->texture = 0;
+        m_loading->GetFrame()->vertex_buffer = 0;
+        m_model->Add(m_loading);
+      } 
+      m_level_complete_heading->GetTexture()->transparency = 1.0f;
+      m_next_level_heading->GetTexture()->transparency = 1.0f;
+      m_next_level_name->GetTexture()->transparency = 1.0f;
+      m_next_level_blurb->GetTexture()->transparency = 1.0f;
+      m_loading->GetTexture()->transparency = 1.0f;
     } else {
-      m_top_slash->SetScale(new D3DXVECTOR3(m_top_slash->GetScale()->x,m_top_slash->GetScale()->y + 0.05, 1.0f));
-      m_bottom_slash->SetScale(new D3DXVECTOR3(m_bottom_slash->GetScale()->x,m_bottom_slash->GetScale()->y + 0.05, 1.0f));
+      m_top_slash->SetScale(new D3DXVECTOR3(m_top_slash->GetScale()->x,m_top_slash->GetScale()->y + 0.1, 1.0f));
+      m_bottom_slash->SetScale(new D3DXVECTOR3(m_bottom_slash->GetScale()->x,m_bottom_slash->GetScale()->y + 0.1, 1.0f));
     }
   }
 
@@ -183,57 +199,68 @@ bool Level_Transition_Controller::Run() {
     m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
   }
   
-  m_game_name_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + 200, m_z_text_position);
-  m_game_name_heading->GetTexture()->transparency = 1.0f;
-
-  float position_y = m_game_name_heading->GetPosition()->y - (m_game_name_heading->GetSize().y / 2);
-  position_y -= (m_author->GetSize().y /2);
-  position_y -= 50;
-  m_author->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
-  m_author->GetTexture()->transparency = 1.0f;
-
-  position_y = m_author->GetPosition()->y - (m_author->GetSize().y / 2);
-  position_y -= (m_version->GetSize().y /2);
-  position_y -= 50;
-  m_version->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
-  m_version->GetTexture()->transparency = 1.0f;
-
-  UpdateTimer();
-  if (m_animation_tick) {
-    if (m_loading->GetTexture()->transparency == 1.0f) {
-      m_loading->GetTexture()->transparency = 0.0f;
-    } else {
-      m_loading->GetTexture()->transparency = 1.0f;
-    }
-
-    m_animation_tick = false;
+  if (m_level_complete_heading != 0) {
+    m_level_complete_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + 200, m_z_text_position);
   }
 
-  if (m_loading->GetText()->text.compare("Loading!") == 0) {
-    if (!m_level_transition_component->IsLoading()) {
-      m_loading->GetTexture()->transparency = 1.0f;
-      m_loading->GetText()->text = "Loading Complete Press Space to Continue";
-      m_loading->Init();
-    }
+  if (m_next_level_heading != 0) {
+    float position_y = m_level_complete_heading->GetPosition()->y - (m_level_complete_heading->GetSize().y / 2);
+    position_y -= (m_next_level_heading->GetSize().y /2);
+    position_y -= 50;
+    m_next_level_heading->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+  }
+  
+  if (m_next_level_name != 0) {
+    float position_y = m_next_level_heading->GetPosition()->y - (m_next_level_heading->GetSize().y / 2);
+    position_y -= (m_next_level_name->GetSize().y /2);
+    position_y -= 50;
+    m_next_level_name->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+  }
+  
+  if (m_next_level_blurb != 0) {
+    float position_y = m_next_level_name->GetPosition()->y - (m_next_level_name->GetSize().y / 2);
+    position_y -= (m_next_level_blurb->GetSize().y /2);
+    position_y -= 50;
+    m_next_level_blurb->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
   }
 
-  if (m_loading->GetText()->text.compare("Loading Complete Press Space to Continue") == 0) {
-    if (m_input->GetCurrentKeyInput().IsSpace) {
-      m_top_slash->GetTexture()->transparency = 0.0f;
-      m_bottom_slash->GetTexture()->transparency = 0.0f;
-      m_game_name_heading->GetTexture()->transparency = 0.0f;
-      m_author->GetTexture()->transparency = 0.0f;
-      m_version->GetTexture()->transparency = 0.0f;
-      m_loading->GetTexture()->transparency = 0.0f;
-      m_is_finished = true;
+  if (m_loading != 0) {
+    UpdateTimer();
+    if (m_animation_tick && m_background != 0) {
+      if (m_loading->GetTexture()->transparency == 1.0f) {
+        m_loading->GetTexture()->transparency = 0.0f;
+      } else {
+        m_loading->GetTexture()->transparency = 1.0f;
+      }
+
+      m_animation_tick = false;
     }
+
+    if (m_loading->GetText()->text.compare("Loading!") == 0) {
+      if (!m_level_transition_component->IsLoading()) {
+        m_loading->GetTexture()->transparency = 1.0f;
+        m_loading->GetText()->text = "Loading Complete Press Space to Continue";
+        m_loading->Init();
+      }
+    }
+
+    if (m_loading->GetText()->text.compare("Loading Complete Press Space to Continue") == 0) {
+      if (m_input->GetCurrentKeyInput().IsSpace) {
+        m_top_slash->GetTexture()->transparency = 0.0f;
+        m_bottom_slash->GetTexture()->transparency = 0.0f;
+        m_level_complete_heading->GetTexture()->transparency = 0.0f;
+        m_next_level_heading->GetTexture()->transparency = 0.0f;
+        m_next_level_name->GetTexture()->transparency = 0.0f;
+        m_loading->GetTexture()->transparency = 0.0f;
+        m_is_finished = true;
+      }
+    }
+
+    float position_y = m_next_level_blurb->GetPosition()->y - (m_next_level_blurb->GetSize().y / 2);
+    position_y -= (m_next_level_blurb->GetSize().y /2);
+    position_y -= 50;
+    m_loading->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
   }
-
-
-  position_y = m_version->GetPosition()->y - (m_version->GetSize().y / 2);
-  position_y -= (m_version->GetSize().y /2);
-  position_y -= 50;
-  m_loading->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
 
   return true;
 }

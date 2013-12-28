@@ -48,6 +48,7 @@ void Component_Composite::Remove(Tunnelour::Component * component) {
   m_components.remove(component);
   NotifyOnRemoveType(component);
   delete component;
+  component = 0;
 }
 
 //------------------------------------------------------------------------------
