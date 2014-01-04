@@ -37,6 +37,10 @@ Level_Controller::Level_Controller() : Controller() {
   m_splash_screen_component = 0;
   m_level_transition_controller = 0;
   m_avatar_controller = 0; 
+  m_has_transition_been_initalised = false;
+  m_has_level_been_destroyed = false;
+  m_has_level_been_created = false;
+  m_has_level_been_shown = false;
 }
 
 //------------------------------------------------------------------------------
@@ -103,129 +107,114 @@ bool Level_Controller::Run() {
     if (m_splash_screen_component->HasSpaceBeenPressed()) {
       m_level_tile_controller->ShowLevel();
     }
-    /*
-    if (m_level_name_heading == 0 && m_level->GetCurrentLevel().level_name.size() != 0) {
-      m_level_name_heading = new Text_Component();
-      m_level_name_heading->GetText()->font_csv_file = m_font_path;
-      m_level_name_heading->GetText()->text = m_level->GetCurrentLevel().level_name;
-      m_level_name_heading->GetTexture()->transparency = 1.0f;
-      m_level_name_heading->SetPosition(0, 0, m_z_position);
-      m_model->Add(m_level_name_heading);
-    }
-    if (m_level_blurb == 0) {
-      m_level_blurb = new Text_Component();
-      m_level_blurb->GetText()->font_csv_file = m_font_path;
-      m_level_blurb->GetText()->text = m_level->GetCurrentLevel().blurb;
-      m_level_blurb->GetTexture()->transparency = 1.0f;
-      m_level_blurb->SetPosition(0, 0, m_z_position);
-      m_model->Add(m_level_blurb);
-      m_level_blurb->Init();
-    }
-    if (m_level_name_heading->GetTexture()->transparency != 0.0) {
-      float transparency = m_level_name_heading->GetTexture()->transparency;
-      transparency = transparency - 0.01f;
-      if (transparency < 0.0) { transparency = 0.0f; }
-      m_level_name_heading->GetTexture()->transparency = transparency;
-      m_level_blurb->GetTexture()->transparency = transparency;
-    }
-    */
-    m_avatar_controller->Run();
-    if (m_avatar == 0) {
-      Get_Avatar_Mutator mutator;
-      m_model->Apply(&mutator);
-      if (mutator.WasSuccessful()) {
-        m_avatar = mutator.GetAvatarComponent();
+    if (m_level_transition_controller != 0) {
+      if (m_level_transition_controller->IsLoading()) {
+        if (!m_has_transition_been_initalised) {
+          m_level_transition_controller->SetLevelCompleteHeadingText("LEVEL COMPLETE");
+          m_level_transition_controller->SetNextLevelHeadingText("Loading Next Level");
+          m_level_transition_controller->SetNextLevelNameText(m_next_level.level_name);
+          m_level_transition_controller->SetNextLevelBlurbText(m_next_level.blurb);
+          m_level->SetCurrentLevel(m_next_level);
+          m_level->SetIsComplete(false);
+          m_has_transition_been_initalised = true;
+        } else if(!m_has_level_been_destroyed) {
+          m_level_tile_controller->DestroyLevel();
+          m_has_level_been_destroyed = true;
+        } else if (!m_has_level_been_created) {
+          m_level_tile_controller->CreateLevel();
+          m_has_level_been_created = true;
+        } else if(!m_has_level_been_shown) {
+          m_level_tile_controller->ShowLevel();
+          m_has_level_been_shown = true;
+        } else {
+          m_level_transition_controller->SetIsLoading(false);
+          m_has_transition_been_initalised = false;
+          m_has_level_been_destroyed = false;
+          m_has_level_been_created = false;
+          m_has_level_been_shown = false;
+        }
+        if (m_level_transition_controller->IsFinished()) {
+          delete m_level_transition_controller;
+          m_level_transition_controller = 0;
+        }
       }
-    }
-    /*
-    m_level_name_heading->SetPosition(m_camera->GetPosition().x,
-                                      m_camera->GetPosition().y + m_level_name_heading->GetSize().y, m_z_position);
-    m_level_name_heading->Init();
-
-    m_level_blurb->SetPosition(m_camera->GetPosition().x,
-                               m_camera->GetPosition().y - m_level_name_heading->GetSize().y, m_z_position);
-    m_level_blurb->Init();
-    */
-    // Check if the level end conditions are met
-    if (m_avatar != 0) {
-      if (m_level->GetCurrentLevel().end_conditions.size() != 0) {
-        std::vector<Level_Component::End_Condition*> end_conditions = m_level->GetCurrentLevel().end_conditions;
-        std::vector<Level_Component::End_Condition*>::iterator end_condition;
-        for (end_condition = end_conditions.begin(); end_condition != end_conditions.end(); end_condition++) {
-          bool and = true;
-          bool or = false;
-          std::vector<Level_Component::Condition*>::iterator condition;
-          for (condition = (*end_condition)->conditions.begin(); condition != (*end_condition)->conditions.end(); condition++) {
-            if ((*end_condition)->and) {
-              if ((*condition)->type.compare("State") == 0) {
-                Level_Component::End_Condition_Avatar_State *state_end_condition = static_cast<Level_Component::End_Condition_Avatar_State*>((*condition));
-                if ((m_avatar->GetLastState().state.compare(state_end_condition->avatar_state) == 0 && m_avatar->GetLastState().direction.compare(state_end_condition->avatar_direction) != 0) || (*condition)->has_been_met == true) {
-                  if (m_avatar->GetLastState().state.compare(m_avatar->GetState().state) != 0 || m_avatar->GetLastState().direction.compare(m_avatar->GetState().direction) != 0) {
-                    (*condition)->has_been_met = true;
+      m_level_transition_controller->Run();
+      m_level_tile_controller->Run();
+    } else {
+      m_avatar_controller->Run();
+      if (m_avatar == 0) {
+        Get_Avatar_Mutator mutator;
+        m_model->Apply(&mutator);
+        if (mutator.WasSuccessful()) {
+          m_avatar = mutator.GetAvatarComponent();
+        }
+      } else {
+        if (m_level->GetCurrentLevel().end_conditions.size() != 0) {
+          std::vector<Level_Component::End_Condition*> end_conditions = m_level->GetCurrentLevel().end_conditions;
+          std::vector<Level_Component::End_Condition*>::iterator end_condition;
+          for (end_condition = end_conditions.begin(); end_condition != end_conditions.end(); end_condition++) {
+            bool and = true;
+            bool or = false;
+            std::vector<Level_Component::Condition*>::iterator condition;
+            for (condition = (*end_condition)->conditions.begin(); condition != (*end_condition)->conditions.end(); condition++) {
+              if ((*end_condition)->and) {
+                if ((*condition)->type.compare("State") == 0) {
+                  Level_Component::End_Condition_Avatar_State *state_end_condition = static_cast<Level_Component::End_Condition_Avatar_State*>((*condition));
+                  if ((m_avatar->GetLastState().state.compare(state_end_condition->avatar_state) == 0 && m_avatar->GetLastState().direction.compare(state_end_condition->avatar_direction) != 0) || (*condition)->has_been_met == true) {
+                    if (m_avatar->GetLastState().state.compare(m_avatar->GetState().state) != 0 || m_avatar->GetLastState().direction.compare(m_avatar->GetState().direction) != 0) {
+                      (*condition)->has_been_met = true;
+                    } else {
+                      and = false;
+                    }
                   } else {
                     and = false;
                   }
                 } else {
-                  and = false;
+                  throw Tunnelour::Exceptions::run_error("Level_Controller: Unhandled State");
                 }
-              } else {
-                throw Tunnelour::Exceptions::run_error("Level_Controller: Unhandled State");
-              }
-            } else if ((*end_condition)->or) {
-              if ((*condition)->type.compare("State") == 0) {
-                Level_Component::End_Condition_Avatar_State *state_end_condition = static_cast<Level_Component::End_Condition_Avatar_State*>((*condition));
-                if (m_avatar->GetLastState().state.compare(state_end_condition->avatar_state) == 0) {
-                  if (m_avatar->GetLastState().direction.compare(state_end_condition->avatar_direction) == 0 || (*condition)->has_been_met == true) {
-                    (*condition)->has_been_met = true;
-                    or = true;
+              } else if ((*end_condition)->or) {
+                if ((*condition)->type.compare("State") == 0) {
+                  Level_Component::End_Condition_Avatar_State *state_end_condition = static_cast<Level_Component::End_Condition_Avatar_State*>((*condition));
+                  if (m_avatar->GetLastState().state.compare(state_end_condition->avatar_state) == 0) {
+                    if (m_avatar->GetLastState().direction.compare(state_end_condition->avatar_direction) == 0 || (*condition)->has_been_met == true) {
+                      (*condition)->has_been_met = true;
+                      or = true;
+                    }
                   }
                 }
               }
             }
-          }
-          if ((*end_condition)->and && and) {
-            //m_model->Remove(m_level_name_heading);
-            //m_level_name_heading = 0;
-            //m_model->Remove(m_level_blurb);
-            //m_level_blurb = 0;
-            if ((*end_condition)->next_level.compare("QUIT") != 0) {
-              //m_level->SetCurrentLevel(GetNamedLevel((*end_condition)->next_level));
-              if (m_level_transition_controller == 0) {
-                m_level_transition_controller = new Level_Transition_Controller();
-                m_level_transition_controller->Init(m_model);
-                m_level_transition_controller->Run();
+            if ((*end_condition)->and && and) {
+              if ((*end_condition)->next_level.compare("QUIT") != 0) {
+                if (m_level_transition_controller == 0) {
+                  m_level_transition_controller = new Level_Transition_Controller();
+                  m_level_transition_controller->Init(m_model);
+                  m_level_transition_controller->Run();
+                }
+                m_level->SetIsComplete(true);
+                m_next_level = GetNamedLevel((*end_condition)->next_level);
+              } else {
+                PostQuitMessage(0);
               }
-              m_level->SetIsComplete(true);
-            } else {
-              ///throw Tunnelour::Exceptions::run_error("QUIT");
-              PostQuitMessage(0);
-            }
-          } else if ((*end_condition)->or && or) {
-            //m_model->Remove(m_level_name_heading);
-            //m_level_name_heading = 0;
-            //m_model->Remove(m_level_blurb);
-            //m_level_blurb = 0;
-            if ((*end_condition)->next_level.compare("QUIT") != 0) {
-              //m_level->SetCurrentLevel(GetNamedLevel((*end_condition)->next_level));
-              //m_splash_screen_component->SetIsLoading(true);
-              m_level->SetIsComplete(true);
-            } else {
-              //throw Tunnelour::Exceptions::run_error("QUIT");
-              PostQuitMessage(0);
+            } else if ((*end_condition)->or && or) {
+              if ((*end_condition)->next_level.compare("QUIT") != 0) {
+                if (m_level_transition_controller == 0) {
+                  m_level_transition_controller = new Level_Transition_Controller();
+                  m_level_transition_controller->Init(m_model);
+                  m_level_transition_controller->Run();
+                }
+                m_level->SetIsComplete(true);
+                m_next_level = GetNamedLevel((*end_condition)->next_level);
+              } else {
+                PostQuitMessage(0);
+              }
             }
           }
         }
       }
+    
+      m_level_tile_controller->Run();
     }
-    //m_background_controller->Run();
-    //m_middleground_controller->Run();
-    
-    m_level_tile_controller->Run();
-    
-    if (m_level_transition_controller != 0) {
-      m_level_transition_controller->Run();
-    }
-    
   } else {
     return false;
   }

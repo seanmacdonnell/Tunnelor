@@ -84,8 +84,8 @@ bool Level_Tile_Controller::Run() {
   if (!m_has_been_initialised) { return false; }
 
   if (m_current_level_name.compare(m_level->GetCurrentLevel().level_name) != 0) {
-    DestroyLevel();
-    CreateLevel();
+    //DestroyLevel();
+    //CreateLevel();
   } else {
     // If Camera is over an area with no tiles
     D3DXVECTOR2 game_resolution = m_game_settings->GetResolution();
@@ -167,9 +167,10 @@ void Level_Tile_Controller::HideLevel() {
 //------------------------------------------------------------------------------
 void Level_Tile_Controller::DestroyLevel() {
   // Add tiles to Model
-  for (std::vector<Tile_Bitmap*>::iterator tile = m_middleground_tiles.begin(); tile != m_middleground_tiles.end(); ++tile) {
+  for (std::vector<Tile_Bitmap*>::iterator tile = m_created_tiles.begin(); tile != m_created_tiles.end(); ++tile) {
     m_model->Remove(*tile);
   }
+  m_created_tiles.clear();
   m_middleground_tiles.clear();
   m_top_edge_tiles.clear();
   m_bottom_edge_tiles.clear();

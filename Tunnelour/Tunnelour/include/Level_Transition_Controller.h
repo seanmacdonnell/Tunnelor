@@ -59,6 +59,21 @@ class Level_Transition_Controller: public Controller {
   //---------------------------------------------------------------------------
   virtual bool Run();
 
+  //---------------------------------------------------------------------------
+  // Description : Controller Runner
+  //---------------------------------------------------------------------------
+  void SetIsLoading(bool is_loading);
+  
+  bool IsLoading();
+
+  void SetLevelCompleteHeadingText(std::string level_complete_heading_text);
+
+  void SetNextLevelHeadingText(std::string next_level_heading);
+
+  void SetNextLevelNameText(std::string next_level_name);
+
+  void SetNextLevelBlurbText(std::string next_level_blurb);
+
  protected:
 
  private:
@@ -91,9 +106,13 @@ class Level_Transition_Controller: public Controller {
   int m_z_text_position;
 
   Text_Component *m_level_complete_heading;
+  std::string m_level_complete_heading_text;
   Text_Component *m_next_level_heading;
+  std::string m_next_level_heading_text;
   Text_Component *m_next_level_name;
+  std::string m_next_level_name_text;
   Text_Component *m_next_level_blurb;
+  std::string m_next_level_blurb_text;
   Text_Component *m_loading;
 
   //---------------------------------------------------------------------------
@@ -115,6 +134,8 @@ class Level_Transition_Controller: public Controller {
 
   Level_Transition_Component *m_level_transition_component;
   Input_Component *m_input;
+
+  bool m_is_loading;
 };
 }  // namespace Tunnelour
 #endif  // LEVEL_TRANSITION_CONTROLLER_H_

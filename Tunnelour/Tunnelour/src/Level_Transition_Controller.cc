@@ -49,6 +49,10 @@ Level_Transition_Controller::Level_Transition_Controller() : Controller() {
   m_level_transition_component = 0;
   m_input = 0;
   m_background = 0;
+  m_level_complete_heading_text = " ";
+  m_next_level_heading_text = " ";
+  m_next_level_name_text = " ";
+  m_next_level_blurb_text = " ";
 }
 
 //------------------------------------------------------------------------------
@@ -100,7 +104,6 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
       m_bottom_slash->SetScale(new D3DXVECTOR3((m_game_settings->GetResolution().x/128), ((m_game_settings->GetResolution().y/128)/3), 1.0f));
       m_model->Add(m_bottom_slash);
     }
-    m_level_transition_component->SetIsLoading(true);
   } else {
     return false;
   }
@@ -132,7 +135,7 @@ bool Level_Transition_Controller::Run() {
       if (m_level_complete_heading == 0) {
         m_level_complete_heading = new Text_Component();
         m_level_complete_heading->GetText()->font_csv_file = m_heading_font_path;
-        m_level_complete_heading->GetText()->text = "LEVEL COMPLETE!";
+        m_level_complete_heading->GetText()->text = m_level_complete_heading_text;
         m_level_complete_heading->GetTexture()->transparency = 0.0f;
         m_level_complete_heading->SetPosition(0, 0, m_z_text_position);
         m_level_complete_heading->GetFrame()->index_buffer = 0;
@@ -143,7 +146,7 @@ bool Level_Transition_Controller::Run() {
       if (m_next_level_heading == 0) {
         m_next_level_heading = new Text_Component();
         m_next_level_heading->GetText()->font_csv_file = m_text_font_path;
-        m_next_level_heading->GetText()->text = "Next Level is Loading!";
+        m_next_level_heading->GetText()->text = m_next_level_heading_text;
         m_next_level_heading->GetTexture()->transparency = 0.0f;
         m_next_level_heading->SetPosition(0, 0, m_z_text_position);
         m_next_level_heading->GetFrame()->index_buffer = 0;
@@ -154,7 +157,7 @@ bool Level_Transition_Controller::Run() {
       if (m_next_level_name == 0) {
         m_next_level_name = new Text_Component();
         m_next_level_name->GetText()->font_csv_file = m_text_font_path;
-        m_next_level_name->GetText()->text = m_level->GetCurrentLevel().level_name;
+        m_next_level_name->GetText()->text = m_next_level_name_text;
         m_next_level_name->GetTexture()->transparency = 0.0f;
         m_next_level_name->SetPosition(0, 0, m_z_text_position);
         m_next_level_name->GetFrame()->index_buffer = 0;
@@ -165,7 +168,7 @@ bool Level_Transition_Controller::Run() {
       if (m_next_level_blurb == 0) {
         m_next_level_blurb = new Text_Component();
         m_next_level_blurb->GetText()->font_csv_file = m_text_font_path;
-        m_next_level_blurb->GetText()->text = m_level->GetCurrentLevel().blurb;
+        m_next_level_blurb->GetText()->text = m_next_level_blurb_text;
         m_next_level_blurb->GetTexture()->transparency = 0.0f;
         m_next_level_blurb->SetPosition(0, 0, m_z_text_position);
         m_next_level_blurb->GetFrame()->index_buffer = 0;
@@ -183,6 +186,7 @@ bool Level_Transition_Controller::Run() {
         m_loading->GetTexture()->texture = 0;
         m_loading->GetFrame()->vertex_buffer = 0;
         m_model->Add(m_loading);
+        m_level_transition_component->SetIsLoading(true);
       } 
       m_level_complete_heading->GetTexture()->transparency = 1.0f;
       m_next_level_heading->GetTexture()->transparency = 1.0f;
@@ -200,10 +204,22 @@ bool Level_Transition_Controller::Run() {
   }
   
   if (m_level_complete_heading != 0) {
+    if (m_level_complete_heading_text.compare(m_level_complete_heading->GetText()->text) != 0) {
+      m_level_complete_heading->GetText()->text = m_level_complete_heading_text;
+      m_level_complete_heading->GetFrame()->index_buffer = 0;
+      m_level_complete_heading->GetTexture()->texture = 0;
+      m_level_complete_heading->GetFrame()->vertex_buffer = 0;
+    }
     m_level_complete_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + 200, m_z_text_position);
   }
 
   if (m_next_level_heading != 0) {
+    if (m_next_level_heading_text.compare(m_next_level_heading->GetText()->text) != 0) {
+      m_next_level_heading->GetText()->text = m_next_level_heading_text;
+      m_next_level_heading->GetFrame()->index_buffer = 0;
+      m_next_level_heading->GetTexture()->texture = 0;
+      m_next_level_heading->GetFrame()->vertex_buffer = 0;
+    }
     float position_y = m_level_complete_heading->GetPosition()->y - (m_level_complete_heading->GetSize().y / 2);
     position_y -= (m_next_level_heading->GetSize().y /2);
     position_y -= 50;
@@ -211,6 +227,12 @@ bool Level_Transition_Controller::Run() {
   }
   
   if (m_next_level_name != 0) {
+    if (m_next_level_name_text.compare(m_next_level_name->GetText()->text) != 0) {
+      m_next_level_name->GetText()->text = m_next_level_name_text;
+      m_next_level_name->GetFrame()->index_buffer = 0;
+      m_next_level_name->GetTexture()->texture = 0;
+      m_next_level_name->GetFrame()->vertex_buffer = 0;
+    }
     float position_y = m_next_level_heading->GetPosition()->y - (m_next_level_heading->GetSize().y / 2);
     position_y -= (m_next_level_name->GetSize().y /2);
     position_y -= 50;
@@ -218,6 +240,12 @@ bool Level_Transition_Controller::Run() {
   }
   
   if (m_next_level_blurb != 0) {
+    if (m_next_level_blurb_text.compare(m_next_level_blurb->GetText()->text) != 0) {
+      m_next_level_blurb->GetText()->text = m_next_level_blurb_text;
+      m_next_level_blurb->GetFrame()->index_buffer = 0;
+      m_next_level_blurb->GetTexture()->texture = 0;
+      m_next_level_blurb->GetFrame()->vertex_buffer = 0;
+    }
     float position_y = m_next_level_name->GetPosition()->y - (m_next_level_name->GetSize().y / 2);
     position_y -= (m_next_level_blurb->GetSize().y /2);
     position_y -= 50;
@@ -237,7 +265,7 @@ bool Level_Transition_Controller::Run() {
     }
 
     if (m_loading->GetText()->text.compare("Loading!") == 0) {
-      if (!m_level_transition_component->IsLoading()) {
+      if (!m_is_loading) {
         m_loading->GetTexture()->transparency = 1.0f;
         m_loading->GetText()->text = "Loading Complete Press Space to Continue";
         m_loading->Init();
@@ -263,6 +291,36 @@ bool Level_Transition_Controller::Run() {
   }
 
   return true;
+}
+
+//------------------------------------------------------------------------------
+void Level_Transition_Controller::SetIsLoading(bool is_loading) {
+  m_is_loading = is_loading;
+}
+
+//------------------------------------------------------------------------------
+bool Level_Transition_Controller::IsLoading() {
+  return m_is_loading;
+}
+
+//------------------------------------------------------------------------------
+void Level_Transition_Controller::SetLevelCompleteHeadingText(std::string level_complete_heading_text) {
+  m_level_complete_heading_text = level_complete_heading_text;
+}
+
+//------------------------------------------------------------------------------
+void Level_Transition_Controller::SetNextLevelHeadingText(std::string next_level_heading_text) {
+  m_next_level_heading_text = next_level_heading_text;
+}
+
+//------------------------------------------------------------------------------
+void Level_Transition_Controller::SetNextLevelNameText(std::string next_level_name_text) {
+  m_next_level_name_text = next_level_name_text;
+}
+
+//------------------------------------------------------------------------------
+void Level_Transition_Controller::SetNextLevelBlurbText(std::string next_level_blurb_text) {
+  m_next_level_blurb_text = next_level_blurb_text;
 }
 
 //------------------------------------------------------------------------------

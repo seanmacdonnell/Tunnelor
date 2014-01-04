@@ -83,11 +83,18 @@ class Level_Controller: public Controller {
   std::string m_font_path;
   int m_z_position;
 
+  Level_Component::Level_Metadata m_next_level;
+
   Tunnelour::Background_Controller *m_background_controller;
   Tunnelour::Middleground_Controller *m_middleground_controller;
   Tunnelour::Level_Tile_Controller *m_level_tile_controller;
   Tunnelour::Splash_Screen_Component *m_splash_screen_component;
   Tunnelour::Level_Transition_Controller *m_level_transition_controller;
+
+  bool m_has_transition_been_initalised;
+  bool m_has_level_been_destroyed;
+  bool m_has_level_been_created;
+  bool m_has_level_been_shown;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_LEVEL_CONTROLLER_H_
