@@ -117,11 +117,12 @@ bool Level_Controller::Run() {
           m_level->SetCurrentLevel(m_next_level);
           m_level->SetIsComplete(false);
           m_has_transition_been_initalised = true;
-        } else if(!m_has_level_been_destroyed) {
+        } else if (!m_has_level_been_destroyed) {
           m_level_tile_controller->DestroyLevel();
           m_has_level_been_destroyed = true;
         } else if (!m_has_level_been_created) {
           m_level_tile_controller->CreateLevel();
+          m_level_tile_controller->HideLevel();
           m_has_level_been_created = true;
         } else if(!m_has_level_been_shown) {
           m_level_tile_controller->ShowLevel();

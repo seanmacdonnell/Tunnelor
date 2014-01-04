@@ -53,6 +53,7 @@ Level_Transition_Controller::Level_Transition_Controller() : Controller() {
   m_next_level_heading_text = " ";
   m_next_level_name_text = " ";
   m_next_level_blurb_text = " ";
+  m_is_loading = false;
 }
 
 //------------------------------------------------------------------------------
@@ -130,7 +131,7 @@ bool Level_Transition_Controller::Run() {
         m_background = CreateTile(128);
         m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
         m_background->SetScale(new D3DXVECTOR3((m_game_settings->GetResolution().x/128), (m_game_settings->GetResolution().y/128), 1.0f));
-        m_model->Add(m_background);
+        m_model->Add(m_background);        
       }
       if (m_level_complete_heading == 0) {
         m_level_complete_heading = new Text_Component();
@@ -186,13 +187,13 @@ bool Level_Transition_Controller::Run() {
         m_loading->GetTexture()->texture = 0;
         m_loading->GetFrame()->vertex_buffer = 0;
         m_model->Add(m_loading);
-        m_level_transition_component->SetIsLoading(true);
       } 
       m_level_complete_heading->GetTexture()->transparency = 1.0f;
       m_next_level_heading->GetTexture()->transparency = 1.0f;
       m_next_level_name->GetTexture()->transparency = 1.0f;
       m_next_level_blurb->GetTexture()->transparency = 1.0f;
       m_loading->GetTexture()->transparency = 1.0f;
+      SetIsLoading(true);
     } else {
       m_top_slash->SetScale(new D3DXVECTOR3(m_top_slash->GetScale()->x,m_top_slash->GetScale()->y + 0.1, 1.0f));
       m_bottom_slash->SetScale(new D3DXVECTOR3(m_bottom_slash->GetScale()->x,m_bottom_slash->GetScale()->y + 0.1, 1.0f));
@@ -209,6 +210,7 @@ bool Level_Transition_Controller::Run() {
       m_level_complete_heading->GetFrame()->index_buffer = 0;
       m_level_complete_heading->GetTexture()->texture = 0;
       m_level_complete_heading->GetFrame()->vertex_buffer = 0;
+      m_level_complete_heading->Init();
     }
     m_level_complete_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + 200, m_z_text_position);
   }
@@ -219,6 +221,7 @@ bool Level_Transition_Controller::Run() {
       m_next_level_heading->GetFrame()->index_buffer = 0;
       m_next_level_heading->GetTexture()->texture = 0;
       m_next_level_heading->GetFrame()->vertex_buffer = 0;
+      m_next_level_heading->Init();
     }
     float position_y = m_level_complete_heading->GetPosition()->y - (m_level_complete_heading->GetSize().y / 2);
     position_y -= (m_next_level_heading->GetSize().y /2);
@@ -232,6 +235,7 @@ bool Level_Transition_Controller::Run() {
       m_next_level_name->GetFrame()->index_buffer = 0;
       m_next_level_name->GetTexture()->texture = 0;
       m_next_level_name->GetFrame()->vertex_buffer = 0;
+      m_next_level_name->Init();
     }
     float position_y = m_next_level_heading->GetPosition()->y - (m_next_level_heading->GetSize().y / 2);
     position_y -= (m_next_level_name->GetSize().y /2);
@@ -245,6 +249,7 @@ bool Level_Transition_Controller::Run() {
       m_next_level_blurb->GetFrame()->index_buffer = 0;
       m_next_level_blurb->GetTexture()->texture = 0;
       m_next_level_blurb->GetFrame()->vertex_buffer = 0;
+      m_next_level_blurb->Init();
     }
     float position_y = m_next_level_name->GetPosition()->y - (m_next_level_name->GetSize().y / 2);
     position_y -= (m_next_level_blurb->GetSize().y /2);
@@ -268,14 +273,16 @@ bool Level_Transition_Controller::Run() {
       if (!m_is_loading) {
         m_loading->GetTexture()->transparency = 1.0f;
         m_loading->GetText()->text = "Loading Complete Press Space to Continue";
+        m_loading->GetFrame()->index_buffer = 0;
+        m_loading->GetTexture()->texture = 0;
+        m_loading->GetFrame()->vertex_buffer = 0;
         m_loading->Init();
       }
     }
 
     if (m_loading->GetText()->text.compare("Loading Complete Press Space to Continue") == 0) {
       if (m_input->GetCurrentKeyInput().IsSpace) {
-        m_top_slash->GetTexture()->transparency = 0.0f;
-        m_bottom_slash->GetTexture()->transparency = 0.0f;
+        m_background->GetTexture()->transparency = 0.0f;
         m_level_complete_heading->GetTexture()->transparency = 0.0f;
         m_next_level_heading->GetTexture()->transparency = 0.0f;
         m_next_level_name->GetTexture()->transparency = 0.0f;
