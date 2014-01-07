@@ -222,7 +222,7 @@ bool Level_Transition_Controller::Run() {
         m_loading = new Text_Component();
         m_loading->GetText()->font_csv_file = m_text_font_path;
         m_loading->GetText()->text = "Loading!";
-        m_loading->GetTexture()->transparency = 0.0f;
+        m_loading->GetTexture()->transparency = 1.0f;
         m_loading->SetPosition(0, 0, m_z_text_position);
         m_loading->GetFrame()->index_buffer = 0;
         m_loading->GetTexture()->texture = 0;
