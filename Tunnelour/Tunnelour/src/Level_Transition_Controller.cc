@@ -54,6 +54,8 @@ Level_Transition_Controller::Level_Transition_Controller() : Controller() {
   m_next_level_name_text = " ";
   m_next_level_blurb_text = " ";
   m_is_loading = false;
+  m_is_fading = false;
+  m_loading_transparency = 0.0f;
 }
 
 //------------------------------------------------------------------------------
@@ -66,6 +68,42 @@ Level_Transition_Controller::~Level_Transition_Controller() {
   m_is_debug_mode = false;
   m_black_metadata_file_path = "";
   m_white_metadata_file_path = "";
+  if (m_top_slash != 0) {
+    m_model->Remove(m_top_slash);
+    m_top_slash = 0;
+  }
+  if (m_bottom_slash != 0) {
+    m_model->Remove(m_bottom_slash);
+    m_bottom_slash = 0;
+  }
+  if (m_background != 0) {
+    m_model->Remove(m_background);
+    m_background = 0;
+  }
+  if (m_level_complete_heading != 0) {
+    m_model->Remove(m_level_complete_heading);
+    m_level_complete_heading = 0;
+  }
+  if (m_next_level_heading != 0) {
+    m_model->Remove(m_next_level_heading);
+    m_next_level_heading = 0;
+  }
+  if (m_next_level_name != 0) {
+    m_model->Remove(m_next_level_name);
+    m_next_level_name = 0;
+  }
+  if (m_next_level_blurb != 0) {
+    m_model->Remove(m_next_level_blurb);
+    m_next_level_blurb = 0;
+  }
+  if (m_loading != 0) {
+    m_model->Remove(m_loading);
+    m_loading = 0;
+  }
+  if (m_level_transition_component != 0) {
+    m_model->Remove(m_level_transition_component);
+    m_level_transition_component = 0;
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -258,10 +296,11 @@ bool Level_Transition_Controller::Run() {
   if (m_loading != 0) {
     UpdateTimer();
     if (m_animation_tick && m_background != 0) {
-      if (m_loading->GetTexture()->transparency == 1.0f) {
+      if (m_loading->GetTexture()->transparency > 0.0f) {
+        m_loading_transparency = m_loading->GetTexture()->transparency;
         m_loading->GetTexture()->transparency = 0.0f;
       } else {
-        m_loading->GetTexture()->transparency = 1.0f;
+        m_loading->GetTexture()->transparency = m_loading_transparency;
       }
 
       m_animation_tick = false;
@@ -284,15 +323,63 @@ bool Level_Transition_Controller::Run() {
 
     if (m_loading->GetText()->text.compare("Loading Complete Press Space to Continue") == 0) {
       if (m_input->GetCurrentKeyInput().IsSpace) {
-        m_background->GetTexture()->transparency = 0.0f;
-        m_level_complete_heading->GetTexture()->transparency = 0.0f;
-        m_next_level_heading->GetTexture()->transparency = 0.0f;
-        m_next_level_name->GetTexture()->transparency = 0.0f;
-        m_loading->GetTexture()->transparency = 0.0f;
-        m_is_finished = true;
+        m_is_fading = true;
       }
     }
   }
+
+  if (m_is_fading) {
+    m_background->GetTexture()->transparency = m_background->GetTexture()->transparency - 0.1f;
+    m_level_complete_heading->GetTexture()->transparency = m_level_complete_heading->GetTexture()->transparency - 0.1f;
+    m_next_level_heading->GetTexture()->transparency = m_next_level_heading->GetTexture()->transparency - 0.1f;
+    m_next_level_name->GetTexture()->transparency = m_next_level_name->GetTexture()->transparency - 0.1f;
+    m_next_level_blurb->GetTexture()->transparency = m_next_level_blurb->GetTexture()->transparency  - 0.0f;
+    if (m_loading->GetTexture()->transparency != 0.0f) {
+      m_loading->GetTexture()->transparency = m_loading->GetTexture()->transparency - 0.1f;
+    }
+
+    if (m_background->GetTexture()->transparency < 0.0f) {
+      m_background->GetTexture()->transparency = 0.0f;
+      m_level_complete_heading->GetTexture()->transparency = 0.0f;
+      m_next_level_heading->GetTexture()->transparency = 0.0f;
+      m_next_level_name->GetTexture()->transparency = 0.0f;
+      m_next_level_blurb->GetTexture()->transparency = 0.0f;
+      m_loading->GetTexture()->transparency = 0.0f;
+      if (m_top_slash != 0) {
+        m_model->Remove(m_top_slash);
+        m_top_slash = 0;
+      }
+      if (m_bottom_slash != 0) {
+        m_model->Remove(m_bottom_slash);
+        m_bottom_slash = 0;
+      }
+      if (m_background != 0) {
+        m_model->Remove(m_background);
+        m_background = 0;
+      }
+      if (m_level_complete_heading != 0) {
+        m_model->Remove(m_level_complete_heading);
+        m_level_complete_heading = 0;
+      }
+      if (m_next_level_heading != 0) {
+        m_model->Remove(m_next_level_heading);
+        m_next_level_heading = 0;
+      }
+      if (m_next_level_name != 0) {
+        m_model->Remove(m_next_level_name);
+        m_next_level_name = 0;
+      }
+      if (m_next_level_blurb != 0) {
+        m_model->Remove(m_next_level_blurb);
+        m_next_level_blurb = 0;
+      }
+      if (m_loading != 0) {
+        m_model->Remove(m_loading);
+        m_loading = 0;
+      }
+      m_is_finished = true;
+    }
+  } 
 
   return true;
 }

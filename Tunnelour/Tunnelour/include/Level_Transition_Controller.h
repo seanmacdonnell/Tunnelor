@@ -139,6 +139,8 @@ class Level_Transition_Controller: public Controller,
   Input_Component *m_input;
 
   bool m_is_loading;
+  bool m_is_fading;
+  float m_loading_transparency;
 };
 }  // namespace Tunnelour
 #endif  // LEVEL_TRANSITION_CONTROLLER_H_
