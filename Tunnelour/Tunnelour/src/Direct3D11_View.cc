@@ -153,6 +153,7 @@ Direct3D11_View::~Direct3D11_View() {
 
   m_model->IgnoreType(this, "Bitmap_Component");
   m_model->IgnoreType(this, "Text_Component");
+  m_model->IgnoreType(this, "Avatar_Component");
 
   m_renderables.Layer_00.clear();
   m_renderables.Layer_01.clear();

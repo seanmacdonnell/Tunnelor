@@ -120,7 +120,6 @@ bool Debug_Data_Display_Controller::Run() {
           (*collision_bitmap)->GetTexture()->transparency = 0.0f;
           (*collision_bitmap)->Init();
         }
-        //m_avatar->GetTexture()->transparency = 0.0f;
         m_is_debug_mode = m_game_settings->IsDebugMode();
       } else {
         m_heading->GetTexture()->transparency = 1.0f;
@@ -131,7 +130,6 @@ bool Debug_Data_Display_Controller::Run() {
           (*collision_bitmap)->GetTexture()->transparency = 1.0f;
           (*collision_bitmap)->Init();
         }
-        //m_avatar->GetTexture()->transparency = 1.0f;
         m_is_debug_mode = m_game_settings->IsDebugMode();
       }
     }

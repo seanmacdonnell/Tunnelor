@@ -130,6 +130,7 @@ bool Level_Controller::Run() {
           m_has_transition_been_initalised = false;
           m_has_level_been_destroyed = false;
           m_has_level_been_created = false;
+          m_has_level_been_added = false;
           m_has_level_been_shown = false;
           m_level->SetIsComplete(false);
         }
