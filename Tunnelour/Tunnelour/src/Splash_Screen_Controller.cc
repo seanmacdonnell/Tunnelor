@@ -53,6 +53,7 @@ Splash_Screen_Controller::Splash_Screen_Controller() : Controller() {
 //------------------------------------------------------------------------------
 Splash_Screen_Controller::~Splash_Screen_Controller() {
   m_game_settings = 0;
+  m_camera->Ignore(this);
   m_camera = 0;
   m_level = 0;
   m_tileset_filename = "";
@@ -77,6 +78,7 @@ bool Splash_Screen_Controller::Init(Component_Composite * const model) {
   if (mutator.WasSuccessful()) {
     m_game_settings = mutator.GetGameSettings();
     m_camera = mutator.GetCamera();
+    m_camera->Observe(this);
     m_level = mutator.GetLevel();
     m_input = mutator.GetInput();
     LoadTilesetMetadata();
@@ -230,6 +232,32 @@ bool Splash_Screen_Controller::Run() {
   m_loading->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
 
   return true;
+}
+
+//------------------------------------------------------------------------------
+void Splash_Screen_Controller::HandleEvent(Tunnelour::Component * const component) {
+  if (component->GetType().compare("Camera_Component") == 0) {
+    m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
+
+    m_game_name_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + 200, m_z_text_position);
+    //m_game_name_heading->GetTexture()->transparency = 1.0f;
+
+    float position_y = m_game_name_heading->GetPosition()->y - (m_game_name_heading->GetSize().y / 2);
+    position_y -= (m_author->GetSize().y /2);
+    position_y -= 50;
+    m_author->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+    //m_author->GetTexture()->transparency = 1.0f;
+
+    position_y = m_author->GetPosition()->y - (m_author->GetSize().y / 2);
+    position_y -= (m_version->GetSize().y /2);
+    position_y -= 50;
+    m_version->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+    //m_version->GetTexture()->transparency = 1.0f;
+    position_y = m_version->GetPosition()->y - (m_version->GetSize().y / 2);
+    position_y -= (m_version->GetSize().y /2);
+    position_y -= 50;
+    m_loading->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+  }
 }
 
 //------------------------------------------------------------------------------

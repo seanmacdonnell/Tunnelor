@@ -66,6 +66,7 @@ void Component_Composite::ObserveType(Component_Composite_Type_Observer* compone
   m_type_observers.remove(std::pair<std::string, Component_Composite_Type_Observer*>(type, component_observer));
   m_type_observers.push_back(std::pair<std::string, Component_Composite_Type_Observer*>(type, component_observer));
 }
+
 //------------------------------------------------------------------------------
 void Component_Composite::IgnoreType(Component_Composite_Type_Observer* component_observer, std::string type) {
   m_type_observers.remove(std::pair<std::string, Component_Composite_Type_Observer*>(type, component_observer)); 
@@ -88,6 +89,7 @@ void Component_Composite::NotifyOnAddType(Tunnelour::Component * component) {
   }
 }
 
+//---------------------------------------------------------------------------
 void Component_Composite::NotifyOnRemoveType(Tunnelour::Component * component) {
   for each(std::pair<std::string, Component_Composite_Type_Observer*> observer in m_type_observers) {
     if (observer.first.compare(component->GetType()) == 0) {

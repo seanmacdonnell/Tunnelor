@@ -94,6 +94,7 @@ class Level_Controller: public Controller {
   bool m_has_transition_been_initalised;
   bool m_has_level_been_destroyed;
   bool m_has_level_been_created;
+  bool m_has_level_been_added;
   bool m_has_level_been_shown;
 };
 }  // namespace Tunnelour

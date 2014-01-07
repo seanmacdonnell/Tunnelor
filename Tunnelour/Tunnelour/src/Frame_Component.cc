@@ -83,6 +83,7 @@ D3DXVECTOR3 * const Frame_Component::GetPosition() {
 //---------------------------------------------------------------------------
 void Frame_Component::SetPosition(D3DXVECTOR3 position) {
   m_position = position;
+  Notify();
 }
 
 //---------------------------------------------------------------------------

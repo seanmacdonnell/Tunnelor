@@ -37,7 +37,8 @@ namespace Tunnelour {
 //  Description : This controller is responsible for the generation of the
 //                introduction to Tunnelor
 //-----------------------------------------------------------------------------
-class Splash_Screen_Controller: public Controller {
+class Splash_Screen_Controller: public Controller,
+                                public Component::Component_Observer {
  public:
   //---------------------------------------------------------------------------
   // Description : Constructor
@@ -58,6 +59,8 @@ class Splash_Screen_Controller: public Controller {
   // Description : Controller Runner
   //---------------------------------------------------------------------------
   virtual bool Run();
+
+  virtual void HandleEvent(Tunnelour::Component * const component);
 
  protected:
 

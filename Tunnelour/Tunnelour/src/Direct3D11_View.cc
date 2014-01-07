@@ -1026,9 +1026,11 @@ void Direct3D11_View::Render_Texts(std::vector<Direct3D11_View::Text_Renderable*
       } else {
         renderables[i]->texture->texture = (*stored_texture).second;
       }
-    } else {
-      Render_Text(renderables[i], viewmatrix);
     }
+    // By putting an ELSE here, you fix the bug which displays corrupt text for the first 
+    // render cycle, but the text shows up slower.
+    // I've chosen to live with the bug.
+    Render_Text(renderables[i], viewmatrix);
   }
 }
 

@@ -146,7 +146,6 @@ void Level_Tile_Controller::CreateLevel() {
 void Level_Tile_Controller::AddLevelToModel() {
   for (std::vector<Tile_Bitmap*>::iterator tile = m_created_tiles.begin(); tile != m_created_tiles.end(); ++tile) {
     m_model->Add(*tile);
-    m_middleground_tiles.push_back(*tile);
   }
 }
 
@@ -172,6 +171,7 @@ void Level_Tile_Controller::DestroyLevel() {
   }
   m_created_tiles.clear();
   m_middleground_tiles.clear();
+  m_background_tiles.clear();
   m_top_edge_tiles.clear();
   m_bottom_edge_tiles.clear();
   m_left_edge_tiles.clear();
@@ -205,10 +205,10 @@ std::vector<Tile_Bitmap*> Level_Tile_Controller::GenerateTunnelFromMetadata(Leve
       float position_z = 0;
       if ((*tile).type.compare("Middleground") == 0) {
         new_tile = new_tile = CreateMiddlegroundTile((*tile).size);
-        float position_z = -1;
+        position_z = -1;
       } else if ((*tile).type.compare("Tunnel") == 0) {
         new_tile = new_tile = CreateBackgroundTile((*tile).size);
-        float position_z = 0;
+        position_z = 0;
       }
       if (tile == (*line).begin()) {
         new_tile->SetIsLeftEdge(true);
@@ -254,6 +254,7 @@ std::vector<Tile_Bitmap*> Level_Tile_Controller::GenerateTunnelFromMetadata(Leve
       new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
 
       if ((*tile).type.compare("Middleground") == 0) {
+        m_middleground_tiles.push_back(new_tile);
         new_tile->GetTexture()->transparency = 0.0f;
         if (!tile_line.empty()) {
           if (tile_line.back()->GetPosition()->z == 0) {
@@ -273,6 +274,7 @@ std::vector<Tile_Bitmap*> Level_Tile_Controller::GenerateTunnelFromMetadata(Leve
           }
         }
       } else { // TUNNEL
+        m_background_tiles.push_back(new_tile);
         new_tile->GetTexture()->transparency = 0.0f; //TUNNEL
         if (tile_line.back()->GetPosition()->z != 0) {
           tile_line.back()->SetIsWall(true);
@@ -291,7 +293,7 @@ std::vector<Tile_Bitmap*> Level_Tile_Controller::GenerateTunnelFromMetadata(Leve
         }
       }
 
-      //ResetTileTexture(new_tile);
+      //ResetMiddlegroundTileTexture(new_tile);
 
       tile_line.push_back(new_tile);
       tiles.push_back(new_tile);
@@ -449,7 +451,7 @@ Tile_Bitmap* Level_Tile_Controller::CreateBackgroundTile(float base_tile_size) {
 }
 
 //---------------------------------------------------------------------------
-Tileset_Helper::Line Level_Tile_Controller::GetCurrentSizedLine(float size) {
+Tileset_Helper::Line Level_Tile_Controller::GetCurrentSizedMiddlegroundLine(float size) {
   Tileset_Helper::Line tile_line;
   std::vector<Tileset_Helper::Line>::iterator line;
   for (line = m_current_middleground_subset.lines.begin(); line != m_current_middleground_subset.lines.end(); line++) {
@@ -463,8 +465,44 @@ Tileset_Helper::Line Level_Tile_Controller::GetCurrentSizedLine(float size) {
 }
 
 //---------------------------------------------------------------------------
-void Level_Tile_Controller::ResetTileTexture(Tile_Bitmap *out_tile) {
-  Tileset_Helper::Line tile_line = GetCurrentSizedLine(out_tile->GetSize().x);
+Tileset_Helper::Line Level_Tile_Controller::GetCurrentSizedBackgroundLine(float size) {
+  Tileset_Helper::Line tile_line;
+  std::vector<Tileset_Helper::Line>::iterator line;
+  for (line = m_current_background_subset.lines.begin(); line != m_current_background_subset.lines.end(); line++) {
+    if (line->tile_size_x == size) {
+      if (line->tile_size_y == size) {
+        tile_line = *line;
+      }
+    }
+  }
+  return tile_line;
+}
+
+//---------------------------------------------------------------------------
+void Level_Tile_Controller::ResetMiddlegroundTileTexture(Tile_Bitmap *out_tile) {
+  Tileset_Helper::Line tile_line = GetCurrentSizedMiddlegroundLine(out_tile->GetSize().x);
+  int random_variable = 0;
+  if (m_is_debug_mode) {
+    if (out_tile->IsEdge()) {
+      random_variable = 1;
+    } else {
+      random_variable = 0;
+    }   
+  } else {
+    random_variable = rand() % tile_line.number_of_tiles;
+  }
+
+  float left = random_variable * tile_line.tile_size_x + tile_line.top_left_x;
+  float top = tile_line.top_left_y;
+  out_tile->GetTexture()->top_left_position = D3DXVECTOR2(left, top);
+  out_tile->GetTexture()->texture = 0;
+  out_tile->GetFrame()->vertex_buffer = 0;
+  out_tile->Init();
+}
+
+//---------------------------------------------------------------------------
+void Level_Tile_Controller::ResetBackgroundTileTexture(Tile_Bitmap *out_tile) {
+  Tileset_Helper::Line tile_line = GetCurrentSizedBackgroundLine(out_tile->GetSize().x);
   int random_variable = 0;
   if (m_is_debug_mode) {
     if (out_tile->IsEdge()) {
@@ -494,29 +532,30 @@ void Level_Tile_Controller::SwitchTileset() {
     m_current_tileset = GetNamedTileset("Dirt");
   }
 
-  m_current_middleground_subset = GetCurrentMiddlegroundSubset();
   std::vector<Tile_Bitmap*>::iterator tile;
-  for (tile = m_middleground_tiles.begin(); tile != m_middleground_tiles.end(); ++tile) {
-    Tileset_Helper::Line tile_line = GetCurrentSizedLine((*tile)->GetSize().x);
+  
+  m_current_middleground_subset = GetCurrentMiddlegroundSubset();
+  for (tile = m_middleground_tiles.begin(); tile != m_middleground_tiles.end(); tile++) {
+    Tileset_Helper::Line tile_line = GetCurrentSizedMiddlegroundLine((*tile)->GetSize().x);
     std::wstring texture_path = m_game_settings->GetTilesetPath();
     texture_path += String_Helper::StringToWString(m_current_tileset.filename);
     (*tile)->GetTexture()->texture_path = texture_path;
     D3DXVECTOR2 size = D3DXVECTOR2(m_current_tileset.size_x,
                                    m_current_tileset.size_y);
     (*tile)->GetTexture()->texture_size = size;
-    ResetTileTexture((*tile));
+    ResetMiddlegroundTileTexture((*tile));
   }
-
+  
   m_current_background_subset = GetCurrentBackgroundSubset();
-  for (tile = m_background_tiles.begin(); tile != m_background_tiles.end(); ++tile) {
-    Tileset_Helper::Line background_line = GetCurrentSizedLine((*tile)->GetSize().x);
+  for (tile = m_background_tiles.begin(); tile != m_background_tiles.end(); tile++) {
+    Tileset_Helper::Line background_line = GetCurrentSizedBackgroundLine((*tile)->GetSize().x);
     std::wstring texture_path = m_game_settings->GetTilesetPath();
     texture_path += String_Helper::StringToWString(m_current_tileset.filename);
     (*tile)->GetTexture()->texture_path = texture_path;
     D3DXVECTOR2 size = D3DXVECTOR2(m_current_tileset.size_x,
                                    m_current_tileset.size_y);
     (*tile)->GetTexture()->texture_size = size;
-    ResetTileTexture((*tile));
+    ResetBackgroundTileTexture((*tile));
   }
 }
 
@@ -551,8 +590,8 @@ void Level_Tile_Controller::TileUp(float camera_top, float middleground_top) {
       m_left_edge_tiles.push_back(tile);
     }
     if (m_is_debug_mode) {
-      ResetTileTexture((*edge_tile));
-      ResetTileTexture(tile);
+      ResetMiddlegroundTileTexture((*edge_tile));
+      ResetMiddlegroundTileTexture(tile);
     }
     m_created_tiles.push_back(tile);
   }
@@ -592,8 +631,8 @@ void Level_Tile_Controller::TileDown(float camera_bottom, float middleground_bot
       m_left_edge_tiles.push_back(tile);
     }
     if (m_is_debug_mode) {
-      ResetTileTexture((*edge_tile));
-      ResetTileTexture(tile);
+      ResetMiddlegroundTileTexture((*edge_tile));
+      ResetMiddlegroundTileTexture(tile);
     }
     m_created_tiles.push_back(tile);
   }
@@ -633,8 +672,8 @@ void Level_Tile_Controller::TileRight(float camera_right, float middleground_rig
       m_left_edge_tiles.push_back(tile);
     }
     if (m_is_debug_mode) {
-      ResetTileTexture((*edge_tile));
-      ResetTileTexture(tile);
+      ResetMiddlegroundTileTexture((*edge_tile));
+      ResetMiddlegroundTileTexture(tile);
     }
     m_created_tiles.push_back(tile);
   }
@@ -674,8 +713,8 @@ void Level_Tile_Controller::TileLeft(float camera_left, float middleground_left)
       m_right_edge_tiles.push_back(tile);
     }
     if (m_is_debug_mode) {
-      ResetTileTexture((*edge_tile));
-      ResetTileTexture(tile);
+      ResetMiddlegroundTileTexture((*edge_tile));
+      ResetMiddlegroundTileTexture(tile);
     }
     m_created_tiles.push_back(tile);
   }

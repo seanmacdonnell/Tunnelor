@@ -37,7 +37,8 @@ namespace Tunnelour {
 //  Description : This controller is responsible for the generation of the
 //                introduction to Tunnelor
 //-----------------------------------------------------------------------------
-class Level_Transition_Controller: public Controller {
+class Level_Transition_Controller: public Controller,
+                                   public Component::Component_Observer {
  public:
   //---------------------------------------------------------------------------
   // Description : Constructor
@@ -73,6 +74,8 @@ class Level_Transition_Controller: public Controller {
   void SetNextLevelNameText(std::string next_level_name);
 
   void SetNextLevelBlurbText(std::string next_level_blurb);
+
+  virtual void HandleEvent(Tunnelour::Component * const component);
 
  protected:
 

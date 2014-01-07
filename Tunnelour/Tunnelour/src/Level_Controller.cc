@@ -40,6 +40,7 @@ Level_Controller::Level_Controller() : Controller() {
   m_has_transition_been_initalised = false;
   m_has_level_been_destroyed = false;
   m_has_level_been_created = false;
+  m_has_level_been_added = false;
   m_has_level_been_shown = false;
 }
 
@@ -110,20 +111,17 @@ bool Level_Controller::Run() {
     if (m_level_transition_controller != 0) {
       if (m_level_transition_controller->IsLoading()) {
         if (!m_has_transition_been_initalised) {
-          m_level_transition_controller->SetLevelCompleteHeadingText("LEVEL COMPLETE");
-          m_level_transition_controller->SetNextLevelHeadingText("Loading Next Level");
-          m_level_transition_controller->SetNextLevelNameText(m_next_level.level_name);
-          m_level_transition_controller->SetNextLevelBlurbText(m_next_level.blurb);
           m_level->SetCurrentLevel(m_next_level);
-          m_level->SetIsComplete(false);
           m_has_transition_been_initalised = true;
         } else if (!m_has_level_been_destroyed) {
           m_level_tile_controller->DestroyLevel();
           m_has_level_been_destroyed = true;
         } else if (!m_has_level_been_created) {
           m_level_tile_controller->CreateLevel();
-          m_level_tile_controller->HideLevel();
           m_has_level_been_created = true;
+        } else if (!m_has_level_been_added) {
+          m_level_tile_controller->AddLevelToModel();
+          m_has_level_been_added = true;
         } else if(!m_has_level_been_shown) {
           m_level_tile_controller->ShowLevel();
           m_has_level_been_shown = true;
@@ -133,14 +131,18 @@ bool Level_Controller::Run() {
           m_has_level_been_destroyed = false;
           m_has_level_been_created = false;
           m_has_level_been_shown = false;
+          m_level->SetIsComplete(false);
         }
-        if (m_level_transition_controller->IsFinished()) {
-          delete m_level_transition_controller;
-          m_level_transition_controller = 0;
-        }
+      } else {
+        m_level_tile_controller->Run();
+        m_avatar_controller->Run();
       }
+
       m_level_transition_controller->Run();
-      m_level_tile_controller->Run();
+      if (m_level_transition_controller->IsFinished()) {
+        delete m_level_transition_controller;
+        m_level_transition_controller = 0;
+      }
     } else {
       m_avatar_controller->Run();
       if (m_avatar == 0) {
@@ -187,25 +189,33 @@ bool Level_Controller::Run() {
             }
             if ((*end_condition)->and && and) {
               if ((*end_condition)->next_level.compare("QUIT") != 0) {
+                m_level->SetIsComplete(true);
+                m_next_level = GetNamedLevel((*end_condition)->next_level);
                 if (m_level_transition_controller == 0) {
                   m_level_transition_controller = new Level_Transition_Controller();
+                  m_level_transition_controller->SetLevelCompleteHeadingText("LEVEL COMPLETE");
+                  m_level_transition_controller->SetNextLevelHeadingText("Loading Next Level");
+                  m_level_transition_controller->SetNextLevelNameText(m_next_level.level_name);
+                  m_level_transition_controller->SetNextLevelBlurbText(m_next_level.blurb);
                   m_level_transition_controller->Init(m_model);
                   m_level_transition_controller->Run();
                 }
-                m_level->SetIsComplete(true);
-                m_next_level = GetNamedLevel((*end_condition)->next_level);
               } else {
                 PostQuitMessage(0);
               }
             } else if ((*end_condition)->or && or) {
               if ((*end_condition)->next_level.compare("QUIT") != 0) {
+                m_level->SetIsComplete(true);
+                m_next_level = GetNamedLevel((*end_condition)->next_level);
                 if (m_level_transition_controller == 0) {
                   m_level_transition_controller = new Level_Transition_Controller();
+                  m_level_transition_controller->SetLevelCompleteHeadingText("LEVEL COMPLETE");
+                  m_level_transition_controller->SetNextLevelHeadingText("Loading Next Level");
+                  m_level_transition_controller->SetNextLevelNameText(m_next_level.level_name);
+                  m_level_transition_controller->SetNextLevelBlurbText(m_next_level.blurb);
                   m_level_transition_controller->Init(m_model);
                   m_level_transition_controller->Run();
                 }
-                m_level->SetIsComplete(true);
-                m_next_level = GetNamedLevel((*end_condition)->next_level);
               } else {
                 PostQuitMessage(0);
               }

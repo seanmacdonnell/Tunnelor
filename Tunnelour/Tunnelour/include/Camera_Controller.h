@@ -28,7 +28,8 @@ namespace Tunnelour {
 //  Description : This controller is responsible for the generation
 //              : and movement of the camera_component.
 //-----------------------------------------------------------------------------
-class Camera_Controller: public Controller {
+class Camera_Controller: public Controller,
+                         public Component::Component_Observer {
  public:
   //---------------------------------------------------------------------------
   // Description : Constructor
@@ -49,6 +50,8 @@ class Camera_Controller: public Controller {
   // Description : Controller Runner
   //---------------------------------------------------------------------------
   virtual bool Run();
+
+  virtual void HandleEvent(Tunnelour::Component * const component);
 
  protected:
 

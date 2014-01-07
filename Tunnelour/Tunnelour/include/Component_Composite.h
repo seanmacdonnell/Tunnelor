@@ -73,12 +73,12 @@ class Component_Composite: public Component {
   void Apply(Tunnelour::Component::Component_Mutator * const mutator);
 
   //---------------------------------------------------------------------------
-  // Description : Observe this component
+  // Description : Observe all components of this type
   //---------------------------------------------------------------------------
   void ObserveType(Component_Composite_Type_Observer* component_observer, std::string type);
 
   //---------------------------------------------------------------------------
-  // Description : Stop observing this component
+  // Description : Stop observing all components of this type
   //---------------------------------------------------------------------------
   void IgnoreType(Component_Composite_Type_Observer* component_observer, std::string type);
 
@@ -89,7 +89,7 @@ class Component_Composite: public Component {
   std::list<Tunnelour::Component*> m_components;
 
   //---------------------------------------------------------------------------
-  // Description : Notify all observers
+  // Description : Notify all type observers
   //---------------------------------------------------------------------------
   void NotifyOnAddType(Tunnelour::Component * component);
   void NotifyOnRemoveType(Tunnelour::Component * component);

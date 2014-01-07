@@ -79,12 +79,14 @@ class Level_Tile_Controller: public Controller {
   Tileset_Helper::Subset GetCurrentBackgroundSubset();
   Tile_Bitmap* CreateMiddlegroundTile(float base_tile_size);
   Tile_Bitmap* CreateBackgroundTile(float base_tile_size);
-  Tileset_Helper::Line GetCurrentSizedLine(float size);
+  Tileset_Helper::Line GetCurrentSizedMiddlegroundLine(float size);
+  Tileset_Helper::Line GetCurrentSizedBackgroundLine(float size);
   
   //---------------------------------------------------------------------------
   // Description : Resets a tiles texture to 0 for switching tilesets.
   //---------------------------------------------------------------------------
-  void ResetTileTexture(Tile_Bitmap *out_tile);
+  void ResetMiddlegroundTileTexture(Tile_Bitmap *out_tile);
+  void ResetBackgroundTileTexture(Tile_Bitmap *out_tile);
   std::vector<Tile_Bitmap*> m_left_edge_tiles;
   std::vector<Tile_Bitmap*> m_right_edge_tiles;
   std::vector<Tile_Bitmap*> m_bottom_edge_tiles;
