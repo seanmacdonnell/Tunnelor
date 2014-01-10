@@ -95,7 +95,7 @@ bool Splash_Screen_Controller::Init(Component_Composite * const model) {
       m_model->Add(m_splash_screen_component);
     }
     if (m_background == 0) {
-      // Create the Spash Black Tile
+      // Create the Black Tile
       m_background = CreateTile(128);
       m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
       m_background->SetScale(new D3DXVECTOR3((m_game_settings->GetResolution().x/128), (m_game_settings->GetResolution().y/128), 1.0f));
@@ -107,12 +107,12 @@ bool Splash_Screen_Controller::Init(Component_Composite * const model) {
       m_game_name_heading->GetText()->text = "TUNNELOR";
       m_game_name_heading->GetTexture()->transparency = 1.0f;
       m_game_name_heading->SetPosition(0, 0, m_z_text_position);
-      //m_game_name_heading->GetFont()->font_color = D3DXCOLOR(0.37, 0.15, 0.02, 1);
       m_game_name_heading->GetFrame()->index_buffer = 0;
       m_game_name_heading->GetTexture()->texture = 0;
       m_game_name_heading->GetFrame()->vertex_buffer = 0;
+      m_game_name_heading->Init();
       m_model->Add(m_game_name_heading);
-     }
+    }
     if (m_author == 0) {
       m_author = new Text_Component();
       m_author->GetText()->font_csv_file = m_text_font_path;
@@ -122,6 +122,7 @@ bool Splash_Screen_Controller::Init(Component_Composite * const model) {
       m_author->GetFrame()->index_buffer = 0;
       m_author->GetTexture()->texture = 0;
       m_author->GetFrame()->vertex_buffer = 0;
+      m_author->Init();
       m_model->Add(m_author);
     }
     if (m_version == 0) {
@@ -133,6 +134,7 @@ bool Splash_Screen_Controller::Init(Component_Composite * const model) {
       m_version->GetFrame()->index_buffer = 0;
       m_version->GetTexture()->texture = 0;
       m_version->GetFrame()->vertex_buffer = 0;
+      m_version->Init();
       m_model->Add(m_version);
     }
     if (m_loading == 0) {
@@ -145,6 +147,7 @@ bool Splash_Screen_Controller::Init(Component_Composite * const model) {
       m_loading->GetFrame()->index_buffer = 0;
       m_loading->GetTexture()->texture = 0;
       m_loading->GetFrame()->vertex_buffer = 0;
+      m_loading->Init();
       m_model->Add(m_loading);
     } 
     m_splash_screen_component->SetIsLoading(true);
@@ -159,41 +162,53 @@ bool Splash_Screen_Controller::Run() {
   // Get game settings component from the model with the Mutator.
   if (!m_has_been_initialised) { return false; }
 
-  m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
-
-  m_game_name_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + 200, m_z_text_position);
-  //m_game_name_heading->GetTexture()->transparency = 1.0f;
-
-  float position_y = m_game_name_heading->GetPosition()->y - (m_game_name_heading->GetSize().y / 2);
-  position_y -= (m_author->GetSize().y /2);
-  position_y -= 50;
-  m_author->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
-  //m_author->GetTexture()->transparency = 1.0f;
-
-  position_y = m_author->GetPosition()->y - (m_author->GetSize().y / 2);
-  position_y -= (m_version->GetSize().y /2);
-  position_y -= 50;
-  m_version->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
-  //m_version->GetTexture()->transparency = 1.0f;
-
-  UpdateTimer();
-  if (m_animation_tick) {
-    if (m_loading->GetTexture()->transparency > 0.0f) {
-      m_loading_transparency = m_loading->GetTexture()->transparency;
-      m_loading->GetTexture()->transparency = 0.0f;
-    } else {
-      m_loading->GetTexture()->transparency = m_loading_transparency;
-    }
-
-    m_animation_tick = false;
+  if (m_background != 0) {
+    m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
   }
 
-  if (m_loading->GetText()->text.compare("Loading!") == 0) {
-    if (!m_splash_screen_component->IsLoading()) {
-      //m_loading->GetTexture()->transparency = 0.0f;
-      m_loading->GetText()->text = "Loading Complete Press Space to Continue";
-      m_loading->Init();
+  if (m_game_name_heading != 0) {
+    m_game_name_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + 200, m_z_text_position);
+  }
+
+  float position_y = 0; 
+  if (m_game_name_heading != 0 && m_author != 0) {
+    position_y = m_game_name_heading->GetPosition()->y - (m_game_name_heading->GetSize().y / 2);
+    position_y -= (m_author->GetSize().y /2);
+    position_y -= 50;
+    m_author->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+  }
+
+  if (m_author != 0 && m_version != 0) {
+    position_y = m_author->GetPosition()->y - (m_author->GetSize().y / 2);
+    position_y -= (m_version->GetSize().y /2);
+    position_y -= 50;
+    m_version->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+  }
+
+  if (m_loading != 0 && m_version != 0) {
+    UpdateTimer();
+    if (m_animation_tick) {
+      if (m_loading->GetTexture()->transparency > 0.0f) {
+        m_loading_transparency = m_loading->GetTexture()->transparency;
+        m_loading->GetTexture()->transparency = 0.0f;
+      } else {
+        m_loading->GetTexture()->transparency = m_loading_transparency;
+      }
+
+      m_animation_tick = false;
     }
+
+    if (m_loading->GetText()->text.compare("Loading!") == 0) {
+      if (!m_splash_screen_component->IsLoading()) {
+        m_loading->GetText()->text = "Loading Complete Press Space to Continue";
+        m_loading->Init();
+      }
+    }
+
+    position_y = m_version->GetPosition()->y - (m_version->GetSize().y / 2);
+    position_y -= (m_version->GetSize().y /2);
+    position_y -= 50;
+    m_loading->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
   }
 
   if (m_loading->GetText()->text.compare("Loading Complete Press Space to Continue") == 0) {
@@ -216,20 +231,30 @@ bool Splash_Screen_Controller::Run() {
         m_author->GetTexture()->transparency = 0.0f;
         m_version->GetTexture()->transparency = 0.0f;
         m_loading->GetTexture()->transparency = 0.0f;
-        if (m_game_name_heading != 0) { m_model->Remove(m_game_name_heading); }
-        if (m_author != 0) { m_model->Remove(m_author); }
-        if (m_version != 0) { m_model->Remove(m_version); }
-        if (m_loading != 0) { m_model->Remove(m_loading); }
-        if (m_background != 0) { m_model->Remove(m_background); }
+        if (m_game_name_heading != 0) { 
+          m_model->Remove(m_game_name_heading);
+          m_game_name_heading = 0;
+        }
+        if (m_author != 0) {
+          m_model->Remove(m_author); 
+          m_author = 0;
+        }
+        if (m_version != 0) {
+          m_model->Remove(m_version); 
+          m_version = 0;
+        }
+        if (m_loading != 0) {
+          m_model->Remove(m_loading);
+          m_loading = 0;
+        }
+        if (m_background != 0) {
+          m_model->Remove(m_background); 
+          m_background = 0;
+        }
         m_is_finished = true;
       }
     }
   }
-
-  position_y = m_version->GetPosition()->y - (m_version->GetSize().y / 2);
-  position_y -= (m_version->GetSize().y /2);
-  position_y -= 50;
-  m_loading->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
 
   return true;
 }
@@ -237,26 +262,31 @@ bool Splash_Screen_Controller::Run() {
 //------------------------------------------------------------------------------
 void Splash_Screen_Controller::HandleEvent(Tunnelour::Component * const component) {
   if (component->GetType().compare("Camera_Component") == 0) {
-    m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
-
-    m_game_name_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + 200, m_z_text_position);
-    //m_game_name_heading->GetTexture()->transparency = 1.0f;
-
-    float position_y = m_game_name_heading->GetPosition()->y - (m_game_name_heading->GetSize().y / 2);
-    position_y -= (m_author->GetSize().y /2);
-    position_y -= 50;
-    m_author->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
-    //m_author->GetTexture()->transparency = 1.0f;
-
-    position_y = m_author->GetPosition()->y - (m_author->GetSize().y / 2);
-    position_y -= (m_version->GetSize().y /2);
-    position_y -= 50;
-    m_version->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
-    //m_version->GetTexture()->transparency = 1.0f;
-    position_y = m_version->GetPosition()->y - (m_version->GetSize().y / 2);
-    position_y -= (m_version->GetSize().y /2);
-    position_y -= 50;
-    m_loading->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+    if (m_background != 0) {
+      m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
+    }
+    if (m_game_name_heading != 0) {
+      m_game_name_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + 200, m_z_text_position);
+    }
+    float position_y = 0;
+    if (m_author != 0) {
+      position_y = m_game_name_heading->GetPosition()->y - (m_game_name_heading->GetSize().y / 2);
+      position_y -= (m_author->GetSize().y /2);
+      position_y -= 50;
+      m_author->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+    }
+    if (m_version != 0) {
+      position_y = m_author->GetPosition()->y - (m_author->GetSize().y / 2);
+      position_y -= (m_version->GetSize().y /2);
+      position_y -= 50;
+      m_version->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+    }
+    if (m_loading != 0) {
+      position_y = m_version->GetPosition()->y - (m_version->GetSize().y / 2);
+      position_y -= (m_version->GetSize().y /2);
+      position_y -= 50;
+      m_loading->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+    }
   }
 }
 

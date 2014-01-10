@@ -234,9 +234,16 @@ void Avatar_Controller::RunWalkingState() {
     // Is the command different from the current state?
     if (current_state.state.compare(current_command.state) != 0 ||
         current_state.direction != current_command.direction) {
-      // Set a new state
-      SetAvatarState(current_command.state, current_command.direction);
-      AlignAvatarOnLastAvatarCollisionBlock();
+      if (current_state.state.compare("Wall_Colliding") == 0) {
+        if (current_state.direction != current_command.direction) {
+          SetAvatarState(current_command.state, current_command.direction);
+          AlignAvatarOnLastAvatarCollisionBlock();
+        }
+      } else {
+        // Set a new state
+        SetAvatarState(current_command.state, current_command.direction);
+        AlignAvatarOnLastAvatarCollisionBlock();
+      }
     } else { // Command is the same as the current state.
       // Continue State
       unsigned int state_index = current_state.state_index;
@@ -250,17 +257,18 @@ void Avatar_Controller::RunWalkingState() {
           throw Exceptions::init_error(error);
         }
       }
+      if (current_state.state.compare("Walking") == 0) {
+        SetAvatarStateAnimationFrame(state_index);
+        AlignAvatarOnLastAvatarCollisionBlock();
 
-      SetAvatarStateAnimationFrame(state_index);
-      AlignAvatarOnLastAvatarCollisionBlock();
-
-      D3DXVECTOR3 position = *m_avatar->GetPosition();
-      if (current_state.direction.compare("Right") == 0) {
-        position += m_avatar->GetVelocity();
-      } else {  // Left
-        position -= m_avatar->GetVelocity();
+        D3DXVECTOR3 position = *m_avatar->GetPosition();
+        if (current_state.direction.compare("Right") == 0) {
+          position += m_avatar->GetVelocity();
+        } else {  // Left
+          position -= m_avatar->GetVelocity();
+        }
+        m_avatar->SetPosition(position);
       }
-      m_avatar->SetPosition(position);
     }
 
     ClearAvatarState();
@@ -273,7 +281,7 @@ void Avatar_Controller::RunWalkingState() {
   // Detect if the avatar is intersecting with a wall
   std::vector<Bitmap_Component*> *out_colliding_floor_tiles = new std::vector<Bitmap_Component*>();
   if (IsAvatarWallColliding(out_colliding_floor_tiles, &CollisionBlockToBitmapComponent(GetNamedCollisionBlock("Avatar", m_avatar->GetState().avatar_collision_blocks)))) {
-    SetAvatarState("Standing", m_avatar->GetState().direction);
+    SetAvatarState("Wall_Colliding", m_avatar->GetState().direction);
     AlignAvatarOnLastAvatarCollisionBlock();
     // Move back avatar
     if (m_avatar->GetState().direction.compare("Left") == 0) {
@@ -579,7 +587,7 @@ void Avatar_Controller::LoadTilesets(std::wstring wtileset_path) {
   m_animation_metadata.push_back(m_running_metadata);
 
   // Walking
-  m_walking_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Walking_Animation_Tileset_1_6.txt");
+  m_walking_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Walking_Animation_Tileset_1_7.txt");
   Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(m_walking_metadata_file_path, &m_walking_metadata);
   m_animation_metadata.push_back(m_walking_metadata);
 
@@ -705,8 +713,6 @@ void Avatar_Controller::AlignAvatarOnLastAvatarCollisionBlock() {
 
     m_avatar->SetPosition(new_avatar_position);
   }
-
-
 }
 
 //------------------------------------------------------------------------------

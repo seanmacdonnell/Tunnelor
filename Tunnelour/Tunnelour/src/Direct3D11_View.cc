@@ -1005,8 +1005,8 @@ void Direct3D11_View::Render_Texts(std::vector<Direct3D11_View::Text_Renderable*
 
       // Create the index buffer.
       if (FAILED(m_device->CreateBuffer(&indexBufferDesc,
-                                              &indexData,
-                                              &(renderables[i]->frame->index_buffer)))) {
+                                        &indexData,
+                                        &(renderables[i]->frame->index_buffer)))) {
         throw Exceptions::init_error("CreateBuffer (index_buffer) Failed!");
       }
     }
@@ -1023,7 +1023,8 @@ void Direct3D11_View::Render_Texts(std::vector<Direct3D11_View::Text_Renderable*
                                                           NULL)))  {
           throw Exceptions::init_error("Loading font file failed!");
         }
-        m_texture_map[renderables[i]->texture->texture_path]=texture;
+        m_texture_map[renderables[i]->texture->texture_path] = texture;
+        renderables[i]->texture->texture = texture;
       } else {
         renderables[i]->texture->texture = (*stored_texture).second;
       }
