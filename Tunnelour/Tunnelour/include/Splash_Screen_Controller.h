@@ -94,7 +94,6 @@ class Splash_Screen_Controller: public Controller,
   Text_Component *m_game_name_heading;
   Text_Component *m_author;
   Text_Component *m_version;
-  Text_Component *m_loading;
 
   //---------------------------------------------------------------------------
   // Description : Initialises the timer used for the animation ticks
@@ -105,6 +104,7 @@ class Splash_Screen_Controller: public Controller,
   // Description : Updates and determines if the animation needs to update
   //---------------------------------------------------------------------------
   void UpdateTimer();
+  void UpdateFadeoutTimer();
 
   INT64 m_frequency;
   float m_ticksPerMs;
@@ -112,6 +112,14 @@ class Splash_Screen_Controller: public Controller,
   float m_frameTime;
   bool m_animation_tick;
   int m_current_animation_fps;
+
+  float m_fadeout_frameTime;
+  bool m_fadeout_animation_tick;
+  INT64 m_fadeout_startTime;
+
+  INT64 m_fadeout_frequency;
+  
+  bool m_fadeout;
 
   Splash_Screen_Component *m_splash_screen_component;
   Input_Component *m_input;

@@ -22,7 +22,6 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 Input_Controller_Mutator::Input_Controller_Mutator() {
   m_found_game_settings = false;
-  m_found_avatar_component = false;
   m_game_settings = 0;
   m_avatar_controller = 0;
 }
@@ -30,7 +29,6 @@ Input_Controller_Mutator::Input_Controller_Mutator() {
 //------------------------------------------------------------------------------
 Input_Controller_Mutator::~Input_Controller_Mutator() {
   m_found_game_settings = false;
-  m_found_avatar_component = false;
   m_game_settings = 0;
   m_avatar_controller = 0;
 }
@@ -40,9 +38,6 @@ void Input_Controller_Mutator::Mutate(Component *const component) {
   if (component->GetType().compare("Game_Settings_Component") == 0) {
     m_game_settings = static_cast<Game_Settings_Component*>(component);
     m_found_game_settings = true;
-  } else if (component->GetType().compare("Avatar_Component") == 0) {
-    m_avatar_controller = static_cast<Avatar_Component*>(component);
-    m_found_avatar_component = true;
   }
 }
 
@@ -52,13 +47,8 @@ Game_Settings_Component *const Input_Controller_Mutator::GetGameSettings() {
 }
 
 //------------------------------------------------------------------------------
-Avatar_Component *const Input_Controller_Mutator::GetAvatarComponent() {
-  return m_avatar_controller;
-}
-
-//------------------------------------------------------------------------------
 bool Input_Controller_Mutator::WasSuccessful() {
-  return m_found_avatar_component && m_found_game_settings;
+  return  m_found_game_settings;
 }
 
 

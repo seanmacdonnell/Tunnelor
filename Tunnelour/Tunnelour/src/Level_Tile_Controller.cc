@@ -41,6 +41,7 @@ Level_Tile_Controller::Level_Tile_Controller() : Controller() {
 //------------------------------------------------------------------------------
 Level_Tile_Controller::~Level_Tile_Controller() {
   m_game_settings = 0;
+  m_camera->Ignore(this);
   m_camera = 0;
   m_level = 0;
   m_tileset_filename = "";
@@ -83,56 +84,58 @@ bool Level_Tile_Controller::Run() {
   // Get game settings component from the model with the Mutator.
   if (!m_has_been_initialised) { return false; }
 
-  if (m_current_level_name.compare(m_level->GetCurrentLevel().level_name) != 0) {
-    //DestroyLevel();
-    //CreateLevel();
-  } else {
-    // If Camera is over an area with no tiles
-    D3DXVECTOR2 game_resolution = m_game_settings->GetResolution();
-    D3DXVECTOR3 camera_position = m_camera->GetPosition();
-
-    float camera_top = (camera_position.y + (game_resolution.y / 2));
-    float camera_bottom = (camera_position.y - (game_resolution.y / 2));
-    float camera_left = (camera_position.x - (game_resolution.x / 2));
-    float camera_right = (camera_position.x + (game_resolution.x / 2));
-
-    float middleground_top = (*m_top_edge_tiles.begin())->GetTopLeftPostion().y;
-    float middleground_left = (*m_left_edge_tiles.begin())->GetTopLeftPostion().x;
-    float middleground_bottom = (*m_bottom_edge_tiles.begin())->GetBottomRightPostion().y;
-    float middleground_right = (*m_right_edge_tiles.begin())->GetBottomRightPostion().x;
+  // If Camera is over an area with no tiles
+  D3DXVECTOR2 game_resolution = m_game_settings->GetResolution();
+  D3DXVECTOR3 camera_position = m_camera->GetPosition();
   
+  if (!m_right_edge_tiles.empty()) {
+    float camera_right = (camera_position.x + (game_resolution.x / 2));
+    float middleground_right = (*m_right_edge_tiles.begin())->GetBottomRightPostion().x;
     if ((camera_right + game_resolution.x) > middleground_right) {
       while ((camera_right + game_resolution.x) > middleground_right) {
         TileRight(camera_right, middleground_right);
         middleground_right = (*m_right_edge_tiles.begin())->GetBottomRightPostion().x;
       }
     }
+  }
   
+  if (!m_left_edge_tiles.empty()) {
+    float camera_left = (camera_position.x - (game_resolution.x / 2));
+    float middleground_left = (*m_left_edge_tiles.begin())->GetTopLeftPostion().x;
     if (camera_left - (game_resolution.x) < middleground_left) {
       while ((camera_left - game_resolution.x) < middleground_left) {
         TileLeft(camera_left, middleground_left);
         middleground_left = (*m_left_edge_tiles.begin())->GetTopLeftPostion().x;
       }
     }
+  }
 
+  if (!m_top_edge_tiles.empty()) {
+    float camera_top = (camera_position.y + (game_resolution.y / 2));
+    float middleground_top = (*m_top_edge_tiles.begin())->GetTopLeftPostion().y;
     if (camera_top + (game_resolution.y) > middleground_top) {
       while ((camera_top + game_resolution.y) > middleground_top) {
         TileUp(camera_top, middleground_top);
         middleground_top = (*m_top_edge_tiles.begin())->GetTopLeftPostion().y;
       }
     }
+  }
 
+  if (!m_bottom_edge_tiles.empty()) {
+    float camera_bottom = (camera_position.y - (game_resolution.y / 2));
+    float middleground_bottom = (*m_bottom_edge_tiles.begin())->GetBottomRightPostion().y;
     if (camera_bottom - (game_resolution.y) < middleground_bottom) {
       while ((camera_bottom - game_resolution.y) < middleground_bottom) {
         TileDown(camera_bottom, middleground_bottom);
         middleground_bottom = (*m_bottom_edge_tiles.begin())->GetBottomRightPostion().y;
       }
     }
-  
-    if (m_is_debug_mode != m_game_settings->IsDebugMode()) {
-      SwitchTileset();
-    }
   }
+  
+  if (m_is_debug_mode != m_game_settings->IsDebugMode()) {
+    SwitchTileset();
+  }
+
   return true;
 }
 
@@ -176,6 +179,13 @@ void Level_Tile_Controller::DestroyLevel() {
   m_bottom_edge_tiles.clear();
   m_left_edge_tiles.clear();
   m_right_edge_tiles.clear();
+}
+
+//------------------------------------------------------------------------------
+void Level_Tile_Controller::HandleEvent(Tunnelour::Component * const component) {
+  if (component->GetType().compare("Camera_Component") == 0) {
+    Run();
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -386,7 +396,7 @@ Tile_Bitmap* Level_Tile_Controller::CreateMiddlegroundTile(float base_tile_size)
 
   Tile_Bitmap* tile = new Tile_Bitmap();
   tile->SetPosition(D3DXVECTOR3(0, 0, -1));
-  tile->GetTexture()->transparency = 0.0f;
+  tile->GetTexture()->transparency = 1.0f;
 
   std::wstring texture_path = m_game_settings->GetTilesetPath();
   texture_path += String_Helper::StringToWString(m_current_tileset.filename);
@@ -616,7 +626,6 @@ void Level_Tile_Controller::TileDown(float camera_bottom, float middleground_bot
     tile->SetIsBottomEdge((*edge_tile)->IsBottomEdge());
     tile->SetIsRightEdge((*edge_tile)->IsRightEdge());
     tile->SetIsLeftEdge((*edge_tile)->IsLeftEdge());
-    m_model->Add(tile);
     m_middleground_tiles.push_back(tile);
     new_bottom_tiles.push_back(tile);
 
@@ -635,9 +644,10 @@ void Level_Tile_Controller::TileDown(float camera_bottom, float middleground_bot
       ResetMiddlegroundTileTexture(tile);
     }
     m_created_tiles.push_back(tile);
+    m_model->Add(tile);
   }
-  m_bottom_edge_tiles.clear();
 
+  m_bottom_edge_tiles.clear();
   m_bottom_edge_tiles = new_bottom_tiles;
 }
 

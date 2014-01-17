@@ -122,6 +122,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Level_Transition_Controller_Mutator.cc" />
     <ClCompile Include="src\Message_Wrapper.cc" />
     <ClCompile Include="src\Bitmap_Component.cc" />
+    <ClCompile Include="src\Screen_Wipeout_Controller.cc" />
     <ClCompile Include="src\Splash_Screen_Component.cc" />
     <ClCompile Include="src\Splash_Screen_Controller.cc" />
     <ClCompile Include="src\Splash_Screen_Controller_Mutator.cc" />
@@ -176,6 +177,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Level_Transition_Controller_Mutator.h" />
     <ClInclude Include="include\Message_Wrapper.h" />
     <ClInclude Include="include\Bitmap_Component.h" />
+    <ClInclude Include="include\Screen_Wipeout_Controller.h" />
     <ClInclude Include="include\Splash_Screen_Component.h" />
     <ClInclude Include="include\Splash_Screen_Controller.h" />
     <ClInclude Include="include\Splash_Screen_Controller_Mutator.h" />

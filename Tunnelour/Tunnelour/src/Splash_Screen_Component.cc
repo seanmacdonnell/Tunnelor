@@ -22,9 +22,8 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 Splash_Screen_Component::Splash_Screen_Component(): Component() {
   m_type = "Splash_Screen_Component";
-  m_first_level = "Level 0";
-  m_is_loading = false;
-  m_has_space_been_pressed = false;
+  m_is_fading = false;
+  m_has_faded = false;
 }
 
 //------------------------------------------------------------------------------
@@ -37,27 +36,23 @@ void Splash_Screen_Component::Init() {
 }
 
 //---------------------------------------------------------------------------
-std::string Splash_Screen_Component::GetFirstLevel() {
-  return m_first_level;
+bool Splash_Screen_Component::IsFading() {
+  return m_is_fading;
 }
 
 //---------------------------------------------------------------------------
-bool Splash_Screen_Component::IsLoading() {
-  return m_is_loading;
+void Splash_Screen_Component::SetIsFading(bool is_fading) {
+  m_is_fading = is_fading;
 }
 
 //---------------------------------------------------------------------------
-void Splash_Screen_Component::SetIsLoading(bool is_loading) {
-  m_is_loading = is_loading;
+bool Splash_Screen_Component::HasFaded() {
+  return m_has_faded;
 }
 
 //---------------------------------------------------------------------------
-bool Splash_Screen_Component::HasSpaceBeenPressed() {
-  return m_has_space_been_pressed;
+void Splash_Screen_Component::SetHasFaded(bool has_faded) {
+  m_has_faded = has_faded;
 }
 
-//---------------------------------------------------------------------------
-void Splash_Screen_Component::SetHasSpaceBeenPressed(bool has_space_been_pressed) {
-  m_has_space_been_pressed = has_space_been_pressed;
-}
 }  // namespace Tunnelour

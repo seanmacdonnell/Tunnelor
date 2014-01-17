@@ -207,6 +207,9 @@
     <ClCompile Include="src\Level_Tile_Controller_Mutator.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
+    <ClCompile Include="src\Screen_Wipeout_Controller.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Init_Controller.h">
@@ -366,6 +369,9 @@
       <Filter>Include Files\Controllers</Filter>
     </ClInclude>
     <ClInclude Include="include\Level_Tile_Controller_Mutator.h">
+      <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Screen_Wipeout_Controller.h">
       <Filter>Include Files\Controllers</Filter>
     </ClInclude>
   </ItemGroup>

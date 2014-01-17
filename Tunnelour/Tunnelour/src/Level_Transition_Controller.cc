@@ -36,8 +36,6 @@ Level_Transition_Controller::Level_Transition_Controller() : Controller() {
   m_is_debug_mode = false;
   m_black_metadata_file_path = "";
   m_white_metadata_file_path = "";
-  m_top_slash = 0;
-  m_bottom_slash = 0;
   m_level_complete_heading = 0;
   m_next_level_heading = 0;
   m_next_level_name = 0;
@@ -68,14 +66,6 @@ Level_Transition_Controller::~Level_Transition_Controller() {
   m_is_debug_mode = false;
   m_black_metadata_file_path = "";
   m_white_metadata_file_path = "";
-  if (m_top_slash != 0) {
-    m_model->Remove(m_top_slash);
-    m_top_slash = 0;
-  }
-  if (m_bottom_slash != 0) {
-    m_model->Remove(m_bottom_slash);
-    m_bottom_slash = 0;
-  }
   if (m_background != 0) {
     m_model->Remove(m_background);
     m_background = 0;
@@ -132,20 +122,81 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
       m_level_transition_component->Init();
       m_model->Add(m_level_transition_component);
     }
-    if (m_top_slash == 0) {
+    if (m_background == 0) {
       // Create the Spash Black Tile
-      m_top_slash = CreateTile(128);
-      m_top_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
-      m_top_slash->SetScale(new D3DXVECTOR3((m_game_settings->GetResolution().x/128), ((m_game_settings->GetResolution().y/128)/3), 1.0f));
-      m_model->Add(m_top_slash);
+      m_background = CreateTile(128);
+      m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
+      m_background->SetScale(new D3DXVECTOR3((m_game_settings->GetResolution().x/128), (m_game_settings->GetResolution().y/128), 1.0f));
+      m_model->Add(m_background);        
     }
-    if (m_bottom_slash == 0) {
-      // Create the Spash Black Tile
-      m_bottom_slash = CreateTile(128);
-      m_bottom_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
-      m_bottom_slash->SetScale(new D3DXVECTOR3((m_game_settings->GetResolution().x/128), ((m_game_settings->GetResolution().y/128)/3), 1.0f));
-      m_model->Add(m_bottom_slash);
+    if (m_level_complete_heading == 0) {
+      m_level_complete_heading = new Text_Component();
+      m_level_complete_heading->GetText()->font_csv_file = m_heading_font_path;
+      m_level_complete_heading->GetText()->text = m_level_complete_heading_text;
+      m_level_complete_heading->GetTexture()->transparency = 1.0f;
+      m_level_complete_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + 200, m_z_text_position);
+      m_level_complete_heading->GetFrame()->index_buffer = 0;
+      m_level_complete_heading->GetTexture()->texture = 0;
+      m_level_complete_heading->GetFrame()->vertex_buffer = 0;
+      m_model->Add(m_level_complete_heading);
+      }
+    if (m_next_level_heading == 0) {
+      m_next_level_heading = new Text_Component();
+      m_next_level_heading->GetText()->font_csv_file = m_text_font_path;
+      m_next_level_heading->GetText()->text = m_next_level_heading_text;
+      m_next_level_heading->GetTexture()->transparency = 1.0f;
+      float position_y = m_level_complete_heading->GetPosition()->y - (m_level_complete_heading->GetSize().y / 2);
+      position_y -= (m_next_level_heading->GetSize().y /2);
+      position_y -= 50;
+      m_next_level_heading->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+      m_next_level_heading->GetFrame()->index_buffer = 0;
+      m_next_level_heading->GetTexture()->texture = 0;
+      m_next_level_heading->GetFrame()->vertex_buffer = 0;
+      m_model->Add(m_next_level_heading);
     }
+    if (m_next_level_name == 0) {
+      m_next_level_name = new Text_Component();
+      m_next_level_name->GetText()->font_csv_file = m_text_font_path;
+      m_next_level_name->GetText()->text = m_next_level_name_text;
+      m_next_level_name->GetTexture()->transparency = 1.0f;
+      float position_y = m_next_level_heading->GetPosition()->y - (m_next_level_heading->GetSize().y / 2);
+      position_y -= (m_next_level_name->GetSize().y /2);
+      position_y -= 50;
+      m_next_level_name->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+      m_next_level_name->GetFrame()->index_buffer = 0;
+      m_next_level_name->GetTexture()->texture = 0;
+      m_next_level_name->GetFrame()->vertex_buffer = 0;
+      m_model->Add(m_next_level_name);
+    }
+    if (m_next_level_blurb == 0) {
+      m_next_level_blurb = new Text_Component();
+      m_next_level_blurb->GetText()->font_csv_file = m_text_font_path;
+      m_next_level_blurb->GetText()->text = m_next_level_blurb_text;
+      m_next_level_blurb->GetTexture()->transparency = 1.0f;
+      float position_y = m_next_level_name->GetPosition()->y - (m_next_level_name->GetSize().y / 2);
+      position_y -= (m_next_level_blurb->GetSize().y /2);
+      position_y -= 50;
+      m_next_level_blurb->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+      m_next_level_blurb->GetFrame()->index_buffer = 0;
+      m_next_level_blurb->GetTexture()->texture = 0;
+      m_next_level_blurb->GetFrame()->vertex_buffer = 0;
+      m_model->Add(m_next_level_blurb);
+    }
+    if (m_loading == 0) {
+      m_loading = new Text_Component();
+      m_loading->GetText()->font_csv_file = m_text_font_path;
+      m_loading->GetText()->text = "Loading!";
+      m_loading->GetTexture()->transparency = 1.0f;
+      float position_y = m_next_level_blurb->GetPosition()->y - (m_next_level_blurb->GetSize().y / 2);
+      position_y -= (m_next_level_blurb->GetSize().y /2);
+      position_y -= 50;
+      m_loading->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+      m_loading->GetFrame()->index_buffer = 0;
+      m_loading->GetTexture()->texture = 0;
+      m_loading->GetFrame()->vertex_buffer = 0;
+      m_model->Add(m_loading);
+      SetIsLoading(true);
+    } 
   } else {
     return false;
   }
@@ -156,85 +207,6 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
 bool Level_Transition_Controller::Run() {
   // Get game settings component from the model with the Mutator.
   if (!m_has_been_initialised) { return false; }
-
-  if (m_top_slash != 0 && m_bottom_slash != 0) {
-    m_top_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + (m_game_settings->GetResolution().y /2), m_z_bitmap_position);
-    m_bottom_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y - (m_game_settings->GetResolution().y /2), m_z_bitmap_position);
-    float bottom = m_top_slash->GetBottomRightPostion().y;
-    float top = m_bottom_slash->GetTopLeftPostion().y;
-    if (bottom <= top) {
-      m_model->Remove(m_top_slash);
-      m_top_slash = 0;
-      m_model->Remove(m_bottom_slash);
-      m_bottom_slash = 0;
-      if (m_background == 0) {
-        // Create the Spash Black Tile
-        m_background = CreateTile(128);
-        m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
-        m_background->SetScale(new D3DXVECTOR3((m_game_settings->GetResolution().x/128), (m_game_settings->GetResolution().y/128), 1.0f));
-        m_model->Add(m_background);        
-      }
-      if (m_level_complete_heading == 0) {
-        m_level_complete_heading = new Text_Component();
-        m_level_complete_heading->GetText()->font_csv_file = m_heading_font_path;
-        m_level_complete_heading->GetText()->text = m_level_complete_heading_text;
-        m_level_complete_heading->GetTexture()->transparency = 1.0f;
-        m_level_complete_heading->SetPosition(0, 0, m_z_text_position);
-        m_level_complete_heading->GetFrame()->index_buffer = 0;
-        m_level_complete_heading->GetTexture()->texture = 0;
-        m_level_complete_heading->GetFrame()->vertex_buffer = 0;
-        m_model->Add(m_level_complete_heading);
-       }
-      if (m_next_level_heading == 0) {
-        m_next_level_heading = new Text_Component();
-        m_next_level_heading->GetText()->font_csv_file = m_text_font_path;
-        m_next_level_heading->GetText()->text = m_next_level_heading_text;
-        m_next_level_heading->GetTexture()->transparency = 1.0f;
-        m_next_level_heading->SetPosition(0, 0, m_z_text_position);
-        m_next_level_heading->GetFrame()->index_buffer = 0;
-        m_next_level_heading->GetTexture()->texture = 0;
-        m_next_level_heading->GetFrame()->vertex_buffer = 0;
-        m_model->Add(m_next_level_heading);
-      }
-      if (m_next_level_name == 0) {
-        m_next_level_name = new Text_Component();
-        m_next_level_name->GetText()->font_csv_file = m_text_font_path;
-        m_next_level_name->GetText()->text = m_next_level_name_text;
-        m_next_level_name->GetTexture()->transparency = 1.0f;
-        m_next_level_name->SetPosition(0, 0, m_z_text_position);
-        m_next_level_name->GetFrame()->index_buffer = 0;
-        m_next_level_name->GetTexture()->texture = 0;
-        m_next_level_name->GetFrame()->vertex_buffer = 0;
-        m_model->Add(m_next_level_name);
-      }
-      if (m_next_level_blurb == 0) {
-        m_next_level_blurb = new Text_Component();
-        m_next_level_blurb->GetText()->font_csv_file = m_text_font_path;
-        m_next_level_blurb->GetText()->text = m_next_level_blurb_text;
-        m_next_level_blurb->GetTexture()->transparency = 1.0f;
-        m_next_level_blurb->SetPosition(0, 0, m_z_text_position);
-        m_next_level_blurb->GetFrame()->index_buffer = 0;
-        m_next_level_blurb->GetTexture()->texture = 0;
-        m_next_level_blurb->GetFrame()->vertex_buffer = 0;
-        m_model->Add(m_next_level_blurb);
-      }
-      if (m_loading == 0) {
-        m_loading = new Text_Component();
-        m_loading->GetText()->font_csv_file = m_text_font_path;
-        m_loading->GetText()->text = "Loading!";
-        m_loading->GetTexture()->transparency = 1.0f;
-        m_loading->SetPosition(0, 0, m_z_text_position);
-        m_loading->GetFrame()->index_buffer = 0;
-        m_loading->GetTexture()->texture = 0;
-        m_loading->GetFrame()->vertex_buffer = 0;
-        m_model->Add(m_loading);
-      } 
-      SetIsLoading(true);
-    } else {
-      m_top_slash->SetScale(new D3DXVECTOR3(m_top_slash->GetScale()->x,m_top_slash->GetScale()->y + 0.1, 1.0f));
-      m_bottom_slash->SetScale(new D3DXVECTOR3(m_bottom_slash->GetScale()->x,m_bottom_slash->GetScale()->y + 0.1, 1.0f));
-    }
-  }
 
   if (m_background != 0) {
     m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
@@ -347,14 +319,6 @@ bool Level_Transition_Controller::Run() {
       m_next_level_name->GetTexture()->transparency = 0.0f;
       m_next_level_blurb->GetTexture()->transparency = 0.0f;
       m_loading->GetTexture()->transparency = 0.0f;
-      if (m_top_slash != 0) {
-        m_model->Remove(m_top_slash);
-        m_top_slash = 0;
-      }
-      if (m_bottom_slash != 0) {
-        m_model->Remove(m_bottom_slash);
-        m_bottom_slash = 0;
-      }
       if (m_background != 0) {
         m_model->Remove(m_background);
         m_background = 0;

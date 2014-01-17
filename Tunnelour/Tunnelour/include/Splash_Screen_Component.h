@@ -41,23 +41,20 @@ class Splash_Screen_Component: public Tunnelour::Component {
   // Description : Initialise this Component
   //---------------------------------------------------------------------------
   void Init();
-
-  std::string GetFirstLevel();
   
-  bool IsLoading();
+  bool IsFading();
 
-  void SetIsLoading(bool is_loading);
+  void SetIsFading(bool is_fading);
 
-  bool HasSpaceBeenPressed();
+  bool HasFaded();
 
-  void SetHasSpaceBeenPressed(bool has_space_been_pressed);
+  void SetHasFaded(bool has_faded);
 
  protected:
 
  private:
- std::string m_first_level;
- bool m_is_loading;
- bool m_has_space_been_pressed;
+ bool m_is_fading;
+ bool m_has_faded;
 };
 }  // namespace Tunnelour
 #endif  //  TUNNELOUR_SPLASH_SCREEN_COMPONENT_H_

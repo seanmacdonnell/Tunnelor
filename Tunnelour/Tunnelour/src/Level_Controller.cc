@@ -42,6 +42,7 @@ Level_Controller::Level_Controller() : Controller() {
   m_has_level_been_created = false;
   m_has_level_been_added = false;
   m_has_level_been_shown = false;
+  m_has_splash_screen_faded = false;
 }
 
 //------------------------------------------------------------------------------
@@ -76,25 +77,15 @@ bool Level_Controller::Init(Component_Composite * const model) {
       m_splash_screen_component = mutator.GetSplashScreen();
     }
 
-    if (m_splash_screen_component->IsLoading()) {
-      LoadLevelMetadata();
-      m_font_path = "resource\\tilesets\\Ariel.fnt";
+    LoadLevelMetadata();
+    m_font_path = "resource\\tilesets\\Ariel.fnt";
 
-      if (m_level_tile_controller == 0) {
-        m_level_tile_controller = new Level_Tile_Controller();
-        m_level_tile_controller->Init(m_model);
-        m_level_tile_controller->CreateLevel();
-        m_level_tile_controller->AddLevelToModel();
-      }
-
-      if (m_avatar_controller == 0) {
-        m_avatar_controller = new Tunnelour::Avatar_Controller();
-        m_avatar_controller->Init(m_model);
-      }
-
-      m_has_been_initialised = true;
-      m_splash_screen_component->SetIsLoading(false);
+    if (m_level_tile_controller == 0) {
+      m_level_tile_controller = new Level_Tile_Controller();
+      m_level_tile_controller->Init(m_model);
     }
+
+    m_has_been_initialised = true;
   } else {
     return false;
   }
@@ -105,8 +96,18 @@ bool Level_Controller::Init(Component_Composite * const model) {
 //------------------------------------------------------------------------------
 bool Level_Controller::Run() {
   if (m_has_been_initialised) {
-    if (m_splash_screen_component->HasSpaceBeenPressed()) {
-      m_level_tile_controller->ShowLevel();
+    if (m_splash_screen_component->HasFaded() && !m_has_splash_screen_faded) {
+      m_has_splash_screen_faded = true;
+      m_next_level = GetNamedLevel(m_level->GetCurrentLevel().level_name);
+      if (m_level_transition_controller == 0) {
+        m_level_transition_controller = new Level_Transition_Controller();
+        m_level_transition_controller->SetLevelCompleteHeadingText("TEST HARNESS");
+        m_level_transition_controller->SetNextLevelHeadingText("Loading First Test");
+        m_level_transition_controller->SetNextLevelNameText(m_next_level.level_name);
+        m_level_transition_controller->SetNextLevelBlurbText(m_next_level.blurb);
+        m_level_transition_controller->Init(m_model);
+        m_level_transition_controller->Run();
+      }
     }
     if (m_level_transition_controller != 0) {
       if (m_level_transition_controller->IsLoading()) {
@@ -123,6 +124,7 @@ bool Level_Controller::Run() {
           m_level_tile_controller->AddLevelToModel();
           m_has_level_been_added = true;
         } else if(!m_has_level_been_shown) {
+          m_level_tile_controller->Run();
           m_level_tile_controller->ShowLevel();
           m_has_level_been_shown = true;
         } else {
@@ -133,10 +135,18 @@ bool Level_Controller::Run() {
           m_has_level_been_added = false;
           m_has_level_been_shown = false;
           m_level->SetIsComplete(false);
+          if (m_avatar_controller == 0) {
+            m_avatar_controller = new Tunnelour::Avatar_Controller();
+            m_avatar_controller->Init(m_model);
+          }
         }
       } else {
-        m_level_tile_controller->Run();
-        m_avatar_controller->Run();
+        if (m_level_tile_controller != 0) {
+          m_level_tile_controller->Run();
+        }
+        if (m_avatar_controller != 0) {
+          m_avatar_controller->Run();
+        }
       }
 
       m_level_transition_controller->Run();
@@ -144,7 +154,7 @@ bool Level_Controller::Run() {
         delete m_level_transition_controller;
         m_level_transition_controller = 0;
       }
-    } else {
+    } else if (m_avatar_controller != 0) {
       m_avatar_controller->Run();
       if (m_avatar == 0) {
         Get_Avatar_Mutator mutator;
@@ -240,9 +250,9 @@ bool Level_Controller::Run() {
 void Level_Controller::LoadLevelMetadata() {
   Level_Component::Level_Metadata level_metadata;
   std::string level_metadata_file_path;
-  level_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_0.txt");
+  level_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Testing_Walking_Animation.txt");
   level_metadata = LoadLevelMetadataIntoStruct(level_metadata_file_path);
-  std::string level_csv_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Level_0.csv");
+  std::string level_csv_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Testing_Walking_Animation.csv");
   LoadLevelCSVIntoStruct(level_csv_file_path, &level_metadata);
   m_level->SetCurrentLevel(level_metadata);
   m_levels.push_back(level_metadata);

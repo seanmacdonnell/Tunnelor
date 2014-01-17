@@ -100,8 +100,6 @@ class Level_Transition_Controller: public Controller,
   std::string m_black_metadata_file_path;
   std::string m_white_metadata_file_path;
 
-  Tile_Bitmap* m_top_slash;
-  Tile_Bitmap* m_bottom_slash;
   Tile_Bitmap* m_background;
   std::string m_heading_font_path;
   std::string m_text_font_path;

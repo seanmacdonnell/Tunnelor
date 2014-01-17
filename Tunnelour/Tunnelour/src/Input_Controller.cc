@@ -18,6 +18,7 @@
 #include "Game_Settings_Component.h"
 #include "Input_Controller_Mutator.h"
 #include "Exceptions.h"
+#include "Get_Avatar_Mutator.h"
 
 namespace Tunnelour {
 
@@ -75,7 +76,6 @@ bool Input_Controller::Init(Component_Composite * const model) {
 
     m_game_settings = mutator.GetGameSettings();
     if (m_game_settings->GetHInstance() != 0) {
-      m_avatar_component = mutator.GetAvatarComponent();
       if (InitDirectInput()) {
         m_has_been_initialised = true;
       }
@@ -240,30 +240,40 @@ void Input_Controller::ProcessInput() {
   if (m_mouseX > m_screenWidth)  { m_mouseX = m_screenWidth; }
   if (m_mouseY > m_screenHeight) { m_mouseY = m_screenHeight; }
 
-  Avatar_Component::Avatar_State command;
+  if (m_avatar_component != 0) {
+    Avatar_Component::Avatar_State command;
 
-  if (m_keyboardState[DIK_RIGHT] & 0x80)  {
-    command.direction = "Right";
-    command.state = "Walking";
-    if (m_keyboardState[DIK_LSHIFT] & 0x80)  {
-      command.state = "Running";
+    if (m_keyboardState[DIK_RIGHT] & 0x80)  {
+      command.direction = "Right";
+      command.state = "Walking";
+      if (m_keyboardState[DIK_LSHIFT] & 0x80)  {
+        command.state = "Running";
+      }
     }
-  }
 
-  if (m_keyboardState[DIK_LEFT] & 0x80)  {
-    command.direction = "Left";
-    command.state = "Walking";
-    if (m_keyboardState[DIK_LSHIFT] & 0x80)  {
-      command.state = "Running";
+    if (m_keyboardState[DIK_LEFT] & 0x80)  {
+      command.direction = "Left";
+      command.state = "Walking";
+      if (m_keyboardState[DIK_LSHIFT] & 0x80)  {
+        command.state = "Running";
+      }
     }
-  }
 
-  if (m_keyboardState[DIK_GRAVE] & 0x80)  {
-    m_dik_grave_pressed = true;
+    if (m_keyboardState[DIK_GRAVE] & 0x80)  {
+      m_dik_grave_pressed = true;
+    } else {
+      if (m_dik_grave_pressed) {
+        m_game_settings->SetIsDebugMode(!m_game_settings->IsDebugMode());
+        m_dik_grave_pressed = false;
+      }
+    }
+
+    m_avatar_component->SetCommand(command);
   } else {
-    if (m_dik_grave_pressed) {
-      m_game_settings->SetIsDebugMode(!m_game_settings->IsDebugMode());
-      m_dik_grave_pressed = false;
+    Get_Avatar_Mutator mutator;
+    m_model->Apply(&mutator);
+    if (mutator.WasSuccessful()) {
+      m_avatar_component = mutator.GetAvatarComponent();
     }
   }
 
@@ -275,10 +285,6 @@ void Input_Controller::ProcessInput() {
     key_input.IsSpace = false;
   }
   m_input_component->SetCurrentKeyInput(key_input);
-
-  if (m_avatar_component != 0) {
-    m_avatar_component->SetCommand(command);
-  }
 
   return;
 }

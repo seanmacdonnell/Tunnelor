@@ -34,7 +34,8 @@ namespace Tunnelour {
 //  Description : This controller is responsible for the generation of the
 //                middleground (Layer 0)
 //-----------------------------------------------------------------------------
-class Level_Tile_Controller: public Controller {
+class Level_Tile_Controller: public Controller,
+                             public Component::Component_Observer {
  public:
   //---------------------------------------------------------------------------
   // Description : Constructor
@@ -64,6 +65,8 @@ class Level_Tile_Controller: public Controller {
   void ShowLevel();
   void HideLevel();
   void DestroyLevel();
+
+  virtual void HandleEvent(Tunnelour::Component * const component);
 
  protected:
 

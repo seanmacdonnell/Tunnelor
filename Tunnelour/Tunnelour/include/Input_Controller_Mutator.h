@@ -49,11 +49,6 @@ class Input_Controller_Mutator: public Component::Component_Mutator  {
   Game_Settings_Component *const GetGameSettings();
 
   //-------------------------------------------------------------------------
-  // Description : Accessors for the Game_Settings_Component
-  //-------------------------------------------------------------------------
-  Avatar_Component *const Input_Controller_Mutator::GetAvatarComponent();
-
-  //-------------------------------------------------------------------------
   // Description : Did this mutator run successfully?
   //-------------------------------------------------------------------------
   bool Input_Controller_Mutator::WasSuccessful();
