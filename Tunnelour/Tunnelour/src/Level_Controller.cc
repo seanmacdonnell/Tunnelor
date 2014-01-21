@@ -18,6 +18,7 @@
 #include "Exceptions.h"
 #include "Get_Avatar_Mutator.h"
 
+
 namespace Tunnelour {
 
 //------------------------------------------------------------------------------
@@ -36,6 +37,7 @@ Level_Controller::Level_Controller() : Controller() {
   m_level_tile_controller = 0;
   m_splash_screen_component = 0;
   m_level_transition_controller = 0;
+  m_screen_wipeout_controller = 0;
   m_avatar_controller = 0; 
   m_has_transition_been_initalised = false;
   m_has_level_been_destroyed = false;
@@ -96,7 +98,22 @@ bool Level_Controller::Init(Component_Composite * const model) {
 //------------------------------------------------------------------------------
 bool Level_Controller::Run() {
   if (m_has_been_initialised) {
-    if (m_splash_screen_component->HasFaded() && !m_has_splash_screen_faded) {
+    if (m_screen_wipeout_controller != 0) {
+      m_screen_wipeout_controller->Run();
+      if (m_screen_wipeout_controller->IsFinished()) {
+        delete m_screen_wipeout_controller;
+        m_screen_wipeout_controller = 0;
+        if (m_level_transition_controller == 0) {
+          m_level_transition_controller = new Level_Transition_Controller();
+          m_level_transition_controller->SetLevelCompleteHeadingText("LEVEL COMPLETE");
+          m_level_transition_controller->SetNextLevelHeadingText("Loading Next Level");
+          m_level_transition_controller->SetNextLevelNameText(m_next_level.level_name);
+          m_level_transition_controller->SetNextLevelBlurbText(m_next_level.blurb);
+          m_level_transition_controller->Init(m_model);
+          m_level_transition_controller->Run();
+        }
+      }
+    } else if (m_splash_screen_component->HasFaded() && !m_has_splash_screen_faded) {
       m_has_splash_screen_faded = true;
       m_next_level = GetNamedLevel(m_level->GetCurrentLevel().level_name);
       if (m_level_transition_controller == 0) {
@@ -108,8 +125,7 @@ bool Level_Controller::Run() {
         m_level_transition_controller->Init(m_model);
         m_level_transition_controller->Run();
       }
-    }
-    if (m_level_transition_controller != 0) {
+    } else if (m_level_transition_controller != 0) {
       if (m_level_transition_controller->IsLoading()) {
         if (!m_has_transition_been_initalised) {
           m_level->SetCurrentLevel(m_next_level);
@@ -202,14 +218,10 @@ bool Level_Controller::Run() {
               if ((*end_condition)->next_level.compare("QUIT") != 0) {
                 m_level->SetIsComplete(true);
                 m_next_level = GetNamedLevel((*end_condition)->next_level);
-                if (m_level_transition_controller == 0) {
-                  m_level_transition_controller = new Level_Transition_Controller();
-                  m_level_transition_controller->SetLevelCompleteHeadingText("LEVEL COMPLETE");
-                  m_level_transition_controller->SetNextLevelHeadingText("Loading Next Level");
-                  m_level_transition_controller->SetNextLevelNameText(m_next_level.level_name);
-                  m_level_transition_controller->SetNextLevelBlurbText(m_next_level.blurb);
-                  m_level_transition_controller->Init(m_model);
-                  m_level_transition_controller->Run();
+                if (m_screen_wipeout_controller == 0) {
+                  m_screen_wipeout_controller = new Screen_Wipeout_Controller();
+                  m_screen_wipeout_controller->Init(m_model);
+                  m_screen_wipeout_controller->Run();
                 }
               } else {
                 PostQuitMessage(0);

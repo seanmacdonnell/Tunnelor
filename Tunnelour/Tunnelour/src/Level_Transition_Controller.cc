@@ -54,6 +54,11 @@ Level_Transition_Controller::Level_Transition_Controller() : Controller() {
   m_is_loading = false;
   m_is_fading = false;
   m_loading_transparency = 0.0f;
+  m_level_complete_heading_y_offset = 0.0f;
+  m_next_level_heading_y_offset = 0.0f;
+  m_next_level_name_y_offset = 0.0f;
+  m_next_level_blurb_y_offset = 0.0f;
+  m_loading_y_offset = 0.0f;
 }
 
 //------------------------------------------------------------------------------
@@ -94,6 +99,7 @@ Level_Transition_Controller::~Level_Transition_Controller() {
     m_model->Remove(m_level_transition_component);
     m_level_transition_component = 0;
   }
+  m_loading_transparency = 0.0f;
 }
 
 //------------------------------------------------------------------------------
@@ -103,7 +109,12 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
 
   Level_Transition_Controller_Mutator mutator;
   m_model->Apply(&mutator);
-  if (mutator.WasSuccessful()) {
+  if (mutator.WasSuccessful()) {  
+    m_level_complete_heading_y_offset = 200.0f;
+    m_next_level_heading_y_offset = 100.0f;
+    m_next_level_name_y_offset = 0.0f;
+    m_next_level_blurb_y_offset = -100.0f;
+    m_loading_y_offset = -200.0f;
     m_game_settings = mutator.GetGameSettings();
     m_camera = mutator.GetCamera();
     m_camera->Observe(this);
@@ -113,9 +124,11 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
     m_current_tileset = GetNamedTileset("Black");
     m_current_tileset_subset = GetCurrentForegroundSubset();
     m_has_been_initialised = true;
-    m_heading_font_path = "resource\\tilesets\\tnt_x_plosion_2.fnt";
+    //m_heading_font_path = "resource\\tilesets\\tnt_x_plosion_2.fnt";
+    m_heading_font_path = "resource\\tilesets\\victor_256.fnt";
     //m_heading_font_path = "resource\\tilesets\\CC-Red-Alert-LAN.fnt";
-    m_text_font_path = "resource\\tilesets\\CC-Red-Alert-LAN.fnt";
+    //m_text_font_path = "resource\\tilesets\\CC-Red-Alert-LAN.fnt";
+    m_text_font_path = "resource\\tilesets\\victor_64.fnt";
     InitTimer();
     if (m_level_transition_component == 0) {
       m_level_transition_component = new Level_Transition_Component();
@@ -134,7 +147,8 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
       m_level_complete_heading->GetText()->font_csv_file = m_heading_font_path;
       m_level_complete_heading->GetText()->text = m_level_complete_heading_text;
       m_level_complete_heading->GetTexture()->transparency = 1.0f;
-      m_level_complete_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + 200, m_z_text_position);
+      m_level_complete_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_level_complete_heading_y_offset, m_z_text_position);
+      m_level_complete_heading->GetFont()->font_color = D3DXCOLOR(0.0f,1.0f,0.0f,1.0f);
       m_level_complete_heading->GetFrame()->index_buffer = 0;
       m_level_complete_heading->GetTexture()->texture = 0;
       m_level_complete_heading->GetFrame()->vertex_buffer = 0;
@@ -145,10 +159,7 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
       m_next_level_heading->GetText()->font_csv_file = m_text_font_path;
       m_next_level_heading->GetText()->text = m_next_level_heading_text;
       m_next_level_heading->GetTexture()->transparency = 1.0f;
-      float position_y = m_level_complete_heading->GetPosition()->y - (m_level_complete_heading->GetSize().y / 2);
-      position_y -= (m_next_level_heading->GetSize().y /2);
-      position_y -= 50;
-      m_next_level_heading->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+      m_next_level_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_next_level_heading_y_offset, m_z_text_position);
       m_next_level_heading->GetFrame()->index_buffer = 0;
       m_next_level_heading->GetTexture()->texture = 0;
       m_next_level_heading->GetFrame()->vertex_buffer = 0;
@@ -159,10 +170,7 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
       m_next_level_name->GetText()->font_csv_file = m_text_font_path;
       m_next_level_name->GetText()->text = m_next_level_name_text;
       m_next_level_name->GetTexture()->transparency = 1.0f;
-      float position_y = m_next_level_heading->GetPosition()->y - (m_next_level_heading->GetSize().y / 2);
-      position_y -= (m_next_level_name->GetSize().y /2);
-      position_y -= 50;
-      m_next_level_name->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+      m_next_level_name->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_next_level_name_y_offset, m_z_text_position);
       m_next_level_name->GetFrame()->index_buffer = 0;
       m_next_level_name->GetTexture()->texture = 0;
       m_next_level_name->GetFrame()->vertex_buffer = 0;
@@ -173,10 +181,7 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
       m_next_level_blurb->GetText()->font_csv_file = m_text_font_path;
       m_next_level_blurb->GetText()->text = m_next_level_blurb_text;
       m_next_level_blurb->GetTexture()->transparency = 1.0f;
-      float position_y = m_next_level_name->GetPosition()->y - (m_next_level_name->GetSize().y / 2);
-      position_y -= (m_next_level_blurb->GetSize().y /2);
-      position_y -= 50;
-      m_next_level_blurb->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+      m_next_level_blurb->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_next_level_blurb_y_offset, m_z_text_position);
       m_next_level_blurb->GetFrame()->index_buffer = 0;
       m_next_level_blurb->GetTexture()->texture = 0;
       m_next_level_blurb->GetFrame()->vertex_buffer = 0;
@@ -187,10 +192,7 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
       m_loading->GetText()->font_csv_file = m_text_font_path;
       m_loading->GetText()->text = "Loading!";
       m_loading->GetTexture()->transparency = 1.0f;
-      float position_y = m_next_level_blurb->GetPosition()->y - (m_next_level_blurb->GetSize().y / 2);
-      position_y -= (m_next_level_blurb->GetSize().y /2);
-      position_y -= 50;
-      m_loading->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+      m_loading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_loading_y_offset, m_z_text_position);
       m_loading->GetFrame()->index_buffer = 0;
       m_loading->GetTexture()->texture = 0;
       m_loading->GetFrame()->vertex_buffer = 0;
@@ -219,7 +221,7 @@ bool Level_Transition_Controller::Run() {
       m_level_complete_heading->GetTexture()->texture = 0;
       m_level_complete_heading->GetFrame()->vertex_buffer = 0;
       m_level_complete_heading->Init();
-      m_level_complete_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + 200, m_z_text_position);
+      m_level_complete_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_level_complete_heading_y_offset, m_z_text_position);
     }
   }
 
@@ -230,10 +232,7 @@ bool Level_Transition_Controller::Run() {
       m_next_level_heading->GetTexture()->texture = 0;
       m_next_level_heading->GetFrame()->vertex_buffer = 0;
       m_next_level_heading->Init();
-      float position_y = m_level_complete_heading->GetPosition()->y - (m_level_complete_heading->GetSize().y / 2);
-      position_y -= (m_next_level_heading->GetSize().y /2);
-      position_y -= 50;
-      m_next_level_heading->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+      m_next_level_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_next_level_heading_y_offset, m_z_text_position);
     }
   }
   
@@ -244,10 +243,7 @@ bool Level_Transition_Controller::Run() {
       m_next_level_name->GetTexture()->texture = 0;
       m_next_level_name->GetFrame()->vertex_buffer = 0;
       m_next_level_name->Init();
-      float position_y = m_next_level_heading->GetPosition()->y - (m_next_level_heading->GetSize().y / 2);
-      position_y -= (m_next_level_name->GetSize().y /2);
-      position_y -= 50;
-      m_next_level_name->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+      m_next_level_name->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_next_level_name_y_offset, m_z_text_position);
     }
   }
   
@@ -258,10 +254,7 @@ bool Level_Transition_Controller::Run() {
       m_next_level_blurb->GetTexture()->texture = 0;
       m_next_level_blurb->GetFrame()->vertex_buffer = 0;
       m_next_level_blurb->Init();
-      float position_y = m_next_level_name->GetPosition()->y - (m_next_level_name->GetSize().y / 2);
-      position_y -= (m_next_level_blurb->GetSize().y /2);
-      position_y -= 50;
-      m_next_level_blurb->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+      m_next_level_blurb->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_next_level_blurb_y_offset, m_z_text_position);
     }
   }
 
@@ -286,10 +279,7 @@ bool Level_Transition_Controller::Run() {
         m_loading->GetTexture()->texture = 0;
         m_loading->GetFrame()->vertex_buffer = 0;
         m_loading->Init();
-        float position_y = m_next_level_blurb->GetPosition()->y - (m_next_level_blurb->GetSize().y / 2);
-        position_y -= (m_next_level_blurb->GetSize().y /2);
-        position_y -= 50;
-        m_loading->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+        m_loading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_loading_y_offset, m_z_text_position);
       }
     }
 
@@ -387,31 +377,19 @@ void Level_Transition_Controller::HandleEvent(Tunnelour::Component * const compo
       m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
     }
     if (m_level_complete_heading != 0) {
-      m_level_complete_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + 200, m_z_text_position);
+      m_level_complete_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_level_complete_heading_y_offset, m_z_text_position);
     }
     if (m_next_level_heading != 0) {
-      float position_y = m_level_complete_heading->GetPosition()->y - (m_level_complete_heading->GetSize().y / 2);
-      position_y -= (m_next_level_heading->GetSize().y /2);
-      position_y -= 50;
-      m_next_level_heading->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+      m_next_level_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_next_level_heading_y_offset, m_z_text_position);
     }
     if (m_next_level_name != 0) {
-      float position_y = m_next_level_heading->GetPosition()->y - (m_next_level_heading->GetSize().y / 2);
-      position_y -= (m_next_level_name->GetSize().y /2);
-      position_y -= 50;
-      m_next_level_name->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+      m_next_level_name->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_next_level_name_y_offset, m_z_text_position);
     }
     if (m_next_level_blurb != 0) {
-      float position_y = m_next_level_name->GetPosition()->y - (m_next_level_name->GetSize().y / 2);
-      position_y -= (m_next_level_blurb->GetSize().y /2);
-      position_y -= 50;
-      m_next_level_blurb->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+      m_next_level_blurb->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_next_level_blurb_y_offset, m_z_text_position);
     }
     if (m_loading != 0) {
-      float position_y = m_next_level_blurb->GetPosition()->y - (m_next_level_blurb->GetSize().y / 2);
-      position_y -= (m_next_level_blurb->GetSize().y /2);
-      position_y -= 50;
-      m_loading->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+      m_loading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_loading_y_offset, m_z_text_position);
     }
   }
 }

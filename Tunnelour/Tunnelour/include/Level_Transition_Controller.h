@@ -108,13 +108,18 @@ class Level_Transition_Controller: public Controller,
 
   Text_Component *m_level_complete_heading;
   std::string m_level_complete_heading_text;
+  float m_level_complete_heading_y_offset;
   Text_Component *m_next_level_heading;
   std::string m_next_level_heading_text;
+  float m_next_level_heading_y_offset;
   Text_Component *m_next_level_name;
   std::string m_next_level_name_text;
+  float m_next_level_name_y_offset;
   Text_Component *m_next_level_blurb;
   std::string m_next_level_blurb_text;
+  float m_next_level_blurb_y_offset;
   Text_Component *m_loading;
+  float m_loading_y_offset;
 
   //---------------------------------------------------------------------------
   // Description : Initialises the timer used for the animation ticks

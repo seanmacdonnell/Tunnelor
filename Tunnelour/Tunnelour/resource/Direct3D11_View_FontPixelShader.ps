@@ -15,16 +15,24 @@ float4 FontPixelShader(PixelInputType input) : SV_TARGET {
   float4 color = shaderTexture.Sample(SampleType, input.tex);
   
   // Set the alpha value of this pixel to the blending amount to create the alpha blending effect.
-  if (blendAmount != 1.0f && color.a != 0.0) {
+  if (blendAmount != 1.0f && color.a != 0.0f) {
     color.a = blendAmount;
   }
 
   // If the color is white it is text, color it.
-  if(color.r == 1.0f && color.g == 1.0f && color.b == 1.0f)  {
-    color.rgb = pixelColor.rgb;
+  if(color.a != 0.0f)  {
+    //color.rgb = pixelColor.rgb;
+    color.r = 1.0f;
+    color.g = 0.0f;
+    color.b = 0.0f;
+    color.a = 1.0f;
   } else {
     //if not, it is background. Set the Alpha to 0.
-    color.a = 0.0f;
+    color.r = 0.0f;
+    color.g = 1.0f;
+    color.b = 0.0f;
+    color.a = 1.0f;
+    //color.a = 0.0f;
   }
 
   return color;

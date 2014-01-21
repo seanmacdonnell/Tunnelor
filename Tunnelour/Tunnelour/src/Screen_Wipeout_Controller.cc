@@ -84,14 +84,14 @@ bool Screen_Wipeout_Controller::Init(Component_Composite * const model) {
     if (m_top_slash == 0) {
       // Create the Spash Black Tile
       m_top_slash = CreateTile(128);
-      m_top_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
+      m_top_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + (m_game_settings->GetResolution().y /2), m_z_bitmap_position);
       m_top_slash->SetScale(new D3DXVECTOR3((m_game_settings->GetResolution().x/128), ((m_game_settings->GetResolution().y/128)/3), 1.0f));
       m_model->Add(m_top_slash);
     }
     if (m_bottom_slash == 0) {
       // Create the Spash Black Tile
       m_bottom_slash = CreateTile(128);
-      m_bottom_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
+      m_bottom_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y - (m_game_settings->GetResolution().y /2), m_z_bitmap_position);
       m_bottom_slash->SetScale(new D3DXVECTOR3((m_game_settings->GetResolution().x/128), ((m_game_settings->GetResolution().y/128)/3), 1.0f));
       m_model->Add(m_bottom_slash);
     }

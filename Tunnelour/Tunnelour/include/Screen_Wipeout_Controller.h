@@ -13,8 +13,8 @@
 //  limitations under the License.
 //
 
-#ifndef LEVEL_TRANSITION_CONTROLLER_H_
-#define LEVEL_TRANSITION_CONTROLLER_H_
+#ifndef SCREEN_WIPEOUT_CONTROLLER_H_
+#define SCREEN_WIPEOUT_CONTROLLER_H_
 
 #include <vector>
 #include <string>
@@ -38,7 +38,7 @@ namespace Tunnelour {
 //                introduction to Tunnelor
 //-----------------------------------------------------------------------------
 class Screen_Wipeout_Controller: public Controller,
-                                   public Component::Component_Observer {
+                                 public Component::Component_Observer {
  public:
   //---------------------------------------------------------------------------
   // Description : Constructor
@@ -108,4 +108,4 @@ class Screen_Wipeout_Controller: public Controller,
   int m_current_animation_fps;
 };
 }  // namespace Tunnelour
-#endif  // LEVEL_TRANSITION_CONTROLLER_H_
+#endif  // SCREEN_WIPEOUT_CONTROLLER_H_
