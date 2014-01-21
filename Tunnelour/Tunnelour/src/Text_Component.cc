@@ -352,6 +352,16 @@ void Text_Component::Create_String_Frame() {
     for (int frame_index = 0; frame_index < 6; frame_index++) {
       m_frame->vertices[vertex_index] = m_font.character_frames[character_index][frame_index];
       m_frame->vertices[vertex_index].position.x += static_cast<float>(offset);
+
+      if (i != 0) {
+        m_frame->vertices[vertex_index].position.y -= (m_font.raw_char_frames[m_text.text.c_str()[0]].height - m_font.raw_char_frames[m_text.text.c_str()[i]].height);
+      }
+
+      if (character_index == 103 || character_index == 112 || character_index == 113 ) {
+        if (m_text.text.c_str()[0] != 97) {
+          m_frame->vertices[vertex_index].position.y += (m_font.raw_char_frames[97].height - m_font.raw_char_frames[m_text.text.c_str()[i]].height);
+        }
+      }
       vertex_index++;
     }
     offset += m_font.raw_char_frames[character_index].xadvance;

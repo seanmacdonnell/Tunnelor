@@ -111,10 +111,10 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
   m_model->Apply(&mutator);
   if (mutator.WasSuccessful()) {  
     m_level_complete_heading_y_offset = 200.0f;
-    m_next_level_heading_y_offset = 100.0f;
-    m_next_level_name_y_offset = 0.0f;
-    m_next_level_blurb_y_offset = -100.0f;
-    m_loading_y_offset = -200.0f;
+    m_next_level_heading_y_offset = 50.0f;
+    m_next_level_name_y_offset = -50.0f;
+    m_next_level_blurb_y_offset = -150.0f;
+    m_loading_y_offset = -250.0f;
     m_game_settings = mutator.GetGameSettings();
     m_camera = mutator.GetCamera();
     m_camera->Observe(this);
@@ -125,7 +125,7 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
     m_current_tileset_subset = GetCurrentForegroundSubset();
     m_has_been_initialised = true;
     //m_heading_font_path = "resource\\tilesets\\tnt_x_plosion_2.fnt";
-    m_heading_font_path = "resource\\tilesets\\victor_256.fnt";
+    m_heading_font_path = "resource\\tilesets\\victor_192.fnt";
     //m_heading_font_path = "resource\\tilesets\\CC-Red-Alert-LAN.fnt";
     //m_text_font_path = "resource\\tilesets\\CC-Red-Alert-LAN.fnt";
     m_text_font_path = "resource\\tilesets\\victor_64.fnt";
@@ -148,7 +148,7 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
       m_level_complete_heading->GetText()->text = m_level_complete_heading_text;
       m_level_complete_heading->GetTexture()->transparency = 1.0f;
       m_level_complete_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_level_complete_heading_y_offset, m_z_text_position);
-      m_level_complete_heading->GetFont()->font_color = D3DXCOLOR(0.0f,1.0f,0.0f,1.0f);
+      //m_level_complete_heading->GetFont()->font_color = D3DXCOLOR(0.0f,1.0f,0.0f,1.0f);
       m_level_complete_heading->GetFrame()->index_buffer = 0;
       m_level_complete_heading->GetTexture()->texture = 0;
       m_level_complete_heading->GetFrame()->vertex_buffer = 0;
@@ -517,7 +517,7 @@ bool Level_Transition_Controller::InitTimer() {
 
 //------------------------------------------------------------------------------
 void Level_Transition_Controller::UpdateTimer() {
-  int frames_per_millisecond = static_cast<int>(1000/5);
+  int frames_per_millisecond = static_cast<int>(1000/2);
 
   INT64 currentTime;
   float timeDifference;

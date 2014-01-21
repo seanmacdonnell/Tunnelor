@@ -21,17 +21,17 @@ float4 FontPixelShader(PixelInputType input) : SV_TARGET {
 
   // If the color is white it is text, color it.
   if(color.a != 0.0f)  {
-    //color.rgb = pixelColor.rgb;
-    color.r = 1.0f;
-    color.g = 0.0f;
-    color.b = 0.0f;
-    color.a = 1.0f;
+    color.rgb = pixelColor.rgb;
+    //color.r = 1.0f;
+    //color.g = 0.0f;
+    //color.b = 0.0f;
+    //color.a = 1.0f;
   } else {
     //if not, it is background. Set the Alpha to 0.
-    color.r = 0.0f;
-    color.g = 1.0f;
-    color.b = 0.0f;
-    color.a = 1.0f;
+    //color.r = 0.0f;
+    //color.g = 1.0f;
+    //color.b = 0.0f;
+    //color.a = 1.0f;
     //color.a = 0.0f;
   }
 
