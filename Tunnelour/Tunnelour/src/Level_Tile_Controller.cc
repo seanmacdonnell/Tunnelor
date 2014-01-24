@@ -214,10 +214,10 @@ std::vector<Tile_Bitmap*> Level_Tile_Controller::GenerateTunnelFromMetadata(Leve
       float position_y = 0;
       float position_z = 0;
       if ((*tile).type.compare("Middleground") == 0) {
-        new_tile = new_tile = CreateMiddlegroundTile((*tile).size);
+        new_tile = CreateMiddlegroundTile((*tile).size);
         position_z = -1;
       } else if ((*tile).type.compare("Tunnel") == 0) {
-        new_tile = new_tile = CreateBackgroundTile((*tile).size);
+        new_tile = CreateBackgroundTile((*tile).size);
         position_z = 0;
       }
       if (tile == (*line).begin()) {
@@ -390,12 +390,20 @@ Tileset_Helper::Subset Level_Tile_Controller::GetCurrentBackgroundSubset() {
 Tile_Bitmap* Level_Tile_Controller::CreateMiddlegroundTile(float base_tile_size) {
   Tileset_Helper::Line tile_line;
   std::vector<Tileset_Helper::Line>::iterator line;
+  bool found = false;
   for (line = m_current_middleground_subset.lines.begin(); line != m_current_middleground_subset.lines.end(); line++) {
     if (line->tile_size_x == base_tile_size) {
       if (line->tile_size_y == base_tile_size) {
         tile_line = *line;
+        found = true;
       }
     }
+  }
+  if (!found) {
+    std::string error = "Unable to find size: ";
+    error += base_tile_size;
+    error += " in texture sheet.";
+    throw Tunnelour::Exceptions::init_error(error);
   }
 
   Tile_Bitmap* tile = new Tile_Bitmap();
@@ -429,12 +437,20 @@ Tile_Bitmap* Level_Tile_Controller::CreateMiddlegroundTile(float base_tile_size)
 Tile_Bitmap* Level_Tile_Controller::CreateBackgroundTile(float base_tile_size) {
   Tileset_Helper::Line background_line;
   std::vector<Tileset_Helper::Line>::iterator line;
+  bool found = false;
   for (line = m_current_background_subset.lines.begin(); line != m_current_background_subset.lines.end(); line++) {
     if (line->tile_size_x == base_tile_size) {
       if (line->tile_size_y == base_tile_size) {
         background_line = *line;
+        found = true;
       }
     }
+  }
+  if (!found) {
+    std::string error = "Unable to find size: ";
+    error += base_tile_size;
+    error += " in texture sheet.";
+    throw Tunnelour::Exceptions::init_error(error);
   }
 
   Tile_Bitmap* tile = new Tile_Bitmap();
