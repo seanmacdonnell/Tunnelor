@@ -45,6 +45,7 @@ Level_Controller::Level_Controller() : Controller() {
   m_has_level_been_added = false;
   m_has_level_been_shown = false;
   m_has_splash_screen_faded = false;
+  m_game_over_screen_controller = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -55,6 +56,10 @@ Level_Controller::~Level_Controller() {
   m_level_name_heading = 0;
   m_level_blurb = 0;
   m_camera = 0;
+
+  if (m_game_over_screen_controller != 0) {
+    delete m_game_over_screen_controller;
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -124,6 +129,12 @@ bool Level_Controller::Run() {
         m_level_transition_controller->SetNextLevelBlurbText(m_next_level.blurb);
         m_level_transition_controller->Init(m_model);
         m_level_transition_controller->Run();
+      }
+    } else if (m_game_over_screen_controller != 0) {
+      if (!m_game_over_screen_controller->IsFinished()) {
+        m_game_over_screen_controller->Run();
+      } else {
+        PostQuitMessage(0);
       }
     } else if (m_level_transition_controller != 0) {
       if (m_level_transition_controller->IsLoading()) {
@@ -224,23 +235,35 @@ bool Level_Controller::Run() {
                   m_screen_wipeout_controller->Run();
                 }
               } else {
-                PostQuitMessage(0);
+                m_level->SetIsComplete(true);
+                m_next_level = GetNamedLevel((*end_condition)->next_level);
+                if (m_game_over_screen_controller == 0) {
+                  m_level_tile_controller->HideLevel();
+                  m_avatar_controller->HideAvatar();
+                  m_game_over_screen_controller = new Game_Over_Screen_Controller();
+                  m_game_over_screen_controller->Init(m_model);
+                  m_game_over_screen_controller->Run();
+                }
               }
             } else if ((*end_condition)->or && or) {
               if ((*end_condition)->next_level.compare("QUIT") != 0) {
                 m_level->SetIsComplete(true);
                 m_next_level = GetNamedLevel((*end_condition)->next_level);
-                if (m_level_transition_controller == 0) {
-                  m_level_transition_controller = new Level_Transition_Controller();
-                  m_level_transition_controller->SetLevelCompleteHeadingText("LEVEL COMPLETE");
-                  m_level_transition_controller->SetNextLevelHeadingText("Loading Next Level");
-                  m_level_transition_controller->SetNextLevelNameText(m_next_level.level_name);
-                  m_level_transition_controller->SetNextLevelBlurbText(m_next_level.blurb);
-                  m_level_transition_controller->Init(m_model);
-                  m_level_transition_controller->Run();
+                if (m_screen_wipeout_controller == 0) {
+                  m_screen_wipeout_controller = new Screen_Wipeout_Controller();
+                  m_screen_wipeout_controller->Init(m_model);
+                  m_screen_wipeout_controller->Run();
                 }
               } else {
-                PostQuitMessage(0);
+                m_level->SetIsComplete(true);
+                m_next_level = GetNamedLevel((*end_condition)->next_level);
+                if (m_game_over_screen_controller == 0) {
+                  m_level_tile_controller->HideLevel();
+                  m_avatar_controller->HideAvatar();
+                  m_game_over_screen_controller = new Game_Over_Screen_Controller();
+                  m_game_over_screen_controller->Init(m_model);
+                  m_game_over_screen_controller->Run();
+                }
               }
             }
           }
@@ -602,6 +625,10 @@ Level_Component::Level_Metadata Level_Controller::GetNamedLevel(std::string leve
     if (level->level_name.compare(level_name) == 0) {
       found_level = *level;
     }
+  }
+
+  if (level_name.compare("QUIT") == 0) {
+    found_level.level_name = "QUIT";
   }
 
   return found_level;

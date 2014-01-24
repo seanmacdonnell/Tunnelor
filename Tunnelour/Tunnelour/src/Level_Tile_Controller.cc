@@ -303,8 +303,12 @@ std::vector<Tile_Bitmap*> Level_Tile_Controller::GenerateTunnelFromMetadata(Leve
         }
       }
 
-      //ResetMiddlegroundTileTexture(new_tile);
-
+      if ((*tile).type.compare("Middleground") == 0) {
+        ResetMiddlegroundTileTexture(new_tile);
+      } else if ((*tile).type.compare("Tunnel") == 0) {
+        ResetBackgroundTileTexture(new_tile);
+      }
+      
       tile_line.push_back(new_tile);
       tiles.push_back(new_tile);
     }
@@ -446,7 +450,12 @@ Tile_Bitmap* Level_Tile_Controller::CreateBackgroundTile(float base_tile_size) {
                                               background_line.tile_size_y);
   tile->SetIsCollidable(false);
 
-  int random_line_tile = rand() % background_line.number_of_tiles;
+  int random_line_tile = 0;
+  if (m_is_debug_mode) {
+    random_line_tile = 0;
+  } else {
+    random_line_tile = rand() % background_line.number_of_tiles;
+  }
 
   float random_tile_x = random_line_tile * background_line.tile_size_x;
   random_tile_x += background_line.top_left_x;
@@ -515,16 +524,12 @@ void Level_Tile_Controller::ResetBackgroundTileTexture(Tile_Bitmap *out_tile) {
   Tileset_Helper::Line tile_line = GetCurrentSizedBackgroundLine(out_tile->GetSize().x);
   int random_variable = 0;
   if (m_is_debug_mode) {
-    if (out_tile->IsEdge()) {
-      random_variable = 1;
-    } else {
-      random_variable = 0;
-    }   
+    random_variable = 0;
   } else {
     random_variable = rand() % tile_line.number_of_tiles;
   }
 
-  float left = random_variable * tile_line.tile_size_x + tile_line.top_left_x;
+  float left = random_variable * (tile_line.tile_size_x + tile_line.top_left_x);
   float top = tile_line.top_left_y;
   out_tile->GetTexture()->top_left_position = D3DXVECTOR2(left, top);
   out_tile->GetTexture()->texture = 0;

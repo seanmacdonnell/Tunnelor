@@ -131,6 +131,16 @@ void Avatar_Controller::HandleEventRemove(Tunnelour::Component * const component
 }
 
 //------------------------------------------------------------------------------
+void Avatar_Controller::HideAvatar() {
+  m_avatar->GetTexture()->transparency = 0.0f;
+}
+
+//------------------------------------------------------------------------------
+void Avatar_Controller::ShowAvatar() {
+  m_avatar->GetTexture()->transparency = 1.0f;
+}
+
+//------------------------------------------------------------------------------
 // protected:
 //------------------------------------------------------------------------------
 
@@ -169,15 +179,20 @@ void Avatar_Controller::ResetAvatar() {
 void Avatar_Controller::RunAvatarState() {
   std::string current_state = m_avatar->GetState().parent_state;
 
-  if (current_state.compare("Charlie_Standing") == 0) {
-    RunStandingState();
-  } else if (current_state.compare("Charlie_Walking") == 0) { 
-    RunWalkingState();
-  } else if (current_state.compare("Charlie_Falling") == 0) {
-    RunFallingState();
-  } else if (current_state.compare("Charlie_Level_Transitioning") == 0) {
-    RunLevelTransitioningState();
+  if (m_avatar->GetTexture()->transparency != 0.0f) {
+    if (current_state.compare("Charlie_Standing") == 0) {
+      RunStandingState();
+    } else if (current_state.compare("Charlie_Walking") == 0) { 
+      RunWalkingState();
+    } else if (current_state.compare("Charlie_Falling") == 0) {
+      RunFallingState();
+    } else if (current_state.compare("Charlie_Level_Transitioning") == 0) {
+      RunLevelTransitioningState();
+    }
+  } else {
+    m_avatar->SetPosition(0, 0, 0);
   }
+
   m_animation_tick = false;
 }
 

@@ -210,6 +210,15 @@
     <ClCompile Include="src\Screen_Wipeout_Controller.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
+    <ClCompile Include="src\Game_Over_Screen_Controller.cc">
+      <Filter>Include Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Game_Over_Screen_Controller_Mutator.cc">
+      <Filter>Include Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Get_Game_Metrics_Component_Mutator.cc">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Init_Controller.h">
@@ -373,6 +382,15 @@
     </ClInclude>
     <ClInclude Include="include\Screen_Wipeout_Controller.h">
       <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Game_Over_Screen_Controller.h">
+      <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Game_Over_Screen_Controller_Mutator.h">
+      <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Get_Game_Metrics_Component_Mutator.h">
+      <Filter>Source Files\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

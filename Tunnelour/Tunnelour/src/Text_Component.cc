@@ -357,7 +357,7 @@ void Text_Component::Create_String_Frame() {
         m_frame->vertices[vertex_index].position.y -= (m_font.raw_char_frames[m_text.text.c_str()[0]].height - m_font.raw_char_frames[m_text.text.c_str()[i]].height);
       }
 
-      if (character_index == 103 || character_index == 112 || character_index == 113 ) {
+      if (character_index == 103 || character_index == 112 || character_index == 113 || character_index == 121) {
         if (m_text.text.c_str()[0] != 97) {
           m_frame->vertices[vertex_index].position.y += (m_font.raw_char_frames[97].height - m_font.raw_char_frames[m_text.text.c_str()[i]].height);
         }

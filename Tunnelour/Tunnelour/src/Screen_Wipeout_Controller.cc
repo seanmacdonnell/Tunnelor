@@ -84,15 +84,15 @@ bool Screen_Wipeout_Controller::Init(Component_Composite * const model) {
     if (m_top_slash == 0) {
       // Create the Spash Black Tile
       m_top_slash = CreateTile(128);
-      m_top_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + (m_game_settings->GetResolution().y /2), m_z_bitmap_position);
-      m_top_slash->SetScale(new D3DXVECTOR3((m_game_settings->GetResolution().x/128), ((m_game_settings->GetResolution().y/128)/3), 1.0f));
+      m_top_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + (m_game_settings->GetResolution().y/1.5), m_z_bitmap_position);
+      m_top_slash->SetScale(new D3DXVECTOR3((m_game_settings->GetResolution().x/128), ((m_game_settings->GetResolution().y/128)/4), 1.0f));
       m_model->Add(m_top_slash);
     }
     if (m_bottom_slash == 0) {
       // Create the Spash Black Tile
       m_bottom_slash = CreateTile(128);
-      m_bottom_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y - (m_game_settings->GetResolution().y /2), m_z_bitmap_position);
-      m_bottom_slash->SetScale(new D3DXVECTOR3((m_game_settings->GetResolution().x/128), ((m_game_settings->GetResolution().y/128)/3), 1.0f));
+      m_bottom_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y - (m_game_settings->GetResolution().y/1.5), m_z_bitmap_position);
+      m_bottom_slash->SetScale(new D3DXVECTOR3((m_game_settings->GetResolution().x/128), ((m_game_settings->GetResolution().y/128)/4), 1.0f));
       m_model->Add(m_bottom_slash);
     }
   } else {
@@ -109,8 +109,8 @@ bool Screen_Wipeout_Controller::Run() {
   if (m_top_slash != 0 && m_bottom_slash != 0) {
     UpdateTimer();
     if (m_animation_tick) {
-      m_top_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + (m_game_settings->GetResolution().y /2), m_z_bitmap_position);
-      m_bottom_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y - (m_game_settings->GetResolution().y /2), m_z_bitmap_position);
+      m_top_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + (m_game_settings->GetResolution().y/1.5), m_z_bitmap_position);
+      m_bottom_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y - (m_game_settings->GetResolution().y/1.5), m_z_bitmap_position);
 
       float bottom = m_top_slash->GetBottomRightPostion().y;
       float top = m_bottom_slash->GetTopLeftPostion().y;
@@ -128,8 +128,8 @@ bool Screen_Wipeout_Controller::Run() {
           m_is_finished = true;
         }
       } else {
-        m_top_slash->SetScale(new D3DXVECTOR3(m_top_slash->GetScale()->x,m_top_slash->GetScale()->y + 0.1, 1.0f));
-        m_bottom_slash->SetScale(new D3DXVECTOR3(m_bottom_slash->GetScale()->x,m_bottom_slash->GetScale()->y + 0.1, 1.0f));
+        m_top_slash->SetScale(new D3DXVECTOR3(m_top_slash->GetScale()->x,m_top_slash->GetScale()->y + 0.2, 1.0f));
+        m_bottom_slash->SetScale(new D3DXVECTOR3(m_bottom_slash->GetScale()->x,m_bottom_slash->GetScale()->y + 0.2, 1.0f));
       }
     }
   }

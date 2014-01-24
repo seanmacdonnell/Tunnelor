@@ -20,6 +20,8 @@
 #include "Direct3D11_View_FontShader.h"
 #include "String_Helper.h"
 #include "Bitmap_Helper.h"
+#include "Get_Game_Metrics_Component_Mutator.h"
+
 
 namespace Tunnelour {
 
@@ -224,7 +226,6 @@ void Direct3D11_View::Run() {
       m_debug_shader->Init(m_device, &(m_game_settings->GetHWnd()));
     }
 
-
     // <BeginScene>
     D3DXMATRIX *viewmatrix = new D3DXMATRIX();
 
@@ -267,13 +268,19 @@ void Direct3D11_View::Run() {
       Game_Metrics_Component::FPS_Data fps_data = m_game_metrics->GetFPSData();
       fps_data.count++;
 
-      if(timeGetTime() >= (fps_data.startTime + 1000)) {
+      if (timeGetTime() >= (fps_data.startTime + 1000)) {
         fps_data.fps = fps_data.count;
         fps_data.count = 0;
         fps_data.startTime = timeGetTime();
       }
 
       m_game_metrics->SetFPSData(fps_data);
+    } else {
+      Get_Game_Metrics_Component_Mutator mutator;
+      m_model->Apply(&mutator);
+      if (mutator.WasSuccessful()) {
+        m_game_metrics = mutator.GetGameMetrics();
+      }
     }
   }
 }

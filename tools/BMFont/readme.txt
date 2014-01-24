@@ -1,4 +1,4 @@
-Bitmap Font Generator v1.13 by Andreas Jönsson (www.AngelCode.com)
+Bitmap Font Generator v1.14 beta by Andreas Jönsson (www.AngelCode.com)
 ----------------------------------------------------------------------------------------
 This program will allow you to generate bitmap fonts from TrueType and other Windows fonts. The application generates both image files and character descriptions that can be read by a game for easy rendering of fonts.
 
@@ -20,6 +20,17 @@ The program and any possible upgrades can be found at www.AngelCode.com. The aut
 
 Changes
 -------------------------------
+1.14 beta - 2013/10/08
+- Fixed crash with large fonts when Windows API incorrectly reported negative width for glyphs.
+- Improved handling of out-of-memory conditions.
+- Fixed crash that could occur when exporting unicode characters above 0x10000 with kerning pairs.
+- Fixed crash when command line argument -c was a relative path and the configuration included font file or image files.
+- Fixed crash when saving configuration file with added font file from the same directory.
+- Corrected the cell height when using fixed height and supersampling.
+- Added support for Unicode 6.2.
+- Fixed compatibility with Windows XP.
+- Fixed scaling issues and cropping when using height scale with render from outline.
+
 1.13 - 2012/08/12
 - Added option to export fonts using fixed cell heights for easier post processing.
 - Improved support for exporting kerning pairs for true types that use the GPOS table instead of KERN table.
@@ -190,4 +201,4 @@ Changes
 1.0 - 2004/02/14 
 - First public version.
 
-copyright (c) 2004-2012 Andreas Jönsson
+copyright (c) 2004-2013 Andreas Jönsson

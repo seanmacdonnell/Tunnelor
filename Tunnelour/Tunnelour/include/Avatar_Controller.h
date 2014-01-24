@@ -76,6 +76,10 @@ class Avatar_Controller: public Controller,
   //---------------------------------------------------------------------------
   virtual void HandleEventRemove(Tunnelour::Component * const component);
 
+  void HideAvatar();
+
+  void ShowAvatar();
+
  protected:
 
  private:
