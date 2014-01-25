@@ -237,7 +237,6 @@ std::vector<Tile_Bitmap*> Level_Tile_Controller::GenerateTunnelFromMetadata(Leve
         m_bottom_edge_tiles.push_back(new_tile);
       }
 
-
       // X position is the sum of all the tile sizes before it.
       std::vector<Level_Component::Tile_Metadata>::iterator x_sum_iterator;
       for (x_sum_iterator = (*line).begin(); x_sum_iterator != tile; x_sum_iterator++) {
@@ -401,7 +400,7 @@ Tile_Bitmap* Level_Tile_Controller::CreateMiddlegroundTile(float base_tile_size)
   }
   if (!found) {
     std::string error = "Unable to find size: ";
-    error += base_tile_size;
+    error.append(String_Helper::To_String(base_tile_size));
     error += " in texture sheet.";
     throw Tunnelour::Exceptions::init_error(error);
   }
@@ -448,7 +447,7 @@ Tile_Bitmap* Level_Tile_Controller::CreateBackgroundTile(float base_tile_size) {
   }
   if (!found) {
     std::string error = "Unable to find size: ";
-    error += base_tile_size;
+    error += String_Helper::To_String(base_tile_size);
     error += " in texture sheet.";
     throw Tunnelour::Exceptions::init_error(error);
   }

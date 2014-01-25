@@ -291,11 +291,11 @@ bool Level_Transition_Controller::Run() {
   }
 
   if (m_is_fading) {
-    m_background->GetTexture()->transparency = m_background->GetTexture()->transparency - 0.1f;
-    m_level_complete_heading->GetTexture()->transparency = m_level_complete_heading->GetTexture()->transparency - 0.1f;
-    m_next_level_heading->GetTexture()->transparency = m_next_level_heading->GetTexture()->transparency - 0.1f;
-    m_next_level_name->GetTexture()->transparency = m_next_level_name->GetTexture()->transparency - 0.1f;
-    m_next_level_blurb->GetTexture()->transparency = m_next_level_blurb->GetTexture()->transparency - 0.1f;
+    m_background->GetTexture()->transparency = m_background->GetTexture()->transparency - 0.05f;
+    m_level_complete_heading->GetTexture()->transparency = m_level_complete_heading->GetTexture()->transparency - 0.05f;
+    m_next_level_heading->GetTexture()->transparency = m_next_level_heading->GetTexture()->transparency - 0.05f;
+    m_next_level_name->GetTexture()->transparency = m_next_level_name->GetTexture()->transparency - 0.05f;
+    m_next_level_blurb->GetTexture()->transparency = m_next_level_blurb->GetTexture()->transparency - 0.05f;
     if (m_loading->GetTexture()->transparency != 0.0f) {
       m_loading->GetTexture()->transparency = m_loading->GetTexture()->transparency - 0.1f;
     } else {

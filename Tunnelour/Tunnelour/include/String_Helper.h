@@ -28,6 +28,8 @@
 #include <sstream>
 #include <locale>
 #include <codecvt>
+#include <algorithm>
+#include <iostream>
 
 namespace String_Helper {
 
@@ -77,30 +79,45 @@ inline std::string WStringToString(const std::wstring& wstring) {
 }
 
 //-----------------------------------------------------------------------------
-//  Author(s)   : http://stackoverflow.com/a/236803
+//  Author(s)   : http://stackoverflow.com/a/6328211
 //  Description : Splits a string into elements on a given delimiter and
 //              : adds them to the provided vector
-//-----------------------------------------------------------------------------
-inline std::vector<std::string> &Split(const std::string &s, char delim, std::vector<std::string> &elems) {
-  std::stringstream ss(s);
-  std::string item;
-  while (std::getline(ss, item, delim)) {
-      elems.push_back(item);
-  }
-  return elems;
+//-----------------------------------------------------------------------------    
+inline std::vector<std::string> Split( std::string const& source, char delim ) {
+    std::vector<std::string> results;
+    std::string::const_iterator curr = source.begin();
+    std::string::const_iterator end = source.end();
+    std::string::const_iterator next = std::find( curr, end, delim );
+    while ( next != end ) {
+      std::string curr_next = std::string( curr, next );
+      if (!curr_next.empty()) {
+        results.push_back(curr_next);
+      }
+      curr = next + 1;
+      next = std::find( curr, end, delim );
+    }
+    std::string last = std::string( curr, next );
+    if (strcmp(last.c_str(),"\n") != 0 && !last.empty()) {
+      results.push_back(last);
+    }
+    return results;
 }
 
 //-----------------------------------------------------------------------------
-//  Author(s)   : http://stackoverflow.com/a/236803
-//  Description : Splits a string into elements on a given delimiter returns
-//              : a vector
-//-----------------------------------------------------------------------------
-inline std::vector<std::string> Split(const std::string &s, char delim) {
-  std::vector<std::string> elems;
-  Split(s, delim, elems);
-  return elems;
+inline std::string To_String(int a) {
+  std::stringstream ss;
+  ss << a;
+  std::string str = ss.str();
+  return str;
 }
 
+//-----------------------------------------------------------------------------
+inline std::string To_String(float a) {
+  std::stringstream ss;
+  ss << a;
+  std::string str = ss.str();
+  return str;
+}
 
 }  // namespace String_Helper
 #endif  // STRING_HELPER_H_

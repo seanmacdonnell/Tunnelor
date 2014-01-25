@@ -183,10 +183,10 @@ bool Splash_Screen_Controller::Run() {
   }
 
   if (m_splash_screen_component->IsFading()) {
-    m_background->GetTexture()->transparency = m_background->GetTexture()->transparency - 0.1f;
-    m_game_name_heading->GetTexture()->transparency = m_game_name_heading->GetTexture()->transparency - 0.1f;
-    m_author->GetTexture()->transparency = m_author->GetTexture()->transparency - 0.1f;
-    m_version->GetTexture()->transparency = m_version->GetTexture()->transparency - 0.1f;
+    m_background->GetTexture()->transparency = m_background->GetTexture()->transparency - 0.05f;
+    m_game_name_heading->GetTexture()->transparency = m_game_name_heading->GetTexture()->transparency - 0.05f;
+    m_author->GetTexture()->transparency = m_author->GetTexture()->transparency - 0.05f;
+    m_version->GetTexture()->transparency = m_version->GetTexture()->transparency - 0.05f;
 
     if (m_background->GetTexture()->transparency < 0.0) {
       m_background->GetTexture()->transparency = 0.0f;

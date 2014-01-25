@@ -577,7 +577,7 @@ void Level_Controller::LoadLevelCSVIntoStruct(std::string metadata_path, Level_C
     for (line_tile = split_line.begin(); line_tile != split_line.end(); line_tile++) {
       Level_Component::Tile_Metadata tile_metadata;
       std::vector<std::string> quote_stripper = String_Helper::Split((*line_tile), '\'');
-      std::vector<std::string> split_tile = String_Helper::Split(quote_stripper[1], ';');
+      std::vector<std::string> split_tile = String_Helper::Split(quote_stripper[0], ';');
       std::vector<std::string>::iterator line_tile_data;
       for (line_tile_data = split_tile.begin(); line_tile_data != split_tile.end(); line_tile_data++) {
         std::vector<std::string> split_tile_data = String_Helper::Split((*line_tile_data), ' ');
