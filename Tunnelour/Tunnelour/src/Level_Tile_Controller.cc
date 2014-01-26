@@ -205,9 +205,13 @@ std::vector<Tile_Bitmap*> Level_Tile_Controller::GenerateTunnelFromMetadata(Leve
   std::vector<std::vector<Tile_Bitmap*>> tile_lines;
   
   std::vector<std::vector<Level_Component::Tile_Metadata>>::iterator line;
+  unsigned int offset_y = 0;
   for (line = level_metadata.level.begin(); line != level_metadata.level.end(); line++) {
     std::vector<Level_Component::Tile_Metadata>::iterator tile;
     std::vector<Tile_Bitmap*> tile_line;
+    unsigned int current_block_x = 0;
+    unsigned int current_block_y = 0;
+    unsigned int offset_x = 0;
     for (tile = (*line).begin(); tile != (*line).end(); tile++) {
       Tile_Bitmap* new_tile = 0;
       float position_x = 0;
@@ -237,31 +241,53 @@ std::vector<Tile_Bitmap*> Level_Tile_Controller::GenerateTunnelFromMetadata(Leve
         m_bottom_edge_tiles.push_back(new_tile);
       }
 
-      // X position is the sum of all the tile sizes before it.
-      std::vector<Level_Component::Tile_Metadata>::iterator x_sum_iterator;
-      for (x_sum_iterator = (*line).begin(); x_sum_iterator != tile; x_sum_iterator++) {
-        position_x += (*x_sum_iterator).size;
+      position_x += ((*tile).size / 2) + offset_x + current_block_x;
+      position_y -= ((*tile).size / 2) + offset_y + current_block_y;
+
+      if ((*tile).size == 128) {
+        offset_x += (*tile).size;
+      } else {
+        current_block_x += (*tile).size;
+        if (current_block_x == 128) {
+          current_block_x = 0;
+          current_block_y += (*tile).size;
+          if (current_block_y == 128) {
+            current_block_y = 0;
+            offset_x += 128;
+          }
+        }
       }
-      position_x += ((*tile).size / 2);
       // I'm setting the position here so I can use DoTheseTilesXCollide
       new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
 
-      // Check the line above for any X colliding tiles
-      if (!tile_lines.empty()) {
-        std::vector<Tile_Bitmap*>::iterator y_sum_iterator;
-        for (y_sum_iterator = tile_lines.back().begin(); y_sum_iterator != tile_lines.back().end(); y_sum_iterator++) {
-          if (Bitmap_Helper::DoTheseTilesXCollide((*y_sum_iterator), new_tile) ||
-            Bitmap_Helper::AreTheseTilesXAdjacent((*y_sum_iterator), new_tile)) {
-            position_y = (*y_sum_iterator)->GetPosition()->y;
-          }
-        }
-        position_y -= ((*tile).size);
-      } else {
-        position_y -= ((*tile).size / 2);
+      /*
+      if (current_block_y == 128 && current_block_x == 128) {
+        offset_x += 128;
+        current_block_x = 0;
+        current_block_y = 0;
       }
 
-      new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
+      position_y -= ((*tile).size / 2) + (tile_lines.size() * 128);
+      position_y -= current_block_y;
 
+      if ((*tile).size == 128) {
+        // X position is the sum of all the tile sizes before it.
+        position_x += offset_x;
+        position_x += ((*tile).size / 2);
+        offset_x += (*tile).size;
+      } else {
+        position_x += offset_x + current_block_x;
+        position_x += ((*tile).size / 2);
+        current_block_x += (*tile).size;
+        if (current_block_x == 128) {
+          current_block_y += (*tile).size;
+          current_block_x = 0;
+        }
+      }
+      
+      // I'm setting the position here so I can use DoTheseTilesXCollide
+      new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
+      */
       if ((*tile).type.compare("Middleground") == 0) {
         m_middleground_tiles.push_back(new_tile);
         new_tile->GetTexture()->transparency = 0.0f;
@@ -312,6 +338,7 @@ std::vector<Tile_Bitmap*> Level_Tile_Controller::GenerateTunnelFromMetadata(Leve
       tiles.push_back(new_tile);
     }
     tile_lines.push_back(tile_line);
+    offset_y += 128;
   }
 
   return tiles;

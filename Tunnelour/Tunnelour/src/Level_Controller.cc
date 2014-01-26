@@ -573,21 +573,24 @@ void Level_Controller::LoadLevelCSVIntoStruct(std::string metadata_path, Level_C
   while (fgets(line, max_size, pFile) != NULL) {
     std::vector<Level_Component::Tile_Metadata> line_metadata;
     std::vector<std::string> split_line = String_Helper::Split(line, ',');
-    std::vector<std::string>::iterator line_tile;
-    for (line_tile = split_line.begin(); line_tile != split_line.end(); line_tile++) {
+    std::vector<std::string>::iterator line_block;
+    for (line_block = split_line.begin(); line_block != split_line.end(); line_block++) {
       Level_Component::Tile_Metadata tile_metadata;
-      std::vector<std::string> quote_stripper = String_Helper::Split((*line_tile), '\'');
-      std::vector<std::string> split_tile = String_Helper::Split(quote_stripper[0], ';');
-      std::vector<std::string>::iterator line_tile_data;
-      for (line_tile_data = split_tile.begin(); line_tile_data != split_tile.end(); line_tile_data++) {
-        std::vector<std::string> split_tile_data = String_Helper::Split((*line_tile_data), ' ');
-        if (split_tile_data.begin()->compare("Size") == 0) {
-          tile_metadata.size = static_cast<float>(atof(split_tile_data[1].c_str()));
-        } else if (split_tile_data.begin()->compare("Type") == 0) {
-          tile_metadata.type = split_tile_data[1];
+      std::vector<std::string> quote_stripper = String_Helper::Split((*line_block), '\'');
+      std::vector<std::string>::iterator line_tile;
+      for (line_tile = quote_stripper.begin(); line_tile != quote_stripper.end(); line_tile++) {
+        std::vector<std::string> split_tile = String_Helper::Split(line_tile[0], ';');
+        std::vector<std::string>::iterator line_tile_data;
+        for (line_tile_data = split_tile.begin(); line_tile_data != split_tile.end(); line_tile_data++) {
+          std::vector<std::string> split_tile_data = String_Helper::Split((*line_tile_data), ' ');
+          if (split_tile_data.begin()->compare("Size") == 0) {
+            tile_metadata.size = static_cast<float>(atof(split_tile_data[1].c_str()));
+          } else if (split_tile_data.begin()->compare("Type") == 0) {
+            tile_metadata.type = split_tile_data[1];
+          }
         }
+        line_metadata.push_back(tile_metadata);
       }
-      line_metadata.push_back(tile_metadata);
     }
     out_metadata->level.push_back(line_metadata);
   }
