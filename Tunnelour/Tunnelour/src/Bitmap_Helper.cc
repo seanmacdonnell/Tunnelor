@@ -38,6 +38,78 @@ bool Bitmap_Helper::DoTheseTilesIntersect(Tunnelour::Bitmap_Component* TileA, Tu
 }
 
 //------------------------------------------------------------------------------
+std::string Bitmap_Helper::DoesTileACollideOnTheTopOrBottom(Tunnelour::Bitmap_Component* TileA, Tunnelour::Bitmap_Component* TileB) {
+  // At least one y vertex in TileA is contained in the TileB.
+  std::string collision_side = "";
+
+  float a_tile_top, a_tile_bottom;
+  a_tile_top = TileA->GetPosition()->y + static_cast<float>(TileA->GetSize().y / 2);
+  a_tile_bottom = TileA->GetPosition()->y - static_cast<float>(TileA->GetSize().y / 2);
+
+  float b_tile_top, b_tile_bottom;
+  b_tile_top = TileB->GetPosition()->y + static_cast<float>(TileB->GetSize().y / 2);
+  b_tile_bottom = TileB->GetPosition()->y - static_cast<float>(TileB->GetSize().y / 2);
+
+  if (b_tile_top < a_tile_top && b_tile_top > a_tile_bottom) {
+    collision_side = "Bottom";
+  }
+
+  if (b_tile_bottom < a_tile_top && b_tile_bottom > a_tile_bottom) {
+    collision_side = "Top";
+  }
+
+  if (a_tile_top < b_tile_top && a_tile_top > b_tile_bottom) {
+    collision_side = "Top";
+  }
+
+  if (a_tile_bottom < b_tile_top && a_tile_bottom > b_tile_bottom) {
+    collision_side = "Bottom";
+  }
+
+  if (a_tile_top == b_tile_top  && a_tile_bottom == b_tile_bottom) {
+    collision_side = "Adjacent";
+  }
+
+  return collision_side;
+}
+
+//------------------------------------------------------------------------------
+std::string Bitmap_Helper::DoesTileACollideOnTheRightOrLeft(Tunnelour::Bitmap_Component* TileA, Tunnelour::Bitmap_Component* TileB) {
+  // At least one vertex in TileA is contained in the TileB.
+  std::string collision_side = "";
+
+  float a_tile_left, a_tile_right;
+  a_tile_left = TileA->GetPosition()->x - static_cast<float>(TileA->GetSize().x / 2);
+  a_tile_right = TileA->GetPosition()->x + static_cast<float>(TileA->GetSize().x / 2);
+
+  float b_tile_left, b_tile_right;
+  b_tile_left = TileB->GetPosition()->x - static_cast<float>(TileB->GetSize().x / 2);
+  b_tile_right = TileB->GetPosition()->x + static_cast<float>(TileB->GetSize().x / 2);
+
+  if (b_tile_left > a_tile_left && b_tile_left < a_tile_right) {
+    collision_side = "Right";
+  }
+
+  if (b_tile_right < a_tile_right && b_tile_right > a_tile_left) {
+    collision_side = "Left";
+  }
+
+  if (a_tile_left > b_tile_left && a_tile_left < b_tile_right) {
+    collision_side = "Left";
+  }
+
+  if (a_tile_right < b_tile_right && a_tile_right > b_tile_left) {
+    collision_side = "Right";
+  }
+
+  if (b_tile_left == a_tile_left && b_tile_right == a_tile_right) {
+    collision_side = "Adjacent";
+  }
+
+  return collision_side;
+}
+
+//------------------------------------------------------------------------------
 bool Bitmap_Helper::DoTheseTilesYCollide(Tunnelour::Bitmap_Component* TileA, Tunnelour::Bitmap_Component* TileB) {
   // At least one y vertex in TileA is contained in the TileB.
 

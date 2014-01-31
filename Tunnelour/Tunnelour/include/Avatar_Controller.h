@@ -46,6 +46,11 @@ class Avatar_Controller: public Controller,
     D3DXVECTOR2 b_tile_collision_point;
   };
 
+  struct Wall_Collision {
+    Bitmap_Component* colliding_tile;
+    std::string collision_side;
+  };
+
   //---------------------------------------------------------------------------
   // Description : Constructor
   //---------------------------------------------------------------------------
@@ -114,6 +119,11 @@ class Avatar_Controller: public Controller,
   void RunWalkingState();
 
   //---------------------------------------------------------------------------
+  // Description : Changes and maintains the walking state of the avatar
+  //---------------------------------------------------------------------------
+  void RunRunningState();
+
+  //---------------------------------------------------------------------------
   // Description : Changes and maintains the falling state of the avatar
   //---------------------------------------------------------------------------
   void RunFallingState();
@@ -137,7 +147,7 @@ class Avatar_Controller: public Controller,
   //---------------------------------------------------------------------------
   // Description : Returns true if the avatar is colliding with a floor
   //---------------------------------------------------------------------------
-  bool IsAvatarWallColliding(std::vector<Bitmap_Component*> *out_colliding_floor_tiles,
+  bool IsAvatarWallColliding(std::vector<Wall_Collision> *out_collisions,
                              Bitmap_Component *out_avatar_collision_block);
 
   //---------------------------------------------------------------------------
@@ -188,7 +198,7 @@ class Avatar_Controller: public Controller,
   //---------------------------------------------------------------------------
   // Description : Changes the avatar animation and state and/or direction
   //---------------------------------------------------------------------------
-  void SetAvatarState(std::string new_state_name, std::string direction);
+  void SetAvatarState(std::string new_state_parent_name, std::string new_state_name, std::string direction);
 
   //---------------------------------------------------------------------------
   // Description : Updates the avatar state animation
