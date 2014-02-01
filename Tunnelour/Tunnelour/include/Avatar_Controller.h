@@ -33,8 +33,8 @@
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
-//  Description : This controller is responsible for the generation of the
-//                middleground (Layer 0)
+//  Description : This controller is responsible for the creation and mutation
+//                of the avatar_component.
 //-----------------------------------------------------------------------------
 class Avatar_Controller: public Controller,
                          public Component_Composite::Component_Composite_Type_Observer {

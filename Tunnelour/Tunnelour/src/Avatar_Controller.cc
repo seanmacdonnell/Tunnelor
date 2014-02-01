@@ -92,7 +92,6 @@ bool Avatar_Controller::Run() {
   return true;
 }
 
-
 //------------------------------------------------------------------------------
 void Avatar_Controller::HandleEventAdd(Tunnelour::Component * const component) {
   Tile_Bitmap *tile = 0;
@@ -106,7 +105,7 @@ void Avatar_Controller::HandleEventAdd(Tunnelour::Component * const component) {
 }
 
 //------------------------------------------------------------------------------
-void Avatar_Controller::HandleEventRemove(Tunnelour::Component * const component){
+void Avatar_Controller::HandleEventRemove(Tunnelour::Component * const component) {
   Tunnelour::Tile_Bitmap *target_bitmap = 0;
   target_bitmap = static_cast<Tunnelour::Tile_Bitmap*>(component);
   std::vector<Tile_Bitmap*>::iterator found_bitmap;
@@ -642,7 +641,6 @@ void Avatar_Controller::RunLevelTransitioningState() {
     SetAvatarStateAnimationFrame(state_index);
   }
 }
-
 
 //------------------------------------------------------------------------------
 bool Avatar_Controller::IsAvatarFloorAdjacent() {
