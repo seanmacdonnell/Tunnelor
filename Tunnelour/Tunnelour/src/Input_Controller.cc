@@ -259,6 +259,10 @@ void Input_Controller::ProcessInput() {
       }
     }
 
+    if (m_keyboardState[DIK_LMENU] & 0x80)  {
+      command.state = "Jumping";
+    }
+
     if (m_keyboardState[DIK_GRAVE] & 0x80)  {
       m_dik_grave_pressed = true;
     } else {

@@ -289,7 +289,6 @@ void Level_Controller::LoadLevelMetadata() {
   level_metadata = LoadLevelMetadataIntoStruct(level_metadata_file_path);
   std::string level_csv_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Testing_Walking_Animation.csv");
   LoadLevelCSVIntoStruct(level_csv_file_path, &level_metadata);
-  m_level->SetCurrentLevel(level_metadata);
   m_levels.push_back(level_metadata);
   level_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Testing_Wall_Collision.txt");
   level_metadata = LoadLevelMetadataIntoStruct(level_metadata_file_path);
@@ -311,6 +310,12 @@ void Level_Controller::LoadLevelMetadata() {
   level_csv_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Testing_Falling_Further.csv");
   LoadLevelCSVIntoStruct(level_csv_file_path, &level_metadata);
   m_levels.push_back(level_metadata);
+  level_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Testing_Jumping.txt");
+  level_metadata = LoadLevelMetadataIntoStruct(level_metadata_file_path);
+  level_csv_file_path = String_Helper::WStringToString(m_game_settings->GetLevelPath() + L"Testing_Jumping.csv");
+  LoadLevelCSVIntoStruct(level_csv_file_path, &level_metadata);
+  m_levels.push_back(level_metadata);
+  m_level->SetCurrentLevel(level_metadata);
 }
 
 //------------------------------------------------------------------------------

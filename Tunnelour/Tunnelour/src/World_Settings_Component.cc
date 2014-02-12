@@ -32,7 +32,8 @@ World_Settings_Component::~World_Settings_Component() {
 //------------------------------------------------------------------------------
 void World_Settings_Component::Init() {
   //Default Values
-  m_gravity = 55;
+  //m_gravity = 55;
+  m_gravity = 10;
 }
 
 //------------------------------------------------------------------------------

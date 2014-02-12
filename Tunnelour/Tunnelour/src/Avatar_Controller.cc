@@ -189,6 +189,8 @@ void Avatar_Controller::RunAvatarState() {
       RunLevelTransitioningState();
     } else if (current_state.compare("Charlie_Running") == 0) {
       RunRunningState();
+    } else if (current_state.compare("Charlie_Jumping") == 0) {
+      RunJumpingState();
     }
   } else {
     m_avatar->SetPosition(0, 0, 0);
@@ -207,7 +209,15 @@ void Avatar_Controller::RunStandingState() {
 
   // If there is a command (Left, Right, Run, Etc.)
   if (current_command.state.compare("") != 0) {
-    SetAvatarState("Charlie_" + current_command.state, current_command.state, current_command.direction);
+    if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0 ) {
+      SetAvatarState("Charlie_" + current_command.state, current_command.state, current_command.direction);
+    } else {
+      if (current_command.state.compare("Jumping") == 0) {
+        m_avatar->SetAngle(static_cast<float>(1.0));  // in radians
+        m_avatar->SetVelocity(D3DXVECTOR3(16, 24, 0));
+      }
+      SetAvatarState("Charlie_" + current_command.state, current_command.state, m_avatar->GetState().direction);
+    }
     AlignAvatarOnLastAvatarCollisionBlock();
   } else { // No command, run the standing animation,
     if (m_level->IsComplete()) {
@@ -297,8 +307,15 @@ void Avatar_Controller::RunWalkingState() {
           AlignAvatarOnLastAvatarCollisionBlock();
         }
       } else {
-        // Set a new state
-        SetAvatarState("Charlie_" + current_command.state, current_command.state, current_command.direction);
+        if (current_command.state.compare("Jumping") == 0) {
+          m_avatar->SetAngle(static_cast<float>(1.0));  // in radians
+          m_avatar->SetVelocity(D3DXVECTOR3(24, 24, 0));
+        }
+        if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0 ) {
+          SetAvatarState("Charlie_" + current_command.state, current_command.state, current_command.direction);
+        } else {
+          SetAvatarState("Charlie_" + current_command.state, current_command.state, m_avatar->GetState().direction);
+        }
         AlignAvatarOnLastAvatarCollisionBlock();
       }
     } else { // Command is the same as the current state.
@@ -604,6 +621,96 @@ void Avatar_Controller::RunFallingState() {
 }
 
 //------------------------------------------------------------------------------
+void Avatar_Controller::RunJumpingState() {
+  Avatar_Component::Avatar_State current_state = m_avatar->GetState();
+
+  std::vector<Bitmap_Component*> out_colliding_floor_tiles;
+  Bitmap_Component* out_avatar_collision_block = new Bitmap_Component();
+  if (current_state.state.compare("Jumping") == 0) {
+    bool is_colliding = IsAvatarFloorColliding(&out_colliding_floor_tiles,
+                                               out_avatar_collision_block);
+    if (is_colliding) {
+      // Avatar has landed, move the avatar to the top of the tile
+      bool is_tangent = false;
+      float tile_top = 0;
+
+      std::vector<Bitmap_Component*>::iterator it;
+      it = out_colliding_floor_tiles.begin();
+      for (; it != out_colliding_floor_tiles.end(); it++) {
+        tile_top = (*it)->GetTopLeftPostion().y;
+        float block_bottom = out_avatar_collision_block->GetBottomRightPostion().y;
+        if (tile_top == block_bottom) {
+          is_tangent = true;
+        }
+      }
+
+      D3DXVECTOR3 avatar_position = *m_avatar->GetPosition();
+      float foot_bottom = out_avatar_collision_block->GetBottomRightPostion().y;
+      float foot_bottom_centre_offset = foot_bottom - avatar_position.y;
+
+      avatar_position.y = tile_top - foot_bottom_centre_offset;
+      m_avatar->SetPosition(avatar_position);
+
+      SetAvatarStateAnimationFrame(6);
+      m_avatar->SetAngle(static_cast<float>(0.0));  // in radians
+      m_avatar->SetVelocity(D3DXVECTOR3(0, 0, 0));
+    } else {
+      D3DXVECTOR3 position = *m_avatar->GetPosition();     
+      if (m_avatar->GetState().direction.compare("Right") == 0) {
+        position.x = position.x + m_avatar->GetVelocity().x;
+      } else if  (m_avatar->GetState().direction.compare("Left") == 0) {
+        position.x = position.x - m_avatar->GetVelocity().x;
+      }
+      position.y = position.y + m_avatar->GetVelocity().y;
+      m_avatar->SetPosition(position);
+
+      unsigned int state_index = current_state.state_index;
+      if (state_index == 0) {
+        state_index = 1;
+      } else if (state_index == 1) {
+        if (m_avatar->GetVelocity().y < 10 && m_avatar->GetVelocity().y > 0) {
+          state_index = 2;
+        }
+      } else if (state_index == 2) {
+        if (m_avatar->GetVelocity().y < 0) {
+          state_index = 3;
+        }
+      } else if (state_index == 3) {
+        if (m_avatar->GetVelocity().y < -5) {
+          state_index = 4;
+        }
+      } else if  (state_index == 4) {
+        state_index = 5;
+      } else if   (state_index == 6) {
+        SetAvatarState("Charlie_Standing", "Standing", m_avatar->GetState().direction);
+      }
+
+      if (state_index > (m_current_animation_subset.number_of_frames - 1)) {
+        if (m_current_animation_subset.is_repeatable) {
+          state_index = 0;
+        } else {
+          std::string error;
+          error = "No handling for this non-repeating animation: " + m_avatar->GetState().state;
+          throw Exceptions::init_error(error);
+        }
+      }
+      if (state_index != 6) {
+        SetAvatarStateAnimationFrame(state_index);
+
+        D3DXVECTOR3 new_velocity = D3DXVECTOR3(0, 0 , 0);
+        new_velocity.y = m_avatar->GetVelocity().y - m_world_settings->GetGravity();
+        if (new_velocity.y > 128) { 
+          new_velocity.y = 128; 
+        }
+        new_velocity.x = m_avatar->GetVelocity().x;
+
+        m_avatar->SetVelocity(new_velocity);
+      }
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
 void Avatar_Controller::RunLevelTransitioningState() {
   m_avatar->SetAngle(static_cast<float>(0.0));  // in radians
   m_avatar->SetVelocity(D3DXVECTOR3(0, 0, 0));
@@ -772,6 +879,11 @@ void Avatar_Controller::LoadTilesets(std::wstring wtileset_path) {
   m_level_transitioning_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Level_Transition_Animation_Tileset_1_0.txt");
   Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(m_level_transitioning_metadata_file_path, &m_level_transitioning_metadata);
   m_animation_metadata.push_back(m_level_transitioning_metadata);
+
+  // Jumping
+  m_jumping_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Jumping_Animation_Tileset_1_0.txt");
+  Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(m_jumping_metadata_file_path, &m_jumping_metadata);
+  m_animation_metadata.push_back(m_jumping_metadata);
 }
 
 //------------------------------------------------------------------------------
@@ -935,7 +1047,7 @@ bool Avatar_Controller::InitTimer() {
 
 //------------------------------------------------------------------------------
 void Avatar_Controller::UpdateTimer() {
-  //int frames_per_millisecond = static_cast<int>(1000/30);
+  //int frames_per_millisecond = static_cast<int>(1000/1);
   int frames_per_millisecond = static_cast<int>(1000/24);
 
   INT64 currentTime;

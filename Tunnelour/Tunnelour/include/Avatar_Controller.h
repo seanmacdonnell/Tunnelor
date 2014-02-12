@@ -129,6 +129,11 @@ class Avatar_Controller: public Controller,
   void RunFallingState();
 
   //---------------------------------------------------------------------------
+  // Description : Changes and maintains the jumping state of the avatar
+  //---------------------------------------------------------------------------
+  void RunJumpingState();
+
+  //---------------------------------------------------------------------------
   // Description : Changes and maintains the transitioning state of the avatar
   //---------------------------------------------------------------------------
   void RunLevelTransitioningState();
@@ -249,12 +254,14 @@ class Avatar_Controller: public Controller,
   std::string m_standing_metadata_file_path;
   std::string m_falling_metadata_file_path;
   std::string m_level_transitioning_metadata_file_path;
+  std::string m_jumping_metadata_file_path;
   std::string m_current_metadata_file_path;
   Tileset_Helper::Animation_Tileset_Metadata m_running_metadata;
   Tileset_Helper::Animation_Tileset_Metadata m_walking_metadata;
   Tileset_Helper::Animation_Tileset_Metadata m_standing_metadata;
   Tileset_Helper::Animation_Tileset_Metadata m_falling_metadata;
   Tileset_Helper::Animation_Tileset_Metadata m_level_transitioning_metadata;
+  Tileset_Helper::Animation_Tileset_Metadata m_jumping_metadata;
   Tileset_Helper::Animation_Tileset_Metadata m_current_metadata;
   Tileset_Helper::Animation_Subset m_current_animation_subset;
   std::vector<Tileset_Helper::Animation_Tileset_Metadata> m_animation_metadata;

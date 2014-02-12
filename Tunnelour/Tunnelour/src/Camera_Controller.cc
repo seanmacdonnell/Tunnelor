@@ -70,8 +70,15 @@ bool Camera_Controller::Run() {
     avatar_position.y = m_avatar->GetPosition()->y + avatar_collision_block.offset_from_avatar_centre.y;
     avatar_position.z = m_avatar->GetPosition()->z;
 
-    camera_position.x = avatar_position.x;
-    camera_position.y = avatar_position.y - (avatar_collision_block.size.y / 2) + 128;
+    // I did this because I was getting some funny bugs where tiles were 
+    // dissapearing from view for a frame if the camera followed the avatar
+    // while she was jumping in an arc.
+    if (m_avatar->GetState().parent_state.compare("Charlie_Jumping") == 0) {
+      camera_position.x = avatar_position.x;
+    } else {
+      camera_position.x = avatar_position.x;
+      camera_position.y = avatar_position.y - (avatar_collision_block.size.y / 2) + 128;
+    }
 
     m_camera->SetPosition(camera_position);
   }
@@ -99,23 +106,7 @@ Avatar_Component::Avatar_Collision_Block Camera_Controller::GetNamedCollisionBlo
 //------------------------------------------------------------------------------
 void Camera_Controller::HandleEvent(Tunnelour::Component * const component) {
   if (component->GetType().compare("Avatar_Component") == 0) {
-    if (m_game_settings->IsCameraFollowing()) {
-      // Currently the camera is locked to the avatar.
-      D3DXVECTOR3 avatar_position = *m_avatar->GetPosition();
-      D3DXVECTOR3 camera_position = m_camera->GetPosition();
-
-      // Get the avatar collision block
-      Avatar_Component::Avatar_Collision_Block avatar_collision_block = GetNamedCollisionBlock("Avatar", m_avatar->GetState().avatar_collision_blocks);
-
-      avatar_position.x = m_avatar->GetPosition()->x + avatar_collision_block.offset_from_avatar_centre.x;
-      avatar_position.y = m_avatar->GetPosition()->y + avatar_collision_block.offset_from_avatar_centre.y;
-      avatar_position.z = m_avatar->GetPosition()->z;
-
-      camera_position.x = avatar_position.x;
-      camera_position.y = avatar_position.y - (avatar_collision_block.size.y / 2) + 128;
-
-      m_camera->SetPosition(camera_position);
-    }
+    Run();
   }
 }
 
