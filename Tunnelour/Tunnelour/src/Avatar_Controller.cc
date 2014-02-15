@@ -544,13 +544,13 @@ void Avatar_Controller::RunFallingState() {
         SetAvatarState("Charlie_Falling", "Falling_Flip", "Left");
         MoveAvatarWallAdjacent("Right");
         D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
-        D3DXVECTOR3 new_velocity = D3DXVECTOR3(old_velocity.x /3, old_velocity.y/2 , old_velocity.z);
+        D3DXVECTOR3 new_velocity = D3DXVECTOR3(old_velocity.x / 2, old_velocity.y + m_world_settings->GetGravity(), old_velocity.z);
         m_avatar->SetVelocity(new_velocity);
       } else {
         SetAvatarState("Charlie_Falling", "Falling_Flip", "Right");
         MoveAvatarWallAdjacent("Left");
         D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
-        D3DXVECTOR3 new_velocity = D3DXVECTOR3(old_velocity.x /3, old_velocity.y/2 , old_velocity.z);
+        D3DXVECTOR3 new_velocity = D3DXVECTOR3(old_velocity.x / 2, old_velocity.y + m_world_settings->GetGravity(), old_velocity.z);
         m_avatar->SetVelocity(new_velocity);
       }
     } else {
