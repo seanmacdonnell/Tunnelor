@@ -36,6 +36,7 @@ Debug_Data_Display_Controller::Debug_Data_Display_Controller() : Controller() {
   m_font_path = "";
   m_has_been_initialised = false;
   z_position = -3;
+  m_bitmap_z_position = -4;
 }
 
 //------------------------------------------------------------------------------
@@ -102,6 +103,9 @@ bool Debug_Data_Display_Controller::Run() {
       std::vector<Avatar_Component::Avatar_Collision_Block> avatar_collision_blocks = m_avatar->GetState().avatar_collision_blocks;
       for (avatar_collision_block = avatar_collision_blocks.begin(); avatar_collision_block != avatar_collision_blocks.end(); avatar_collision_block++) {
         Tile_Bitmap *avatar_collision_block_bitmap = Bitmap_Helper::CollisionBlockToBitmapComponent((*avatar_collision_block), m_avatar, m_debug_tileset_metadata, m_game_settings->GetTilesetPath());
+        D3DXVECTOR3 *position = avatar_collision_block_bitmap->GetPosition();
+        position->z = m_bitmap_z_position;
+        avatar_collision_block_bitmap->SetPosition(*position);
         m_collision_bitmaps.push_back(avatar_collision_block_bitmap);
         m_model->Add(avatar_collision_block_bitmap);
         if (m_is_debug_mode) {

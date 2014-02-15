@@ -279,6 +279,8 @@ class Avatar_Controller: public Controller,
   float m_avatar_z_position;
 
   std::string m_current_level_name;
+
+  int m_y_fallen;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_H_

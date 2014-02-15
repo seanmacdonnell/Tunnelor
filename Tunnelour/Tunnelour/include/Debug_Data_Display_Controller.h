@@ -105,6 +105,7 @@ class Debug_Data_Display_Controller: public Controller {
   std::string m_debug_metadata_file_path;
   std::vector<Tile_Bitmap*> m_collision_bitmaps;
   int z_position;
+  int m_bitmap_z_position;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_DEBUG_DATA_DISPLAY_CONTROLLER_H_
