@@ -165,6 +165,8 @@ bool Level_Controller::Run() {
           if (m_avatar_controller == 0) {
             m_avatar_controller = new Tunnelour::Avatar_Controller();
             m_avatar_controller->Init(m_model);
+          } else {
+            m_avatar_controller->ResetAvatar();
           }
         }
       } else {

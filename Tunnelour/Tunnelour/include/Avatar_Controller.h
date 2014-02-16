@@ -85,6 +85,11 @@ class Avatar_Controller: public Controller,
 
   void ShowAvatar();
 
+  //---------------------------------------------------------------------------
+  // Description : Resets the Avatar_Component tile to level defaults
+  //---------------------------------------------------------------------------
+  void ResetAvatar();
+
  protected:
 
  private:
@@ -93,10 +98,7 @@ class Avatar_Controller: public Controller,
   //---------------------------------------------------------------------------
   void CreateAvatar();
 
-  //---------------------------------------------------------------------------
-  // Description : Resets the Avatar_Component tile to level defaults
-  //---------------------------------------------------------------------------
-  void ResetAvatar();
+
 
   //---------------------------------------------------------------------------
   // Description : Creates the Avatar_Component and adds it to the model
@@ -146,8 +148,8 @@ class Avatar_Controller: public Controller,
   //---------------------------------------------------------------------------
   // Description : Returns true if the avatar is colliding with a floor
   //---------------------------------------------------------------------------
-  bool IsAvatarFloorColliding(std::vector<Bitmap_Component*> *out_colliding_floor_tiles,
-                              Bitmap_Component *out_avatar_collision_block);
+  bool IsAvatarFloorColliding(std::vector<Wall_Collision> *out_collisions,
+                             Bitmap_Component *out_avatar_collision_block);
 
   //---------------------------------------------------------------------------
   // Description : Returns true if the avatar is colliding with a floor
