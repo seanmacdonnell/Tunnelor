@@ -77,6 +77,11 @@ class Frame_Component: public Tunnelour::Component {
   D3DXVECTOR3 * const GetPosition();
 
   //---------------------------------------------------------------------------
+  // Description : Accessor for the Position
+  //---------------------------------------------------------------------------
+  D3DXVECTOR3 const GetLastPosition();
+
+  //---------------------------------------------------------------------------
   // Description : Mutator for the Position
   //---------------------------------------------------------------------------
   void SetPosition(D3DXVECTOR3 position);
@@ -132,6 +137,7 @@ class Frame_Component: public Tunnelour::Component {
   // Description : Class variables
   //---------------------------------------------------------------------------
   D3DXVECTOR3 m_position;
+  D3DXVECTOR3 m_last_position;
   D3DXVECTOR3 m_scale;
   D3DXVECTOR2 m_size;
 

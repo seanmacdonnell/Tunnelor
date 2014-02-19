@@ -157,6 +157,10 @@ class Avatar_Controller: public Controller,
   bool IsAvatarWallColliding(std::vector<Wall_Collision> *out_collisions,
                              Bitmap_Component *out_avatar_collision_block);
 
+  double Avatar_Controller::WhatsTheDistanceBetweenThesePoints(D3DXVECTOR2 point_1, D3DXVECTOR2 point_2);
+
+  bool DoTheseLinesIntersect(D3DXVECTOR2 line_a_begin, D3DXVECTOR2 line_a_end, D3DXVECTOR2 line_b_begin, D3DXVECTOR2 line_b_end, D3DXVECTOR2 *out_intersecting_point); 
+
   //---------------------------------------------------------------------------
   // Description : Loads all the tile animations into the controller
   //---------------------------------------------------------------------------
@@ -215,7 +219,7 @@ class Avatar_Controller: public Controller,
   //---------------------------------------------------------------------------
   // Description : Returns the lowest collision block on the avatar
   //---------------------------------------------------------------------------
-  Avatar_Component::Avatar_Collision_Block GetLowestCollisionBlock();
+  Avatar_Component::Avatar_Collision_Block GetLowestCollisionBlock(std::vector<Avatar_Component::Avatar_Collision_Block> avatar_collision_blocks);
 
   //---------------------------------------------------------------------------
   // Description : Returns the lowest and most towards the direction 
@@ -226,7 +230,7 @@ class Avatar_Controller: public Controller,
   //---------------------------------------------------------------------------
   // Description : Creates a Bitmap Component using the given collision block
   //---------------------------------------------------------------------------
-  Bitmap_Component CollisionBlockToBitmapComponent(Avatar_Component::Avatar_Collision_Block avatar_collision_block);
+  Bitmap_Component CollisionBlockToBitmapComponent(Avatar_Component::Avatar_Collision_Block avatar_collision_block, D3DXVECTOR3 position);
 
   //---------------------------------------------------------------------------
   // Description : Creates a Bitmap Component using the given collision block
