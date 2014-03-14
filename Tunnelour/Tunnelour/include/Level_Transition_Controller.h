@@ -67,6 +67,8 @@ class Level_Transition_Controller: public Controller,
   
   bool IsLoading();
 
+  bool IsFading();
+
   void SetLevelCompleteHeadingText(std::string level_complete_heading_text);
 
   void SetNextLevelHeadingText(std::string next_level_heading);

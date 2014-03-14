@@ -79,6 +79,7 @@ class Level_Tile_Controller: public Controller,
   void LoadTilesetMetadata();
   Tileset_Helper::Tileset_Metadata GetNamedTileset(std::string name);
   Tileset_Helper::Subset GetCurrentMiddlegroundSubset();
+  Tileset_Helper::Subset GetCurrentNamedSubset(std::string name);
   Tileset_Helper::Subset GetCurrentBackgroundSubset();
   Tile_Bitmap* CreateMiddlegroundTile(float base_tile_size);
   Tile_Bitmap* CreateBackgroundTile(float base_tile_size);

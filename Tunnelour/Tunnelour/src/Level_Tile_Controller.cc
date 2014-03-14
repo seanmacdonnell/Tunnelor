@@ -347,7 +347,7 @@ std::vector<Tile_Bitmap*> Level_Tile_Controller::GenerateTunnelFromMetadata(Leve
 //---------------------------------------------------------------------------
 void Level_Tile_Controller::LoadTilesetMetadata() {
   Tileset_Helper::Tileset_Metadata debug_tileset_metadata;
-  m_debug_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Debug_Tileset_0_5.txt");
+  m_debug_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Debug_Tileset_0_6.txt");
   Tileset_Helper::LoadTilesetMetadataIntoStruct(m_debug_metadata_file_path, &debug_tileset_metadata);
   m_tilesets.push_back(debug_tileset_metadata);
 
@@ -391,6 +391,20 @@ Tileset_Helper::Subset Level_Tile_Controller::GetCurrentMiddlegroundSubset() {
   std::vector<Tileset_Helper::Subset>::iterator tileset;
   for (tileset = m_current_tileset.tilesets.begin(); tileset != m_current_tileset.tilesets.end(); tileset++) {
     if (tileset->type.compare("Middleground") == 0) {
+      found_subset = *tileset;
+    }
+  }
+
+  return found_subset;
+}
+
+//---------------------------------------------------------------------------
+Tileset_Helper::Subset Level_Tile_Controller::GetCurrentNamedSubset(std::string name) {
+  Tileset_Helper::Subset found_subset;
+
+  std::vector<Tileset_Helper::Subset>::iterator tileset;
+  for (tileset = m_current_tileset.tilesets.begin(); tileset != m_current_tileset.tilesets.end(); tileset++) {
+    if (tileset->type.compare(name) == 0) {
       found_subset = *tileset;
     }
   }
@@ -544,7 +558,7 @@ void Level_Tile_Controller::ResetMiddlegroundTileTexture(Tile_Bitmap *out_tile) 
   Tileset_Helper::Line tile_line = GetCurrentSizedMiddlegroundLine(out_tile->GetSize().x);
   int random_variable = 0;
   if (m_is_debug_mode) {
-    if (out_tile->IsEdge()) {
+    if (out_tile->IsWall()) {
       random_variable = 1;
     } else {
       random_variable = 0;

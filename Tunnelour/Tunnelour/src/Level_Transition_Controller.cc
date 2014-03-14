@@ -351,6 +351,11 @@ bool Level_Transition_Controller::IsLoading() {
 }
 
 //------------------------------------------------------------------------------
+bool Level_Transition_Controller::IsFading() {
+  return m_is_fading;
+}
+
+//------------------------------------------------------------------------------
 void Level_Transition_Controller::SetLevelCompleteHeadingText(std::string level_complete_heading_text) {
   m_level_complete_heading_text = level_complete_heading_text;
 }

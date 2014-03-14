@@ -101,6 +101,8 @@ class Level_Controller: public Controller {
   bool m_has_level_been_added;
   bool m_has_level_been_shown;
   bool m_has_splash_screen_faded;
+
+  bool m_has_avatar_been_reset;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_LEVEL_CONTROLLER_H_

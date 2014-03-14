@@ -148,14 +148,12 @@ class Avatar_Controller: public Controller,
   //---------------------------------------------------------------------------
   // Description : Returns true if the avatar is colliding with a floor
   //---------------------------------------------------------------------------
-  bool IsAvatarFloorColliding(std::vector<Wall_Collision> *out_collisions,
-                             Bitmap_Component *out_avatar_collision_block);
+  bool IsAvatarFloorColliding(std::vector<Wall_Collision> *out_collisions);
 
   //---------------------------------------------------------------------------
   // Description : Returns true if the avatar is colliding with a floor
   //---------------------------------------------------------------------------
-  bool IsAvatarWallColliding(std::vector<Wall_Collision> *out_collisions,
-                             Bitmap_Component *out_avatar_collision_block);
+  bool IsAvatarWallColliding(std::vector<Wall_Collision> *out_collisions);
 
   double Avatar_Controller::WhatsTheDistanceBetweenThesePoints(D3DXVECTOR2 point_1, D3DXVECTOR2 point_2);
 
@@ -188,7 +186,7 @@ class Avatar_Controller: public Controller,
   // Description : Repositions the avatar so he is standing adjacent to
   //             : a colliding wall tile.
   //---------------------------------------------------------------------------
-  void MoveAvatarWallAdjacent(std::string direction);
+  void MoveAvatarTileAdjacent(std::string direction, Bitmap_Component* tile);
 
   //---------------------------------------------------------------------------
   // Description : Repositions the avatar so he is standing adjacent to

@@ -45,6 +45,7 @@ Level_Controller::Level_Controller() : Controller() {
   m_has_level_been_added = false;
   m_has_level_been_shown = false;
   m_has_splash_screen_faded = false;
+  m_has_avatar_been_reset = false;
   m_game_over_screen_controller = 0;
 }
 
@@ -181,7 +182,10 @@ bool Level_Controller::Run() {
       m_level_transition_controller->Run();
       if (m_level_transition_controller->IsFinished()) {
         delete m_level_transition_controller;
-        m_level_transition_controller = 0;
+        m_level_transition_controller = 0;        
+      } else if (m_level_transition_controller->IsFading() && !m_has_avatar_been_reset) {
+        m_avatar_controller->ResetAvatar();
+        m_has_avatar_been_reset = true;
       }
     } else if (m_avatar_controller != 0) {
       m_avatar_controller->Run();
