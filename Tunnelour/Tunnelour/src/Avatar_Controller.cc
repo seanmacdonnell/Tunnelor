@@ -37,6 +37,7 @@ Avatar_Controller::Avatar_Controller() : Controller() {
   m_animation_tick = false;
   m_world_settings = 0;
   m_avatar_z_position = -2; // Middleground Z Space is -1
+  m_wall_impacting = false;
 }
 
 //------------------------------------------------------------------------------
@@ -402,6 +403,7 @@ void Avatar_Controller::RunWalkingState() {
   
     // Detect if the avatar is overbalancing from walking
     if (!IsAvatarFloorAdjacent()) {
+      m_avatar->SetVelocity(D3DXVECTOR3(4, 0 , 0));
       SetAvatarState("Charlie_Falling", "Walking_To_Falling", m_avatar->GetState().direction);
       AlignAvatarOnLastAvatarCollisionBlock();
     }
@@ -655,17 +657,28 @@ void Avatar_Controller::RunFallingState() {
     is_wall_colliding = IsAvatarWallColliding(&out_colliding_wall_tiles);
     if (is_wall_colliding && (current_state.state.compare("Walking_To_Falling") != 0)) {
       if (out_colliding_wall_tiles.begin()->collision_side.compare("Left") == 0) {
-        SetAvatarState("Charlie_Falling", "Falling_Flip", "Left");
-        MoveAvatarTileAdjacent("Left", out_colliding_wall_tiles.begin()->colliding_tile);
-        D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
-        D3DXVECTOR3 new_velocity = D3DXVECTOR3(old_velocity.x / 2, old_velocity.y - m_world_settings->GetGravity(), old_velocity.z);
-        m_avatar->SetVelocity(new_velocity);
+        if (m_wall_impacting) {
+          SetAvatarState("Charlie_Falling", "Falling_Flip", "Left");
+          MoveAvatarTileAdjacent("Left", out_colliding_wall_tiles.begin()->colliding_tile);
+          D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
+          D3DXVECTOR3 new_velocity = D3DXVECTOR3(old_velocity.x / 2, old_velocity.y - m_world_settings->GetGravity(), old_velocity.z);
+          m_avatar->SetVelocity(new_velocity);
+          m_wall_impacting = false;
+        } else {
+          m_wall_impacting = true;
+          MoveAvatarTileAdjacent("Left", out_colliding_wall_tiles.begin()->colliding_tile);
+        }
       } else {
-        SetAvatarState("Charlie_Falling", "Falling_Flip", "Right");
-        MoveAvatarTileAdjacent("Right", out_colliding_wall_tiles.begin()->colliding_tile);
-        D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
-        D3DXVECTOR3 new_velocity = D3DXVECTOR3(old_velocity.x / 2, old_velocity.y - m_world_settings->GetGravity(), old_velocity.z);
-        m_avatar->SetVelocity(new_velocity);
+        if (m_wall_impacting) {
+          SetAvatarState("Charlie_Falling", "Falling_Flip", "Right");
+          MoveAvatarTileAdjacent("Right", out_colliding_wall_tiles.begin()->colliding_tile);
+          D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
+          D3DXVECTOR3 new_velocity = D3DXVECTOR3(old_velocity.x / 2, old_velocity.y - m_world_settings->GetGravity(), old_velocity.z);
+          m_avatar->SetVelocity(new_velocity);
+        } else {
+          m_wall_impacting = true;
+          MoveAvatarTileAdjacent("Left", out_colliding_wall_tiles.begin()->colliding_tile);
+        }
       }
     }
   }

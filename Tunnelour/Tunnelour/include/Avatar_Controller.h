@@ -285,6 +285,7 @@ class Avatar_Controller: public Controller,
   std::string m_current_level_name;
 
   int m_y_fallen;
+  bool m_wall_impacting;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_H_
