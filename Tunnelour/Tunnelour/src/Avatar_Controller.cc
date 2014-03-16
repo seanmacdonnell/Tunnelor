@@ -178,7 +178,7 @@ void Avatar_Controller::CreateAvatar() {
 
 //------------------------------------------------------------------------------
 void Avatar_Controller::RunAvatarState() {
-  std::string current_state = m_avatar->GetState().parent_state;
+   std::string current_state = m_avatar->GetState().parent_state;
 
   if (m_avatar->GetTexture()->transparency != 0.0f) {
     if (current_state.compare("Charlie_Standing") == 0) {
@@ -219,11 +219,11 @@ void Avatar_Controller::RunStandingState() {
     } else {
       if (current_command.state.compare("Jumping") == 0) {
         m_avatar->SetAngle(static_cast<float>(1.0));  // in radians
-          if (current_state.direction.compare("Right") == 0) {
-            m_avatar->SetVelocity(D3DXVECTOR3(16, 24 , 0));
-          } else {  // Left
-            m_avatar->SetVelocity(D3DXVECTOR3(-16, 24 , 0));
-          }
+        if (current_state.direction.compare("Right") == 0) {
+          m_avatar->SetVelocity(D3DXVECTOR3(16, 24 , 0));
+        } else {  // Left
+          m_avatar->SetVelocity(D3DXVECTOR3(-16, 24 , 0));
+        }
       }
       SetAvatarState("Charlie_" + current_command.state, current_command.state, m_avatar->GetState().direction);
       has_state_changed = true;
@@ -702,9 +702,7 @@ void Avatar_Controller::RunJumpingState() {
     if (state_index == 0) {
       state_index = 1;
     } else if (state_index == 1) {
-      if (m_avatar->GetVelocity().y < 10 && m_avatar->GetVelocity().y > 0) {
         state_index = 2;
-      }
     } else if (state_index == 2) {
       if (m_avatar->GetVelocity().y < 0) {
         state_index = 3;
