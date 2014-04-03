@@ -558,7 +558,7 @@ void Level_Tile_Controller::ResetMiddlegroundTileTexture(Tile_Bitmap *out_tile) 
   Tileset_Helper::Line tile_line = GetCurrentSizedMiddlegroundLine(out_tile->GetSize().x);
   int random_variable = 0;
   if (m_is_debug_mode) {
-    if (out_tile->IsWall()) {
+    if (out_tile->IsEdge()) {
       random_variable = 1;
     } else {
       random_variable = 0;

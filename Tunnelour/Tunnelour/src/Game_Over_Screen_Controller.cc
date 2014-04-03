@@ -402,7 +402,7 @@ bool Game_Over_Screen_Controller::InitTimer() {
 
 //------------------------------------------------------------------------------
 void Game_Over_Screen_Controller::UpdateTimer() {
-  int frames_per_millisecond = static_cast<int>(5000);
+  int milliseconds_per_frame = static_cast<int>(5000);
 
   INT64 currentTime;
   float timeDifference;
@@ -413,16 +413,16 @@ void Game_Over_Screen_Controller::UpdateTimer() {
 
   m_frameTime = timeDifference / m_ticksPerMs;
 
-  if (m_frameTime >= frames_per_millisecond) {
+  if (m_frameTime >= milliseconds_per_frame) {
     m_startTime = currentTime;
-    m_frameTime = static_cast<float>(m_frameTime - frames_per_millisecond);
+    m_frameTime = static_cast<float>(m_frameTime - milliseconds_per_frame);
     m_animation_tick = true;
   }
 }
 
 //------------------------------------------------------------------------------
 void Game_Over_Screen_Controller::UpdateFadeoutTimer() {
-  int frames_per_millisecond = static_cast<int>(5000);
+  int milliseconds_per_frame = static_cast<int>(5000);
 
   INT64 currentTime;
   float timeDifference;
@@ -433,7 +433,7 @@ void Game_Over_Screen_Controller::UpdateFadeoutTimer() {
 
   m_fadeout_frameTime = timeDifference / m_ticksPerMs;
 
-  if (m_fadeout_frameTime >= frames_per_millisecond) {
+  if (m_fadeout_frameTime >= milliseconds_per_frame) {
     m_fadeout_animation_tick = true;
   }
 }

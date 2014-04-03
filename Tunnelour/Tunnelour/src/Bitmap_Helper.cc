@@ -30,11 +30,10 @@ Bitmap_Helper::~Bitmap_Helper() {
 
 //------------------------------------------------------------------------------
 bool Bitmap_Helper::DoTheseTilesIntersect(Tunnelour::Bitmap_Component* TileA, Tunnelour::Bitmap_Component* TileB) {
-  if (DoTheseTilesYCollide(TileA, TileB) && DoTheseTilesXCollide(TileA, TileB)) {
-    return true;
-  }
+  bool is_y_colliding = DoTheseTilesYCollide(TileA, TileB);
+  bool is_x_colliding = DoTheseTilesXCollide(TileA, TileB);
 
-  return false;
+  return is_y_colliding && is_x_colliding;
 }
 
 //------------------------------------------------------------------------------
@@ -137,7 +136,7 @@ bool Bitmap_Helper::DoTheseTilesYCollide(Tunnelour::Bitmap_Component* TileA, Tun
     return true;
   }
 
-  if (a_tile_top == b_tile_top  && a_tile_bottom == b_tile_bottom) {
+  if (a_tile_top == b_tile_top  || a_tile_bottom == b_tile_bottom) {
     return true;
   }
 
@@ -197,7 +196,7 @@ bool Bitmap_Helper::DoTheseTilesXCollide(Tunnelour::Bitmap_Component* TileA, Tun
     return true;
   }
 
-  if (b_tile_left == a_tile_left && b_tile_right == a_tile_right) {
+  if (b_tile_left == a_tile_left || b_tile_right == a_tile_right) {
     return true;
   }
 

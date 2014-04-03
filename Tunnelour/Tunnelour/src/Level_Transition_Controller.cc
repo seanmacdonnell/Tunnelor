@@ -522,7 +522,7 @@ bool Level_Transition_Controller::InitTimer() {
 
 //------------------------------------------------------------------------------
 void Level_Transition_Controller::UpdateTimer() {
-  int frames_per_millisecond = static_cast<int>(1000/2);
+  int milliseconds_per_frame = static_cast<int>(1000/2);
 
   INT64 currentTime;
   float timeDifference;
@@ -533,9 +533,9 @@ void Level_Transition_Controller::UpdateTimer() {
 
   m_frameTime = timeDifference / m_ticksPerMs;
 
-  if (m_frameTime >= frames_per_millisecond) {
+  if (m_frameTime >= milliseconds_per_frame) {
     m_startTime = currentTime;
-    m_frameTime = static_cast<float>(m_frameTime - frames_per_millisecond);
+    m_frameTime = static_cast<float>(m_frameTime - milliseconds_per_frame);
     m_animation_tick = true;
   }
 }

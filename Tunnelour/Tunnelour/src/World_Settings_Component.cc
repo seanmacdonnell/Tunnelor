@@ -32,12 +32,14 @@ World_Settings_Component::~World_Settings_Component() {
 //------------------------------------------------------------------------------
 void World_Settings_Component::Init() {
   //Default Values
-  //m_gravity = 55;
-  m_gravity = 13;
+  // Proper gravity is 900cm/s(sq) which is approx 512px/s(sq)
+  // 512/1000 = 0.512 which I am rounding to 0.5
+  m_gravity = 0.5;
+  //m_gravity = 13;
 }
 
 //------------------------------------------------------------------------------
-int World_Settings_Component::GetGravity() {
+float World_Settings_Component::GetGravityInPixPerMs() {
   return m_gravity;
 }
 

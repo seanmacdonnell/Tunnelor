@@ -127,6 +127,11 @@ class Frame_Component: public Tunnelour::Component {
   D3DXVECTOR3 GetTopLeftPostion();
 
   //---------------------------------------------------------------------------
+  // Description : Returns the calculated Top Left Position of the frame
+  //---------------------------------------------------------------------------
+  void SetBottomPostion(float bottom);
+
+  //---------------------------------------------------------------------------
   // Description : Returns the calculated Bottom Right Position of the frame
   //---------------------------------------------------------------------------
   D3DXVECTOR3 GetBottomRightPostion();

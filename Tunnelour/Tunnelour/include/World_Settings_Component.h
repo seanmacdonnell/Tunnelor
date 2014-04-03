@@ -44,7 +44,7 @@ class World_Settings_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   // Description : Accessor for the gravity
   //---------------------------------------------------------------------------
-  int GetGravity();
+  float GetGravityInPixPerMs();
 
   //---------------------------------------------------------------------------
   // Description : Mutator for the gravity
@@ -57,7 +57,7 @@ class World_Settings_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   // Description : Class variables
   //---------------------------------------------------------------------------
-  int m_gravity;
+  float m_gravity;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_COLOR_COMPONENT_H_

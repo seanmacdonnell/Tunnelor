@@ -153,6 +153,12 @@ D3DXVECTOR3 Frame_Component::GetBottomRightPostion() {
   return bottom_right_position;
 }
 
+//---------------------------------------------------------------------------
+void Frame_Component::SetBottomPostion(float bottom) {
+  float new_x = bottom - ((m_size.x * m_scale.x) / 2);
+  SetPosition(new_x, m_position.y, m_position.z);
+}
+
 //------------------------------------------------------------------------------
 // protected:
 //------------------------------------------------------------------------------

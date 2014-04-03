@@ -183,6 +183,12 @@ class Avatar_Controller: public Controller,
   void AlignAvatarOnLastAvatarCollisionBlock();
 
   //---------------------------------------------------------------------------
+  // Description : Syncs the avatar tile position with avatar collision block
+  //             : of the last avatar animation frame.
+  //---------------------------------------------------------------------------
+  void AlignAvatarOnLastAvatarCollisionBlockX();
+
+  //---------------------------------------------------------------------------
   // Description : Repositions the avatar so he is standing adjacent to
   //             : a colliding wall tile.
   //---------------------------------------------------------------------------
@@ -274,6 +280,7 @@ class Avatar_Controller: public Controller,
   float m_ticksPerMs;
   INT64 m_startTime;
   float m_frameTime;
+  int m_last_frame_time;
   bool m_animation_tick;
   int m_current_animation_fps;
   
@@ -286,6 +293,7 @@ class Avatar_Controller: public Controller,
 
   int m_y_fallen;
   bool m_wall_impacting;
+  Avatar_Component::Avatar_State next_state;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_H_
