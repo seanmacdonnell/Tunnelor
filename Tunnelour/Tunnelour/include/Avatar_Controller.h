@@ -51,6 +51,11 @@ class Avatar_Controller: public Controller,
     std::string collision_side;
   };
 
+  struct Avatar_Last_State {
+    Avatar_Component::Avatar_State state;
+    D3DXVECTOR3 position;
+  };
+
   //---------------------------------------------------------------------------
   // Description : Constructor
   //---------------------------------------------------------------------------
@@ -293,7 +298,7 @@ class Avatar_Controller: public Controller,
 
   int m_y_fallen;
   bool m_wall_impacting;
-  Avatar_Component::Avatar_State next_state;
+  Avatar_Last_State m_last_state;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_H_
