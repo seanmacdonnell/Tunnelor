@@ -281,9 +281,10 @@ void Debug_Data_Display_Controller::UpdateAvatarStateDisplay() {
                             m_game_settings->GetResolution().y / 2;
   std::string avatar_state = m_avatar->GetState().parent_state;
   std::string avatar_subset = m_avatar->GetState().state;
+  std::string avatar_subset_index = std::to_string(static_cast<long double>(m_avatar->GetState().state_index));
   std::string avatar_direction = m_avatar->GetState().direction;
   m_avatar_state_display->GetText()->text = "Avatar State: " + avatar_state  +
-                                                          "::" + avatar_subset +
+                                                          "::" + avatar_subset + " " + avatar_subset_index +
                                                           "(" + avatar_direction + ")";
   m_avatar_state_display->GetFrame()->index_buffer = 0;
   m_avatar_state_display->GetTexture()->texture = 0;
