@@ -30,6 +30,8 @@ Debug_Data_Display_Controller::Debug_Data_Display_Controller() : Controller() {
   m_heading = 0;
   m_fps_display = 0;
   m_avatar_position_display = 0;
+  m_avatar_state_display = 0;
+  m_avatar_velocity_display = 0;
   m_fps = 0;
   m_is_debug_mode = false;
   m_avatar = 0;
@@ -37,6 +39,7 @@ Debug_Data_Display_Controller::Debug_Data_Display_Controller() : Controller() {
   m_has_been_initialised = false;
   z_position = -3;
   m_bitmap_z_position = -4;
+
 }
 
 //------------------------------------------------------------------------------
@@ -46,6 +49,8 @@ Debug_Data_Display_Controller::~Debug_Data_Display_Controller() {
   m_heading = 0;
   m_fps_display = 0;
   m_avatar_position_display = 0;
+  m_avatar_state_display = 0;
+  m_avatar_velocity_display = 0;
   m_fps = 0;
   m_is_debug_mode = false;
   m_avatar = 0;
@@ -91,6 +96,12 @@ bool Debug_Data_Display_Controller::Run() {
     if (m_avatar_position_display == 0) {
       CreateAvatarPositionDisplay();
     }
+    if (m_avatar_state_display == 0) {
+      CreateAvatarStateDisplay();
+    }
+    if (m_avatar_velocity_display == 0) {
+      CreateAvatarVelocityDisplay();
+    }
 
     if (!m_avatar->GetState().avatar_collision_blocks.empty()) {
       std::vector<Tile_Bitmap*>::iterator collision_bitmap;
@@ -119,6 +130,8 @@ bool Debug_Data_Display_Controller::Run() {
         m_heading->GetTexture()->transparency = 0.0f;
         m_fps_display->GetTexture()->transparency = 0.0f;
         m_avatar_position_display->GetTexture()->transparency = 0.0f;
+        m_avatar_state_display->GetTexture()->transparency = 0.0f;
+        m_avatar_velocity_display->GetTexture()->transparency = 0.0f;
         std::vector<Tile_Bitmap*>::iterator collision_bitmap;
         for (collision_bitmap = m_collision_bitmaps.begin(); collision_bitmap != m_collision_bitmaps.end(); collision_bitmap++) {
           (*collision_bitmap)->GetTexture()->transparency = 0.0f;
@@ -129,6 +142,8 @@ bool Debug_Data_Display_Controller::Run() {
         m_heading->GetTexture()->transparency = 1.0f;
         m_fps_display->GetTexture()->transparency = 1.0f;
         m_avatar_position_display->GetTexture()->transparency = 1.0f;
+        m_avatar_state_display->GetTexture()->transparency = 1.0f;
+        m_avatar_velocity_display->GetTexture()->transparency = 1.0f;
         std::vector<Tile_Bitmap*>::iterator collision_bitmap;
         for (collision_bitmap = m_collision_bitmaps.begin(); collision_bitmap != m_collision_bitmaps.end(); collision_bitmap++) {
           (*collision_bitmap)->GetTexture()->transparency = 1.0f;
@@ -141,6 +156,8 @@ bool Debug_Data_Display_Controller::Run() {
     UpdateDebugDataHeading();
     UpdateFPSDisplay();
     UpdateAvatarPositionDisplay();
+    UpdateAvatarStateDisplay();
+    UpdateAvatarVelocityDisplay();
   }
   return true;
 }
@@ -246,4 +263,79 @@ void Debug_Data_Display_Controller::UpdateAvatarPositionDisplay() {
 
   m_avatar_position_display->Init();
 }
+
+//------------------------------------------------------------------------------
+void Debug_Data_Display_Controller::CreateAvatarStateDisplay() {
+  m_avatar_state_display = new Text_Component();
+  m_avatar_state_display->GetText()->font_csv_file = m_font_path;
+  m_avatar_state_display->GetTexture()->transparency = 0.0f;
+  m_avatar_state_display->SetPosition(D3DXVECTOR3(0, 0, z_position));
+  m_model->Add(m_avatar_state_display);
+}
+
+//------------------------------------------------------------------------------
+void Debug_Data_Display_Controller::UpdateAvatarStateDisplay() {
+  float top_left_window_x = m_camera->GetPosition().x -
+                            m_game_settings->GetResolution().x / 2;
+  float top_left_window_y = m_camera->GetPosition().y +
+                            m_game_settings->GetResolution().y / 2;
+  std::string avatar_state = m_avatar->GetState().parent_state;
+  std::string avatar_subset = m_avatar->GetState().state;
+  std::string avatar_direction = m_avatar->GetState().direction;
+  m_avatar_state_display->GetText()->text = "Avatar State: " + avatar_state  +
+                                                          "::" + avatar_subset +
+                                                          "(" + avatar_direction + ")";
+  m_avatar_state_display->GetFrame()->index_buffer = 0;
+  m_avatar_state_display->GetTexture()->texture = 0;
+  m_avatar_state_display->GetFrame()->vertex_buffer = 0;
+
+  float m_avatar_display_x = top_left_window_x +
+                             m_avatar_state_display->GetSize().x / 2 +
+                             10;  // This is the offset from the top
+  float m_avatar_display_y = m_avatar_position_display->GetBottomRightPostion().y -
+                             m_avatar_state_display->GetSize().y / 2;
+
+  m_avatar_state_display->SetPosition(D3DXVECTOR3(m_avatar_display_x,
+                                                     m_avatar_display_y,
+                                                     z_position));
+
+  m_avatar_state_display->Init();
+}
+
+//------------------------------------------------------------------------------
+void Debug_Data_Display_Controller::CreateAvatarVelocityDisplay() {
+  m_avatar_velocity_display = new Text_Component();
+  m_avatar_velocity_display->GetText()->font_csv_file = m_font_path;
+  m_avatar_velocity_display->GetTexture()->transparency = 0.0f;
+  m_avatar_velocity_display->SetPosition(D3DXVECTOR3(0, 0, z_position));
+  m_model->Add(m_avatar_velocity_display);
+}
+
+//------------------------------------------------------------------------------
+void Debug_Data_Display_Controller::UpdateAvatarVelocityDisplay() {
+  float top_left_window_x = m_camera->GetPosition().x -
+                            m_game_settings->GetResolution().x / 2;
+  float top_left_window_y = m_camera->GetPosition().y +
+                            m_game_settings->GetResolution().y / 2;
+  std::string avatar_velocity_x = std::to_string(static_cast<long double>(m_avatar->GetVelocity().x));
+  std::string avatar_velocity_y = std::to_string(static_cast<long double>(m_avatar->GetVelocity().y));
+  m_avatar_velocity_display->GetText()->text = "Avatar Velocity: x:" + avatar_velocity_x  +
+                                                          ",y:" + avatar_velocity_y;
+  m_avatar_velocity_display->GetFrame()->index_buffer = 0;
+  m_avatar_velocity_display->GetTexture()->texture = 0;
+  m_avatar_velocity_display->GetFrame()->vertex_buffer = 0;
+
+  float m_avatar_display_x = top_left_window_x +
+                             m_avatar_velocity_display->GetSize().x / 2 +
+                             10;  // This is the offset from the top
+  float m_avatar_display_y = m_avatar_state_display->GetBottomRightPostion().y -
+                             m_avatar_velocity_display->GetSize().y / 2;
+
+  m_avatar_velocity_display->SetPosition(D3DXVECTOR3(m_avatar_display_x,
+                                                     m_avatar_display_y,
+                                                     z_position));
+
+  m_avatar_velocity_display->Init();
+}
+
 }  // Tunnelour

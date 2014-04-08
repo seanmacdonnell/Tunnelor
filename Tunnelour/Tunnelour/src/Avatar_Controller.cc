@@ -1321,9 +1321,9 @@ void Avatar_Controller::UpdateTimer() {
   int milliseconds_per_frame = 0;
   // 1000/24 is the miliseconds per frame from 24 frames per second
   if (m_game_settings->IsDebugMode()) {
-    milliseconds_per_frame = static_cast<int>(1000/24);
+    milliseconds_per_frame = static_cast<int>(1000/1);
   } else {
-    milliseconds_per_frame = static_cast<int>(1000/24);
+    milliseconds_per_frame = static_cast<int>(1000/32);
   }
 
   INT64 currentTime;

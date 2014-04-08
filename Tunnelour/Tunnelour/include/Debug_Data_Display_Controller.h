@@ -89,6 +89,26 @@ class Debug_Data_Display_Controller: public Controller {
   void UpdateAvatarPositionDisplay();
 
   //---------------------------------------------------------------------------
+  // Description : Creates the avatar position display
+  //---------------------------------------------------------------------------
+  void CreateAvatarStateDisplay();
+
+  //---------------------------------------------------------------------------
+  // Description : Updates the avatar position display
+  //---------------------------------------------------------------------------
+  void UpdateAvatarStateDisplay();
+
+  //---------------------------------------------------------------------------
+  // Description : Creates the avatar position display
+  //---------------------------------------------------------------------------
+  void CreateAvatarVelocityDisplay();
+
+  //---------------------------------------------------------------------------
+  // Description : Updates the avatar position display
+  //---------------------------------------------------------------------------
+  void UpdateAvatarVelocityDisplay();
+
+  //---------------------------------------------------------------------------
   // Member Variables
   //---------------------------------------------------------------------------
   Game_Settings_Component *m_game_settings;
@@ -96,6 +116,8 @@ class Debug_Data_Display_Controller: public Controller {
   Text_Component *m_heading;
   Text_Component *m_fps_display;
   Text_Component *m_avatar_position_display;
+  Text_Component *m_avatar_state_display;
+  Text_Component *m_avatar_velocity_display;
   Camera_Component *m_camera;
   Avatar_Component *m_avatar;
   std::string m_font_path;
