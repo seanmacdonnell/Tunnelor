@@ -47,6 +47,11 @@ class World_Settings_Component: public Tunnelour::Component {
   float GetGravityInPixPerMs();
 
   //---------------------------------------------------------------------------
+  // Description : Accessor for the max velocity
+  //---------------------------------------------------------------------------
+  float GetMaxVelocityInPixPerMs();
+
+  //---------------------------------------------------------------------------
   // Description : Mutator for the gravity
   //---------------------------------------------------------------------------
   void SetGravity(int gravity);
@@ -58,6 +63,7 @@ class World_Settings_Component: public Tunnelour::Component {
   // Description : Class variables
   //---------------------------------------------------------------------------
   float m_gravity;
+  float m_max_velocity;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_COLOR_COMPONENT_H_

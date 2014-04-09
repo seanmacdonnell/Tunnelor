@@ -542,12 +542,11 @@ void Avatar_Controller::RunFallingState() {
   Bitmap_Component* out_avatar_collision_block = new Bitmap_Component();
   if (current_state.state.compare("Falling_To_Standing") == 0) {
     D3DXVECTOR3 position = *m_avatar->GetPosition();
-    D3DXVECTOR3 new_velocity = D3DXVECTOR3(0, 0 , 0);
-    new_velocity.y = m_avatar->GetVelocity().y - (m_world_settings->GetGravityInPixPerMs() * m_last_frame_time);
-    if (new_velocity.y < -128) { 
-      new_velocity.y = -128; 
+    D3DXVECTOR3 new_velocity = m_avatar->GetVelocity();
+    new_velocity.y += static_cast<int>(((m_world_settings->GetGravityInPixPerMs() * m_last_frame_time) * -1));
+    if ((new_velocity.y/(m_last_frame_time * -1)) >= m_world_settings->GetMaxVelocityInPixPerMs()) { 
+      new_velocity.y = static_cast<int>((-1 * m_world_settings->GetMaxVelocityInPixPerMs() * m_last_frame_time)); 
     }
-    new_velocity.x = m_avatar->GetVelocity().x;
 
     position += new_velocity;
     m_avatar->SetVelocity(new_velocity);
@@ -623,13 +622,11 @@ void Avatar_Controller::RunFallingState() {
       AlignAvatarOnLastAvatarCollisionBlock();
     } else {
       position = *m_avatar->GetPosition();
-      D3DXVECTOR3 new_velocity = D3DXVECTOR3(0, 0 , 0);
-      new_velocity.y = m_avatar->GetVelocity().y - (m_world_settings->GetGravityInPixPerMs() * m_last_frame_time);
-      // Terminal Velocity is 5600cm/s(sq) or 9800px/s (sq)
-      if (new_velocity.y < -128) { 
-        new_velocity.y = -128; 
+      D3DXVECTOR3 new_velocity = m_avatar->GetVelocity();
+      new_velocity.y += static_cast<int>(((m_world_settings->GetGravityInPixPerMs() * m_last_frame_time) * -1));
+      if ((new_velocity.y/(m_last_frame_time * -1)) >= m_world_settings->GetMaxVelocityInPixPerMs()) { 
+        new_velocity.y = static_cast<int>((-1 * m_world_settings->GetMaxVelocityInPixPerMs() * m_last_frame_time)); 
       }
-      new_velocity.x = m_avatar->GetVelocity().x;
 
       m_avatar->SetVelocity(new_velocity);
       if (m_avatar->GetState().direction.compare("Right") == 0) {
@@ -650,14 +647,14 @@ void Avatar_Controller::RunFallingState() {
         AlignAvatarOnLastAvatarCollisionBlock();
         MoveAvatarTileAdjacent("Left", out_colliding_wall_tiles.begin()->colliding_tile);
         D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
-        D3DXVECTOR3 new_velocity = D3DXVECTOR3(old_velocity.x / 2, old_velocity.y - (m_world_settings->GetGravityInPixPerMs() * m_last_frame_time), old_velocity.z);
+        D3DXVECTOR3 new_velocity = D3DXVECTOR3(old_velocity.x / 2, static_cast<int>(old_velocity.y - (m_world_settings->GetGravityInPixPerMs() * m_last_frame_time)), old_velocity.z);
         m_avatar->SetVelocity(new_velocity);
       } else {
         SetAvatarState("Charlie_Falling", "Falling_Flip", "Right");
         AlignAvatarOnLastAvatarCollisionBlock();
         MoveAvatarTileAdjacent("Right", out_colliding_wall_tiles.begin()->colliding_tile);
         D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
-        D3DXVECTOR3 new_velocity = D3DXVECTOR3(old_velocity.x / 2, old_velocity.y - (m_world_settings->GetGravityInPixPerMs() * m_last_frame_time), old_velocity.z);
+        D3DXVECTOR3 new_velocity = D3DXVECTOR3(old_velocity.x / 2, static_cast<int>(old_velocity.y - (m_world_settings->GetGravityInPixPerMs() * m_last_frame_time)), old_velocity.z);
         m_avatar->SetVelocity(new_velocity);
       }
     }
@@ -768,12 +765,11 @@ void Avatar_Controller::RunJumpingState() {
         SetAvatarStateAnimationFrame(state_index);
 
         D3DXVECTOR3 new_velocity = m_avatar->GetVelocity();
-        new_velocity.y = m_avatar->GetVelocity().y - (m_world_settings->GetGravityInPixPerMs() * m_last_frame_time);
-        if (new_velocity.y > 128) { 
-          new_velocity.y = 128; 
+        new_velocity.y += static_cast<int>(((m_world_settings->GetGravityInPixPerMs() * m_last_frame_time) * -1));
+        if ((new_velocity.y/(m_last_frame_time * -1)) >= m_world_settings->GetMaxVelocityInPixPerMs()) { 
+          new_velocity.y = static_cast<int>((-1 * m_world_settings->GetMaxVelocityInPixPerMs() * m_last_frame_time)); 
         }
         
-
         m_avatar->SetVelocity(new_velocity);
       }
     }
@@ -881,7 +877,7 @@ bool Avatar_Controller::IsAvatarFloorColliding(std::vector<Wall_Collision> *out_
     // Create a list of floor tiles which are colliding with the collision block
     std::vector<Tile_Bitmap*>::iterator border_tile;
     for (border_tile = m_floor_tiles.begin(); border_tile != m_floor_tiles.end(); border_tile++) {
-      if (Bitmap_Helper::DoTheseTilesIntersect(*border_tile, &out_avatar_collision_block)) {
+      if (out_avatar_collision_block.GetBottomRightPostion().y < (*border_tile)->GetTopLeftPostion().y) {
         D3DXVECTOR2 Tile_Top_Left;
         Tile_Top_Left.x = (*border_tile)->GetTopLeftPostion().x;
         Tile_Top_Left.y = (*border_tile)->GetTopLeftPostion().y;
@@ -1078,6 +1074,11 @@ double Avatar_Controller::WhatsTheDistanceBetweenThesePoints(D3DXVECTOR2 point_1
 }
 
 bool Avatar_Controller::DoTheseLinesIntersect(D3DXVECTOR2 line_a_begin, D3DXVECTOR2 line_a_end, D3DXVECTOR2 line_b_begin, D3DXVECTOR2 line_b_end, D3DXVECTOR2 *out_intersecting_point) {
+    if (line_a_begin.y == line_b_end.y) {
+      return false;
+    }
+
+
     float denom = ((line_a_end.y - line_a_begin.y)*(line_b_end.x - line_b_begin.x)) -
                   ((line_a_end.x - line_a_begin.x)*(line_b_end.y - line_b_begin.y));
 
