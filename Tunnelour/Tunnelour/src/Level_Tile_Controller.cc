@@ -293,7 +293,7 @@ std::vector<Tile_Bitmap*> Level_Tile_Controller::GenerateTunnelFromMetadata(Leve
         new_tile->GetTexture()->transparency = 0.0f;
         if (!tile_line.empty()) {
           if (tile_line.back()->GetPosition()->z == 0) {
-            new_tile->SetIsWall(true);
+            new_tile->SetIsRightWall(true);
             m_tunnel_edge_tiles.push_back(new_tile);
           }
           if (!tile_lines.empty()) {
@@ -312,7 +312,7 @@ std::vector<Tile_Bitmap*> Level_Tile_Controller::GenerateTunnelFromMetadata(Leve
         m_background_tiles.push_back(new_tile);
         new_tile->GetTexture()->transparency = 0.0f; //TUNNEL
         if (tile_line.back()->GetPosition()->z != 0) {
-          tile_line.back()->SetIsWall(true);
+          tile_line.back()->SetIsLeftWall(true);
           m_tunnel_edge_tiles.push_back(tile_line.back());
         }
         if (!tile_lines.empty()) {

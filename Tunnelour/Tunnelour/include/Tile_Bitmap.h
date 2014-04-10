@@ -53,7 +53,13 @@ class Tile_Bitmap: public Tunnelour::Bitmap_Component {
 
   bool IsWall();
 
-  void SetIsWall(bool is_wall);
+  bool IsRightWall();
+
+  bool IsLeftWall();
+
+  void SetIsRightWall(bool is_wall);
+
+  void SetIsLeftWall(bool is_wall);
 
   bool IsTopEdge();
 
@@ -86,7 +92,8 @@ class Tile_Bitmap: public Tunnelour::Bitmap_Component {
   void Init_Frame();
   bool m_is_floor;
   bool m_is_roof;
-  bool m_is_wall;
+  bool m_is_right_wall;
+  bool m_is_left_wall;
   bool m_is_top_edge;
   bool m_is_bottom_edge;
   bool m_is_right_edge;

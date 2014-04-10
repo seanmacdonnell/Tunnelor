@@ -347,9 +347,13 @@ void Avatar_Controller::RunWalkingState() {
         if (current_command.state.compare("Jumping") == 0) {
           m_avatar->SetAngle(static_cast<float>(1.0));  // in radians
           if (current_state.direction.compare("Right") == 0) {
-            m_avatar->SetVelocity(D3DXVECTOR3(42, 50, 0));
+            float y_velocity = 42;
+            float x_velocity = 30;
+            m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
           } else {  // Left
-            m_avatar->SetVelocity(D3DXVECTOR3(-42, 50, 0));
+            float y_velocity = 42;
+            float x_velocity = -30;
+            m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
           }
         }
         if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0 ) {
@@ -981,7 +985,8 @@ bool Avatar_Controller::IsAvatarWallColliding(std::vector<Wall_Collision> *out_c
     // Create a list of floor tiles which are colliding with the collision block
     std::vector<Tile_Bitmap*>::iterator border_tile;
     for (border_tile = m_wall_tiles.begin(); border_tile != m_wall_tiles.end(); border_tile++) {
-       if (Bitmap_Helper::DoTheseTilesIntersect(*border_tile, &out_avatar_collision_block)) {
+       if (m_avatar->GetState().direction.compare("Right") == 0 && (*border_tile)->IsRightWall() && m_avatar->GetBottomRightPostion().x > (*border_tile)->GetTopLeftPostion().x ||
+           m_avatar->GetState().direction.compare("Left") == 0 && (*border_tile)->IsLeftWall() && m_avatar->GetTopLeftPostion().x < (*border_tile)->GetBottomRightPostion().x) {
         D3DXVECTOR2 Tile_Top_Left;
         Tile_Top_Left.x = (*border_tile)->GetTopLeftPostion().x;
         Tile_Top_Left.y = (*border_tile)->GetTopLeftPostion().y;
@@ -1080,6 +1085,10 @@ double Avatar_Controller::WhatsTheDistanceBetweenThesePoints(D3DXVECTOR2 point_1
 }
 
 bool Avatar_Controller::DoTheseLinesIntersect(D3DXVECTOR2 line_a_begin, D3DXVECTOR2 line_a_end, D3DXVECTOR2 line_b_begin, D3DXVECTOR2 line_b_end, D3DXVECTOR2 *out_intersecting_point) {
+  if (line_a_begin.y == line_b_begin.y || line_a_begin.y == line_b_end.y) {
+    return false;
+  }
+
     float denom = ((line_a_end.y - line_a_begin.y)*(line_b_end.x - line_b_begin.x)) -
                   ((line_a_end.x - line_a_begin.x)*(line_b_end.y - line_b_begin.y));
 

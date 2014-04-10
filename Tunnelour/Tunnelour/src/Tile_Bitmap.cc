@@ -26,7 +26,8 @@ Tile_Bitmap::Tile_Bitmap(): Bitmap_Component() {
   m_size = D3DXVECTOR2(0, 0);
   m_texture->texture_path = L"";
   m_is_floor = false;
-  m_is_wall = false;
+  m_is_right_wall = false;
+  m_is_left_wall = false;
   m_is_roof = false;
   m_is_top_edge = false;
   m_is_bottom_edge = false;
@@ -157,12 +158,27 @@ void Tile_Bitmap::SetIsRoof(bool is_roof) {
 
 //------------------------------------------------------------------------------
 bool Tile_Bitmap::IsWall() {
-  return m_is_wall;
+  return m_is_right_wall || m_is_left_wall;
 }
 
 //------------------------------------------------------------------------------
-void Tile_Bitmap::SetIsWall(bool is_wall) {
-  m_is_wall = is_wall;
+bool Tile_Bitmap::IsRightWall() {
+  return m_is_right_wall;
+}
+
+//------------------------------------------------------------------------------
+bool Tile_Bitmap::IsLeftWall() {
+  return m_is_left_wall;
+}
+
+//------------------------------------------------------------------------------
+void Tile_Bitmap::SetIsRightWall(bool is_wall) {
+  m_is_right_wall = is_wall;
+}
+
+//------------------------------------------------------------------------------
+void Tile_Bitmap::SetIsLeftWall(bool is_wall) {
+  m_is_left_wall = is_wall;
 }
 
 //------------------------------------------------------------------------------
