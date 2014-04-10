@@ -33,12 +33,12 @@ World_Settings_Component::~World_Settings_Component() {
 void World_Settings_Component::Init() {
   // Default Values
   // Proper gravity is approx 1000cm/s(sq) which is approx 571px/s(sq)
-  // 571/1000 = 0.571 which I am rounding to 0.6
-  m_gravity = 0.6;
+  // 571/1000 = 0.571 which I am changing to 0.4
+  m_gravity = 0.4;
 
   // Default Values
   // Max Velocity is 200km/h or 5555cm/s
-  // Which is 5.555cm\mil and 3.17px\mil rounded to 4.
+  // Which is 5.555cm\mil and 3.17px\mil changed to 4.
   m_max_velocity = 4;
 }
 
