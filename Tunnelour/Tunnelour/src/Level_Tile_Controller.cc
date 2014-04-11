@@ -347,7 +347,7 @@ std::vector<Tile_Bitmap*> Level_Tile_Controller::GenerateTunnelFromMetadata(Leve
 //---------------------------------------------------------------------------
 void Level_Tile_Controller::LoadTilesetMetadata() {
   Tileset_Helper::Tileset_Metadata debug_tileset_metadata;
-  m_debug_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Debug_Tileset_0_6.txt");
+  m_debug_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Debug_Tileset_0_5.txt");
   Tileset_Helper::LoadTilesetMetadataIntoStruct(m_debug_metadata_file_path, &debug_tileset_metadata);
   m_tilesets.push_back(debug_tileset_metadata);
 
@@ -399,6 +399,21 @@ Tileset_Helper::Subset Level_Tile_Controller::GetCurrentMiddlegroundSubset() {
 }
 
 //---------------------------------------------------------------------------
+Tileset_Helper::Subset Level_Tile_Controller::GetCurrentMiddlegroundSubsetType(std::string type) {
+  Tileset_Helper::Subset found_subset;
+
+  std::vector<Tileset_Helper::Subset>::iterator tileset;
+  for (tileset = m_current_tileset.tilesets.begin(); tileset != m_current_tileset.tilesets.end(); tileset++) {
+    std::size_t found = tileset->type.find(type);
+    if (found!=std::string::npos) {
+      found_subset = *tileset;
+    }
+  }
+
+  return found_subset;
+}
+
+//---------------------------------------------------------------------------
 Tileset_Helper::Subset Level_Tile_Controller::GetCurrentNamedSubset(std::string name) {
   Tileset_Helper::Subset found_subset;
 
@@ -442,7 +457,7 @@ Tile_Bitmap* Level_Tile_Controller::CreateMiddlegroundTile(float base_tile_size)
   if (!found) {
     std::string error = "Unable to find size: ";
     error.append(String_Helper::To_String(base_tile_size));
-    error += " in texture sheet.";
+    error += " in middleground texture sheet.";
     throw Tunnelour::Exceptions::init_error(error);
   }
 
@@ -540,6 +555,20 @@ Tileset_Helper::Line Level_Tile_Controller::GetCurrentSizedMiddlegroundLine(floa
 }
 
 //---------------------------------------------------------------------------
+Tileset_Helper::Line Level_Tile_Controller::GetSizedNamedLine(Tileset_Helper::Subset subset, float size) {
+  Tileset_Helper::Line tile_line;
+  std::vector<Tileset_Helper::Line>::iterator line;
+  for (line = subset.lines.begin(); line != subset.lines.end(); line++) {
+    if (line->tile_size_x == size) {
+      if (line->tile_size_y == size) {
+        tile_line = *line;
+      }
+    }
+  }
+  return tile_line;
+}
+
+//---------------------------------------------------------------------------
 Tileset_Helper::Line Level_Tile_Controller::GetCurrentSizedBackgroundLine(float size) {
   Tileset_Helper::Line tile_line;
   std::vector<Tileset_Helper::Line>::iterator line;
@@ -558,8 +587,10 @@ void Level_Tile_Controller::ResetMiddlegroundTileTexture(Tile_Bitmap *out_tile) 
   Tileset_Helper::Line tile_line = GetCurrentSizedMiddlegroundLine(out_tile->GetSize().x);
   int random_variable = 0;
   if (m_is_debug_mode) {
-    if (out_tile->IsEdge()) {
-      random_variable = 1;
+    if (out_tile->IsWall() || out_tile->IsRoof() || out_tile->IsFloor()) {
+      Tileset_Helper::Subset edge_subset = GetCurrentMiddlegroundSubsetType("Floor and Roof and Left Wall and Right Wall");
+      tile_line = GetSizedNamedLine(edge_subset, out_tile->GetSize().x);
+      random_variable = 0;
     } else {
       random_variable = 0;
     }   

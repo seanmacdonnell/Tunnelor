@@ -554,7 +554,7 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
       if (line != NULL) {
         token = strtok_s(line, " ", &next_token);
         if (strcmp(token, "SubSet_Type") == 0)   {
-          token = strtok_s(NULL, " =\"", &next_token);
+          token = strtok_s(NULL, "\"", &next_token);
           temp_tileset.type = token;
         } else {
           std::string error = "Parse Tileset Metadata Failed! Expected: SubSet_Type, got: ";
