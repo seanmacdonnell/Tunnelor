@@ -37,6 +37,27 @@ namespace Tunnelour {
 class Level_Tile_Controller: public Controller,
                              public Component::Component_Observer {
  public:
+  struct Tile_Type {
+    bool found_roof;
+    bool found_floor;
+    bool found_right_wall;
+    bool found_left_wall;
+
+    Tile_Type() {
+      found_roof = false;
+      found_floor = false;
+      found_right_wall = false;
+      found_left_wall = false;
+    }
+
+    // equality comparison. doesn't modify object. therefore const.
+    bool operator==(const Tile_Type& a) const {
+      return (found_roof == a.found_roof &&
+              found_floor == a.found_floor &&
+              found_right_wall == a.found_right_wall &&
+              found_left_wall == a.found_left_wall);
+    }
+  };
   //---------------------------------------------------------------------------
   // Description : Constructor
   //---------------------------------------------------------------------------
@@ -79,7 +100,8 @@ class Level_Tile_Controller: public Controller,
   void LoadTilesetMetadata();
   Tileset_Helper::Tileset_Metadata GetNamedTileset(std::string name);
   Tileset_Helper::Subset GetCurrentMiddlegroundSubset();
-  Tileset_Helper::Subset GetCurrentMiddlegroundSubsetType(std::string type);
+  Tileset_Helper::Subset GetCurrentMiddlegroundSubsetType(Level_Tile_Controller::Tile_Type types);
+  Tile_Type ParseSubsetTypesFromString(std::string type);
   Tileset_Helper::Subset GetCurrentNamedSubset(std::string name);
   Tileset_Helper::Subset GetCurrentBackgroundSubset();
   Tile_Bitmap* CreateMiddlegroundTile(float base_tile_size);

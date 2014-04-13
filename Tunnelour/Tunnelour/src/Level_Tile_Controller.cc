@@ -347,7 +347,7 @@ std::vector<Tile_Bitmap*> Level_Tile_Controller::GenerateTunnelFromMetadata(Leve
 //---------------------------------------------------------------------------
 void Level_Tile_Controller::LoadTilesetMetadata() {
   Tileset_Helper::Tileset_Metadata debug_tileset_metadata;
-  m_debug_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Debug_Tileset_0_5.txt");
+  m_debug_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Debug_Tileset_0_6.txt");
   Tileset_Helper::LoadTilesetMetadataIntoStruct(m_debug_metadata_file_path, &debug_tileset_metadata);
   m_tilesets.push_back(debug_tileset_metadata);
 
@@ -398,19 +398,45 @@ Tileset_Helper::Subset Level_Tile_Controller::GetCurrentMiddlegroundSubset() {
   return found_subset;
 }
 
+
+
 //---------------------------------------------------------------------------
-Tileset_Helper::Subset Level_Tile_Controller::GetCurrentMiddlegroundSubsetType(std::string type) {
+Tileset_Helper::Subset Level_Tile_Controller::GetCurrentMiddlegroundSubsetType(Level_Tile_Controller::Tile_Type types) {
   Tileset_Helper::Subset found_subset;
 
   std::vector<Tileset_Helper::Subset>::iterator tileset;
-  for (tileset = m_current_tileset.tilesets.begin(); tileset != m_current_tileset.tilesets.end(); tileset++) {
-    std::size_t found = tileset->type.find(type);
-    if (found!=std::string::npos) {
+  for (tileset = m_current_tileset.tilesets.begin(); tileset != m_current_tileset.tilesets.end(); tileset++) {    
+    Tile_Type found_types = ParseSubsetTypesFromString(tileset->type);
+    if (found_types == types) {
       found_subset = *tileset;
     }
   }
 
   return found_subset;
+}
+
+//---------------------------------------------------------------------------
+Level_Tile_Controller::Tile_Type Level_Tile_Controller::ParseSubsetTypesFromString(std::string type) {
+  Tile_Type found_types;
+  std::size_t found;
+  found = type.find("Roof");
+  if (found != std::string::npos) {
+    found_types.found_roof = true;
+  }
+  found = type.find("Floor");
+  if (found != std::string::npos) {
+    found_types.found_floor = true;
+  }
+  found = type.find("Right Wall");
+  if (found != std::string::npos) {
+    found_types.found_right_wall = true;
+  }
+  found = type.find("Left Wall");
+  if (found != std::string::npos) {
+    found_types.found_left_wall = true;
+  }
+
+  return found_types;
 }
 
 //---------------------------------------------------------------------------
@@ -587,8 +613,22 @@ void Level_Tile_Controller::ResetMiddlegroundTileTexture(Tile_Bitmap *out_tile) 
   Tileset_Helper::Line tile_line = GetCurrentSizedMiddlegroundLine(out_tile->GetSize().x);
   int random_variable = 0;
   if (m_is_debug_mode) {
-    if (out_tile->IsWall() || out_tile->IsRoof() || out_tile->IsFloor()) {
-      Tileset_Helper::Subset edge_subset = GetCurrentMiddlegroundSubsetType("Floor and Roof and Left Wall and Right Wall");
+    if (out_tile->IsLeftWall() || out_tile->IsRightWall() || out_tile->IsRoof() || out_tile->IsFloor()) {
+      std::string types;
+      if (out_tile->IsLeftWall()) {
+        types += " Left Wall ";
+      }
+      if (out_tile->IsRightWall()) {
+        types += " Right Wall ";
+      }
+      if (out_tile->IsRoof()) {
+        types += " Roof ";
+      }
+      if (out_tile->IsFloor()) {
+        types += " Floor ";
+      }
+      Tile_Type tile_type = ParseSubsetTypesFromString(types);
+      Tileset_Helper::Subset edge_subset = GetCurrentMiddlegroundSubsetType(tile_type);
       tile_line = GetSizedNamedLine(edge_subset, out_tile->GetSize().x);
       random_variable = 0;
     } else {
