@@ -160,9 +160,14 @@ class Level_Tile_Controller: public Controller,
   std::string m_dirt_metadata_file_path;
   std::string m_the_void_metadata_file_path;
 
-
   std::string m_current_level_name;
   std::vector<Tile_Bitmap*> m_created_tiles;
+
+  unsigned int m_blocksize_x;
+  unsigned int m_blocksize_y;
+  std::vector<std::vector<Tile_Bitmap*>> m_block_tile_lines;
+  std::vector<Tile_Bitmap*> m_block_tile_line;
+  Tile_Bitmap* m_back_block;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_LEVEL_TILE_CONTROLLER_H_

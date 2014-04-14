@@ -36,6 +36,8 @@ Level_Tile_Controller::Level_Tile_Controller() : Controller() {
   m_is_debug_mode = false;
   m_debug_metadata_file_path = "";
   m_dirt_metadata_file_path = "";
+  m_blocksize_x = 0;
+  m_blocksize_y = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -260,71 +262,193 @@ std::vector<Tile_Bitmap*> Level_Tile_Controller::GenerateTunnelFromMetadata(Leve
       // I'm setting the position here so I can use DoTheseTilesXCollide
       new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
 
-      /*
-      if (current_block_y == 128 && current_block_x == 128) {
-        offset_x += 128;
-        current_block_x = 0;
-        current_block_y = 0;
-      }
-
-      position_y -= ((*tile).size / 2) + (tile_lines.size() * 128);
-      position_y -= current_block_y;
-
-      if ((*tile).size == 128) {
-        // X position is the sum of all the tile sizes before it.
-        position_x += offset_x;
-        position_x += ((*tile).size / 2);
-        offset_x += (*tile).size;
-      } else {
-        position_x += offset_x + current_block_x;
-        position_x += ((*tile).size / 2);
-        current_block_x += (*tile).size;
-        if (current_block_x == 128) {
-          current_block_y += (*tile).size;
-          current_block_x = 0;
-        }
-      }
-      
-      // I'm setting the position here so I can use DoTheseTilesXCollide
-      new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
-      */
       if ((*tile).type.compare("Middleground") == 0) {
         m_middleground_tiles.push_back(new_tile);
         new_tile->GetTexture()->transparency = 0.0f;
         if (!tile_line.empty()) {
-          if (tile_line.back()->GetPosition()->z == 0) {
-            new_tile->SetIsRightWall(true);
-            m_tunnel_edge_tiles.push_back(new_tile);
-          }
-          if (!tile_lines.empty()) {
-            std::vector<Tile_Bitmap*>::iterator above_tile;
-            for (above_tile = tile_lines.back().begin(); above_tile != tile_lines.back().end(); above_tile++) {
-              if (Bitmap_Helper::DoTheseTilesXCollide((*above_tile), new_tile)) {
-                if ((*above_tile)->GetPosition()->z == 0) {
-                  new_tile->SetIsFloor(true);
-                  m_tunnel_edge_tiles.push_back(new_tile);
+          if (new_tile->GetSize().x == 128) {
+            if (tile_line.back()->GetPosition()->z == 0) {
+              new_tile->SetIsRightWall(true);
+              m_tunnel_edge_tiles.push_back(new_tile);
+            }
+            if (!tile_lines.empty()) {
+              std::vector<Tile_Bitmap*>::iterator above_tile;
+              for (above_tile = tile_lines.back().begin(); above_tile != tile_lines.back().end(); above_tile++) {
+                if (Bitmap_Helper::DoTheseTilesXCollide((*above_tile), new_tile) && Bitmap_Helper::AreTheseTilesYAdjacent((*above_tile), new_tile)) {
+                  if ((*above_tile)->GetPosition()->z == 0) {
+                    new_tile->SetIsFloor(true);
+                    m_tunnel_edge_tiles.push_back(new_tile);
+                  }
                 }
               }
+            }
+          } else {
+            if (m_blocksize_y == 0 && m_blocksize_x == 0) {
+              m_back_block = tile_line.back();
+            }
+            if (m_blocksize_y == 0) {
+              if (tile_line.back()->GetPosition()->z == 0) {
+                new_tile->SetIsRightWall(true);
+                m_tunnel_edge_tiles.push_back(new_tile);
+              }
+              if (!tile_lines.empty()) {
+                std::vector<Tile_Bitmap*>::iterator above_tile;
+                for (above_tile = tile_lines.back().begin(); above_tile != tile_lines.back().end(); above_tile++) {
+                  if (Bitmap_Helper::DoTheseTilesXCollide((*above_tile), new_tile) && Bitmap_Helper::AreTheseTilesYAdjacent((*above_tile), new_tile)) {
+                    if ((*above_tile)->GetPosition()->z == 0) {
+                      new_tile->SetIsFloor(true);
+                      m_tunnel_edge_tiles.push_back(new_tile);
+                    }
+                  }
+                }
+              }
+              m_block_tile_line.push_back(new_tile);
+            } else {
+              if (m_blocksize_x == 0) {
+                if (m_back_block->GetPosition()->z == 0) {
+                  new_tile->SetIsRightWall(true);
+                  m_tunnel_edge_tiles.push_back(new_tile);
+                }
+                if (!m_block_tile_lines.empty()) {
+                  std::vector<Tile_Bitmap*>::iterator above_tile;
+                  for (above_tile = m_block_tile_lines.back().begin(); above_tile != m_block_tile_lines.back().end(); above_tile++) {
+                    if (Bitmap_Helper::DoTheseTilesXCollide((*above_tile), new_tile) && Bitmap_Helper::AreTheseTilesYAdjacent((*above_tile), new_tile)) {
+                      if ((*above_tile)->GetPosition()->z == 0) {
+                        new_tile->SetIsFloor(true);
+                        m_tunnel_edge_tiles.push_back(new_tile);
+                      }
+                    }
+                  }
+                }
+                m_block_tile_line.push_back(new_tile);
+              } else {
+                if (m_block_tile_line.back()->GetPosition()->z == 0) {
+                  new_tile->SetIsRightWall(true);
+                  m_tunnel_edge_tiles.push_back(new_tile);
+                }
+                if (!m_block_tile_lines.empty()) {
+                  std::vector<Tile_Bitmap*>::iterator above_tile;
+                  for (above_tile = m_block_tile_lines.back().begin(); above_tile != m_block_tile_lines.back().end(); above_tile++) {
+                    if (Bitmap_Helper::DoTheseTilesXCollide((*above_tile), new_tile) && Bitmap_Helper::AreTheseTilesYAdjacent((*above_tile), new_tile)) {
+                      if ((*above_tile)->GetPosition()->z == 0) {
+                        new_tile->SetIsFloor(true);
+                        m_tunnel_edge_tiles.push_back(new_tile);
+                      }
+                    }
+                  }
+                }
+                m_block_tile_line.push_back(new_tile);
+              }
+            }
+            
+            m_blocksize_x += new_tile->GetSize().x;
+
+            if (m_blocksize_x == 128 && m_blocksize_y + new_tile->GetSize().y == 128) {
+              m_blocksize_x = 0;
+              m_blocksize_y = 0;
+              m_block_tile_lines.clear();
+              m_block_tile_line.clear();
+              m_back_block = 0;
+            } else if (m_blocksize_x == 128) {
+              m_blocksize_x = 0;
+              m_blocksize_y += new_tile->GetSize().y;
+              m_block_tile_lines.push_back(m_block_tile_line);
+              m_block_tile_line.clear();
             }
           }
         }
       } else { // TUNNEL
         m_background_tiles.push_back(new_tile);
         new_tile->GetTexture()->transparency = 0.0f; //TUNNEL
-        if (tile_line.back()->GetPosition()->z != 0) {
-          tile_line.back()->SetIsLeftWall(true);
-          m_tunnel_edge_tiles.push_back(tile_line.back());
-        }
-        if (!tile_lines.empty()) {
-          std::vector<Tile_Bitmap*>::iterator above_tile;
-          for (above_tile = tile_lines.back().begin(); above_tile != tile_lines.back().end(); above_tile++) {
-            if (Bitmap_Helper::DoTheseTilesXCollide((*above_tile), new_tile)) {
-              if ((*above_tile)->GetPosition()->z != 0) {
-                (*above_tile)->SetIsRoof(true);
-                m_tunnel_edge_tiles.push_back((*above_tile));
+        if (new_tile->GetSize().x == 128) {
+          if (tile_line.back()->GetPosition()->z != 0) {
+            tile_line.back()->SetIsLeftWall(true);
+            m_tunnel_edge_tiles.push_back(tile_line.back());
+          }
+          if (!tile_lines.empty()) {
+            std::vector<Tile_Bitmap*>::iterator above_tile;
+            for (above_tile = tile_lines.back().begin(); above_tile != tile_lines.back().end(); above_tile++) {
+              if (Bitmap_Helper::DoTheseTilesXCollide((*above_tile), new_tile) && Bitmap_Helper::AreTheseTilesYAdjacent((*above_tile), new_tile)) {
+                if ((*above_tile)->GetPosition()->z != 0) {
+                  (*above_tile)->SetIsRoof(true);
+                  m_tunnel_edge_tiles.push_back((*above_tile));
+                }
               }
             }
           }
+        } else {
+            if (m_blocksize_y == 0 && m_blocksize_x == 0) {
+              m_back_block = tile_line.back();
+            }
+            if (m_blocksize_y == 0) {
+              if (tile_line.back()->GetPosition()->z != 0) {
+                tile_line.back()->SetIsLeftWall(true);
+                m_tunnel_edge_tiles.push_back(tile_line.back());
+              }
+              if (!tile_lines.empty()) {
+                std::vector<Tile_Bitmap*>::iterator above_tile;
+                for (above_tile = tile_lines.back().begin(); above_tile != tile_lines.back().end(); above_tile++) {
+                  if (Bitmap_Helper::DoTheseTilesXCollide((*above_tile), new_tile) && Bitmap_Helper::AreTheseTilesYAdjacent((*above_tile), new_tile)) {
+                    if ((*above_tile)->GetPosition()->z != 0) {
+                      (*above_tile)->SetIsRoof(true);
+                      m_tunnel_edge_tiles.push_back((*above_tile));
+                    }
+                  }
+                }
+              }
+              m_block_tile_line.push_back(new_tile);
+            } else {
+              if (m_blocksize_x == 0) {
+                if (m_back_block->GetPosition()->z != 0) {
+                  m_back_block->SetIsLeftWall(true);
+                  m_tunnel_edge_tiles.push_back(tile_line.back());
+                }
+                if (!tile_lines.empty()) {
+                  std::vector<Tile_Bitmap*>::iterator above_tile;
+                  for (above_tile = tile_lines.back().begin(); above_tile != tile_lines.back().end(); above_tile++) {
+                    if (Bitmap_Helper::DoTheseTilesXCollide((*above_tile), new_tile) && Bitmap_Helper::AreTheseTilesYAdjacent((*above_tile), new_tile)) {
+                      if ((*above_tile)->GetPosition()->z != 0) {
+                        (*above_tile)->SetIsRoof(true);
+                        m_tunnel_edge_tiles.push_back((*above_tile));
+                      }
+                    }
+                  }
+                }
+                m_block_tile_line.push_back(new_tile);
+              } else {
+                if (m_back_block->GetPosition()->z != 0) {
+                  m_back_block->SetIsLeftWall(true);
+                  m_tunnel_edge_tiles.push_back(tile_line.back());
+                }
+                if (!tile_lines.empty()) {
+                  std::vector<Tile_Bitmap*>::iterator above_tile;
+                  for (above_tile = m_block_tile_lines.back().begin(); above_tile != m_block_tile_lines.back().end(); above_tile++) {
+                    if (Bitmap_Helper::DoTheseTilesXCollide((*above_tile), new_tile) && Bitmap_Helper::AreTheseTilesYAdjacent((*above_tile), new_tile)) {
+                      if ((*above_tile)->GetPosition()->z != 0) {
+                        (*above_tile)->SetIsRoof(true);
+                        m_tunnel_edge_tiles.push_back((*above_tile));
+                      }
+                    }
+                  }
+                }
+                m_block_tile_line.push_back(new_tile);
+              }
+            }
+            
+            m_blocksize_x += new_tile->GetSize().x;
+            
+            if (m_blocksize_x == 128 && m_blocksize_y + new_tile->GetSize().y == 128) {
+              m_blocksize_x = 0;
+              m_blocksize_y = 0;
+              m_block_tile_lines.clear();
+              m_block_tile_line.clear();
+              m_back_block = 0;
+            } else if (m_blocksize_x == 128) {
+              m_blocksize_x = 0;
+              m_blocksize_y += new_tile->GetSize().y;
+              m_block_tile_lines.push_back(m_block_tile_line);
+              m_block_tile_line.clear();
+            }
         }
       }
 
