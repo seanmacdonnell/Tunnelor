@@ -81,13 +81,17 @@ D3DXVECTOR3 * const Frame_Component::GetPosition() {
 }
 
 //---------------------------------------------------------------------------
-D3DXVECTOR3 const Frame_Component::GetLastPosition() {
+void Frame_Component::SetLastRenderedPosition(D3DXVECTOR3 position) {
+  m_last_position = position;
+}
+
+//---------------------------------------------------------------------------
+D3DXVECTOR3 const Frame_Component::GetLastRenderedPosition() {
   return m_last_position;
 }
 
 //---------------------------------------------------------------------------
 void Frame_Component::SetPosition(D3DXVECTOR3 position) {
-  m_last_position = m_position;
   m_position = position;
   Notify();
 }

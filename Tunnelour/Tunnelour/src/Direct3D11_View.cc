@@ -247,6 +247,9 @@ void Direct3D11_View::Run() {
     Render_Bitmaps(m_renderables.Layer_00, viewmatrix);
     Render_Bitmaps(m_renderables.Layer_01, viewmatrix);
     Render_Bitmaps(m_renderables.Avatars, viewmatrix);
+    if (m_avatar != 0) {
+      m_avatar->SetLastRenderedPosition(*(m_avatar->GetPosition()));
+    }
     Render_Bitmaps(m_renderables.Layer_02, viewmatrix);
     Render_Texts(m_renderables.Layer_03, viewmatrix);
     Render_Bitmaps(m_renderables.Layer_04, viewmatrix);

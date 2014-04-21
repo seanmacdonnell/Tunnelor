@@ -109,6 +109,26 @@ class Debug_Data_Display_Controller: public Controller {
   void UpdateAvatarVelocityDisplay();
 
   //---------------------------------------------------------------------------
+  // Description : Creates the avatar position display
+  //---------------------------------------------------------------------------
+  void CreateAvatarDistanceDisplay();
+
+  //---------------------------------------------------------------------------
+  // Description : Updates the avatar position display
+  //---------------------------------------------------------------------------
+  void UpdateAvatarDistanceDisplay();
+
+  //---------------------------------------------------------------------------
+  // Description : Creates the avatar position display
+  //---------------------------------------------------------------------------
+  void CreateAvatarHeightDisplay();
+
+  //---------------------------------------------------------------------------
+  // Description : Updates the avatar position display
+  //---------------------------------------------------------------------------
+  void UpdateAvatarHeightDisplay();
+
+  //---------------------------------------------------------------------------
   // Member Variables
   //---------------------------------------------------------------------------
   Game_Settings_Component *m_game_settings;
@@ -118,6 +138,8 @@ class Debug_Data_Display_Controller: public Controller {
   Text_Component *m_avatar_position_display;
   Text_Component *m_avatar_state_display;
   Text_Component *m_avatar_velocity_display;
+  Text_Component *m_avatar_jumping_distance_display;
+  Text_Component *m_avatar_jumping_height_display;
   Camera_Component *m_camera;
   Avatar_Component *m_avatar;
   std::string m_font_path;
@@ -128,6 +150,8 @@ class Debug_Data_Display_Controller: public Controller {
   std::vector<Tile_Bitmap*> m_collision_bitmaps;
   int z_position;
   int m_bitmap_z_position;
+  float m_jumping_distance;
+  float m_jumping_height;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_DEBUG_DATA_DISPLAY_CONTROLLER_H_

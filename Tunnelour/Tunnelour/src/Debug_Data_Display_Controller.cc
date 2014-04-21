@@ -32,6 +32,8 @@ Debug_Data_Display_Controller::Debug_Data_Display_Controller() : Controller() {
   m_avatar_position_display = 0;
   m_avatar_state_display = 0;
   m_avatar_velocity_display = 0;
+  m_avatar_jumping_distance_display = 0;
+  m_avatar_jumping_height_display = 0;
   m_fps = 0;
   m_is_debug_mode = false;
   m_avatar = 0;
@@ -39,7 +41,8 @@ Debug_Data_Display_Controller::Debug_Data_Display_Controller() : Controller() {
   m_has_been_initialised = false;
   z_position = -3;
   m_bitmap_z_position = -4;
-
+  m_jumping_distance = 0;
+  m_jumping_height = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -51,6 +54,8 @@ Debug_Data_Display_Controller::~Debug_Data_Display_Controller() {
   m_avatar_position_display = 0;
   m_avatar_state_display = 0;
   m_avatar_velocity_display = 0;
+  m_avatar_jumping_distance_display = 0;
+  m_avatar_jumping_height_display = 0;
   m_fps = 0;
   m_is_debug_mode = false;
   m_avatar = 0;
@@ -102,6 +107,12 @@ bool Debug_Data_Display_Controller::Run() {
     if (m_avatar_velocity_display == 0) {
       CreateAvatarVelocityDisplay();
     }
+    if (m_avatar_jumping_distance_display == 0) {
+      CreateAvatarDistanceDisplay();
+    }
+    if (m_avatar_jumping_height_display == 0) {
+      CreateAvatarHeightDisplay();
+    }
 
     if (!m_avatar->GetState().avatar_collision_blocks.empty()) {
       std::vector<Tile_Bitmap*>::iterator collision_bitmap;
@@ -120,7 +131,7 @@ bool Debug_Data_Display_Controller::Run() {
         m_collision_bitmaps.push_back(avatar_collision_block_bitmap);
         m_model->Add(avatar_collision_block_bitmap);
         if (m_is_debug_mode) {
-          avatar_collision_block_bitmap->GetTexture()->transparency = 1.0f;
+          //avatar_collision_block_bitmap->GetTexture()->transparency = 1.0f;
         }
       }
     }
@@ -132,6 +143,8 @@ bool Debug_Data_Display_Controller::Run() {
         m_avatar_position_display->GetTexture()->transparency = 0.0f;
         m_avatar_state_display->GetTexture()->transparency = 0.0f;
         m_avatar_velocity_display->GetTexture()->transparency = 0.0f;
+        m_avatar_jumping_distance_display->GetTexture()->transparency = 0.0f;
+        m_avatar_jumping_height_display->GetTexture()->transparency = 0.0f;
         std::vector<Tile_Bitmap*>::iterator collision_bitmap;
         for (collision_bitmap = m_collision_bitmaps.begin(); collision_bitmap != m_collision_bitmaps.end(); collision_bitmap++) {
           (*collision_bitmap)->GetTexture()->transparency = 0.0f;
@@ -144,9 +157,11 @@ bool Debug_Data_Display_Controller::Run() {
         m_avatar_position_display->GetTexture()->transparency = 1.0f;
         m_avatar_state_display->GetTexture()->transparency = 1.0f;
         m_avatar_velocity_display->GetTexture()->transparency = 1.0f;
+        m_avatar_jumping_distance_display->GetTexture()->transparency = 1.0f;
+        m_avatar_jumping_height_display->GetTexture()->transparency = 1.0f;
         std::vector<Tile_Bitmap*>::iterator collision_bitmap;
         for (collision_bitmap = m_collision_bitmaps.begin(); collision_bitmap != m_collision_bitmaps.end(); collision_bitmap++) {
-          (*collision_bitmap)->GetTexture()->transparency = 1.0f;
+          //(*collision_bitmap)->GetTexture()->transparency = 1.0f;
           (*collision_bitmap)->Init();
         }
         m_is_debug_mode = m_game_settings->IsDebugMode();
@@ -158,6 +173,8 @@ bool Debug_Data_Display_Controller::Run() {
     UpdateAvatarPositionDisplay();
     UpdateAvatarStateDisplay();
     UpdateAvatarVelocityDisplay();
+    UpdateAvatarDistanceDisplay();
+    UpdateAvatarHeightDisplay();
   }
   return true;
 }
@@ -337,6 +354,98 @@ void Debug_Data_Display_Controller::UpdateAvatarVelocityDisplay() {
                                                      z_position));
 
   m_avatar_velocity_display->Init();
+}
+
+//------------------------------------------------------------------------------
+void Debug_Data_Display_Controller::CreateAvatarDistanceDisplay() {
+  m_avatar_jumping_distance_display = new Text_Component();
+  m_avatar_jumping_distance_display->GetText()->font_csv_file = m_font_path;
+  m_avatar_jumping_distance_display->GetTexture()->transparency = 0.0f;
+  m_avatar_jumping_distance_display->SetPosition(D3DXVECTOR3(0, 0, z_position));
+  m_model->Add(m_avatar_jumping_distance_display);
+}
+
+//------------------------------------------------------------------------------
+void Debug_Data_Display_Controller::UpdateAvatarDistanceDisplay() {
+  float top_left_window_x = m_camera->GetPosition().x -
+                            m_game_settings->GetResolution().x / 2;
+  float top_left_window_y = m_camera->GetPosition().y +
+                            m_game_settings->GetResolution().y / 2;
+
+  if (m_avatar->GetState().parent_state.compare("Charlie_Jumping") == 0) {
+    if (m_avatar->GetLastState().parent_state.compare("Charlie_Jumping") != 0) {
+      m_jumping_distance = 0;
+    }
+    float distance_moved = m_avatar->GetPosition()->x - m_avatar->GetLastRenderedPosition().x;
+    m_jumping_distance += distance_moved;
+  }
+
+  std::string distance_string = std::to_string(static_cast<long double>(m_jumping_distance));
+  
+  m_avatar_jumping_distance_display->GetText()->text = "Avatar Jump Distance: " + distance_string;
+  m_avatar_jumping_distance_display->GetFrame()->index_buffer = 0;
+  m_avatar_jumping_distance_display->GetTexture()->texture = 0;
+  m_avatar_jumping_distance_display->GetFrame()->vertex_buffer = 0;
+
+  float m_avatar_display_x = top_left_window_x +
+                             m_avatar_jumping_distance_display->GetSize().x / 2 +
+                             10;  // This is the offset from the top
+  float m_avatar_display_y = m_avatar_velocity_display->GetBottomRightPostion().y -
+                             m_avatar_jumping_distance_display->GetSize().y / 2;
+
+  m_avatar_jumping_distance_display->SetPosition(D3DXVECTOR3(m_avatar_display_x,
+                                                     m_avatar_display_y,
+                                                     z_position));
+
+  m_avatar_jumping_distance_display->Init();
+}
+
+//------------------------------------------------------------------------------
+void Debug_Data_Display_Controller::CreateAvatarHeightDisplay() {
+  m_avatar_jumping_height_display = new Text_Component();
+  m_avatar_jumping_height_display->GetText()->font_csv_file = m_font_path;
+  m_avatar_jumping_height_display->GetTexture()->transparency = 0.0f;
+  m_avatar_jumping_height_display->SetPosition(D3DXVECTOR3(0, 0, z_position));
+  m_model->Add(m_avatar_jumping_height_display);
+}
+
+//------------------------------------------------------------------------------
+void Debug_Data_Display_Controller::UpdateAvatarHeightDisplay() {
+  float top_left_window_x = m_camera->GetPosition().x -
+                            m_game_settings->GetResolution().x / 2;
+  float top_left_window_y = m_camera->GetPosition().y +
+                            m_game_settings->GetResolution().y / 2;
+
+  if (m_avatar->GetState().parent_state.compare("Charlie_Jumping") == 0) {
+    if (m_avatar->GetLastState().parent_state.compare("Charlie_Jumping") != 0) {
+      m_jumping_height = 0;
+    }
+    float current_y = m_avatar->GetPosition()->y;
+    float last_y = m_avatar->GetLastRenderedPosition().y;
+    float distance_moved = current_y - last_y;
+    if (distance_moved > 0) {
+      m_jumping_height += distance_moved;
+    }
+  }
+
+  std::string distance_string = std::to_string(static_cast<long double>(m_jumping_height));
+  
+  m_avatar_jumping_height_display->GetText()->text = "Avatar Jump Height: " + distance_string;
+  m_avatar_jumping_height_display->GetFrame()->index_buffer = 0;
+  m_avatar_jumping_height_display->GetTexture()->texture = 0;
+  m_avatar_jumping_height_display->GetFrame()->vertex_buffer = 0;
+
+  float m_avatar_display_x = top_left_window_x +
+                             m_avatar_jumping_height_display->GetSize().x / 2 +
+                             10;  // This is the offset from the top
+  float m_avatar_display_y = m_avatar_jumping_distance_display->GetBottomRightPostion().y -
+                             m_avatar_jumping_height_display->GetSize().y / 2;
+
+  m_avatar_jumping_height_display->SetPosition(D3DXVECTOR3(m_avatar_display_x,
+                                                     m_avatar_display_y,
+                                                     z_position));
+
+  m_avatar_jumping_height_display->Init();
 }
 
 }  // Tunnelour
