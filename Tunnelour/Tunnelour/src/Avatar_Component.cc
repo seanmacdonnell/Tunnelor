@@ -141,7 +141,7 @@ void Avatar_Component::Init_Frame() {
   // First triangle
 
   if (m_state.direction != "Right" && m_state.direction != "Left") {
-    throw Tunnelour::Exceptions::init_error("No Direction State!");
+    throw Tunnelour::Exceptions::init_error("No Direction State! " + GetState().state);
   }
 
   // Top left

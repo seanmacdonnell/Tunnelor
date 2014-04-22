@@ -39,6 +39,7 @@ Avatar_Controller::Avatar_Controller() : Controller() {
   m_avatar_z_position = -2; // Middleground Z Space is -1
   m_wall_impacting = false;
   m_last_frame_time = 0;
+  m_y_fallen = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -88,6 +89,8 @@ bool Avatar_Controller::Run() {
 
   UpdateTimer();
   if (m_animation_tick) {
+    m_last_state.state = m_avatar->GetState();
+    m_last_state.position = *(m_avatar->GetPosition());
     RunAvatarState(); 
   }
 
@@ -143,6 +146,7 @@ void Avatar_Controller::ShowAvatar() {
 
 //------------------------------------------------------------------------------
 void Avatar_Controller::ResetAvatar() {
+  m_y_fallen = 0;
   Avatar_Component::Avatar_State initial_state;
   initial_state.direction = "Right";
   float avatar_x_position = m_level->GetCurrentLevel().start_avatar_top_left_x;
@@ -180,8 +184,6 @@ void Avatar_Controller::CreateAvatar() {
 //------------------------------------------------------------------------------
 void Avatar_Controller::RunAvatarState() {
   std::string current_state = m_avatar->GetState().parent_state;
-  m_last_state.state = m_avatar->GetState();
-  m_last_state.position = *(m_avatar->GetPosition());
 
   if (m_avatar->GetTexture()->transparency != 0.0f) {
     if (current_state.compare("Charlie_Standing") == 0) {
@@ -219,32 +221,39 @@ void Avatar_Controller::RunStandingState() {
     if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0 ) {
       if (current_command.state.compare("Jumping") == 0) {
         m_avatar->SetAngle(static_cast<float>(1.0));  // in radians
-        float y_velocity = 42;
-        float x_velocity = 30;
+        float y_velocity = 36;
+        float x_velocity = 36;
         if (current_command.direction.compare("Right") == 0) {
           m_avatar->SetVelocity(D3DXVECTOR3(x_velocity, y_velocity, 0));
         } else {  // Left
           m_avatar->SetVelocity(D3DXVECTOR3((x_velocity * -1), y_velocity, 0));
         }
       }
-      SetAvatarState("Charlie_" + current_command.state, current_command.state, current_command.direction);
+      if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0) {
+        SetAvatarState("Charlie_" + current_command.state, current_command.state, current_command.direction);
+      } else {
+        SetAvatarState("Charlie_" + current_command.state, current_command.state, m_avatar->GetState().direction);
+      }
       has_state_changed = true;
     } else {
       if (current_command.state.compare("Jumping") == 0) {
         m_avatar->SetAngle(static_cast<float>(1.0));  // in radians
-        float y_velocity = 42;
-        float x_velocity = 30;
+        float y_velocity = 36;
+        float x_velocity = 36;
         if (current_state.direction.compare("Right") == 0) {
           m_avatar->SetVelocity(D3DXVECTOR3(x_velocity, y_velocity, 0));
         } else {  // Left
           m_avatar->SetVelocity(D3DXVECTOR3((x_velocity * -1), y_velocity, 0));
         }
       }
-      SetAvatarState("Charlie_" + current_command.state, current_command.state, m_avatar->GetState().direction);
+      if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0) {
+        SetAvatarState("Charlie_" + current_command.state, current_command.state, current_command.direction);
+      } else {
+        SetAvatarState("Charlie_" + current_command.state, current_command.state, m_avatar->GetState().direction);
+      }
       has_state_changed = true;
     }
     AlignAvatarOnLastAvatarCollisionBlock();
-    ClearAvatarState();
   } else { // No command, run the standing animation,
     if (m_level->IsComplete()) {
       SetAvatarState("Charlie_Standing", "Standing_To_Thumbs_up", m_avatar->GetState().direction);
@@ -266,7 +275,7 @@ void Avatar_Controller::RunStandingState() {
       SetAvatarStateAnimationFrame(state_index);
     }
   }
-  
+
   if (!has_state_changed) {
     // Detect if the avatar is intersecting with a wall
     std::vector<Wall_Collision> *out_colliding_floor_tiles = new std::vector<Wall_Collision>();
@@ -308,12 +317,15 @@ void Avatar_Controller::RunStandingState() {
         }
       }
     }
+    
     // If the avatar is not adjacent to the floor, he should fall
     if (!IsAvatarFloorAdjacent()) {
       SetAvatarState("Charlie_Falling", "Falling_To_Standing", m_avatar->GetState().direction);
       AlignAvatarOnLastAvatarCollisionBlock();
       RunAvatarState();
     }
+  } else {
+    RunAvatarState();
   }
 }
 
@@ -337,22 +349,26 @@ void Avatar_Controller::RunWalkingState() {
     // Is the command different from the current state?
     if (current_state.state.compare(current_command.state) != 0 ||
         current_state.direction != current_command.direction) {
-      if (current_state.state.compare("Wall_Colliding") == 0) {
+      /*if (current_state.state.compare("Wall_Colliding") == 0) {
         if (current_state.direction != current_command.direction) {
-          SetAvatarState("Charlie_" + current_command.state, current_command.state, current_command.direction);
+          if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0 ) {
+            SetAvatarState("Charlie_" + current_command.state, current_command.state, current_command.direction);
+          } else {
+            SetAvatarState("Charlie_" + current_command.state, current_command.state, m_avatar->GetState().direction);
+          }
           AlignAvatarOnLastAvatarCollisionBlock();
           has_state_changed = true;
         }
-      } else {
+      } else {*/
         if (current_command.state.compare("Jumping") == 0) {
           m_avatar->SetAngle(static_cast<float>(1.0));  // in radians
           if (current_state.direction.compare("Right") == 0) {
-            float y_velocity = 42;
-            float x_velocity = 30;
+            float y_velocity = 36;
+            float x_velocity = 36;
             m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
           } else {  // Left
-            float y_velocity = 42;
-            float x_velocity = -30;
+            float y_velocity = 36;
+            float x_velocity = -36;
             m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
           }
         }
@@ -363,7 +379,7 @@ void Avatar_Controller::RunWalkingState() {
         }
         has_state_changed = true;
         AlignAvatarOnLastAvatarCollisionBlock();
-      }
+  //    }
     } else { // Command is the same as the current state.
       // Continue State
       unsigned int state_index = current_state.state_index;
@@ -385,9 +401,9 @@ void Avatar_Controller::RunWalkingState() {
         position += m_avatar->GetVelocity();
         m_avatar->SetPosition(position);
       }
-    }
 
-    ClearAvatarState();
+      ClearAvatarState();
+    }
   } else {
     // No Command, Change to standing
     SetAvatarState("Charlie_Standing", "Standing", m_avatar->GetState().direction);
@@ -425,39 +441,61 @@ void Avatar_Controller::RunWalkingState() {
       SetAvatarState("Charlie_Falling", "Walking_To_Falling", m_avatar->GetState().direction);
       AlignAvatarOnLastAvatarCollisionBlock();
     }
+
+  } else {
+    RunAvatarState();
   }
 }
 
 //------------------------------------------------------------------------------
 void Avatar_Controller::RunRunningState() {
   m_avatar->SetAngle(static_cast<float>(0.0));  // in radians
-  m_avatar->SetVelocity(D3DXVECTOR3(20, 0 , 0));
+  
+  bool has_state_changed = false;
 
   Avatar_Component::Avatar_State current_state = m_avatar->GetState();
   Avatar_Component::Avatar_State current_command = m_avatar->GetCommand();
+
+  if (current_state.direction.compare("Right") == 0) {
+    m_avatar->SetVelocity(D3DXVECTOR3(16, 0 , 0));
+  } else {  // Left
+    m_avatar->SetVelocity(D3DXVECTOR3(-16, 0 , 0));
+  }
+
   if (current_command.state.compare("") != 0) {
     // There is a command
     // Is the command different from the current state?
-    if (current_state.state.compare(current_command.state) != 0 || current_state.direction != current_command.direction) {
+    if (current_state.state.compare(current_command.state) != 0 ||
+        current_state.direction != current_command.direction) {
       if (current_state.state.compare("Wall_Colliding") == 0) {
         if (current_state.direction != current_command.direction) {
-          SetAvatarState("Charlie_"+current_command.state, current_command.state, current_command.direction);
+          if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0 ) {
+            SetAvatarState("Charlie_" + current_command.state, current_command.state, current_command.direction);
+          } else {
+            SetAvatarState("Charlie_" + current_command.state, current_command.state, m_avatar->GetState().direction);
+          }
           AlignAvatarOnLastAvatarCollisionBlock();
+          has_state_changed = true;
         }
       } else {
         if (current_command.state.compare("Jumping") == 0) {
+          m_avatar->SetAngle(static_cast<float>(1.0));  // in radians
           if (current_state.direction.compare("Right") == 0) {
-            float y_velocity = 50;
-            float x_velocity = 50;
+            float y_velocity = 36;
+            float x_velocity = 36;
             m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
           } else {  // Left
-            float y_velocity = 50;
-            float x_velocity = -50;
+            float y_velocity = 36;
+            float x_velocity = -36;
             m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
           }
         }
-        // Set a new state
-        SetAvatarState("Charlie_"+current_command.state, current_command.state, current_command.direction);
+        if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0 ) {
+          SetAvatarState("Charlie_" + current_command.state, current_command.state, current_command.direction);
+        } else {
+          SetAvatarState("Charlie_" + current_command.state, current_command.state, m_avatar->GetState().direction);
+        }
+        has_state_changed = true;
         AlignAvatarOnLastAvatarCollisionBlock();
       }
     } else { // Command is the same as the current state.
@@ -478,76 +516,58 @@ void Avatar_Controller::RunRunningState() {
         AlignAvatarOnLastAvatarCollisionBlock();
 
         D3DXVECTOR3 position = *m_avatar->GetPosition();
-        if (current_state.direction.compare("Right") == 0) {
-          position += m_avatar->GetVelocity();
-        } else {  // Left
-          position -= m_avatar->GetVelocity();
-        }
+        position += m_avatar->GetVelocity();
         m_avatar->SetPosition(position);
       }
-    }
 
-    ClearAvatarState();
+      ClearAvatarState();
+    }
   } else {
     // No Command, Change to standing
     SetAvatarState("Charlie_Standing", "Standing", m_avatar->GetState().direction);
     AlignAvatarOnLastAvatarCollisionBlock();
+    has_state_changed = true;
   }
   
-  // Detect if the avatar is intersecting with a wall
-  std::vector<Wall_Collision> *out_colliding_floor_tiles = new std::vector<Wall_Collision>();
-  if (IsAvatarWallColliding(out_colliding_floor_tiles)) {
-    // Move back avatar
-    if ((*out_colliding_floor_tiles->begin()).collision_side.compare("Right") == 0) {
+  if (!has_state_changed) {
+    // Detect if the avatar is intersecting with a wall
+    std::vector<Wall_Collision> *out_colliding_floor_tiles = new std::vector<Wall_Collision>();
+    if (IsAvatarWallColliding(out_colliding_floor_tiles)) {
+      SetAvatarState("Charlie_Running", "Wall_Colliding", m_avatar->GetState().direction);
+      AlignAvatarOnLastAvatarCollisionBlock();
+      // Move back avatar
       if (m_avatar->GetState().direction.compare("Left") == 0) {
-        SetAvatarState("Charlie_Running", "Wall_Colliding", m_avatar->GetState().direction);
-        AlignAvatarOnLastAvatarCollisionBlock();
-        float tile_right_position = (*out_colliding_floor_tiles->begin()).colliding_tile->GetBottomRightPostion().x;
-        float avatar_avatar_collision_block_left_position = (&CollisionBlockToBitmapComponent(GetNamedCollisionBlock("Avatar", m_avatar->GetState().avatar_collision_blocks), *(m_avatar->GetPosition())))->GetTopLeftPostion().x;
-        D3DXVECTOR3 avatar_position = *m_avatar->GetPosition();
-        float x_offset = tile_right_position + (GetNamedCollisionBlock("Avatar", m_avatar->GetState().avatar_collision_blocks).size.x / 2);
-        avatar_position.x = x_offset;
-        m_avatar->SetPosition(avatar_position);
-      } else {
-        float tile_right_position = (*out_colliding_floor_tiles->begin()).colliding_tile->GetBottomRightPostion().x;
+        float tile_right_position = out_colliding_floor_tiles->begin()->colliding_tile->GetBottomRightPostion().x;
         float avatar_avatar_collision_block_left_position = (&CollisionBlockToBitmapComponent(GetNamedCollisionBlock("Avatar", m_avatar->GetState().avatar_collision_blocks), *(m_avatar->GetPosition())))->GetTopLeftPostion().x;
         D3DXVECTOR3 avatar_position = *m_avatar->GetPosition();
         float x_offset = tile_right_position + (GetNamedCollisionBlock("Avatar", m_avatar->GetState().avatar_collision_blocks).size.x / 2);
         avatar_position.x = x_offset;
         m_avatar->SetPosition(avatar_position);
       }
-    } else  if ((*out_colliding_floor_tiles->begin()).collision_side.compare("Left") == 0) {
       if (m_avatar->GetState().direction.compare("Right") == 0) {
-        SetAvatarState("Charlie_Running", "Wall_Colliding", m_avatar->GetState().direction);
-        AlignAvatarOnLastAvatarCollisionBlock();
-        float tile_left_position = (*out_colliding_floor_tiles->begin()).colliding_tile->GetTopLeftPostion().x;
-        float avatar_avatar_collision_block_right_position = (&CollisionBlockToBitmapComponent(GetNamedCollisionBlock("Avatar", m_avatar->GetState().avatar_collision_blocks), *(m_avatar->GetPosition())))->GetBottomRightPostion().x;
+        D3DXVECTOR3 tile_position = out_colliding_floor_tiles->begin()->colliding_tile->GetTopLeftPostion();
         D3DXVECTOR3 avatar_position = *m_avatar->GetPosition();
-        float x_offset = tile_left_position - (GetNamedCollisionBlock("Avatar", m_avatar->GetState().avatar_collision_blocks).size.x / 2);
-        avatar_position.x = x_offset;
-        m_avatar->SetPosition(avatar_position);
-      } else {
-        float tile_left_position = (*out_colliding_floor_tiles->begin()).colliding_tile->GetTopLeftPostion().x;
-        float avatar_avatar_collision_block_right_position = (&CollisionBlockToBitmapComponent(GetNamedCollisionBlock("Avatar", m_avatar->GetState().avatar_collision_blocks), *(m_avatar->GetPosition())))->GetBottomRightPostion().x;
-        D3DXVECTOR3 avatar_position = *m_avatar->GetPosition();
-        float x_offset = tile_left_position - (GetNamedCollisionBlock("Avatar", m_avatar->GetState().avatar_collision_blocks).size.x / 2);
-        avatar_position.x = x_offset;
+        float foot_x_offset = GetLowestCollisionBlock(m_avatar->GetState().avatar_collision_blocks).offset_from_avatar_centre.x + (GetNamedCollisionBlock("Avatar", m_avatar->GetState().avatar_collision_blocks).size.x / 2);
+        avatar_position.x = tile_position.x + (foot_x_offset * -1);
         m_avatar->SetPosition(avatar_position);
       }
     }
-  }
   
-  // Detect if the avatar is overbalancing from walking
-  if (!IsAvatarFloorAdjacent()) {
-    m_avatar->SetVelocity(D3DXVECTOR3(4, 0 , 0));
-    SetAvatarState("Charlie_Falling", "Walking_To_Falling", m_avatar->GetState().direction);
-    AlignAvatarOnLastAvatarCollisionBlock();
+    // Detect if the avatar is overbalancing from walking
+    if (!IsAvatarFloorAdjacent()) {
+      m_avatar->SetVelocity(D3DXVECTOR3(4, 0 , 0));
+      SetAvatarState("Charlie_Falling", "Walking_To_Falling", m_avatar->GetState().direction);
+      AlignAvatarOnLastAvatarCollisionBlock();
+    }
+  } else {
+    RunAvatarState();   
   }
 }
 
 //------------------------------------------------------------------------------
 void Avatar_Controller::RunFallingState() {
   Avatar_Component::Avatar_State current_state = m_avatar->GetState();
+  bool has_state_changed = false;
 
   std::vector<Wall_Collision> out_colliding_floor_tiles;
   Bitmap_Component* out_avatar_collision_block = new Bitmap_Component();
@@ -562,7 +582,7 @@ void Avatar_Controller::RunFallingState() {
     position += new_velocity;
     m_avatar->SetVelocity(new_velocity);
     m_avatar->SetPosition(position);
-
+    /*
     std::vector<Wall_Collision> out_colliding_wall_tiles;
     if (IsAvatarFloorColliding(&out_colliding_floor_tiles)) {
       // Avatar has landed, move the avatar to the top of the tile
@@ -580,8 +600,18 @@ void Avatar_Controller::RunFallingState() {
 
       MoveAvatarFloorAdjacent();
 
-      SetAvatarState("Charlie_Standing", "Standing", m_avatar->GetState().direction);
-      m_y_fallen = 0;
+      if (m_y_fallen < -256) {
+        SetAvatarState("Charlie_Falling", "Falling_To_Death", m_avatar->GetState().direction);
+        AlignAvatarOnLastAvatarCollisionBlock();
+        MoveAvatarTileAdjacent("Top", out_colliding_floor_tiles.begin()->colliding_tile);
+      } else {
+        SetAvatarState("Charlie_Standing", "Standing", m_avatar->GetState().direction);
+        AlignAvatarOnLastAvatarCollisionBlock();
+        m_y_fallen = 0;
+        MoveAvatarTileAdjacent("Top", out_colliding_floor_tiles.begin()->colliding_tile);
+        ClearAvatarState();
+        has_state_changed = true;
+      }
     }
     if (IsAvatarWallColliding(&out_colliding_wall_tiles)) {
       if (out_colliding_wall_tiles.begin()->collision_side.compare("Right") == 0) {
@@ -590,6 +620,7 @@ void Avatar_Controller::RunFallingState() {
         MoveAvatarTileAdjacent("Left", out_colliding_wall_tiles.begin()->colliding_tile);
       }
     }
+    */
   } else {
     D3DXVECTOR3 position = *m_avatar->GetPosition();
     unsigned int state_index = current_state.state_index;
@@ -649,43 +680,46 @@ void Avatar_Controller::RunFallingState() {
       m_y_fallen += m_avatar->GetVelocity().y;
       m_avatar->SetPosition(position);
     }
-    std::vector<Wall_Collision> out_colliding_wall_tiles;
-    bool is_wall_colliding = false;
-    is_wall_colliding = IsAvatarWallColliding(&out_colliding_wall_tiles);
-    if (is_wall_colliding) {
-      if (m_avatar->GetState().direction.compare("Right") == 0) {
-        SetAvatarState("Charlie_Falling", "Falling_Flip", "Left");
-        AlignAvatarOnLastAvatarCollisionBlock();
-        MoveAvatarTileAdjacent("Left", out_colliding_wall_tiles.begin()->colliding_tile);
-        D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
-        D3DXVECTOR3 new_velocity = D3DXVECTOR3(old_velocity.x / 2, ceil(old_velocity.y - (m_world_settings->GetGravityInPixPerMs() * m_last_frame_time)), old_velocity.z);
-        m_avatar->SetVelocity(new_velocity);
-      } else {
-        SetAvatarState("Charlie_Falling", "Falling_Flip", "Right");
-        AlignAvatarOnLastAvatarCollisionBlock();
-        MoveAvatarTileAdjacent("Right", out_colliding_wall_tiles.begin()->colliding_tile);
-        D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
-        D3DXVECTOR3 new_velocity = D3DXVECTOR3(old_velocity.x / 2, ceil(old_velocity.y - (m_world_settings->GetGravityInPixPerMs() * m_last_frame_time)), old_velocity.z);
-        m_avatar->SetVelocity(new_velocity);
-      }
-    }
-    if (current_state.state.compare("Falling") == 0 || current_state.state.compare("Falling_Flip") == 0 || current_state.state.compare("Falling_To_Standing") == 0 ) {
-      out_colliding_floor_tiles.clear();
-      bool is_colliding = IsAvatarFloorColliding(&out_colliding_floor_tiles);
-      if (is_colliding) {
-        if (m_y_fallen < -256) {
-          SetAvatarState("Charlie_Falling", "Falling_To_Death", m_avatar->GetState().direction);
-          AlignAvatarOnLastAvatarCollisionBlock();
-          MoveAvatarTileAdjacent("Top", out_colliding_floor_tiles.begin()->colliding_tile);
-        } else {
-          SetAvatarState("Charlie_Standing", "Standing", m_avatar->GetState().direction);
-          AlignAvatarOnLastAvatarCollisionBlock();
-          m_y_fallen = 0;
-          MoveAvatarTileAdjacent("Top", out_colliding_floor_tiles.begin()->colliding_tile);
-        }
-      } 
-    }
+  }
 
+  std::vector<Wall_Collision> out_colliding_wall_tiles;
+  bool is_wall_colliding = false;
+  is_wall_colliding = IsAvatarWallColliding(&out_colliding_wall_tiles);
+  if (is_wall_colliding) {
+    if (m_avatar->GetState().direction.compare("Right") == 0) {
+      SetAvatarState("Charlie_Falling", "Falling_Flip", "Left");
+      AlignAvatarOnLastAvatarCollisionBlock();
+      MoveAvatarTileAdjacent("Left", out_colliding_wall_tiles.begin()->colliding_tile);
+      D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
+      D3DXVECTOR3 new_velocity = D3DXVECTOR3(old_velocity.x / 2, ceil(old_velocity.y - (m_world_settings->GetGravityInPixPerMs() * m_last_frame_time)), old_velocity.z);
+      m_avatar->SetVelocity(new_velocity);
+    } else {
+      SetAvatarState("Charlie_Falling", "Falling_Flip", "Right");
+      AlignAvatarOnLastAvatarCollisionBlock();
+      MoveAvatarTileAdjacent("Right", out_colliding_wall_tiles.begin()->colliding_tile);
+      D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
+      D3DXVECTOR3 new_velocity = D3DXVECTOR3(old_velocity.x / 2, ceil(old_velocity.y - (m_world_settings->GetGravityInPixPerMs() * m_last_frame_time)), old_velocity.z);
+      m_avatar->SetVelocity(new_velocity);
+    }
+  }
+  out_colliding_floor_tiles.clear();
+  bool is_colliding = IsAvatarFloorColliding(&out_colliding_floor_tiles);
+  if (is_colliding) {
+    if (m_y_fallen < -256) {
+      SetAvatarState("Charlie_Falling", "Falling_To_Death", m_avatar->GetState().direction);
+      AlignAvatarOnLastAvatarCollisionBlock();
+      MoveAvatarTileAdjacent("Top", out_colliding_floor_tiles.begin()->colliding_tile);
+    } else {
+      SetAvatarState("Charlie_Standing", "Standing", m_avatar->GetState().direction);
+      AlignAvatarOnLastAvatarCollisionBlock();
+      m_y_fallen = 0;
+      MoveAvatarTileAdjacent("Top", out_colliding_floor_tiles.begin()->colliding_tile);
+      has_state_changed = true;
+    }
+  } 
+
+  if (has_state_changed) {
+    RunAvatarState();
   }
 }
 
@@ -701,6 +735,7 @@ void Avatar_Controller::RunJumpingState() {
     D3DXVECTOR3 position = *m_avatar->GetPosition();
     D3DXVECTOR3 velocity = m_avatar->GetVelocity();
     position += velocity;
+    m_y_fallen += velocity.y;
     m_avatar->SetPosition(position);
 
     unsigned int state_index = current_state.state_index;
@@ -729,9 +764,13 @@ void Avatar_Controller::RunJumpingState() {
             if (current_command.state.compare("Jumping") == 0) {
               m_avatar->SetAngle(static_cast<float>(1.0));  // in radians
               if (current_state.direction.compare("Right") == 0) {
-                m_avatar->SetVelocity(D3DXVECTOR3(42, 50, 0));
+                float y_velocity = 36;
+                float x_velocity = 36;
+                m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
               } else {  // Left
-                m_avatar->SetVelocity(D3DXVECTOR3(-42, 50, 0));
+                float y_velocity = 36;
+                float x_velocity = -36;
+                m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
               }
             }
             if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0 ) {
@@ -741,13 +780,21 @@ void Avatar_Controller::RunJumpingState() {
             }
             has_state_changed = true;
             AlignAvatarOnLastAvatarCollisionBlock();
+            m_y_fallen = 0;
           }
         }
       } else {
         // No Command, Change to standing
-        SetAvatarState("Charlie_Standing", "Standing", m_avatar->GetState().direction);
-        AlignAvatarOnLastAvatarCollisionBlock();
-        has_state_changed = true;
+        if (m_y_fallen < -256) {
+          SetAvatarState("Charlie_Falling", "Falling_To_Death", m_avatar->GetState().direction);
+          AlignAvatarOnLastAvatarCollisionBlock();
+          MoveAvatarTileAdjacent("Top", out_colliding_floor_tiles.begin()->colliding_tile);
+        } else {
+          SetAvatarState("Charlie_Standing", "Standing", m_avatar->GetState().direction);
+          AlignAvatarOnLastAvatarCollisionBlock();
+          m_y_fallen = 0;
+          has_state_changed = true;
+        }
       }
     }
 
@@ -784,16 +831,41 @@ void Avatar_Controller::RunJumpingState() {
     }
     std::vector<Wall_Collision> out_colliding_wall_tiles;
     if (IsAvatarWallColliding(&out_colliding_wall_tiles)) {
-      SetAvatarState("Charlie_Falling", "Falling", current_state.direction);
-      AlignAvatarOnLastAvatarCollisionBlock();
-      if (current_state.direction.compare("Right") == 0) {
-        MoveAvatarTileAdjacent("Left", out_colliding_wall_tiles.begin()->colliding_tile);
+      if (state_index < 3) {
+        D3DXVECTOR3 new_velocity = m_avatar->GetVelocity();
+        new_velocity.x = 0;
+        m_avatar->SetVelocity(new_velocity);
+        if (current_state.direction.compare("Right") == 0) {
+          MoveAvatarTileAdjacent("Left", out_colliding_wall_tiles.begin()->colliding_tile);
+        } else {
+          MoveAvatarTileAdjacent("Right", out_colliding_wall_tiles.begin()->colliding_tile);
+        }
+      } else if (m_avatar->GetVelocity().x != 0) {
+        SetAvatarState("Charlie_Falling", "Falling_To_Standing", m_avatar->GetState().direction);
+        D3DXVECTOR3 new_velocity = m_avatar->GetVelocity();
+        new_velocity.x = 0;
+        m_avatar->SetVelocity(new_velocity);
+        AlignAvatarOnLastAvatarCollisionBlock();
+        if (current_state.direction.compare("Right") == 0) {
+          MoveAvatarTileAdjacent("Left", out_colliding_wall_tiles.begin()->colliding_tile);
+        } else {
+          MoveAvatarTileAdjacent("Right", out_colliding_wall_tiles.begin()->colliding_tile);
+        }
+        has_state_changed = true; 
       } else {
-        MoveAvatarTileAdjacent("Right", out_colliding_wall_tiles.begin()->colliding_tile);
+        if (current_state.direction.compare("Right") == 0) {
+          MoveAvatarTileAdjacent("Left", out_colliding_wall_tiles.begin()->colliding_tile);
+        } else {
+          MoveAvatarTileAdjacent("Right", out_colliding_wall_tiles.begin()->colliding_tile);
+        }
       }
-      //RunFallingState();
     }
   }
+
+  if (has_state_changed) {
+    RunAvatarState();
+  }
+
 }
 
 //------------------------------------------------------------------------------
@@ -992,8 +1064,8 @@ bool Avatar_Controller::IsAvatarWallColliding(std::vector<Wall_Collision> *out_c
     // Create a list of floor tiles which are colliding with the collision block
     std::vector<Tile_Bitmap*>::iterator border_tile;
     for (border_tile = m_wall_tiles.begin(); border_tile != m_wall_tiles.end(); border_tile++) {
-       if (m_avatar->GetState().direction.compare("Right") == 0 && (*border_tile)->IsRightWall() && m_avatar->GetBottomRightPostion().x > (*border_tile)->GetTopLeftPostion().x ||
-           m_avatar->GetState().direction.compare("Left") == 0 && (*border_tile)->IsLeftWall() && m_avatar->GetTopLeftPostion().x < (*border_tile)->GetBottomRightPostion().x) {
+       if ((*border_tile)->IsRightWall() && m_avatar->GetBottomRightPostion().x > (*border_tile)->GetTopLeftPostion().x ||
+           (*border_tile)->IsLeftWall() && m_avatar->GetTopLeftPostion().x < (*border_tile)->GetBottomRightPostion().x) {
         D3DXVECTOR2 Tile_Top_Left;
         Tile_Top_Left.x = (*border_tile)->GetTopLeftPostion().x;
         Tile_Top_Left.y = (*border_tile)->GetTopLeftPostion().y;
@@ -1354,7 +1426,7 @@ void Avatar_Controller::UpdateTimer() {
   int milliseconds_per_frame = 0;
   // 1000/24 is the miliseconds per frame from 24 frames per second
   if (m_game_settings->IsDebugMode()) {
-    milliseconds_per_frame = static_cast<int>(1000/1);
+    milliseconds_per_frame = static_cast<int>(1000/24);
   } else {
     milliseconds_per_frame = static_cast<int>(1000/24);
   }
