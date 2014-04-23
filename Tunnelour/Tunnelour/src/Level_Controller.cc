@@ -207,8 +207,8 @@ bool Level_Controller::Run() {
               if ((*end_condition)->and) {
                 if ((*condition)->type.compare("State") == 0) {
                   Level_Component::End_Condition_Avatar_State *state_end_condition = static_cast<Level_Component::End_Condition_Avatar_State*>((*condition));
-                  if ((m_avatar->GetLastState().state.compare(state_end_condition->avatar_state) == 0 && m_avatar->GetLastState().direction.compare(state_end_condition->avatar_direction) != 0) || (*condition)->has_been_met == true) {
-                    if (m_avatar->GetLastState().state.compare(m_avatar->GetState().state) != 0 || m_avatar->GetLastState().direction.compare(m_avatar->GetState().direction) != 0) {
+                  if ((m_avatar->GetLastRenderedState().state.compare(state_end_condition->avatar_state) == 0 && m_avatar->GetLastRenderedState().direction.compare(state_end_condition->avatar_direction) != 0) || (*condition)->has_been_met == true) {
+                    if (m_avatar->GetLastRenderedState().state.compare(m_avatar->GetState().state) != 0 || m_avatar->GetLastRenderedState().direction.compare(m_avatar->GetState().direction) != 0) {
                       (*condition)->has_been_met = true;
                     } else {
                       and = false;
@@ -222,8 +222,8 @@ bool Level_Controller::Run() {
               } else if ((*end_condition)->or) {
                 if ((*condition)->type.compare("State") == 0) {
                   Level_Component::End_Condition_Avatar_State *state_end_condition = static_cast<Level_Component::End_Condition_Avatar_State*>((*condition));
-                  if (m_avatar->GetLastState().state.compare(state_end_condition->avatar_state) == 0) {
-                    if (m_avatar->GetLastState().direction.compare(state_end_condition->avatar_direction) == 0 || (*condition)->has_been_met == true) {
+                  if (m_avatar->GetLastRenderedState().state.compare(state_end_condition->avatar_state) == 0) {
+                    if (m_avatar->GetLastRenderedState().direction.compare(state_end_condition->avatar_direction) == 0 || (*condition)->has_been_met == true) {
                       (*condition)->has_been_met = true;
                       or = true;
                     }

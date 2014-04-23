@@ -372,8 +372,10 @@ void Debug_Data_Display_Controller::UpdateAvatarDistanceDisplay() {
   float top_left_window_y = m_camera->GetPosition().y +
                             m_game_settings->GetResolution().y / 2;
 
-  if (m_avatar->GetState().parent_state.compare("Charlie_Jumping") == 0) {
-    if (m_avatar->GetLastState().parent_state.compare("Charlie_Jumping") != 0) {
+  std::string current_parent_state = m_avatar->GetState().parent_state;
+  if (current_parent_state.compare("Charlie_Jumping") == 0) {
+    std::string last_parent_state = m_avatar->GetLastRenderedState().parent_state;
+    if (last_parent_state.compare("Charlie_Jumping") != 0) {
       m_jumping_distance = 0;
     }
     float distance_moved = m_avatar->GetPosition()->x - m_avatar->GetLastRenderedPosition().x;
@@ -417,7 +419,7 @@ void Debug_Data_Display_Controller::UpdateAvatarHeightDisplay() {
                             m_game_settings->GetResolution().y / 2;
 
   if (m_avatar->GetState().parent_state.compare("Charlie_Jumping") == 0) {
-    if (m_avatar->GetLastState().parent_state.compare("Charlie_Jumping") != 0) {
+    if (m_avatar->GetLastRenderedState().parent_state.compare("Charlie_Jumping") != 0) {
       m_jumping_height = 0;
     }
     float current_y = m_avatar->GetPosition()->y;
