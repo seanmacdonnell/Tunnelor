@@ -752,37 +752,27 @@ void Avatar_Controller::RunJumpingState() {
     } else if  (state_index == 4) {
       state_index = 5;
     } else if   (state_index == 6) {
-      if (current_command.state.compare("") != 0) {
-        if (current_state.state.compare(current_command.state) != 0 || current_state.direction != current_command.direction) {
-          if (current_state.state.compare("Wall_Colliding") == 0) {
-            if (current_state.direction != current_command.direction) {
-              SetAvatarState("Charlie_" + current_command.state, current_command.state, current_command.direction);
-              AlignAvatarOnLastAvatarCollisionBlock();
-              has_state_changed = true;
+      if (current_command.state.compare("") != 0) { // There is a new command
+          if (current_command.state.compare("Jumping") == 0) {
+            m_avatar->SetAngle(static_cast<float>(1.0));  // in radians
+            if (current_state.direction.compare("Right") == 0) {
+              float y_velocity = 36;
+              float x_velocity = 36;
+              m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
+            } else {  // Left
+              float y_velocity = 36;
+              float x_velocity = -36;
+              m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
             }
-          } else {
-            if (current_command.state.compare("Jumping") == 0) {
-              m_avatar->SetAngle(static_cast<float>(1.0));  // in radians
-              if (current_state.direction.compare("Right") == 0) {
-                float y_velocity = 36;
-                float x_velocity = 36;
-                m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
-              } else {  // Left
-                float y_velocity = 36;
-                float x_velocity = -36;
-                m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
-              }
-            }
-            if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0 ) {
-              SetAvatarState("Charlie_" + current_command.state, current_command.state, current_command.direction);
-            } else {
-              SetAvatarState("Charlie_" + current_command.state, current_command.state, m_avatar->GetState().direction);
-            }
-            has_state_changed = true;
-            AlignAvatarOnLastAvatarCollisionBlock();
-            m_y_fallen = 0;
           }
-        }
+          if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0 ) {
+            SetAvatarState("Charlie_" + current_command.state, current_command.state, current_command.direction);
+          } else {
+            SetAvatarState("Charlie_" + current_command.state, current_command.state, m_avatar->GetState().direction);
+          }
+          has_state_changed = true;
+          AlignAvatarOnLastAvatarCollisionBlock();
+          m_y_fallen = 0;
       } else {
         // No Command, Change to standing
         if (m_y_fallen < -256) {
