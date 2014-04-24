@@ -62,6 +62,16 @@ class Avatar_Component: public Tunnelour::Bitmap_Component {
       if (avatar_collision_blocks != rhs.avatar_collision_blocks) { return false; }
       return true;
     }
+
+    bool operator!=(const Avatar_State& rhs) const {
+      if (parent_state.compare(rhs.parent_state) != 0) { return true; }
+      if (state.compare(rhs.state) != 0) { return true; }
+      if (state_index != rhs.state_index) { return true; }
+      if (max_state_index != rhs.max_state_index) { return true; }
+      if (direction.compare(rhs.direction) != 0) { return true; }
+      if (avatar_collision_blocks != rhs.avatar_collision_blocks) { return true; }
+      return false;
+    }
   };
 
   //---------------------------------------------------------------------------
