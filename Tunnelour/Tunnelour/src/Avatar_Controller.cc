@@ -636,14 +636,24 @@ void Avatar_Controller::RunJumpingState() {
       if (current_command.state.compare("") != 0) { // There is a new command
           if (current_command.state.compare("Jumping") == 0) {
             m_avatar->SetAngle(static_cast<float>(1.0));  // in radians
-            if (current_state.direction.compare("Right") == 0) {
+            if (current_command.direction.compare("Right") == 0) {
               float y_velocity = 36;
               float x_velocity = 36;
               m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
-            } else {  // Left
+            } else if (current_command.direction.compare("Left") == 0) {  // Left
               float y_velocity = 36;
               float x_velocity = -36;
               m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
+            } else {
+              if (current_state.direction.compare("Right") == 0) {
+                float y_velocity = 36;
+                float x_velocity = 36;
+                m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
+              } else if (current_state.direction.compare("Left") == 0) {  // Left
+                float y_velocity = 36;
+                float x_velocity = -36;
+                m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
+              }
             }
           }
           if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0 ) {
