@@ -174,6 +174,12 @@ class Avatar_Controller: public Controller,
   void AlignAvatarOnRightFoot();
 
   //---------------------------------------------------------------------------
+  // Description : Syncs the avatar tile position with the right foot position
+  //             : of the last avatar animation frame.
+  //---------------------------------------------------------------------------
+  void AlignAvatarOnLastContactingFoot();
+
+  //---------------------------------------------------------------------------
   // Description : Syncs the avatar tile position with the left foot position
   //             : of the last avatar animation frame.
   //---------------------------------------------------------------------------

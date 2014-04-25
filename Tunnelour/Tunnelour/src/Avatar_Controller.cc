@@ -337,7 +337,7 @@ void Avatar_Controller::RunWalkingState() {
     AlignAvatarOnLastAvatarCollisionBlock();
   } else if (current_command.state.compare("") == 0) {    // No Command, Change to standing
     SetAvatarState("Charlie_Standing", "Standing", m_avatar->GetState().direction);
-    AlignAvatarOnLastAvatarCollisionBlock();
+    AlignAvatarOnLastContactingFoot();
     has_state_changed = true;
   } else { // Command is the same as the current state.
     int state_index = current_state.state_index;
@@ -1154,6 +1154,25 @@ void Avatar_Controller::AlignAvatarOnRightFoot() {
 }
 
 //------------------------------------------------------------------------------
+void Avatar_Controller::AlignAvatarOnLastContactingFoot() {
+  if (m_avatar->GetLastState().state.compare("") == 0) { return; }
+
+  Avatar_Component::Avatar_Collision_Block last_right_foot;
+  Avatar_Component::Avatar_Collision_Block last_left_foot;
+
+  last_right_foot = GetNamedCollisionBlock("Right_Foot", m_avatar->GetLastState().avatar_collision_blocks);
+  last_left_foot =  GetNamedCollisionBlock("Left_Foot", m_avatar->GetLastState().avatar_collision_blocks);
+
+  if (last_right_foot.is_contacting && last_left_foot.is_contacting) {
+    AlignAvatarOnLastAvatarCollisionBlock();
+  } else if (last_right_foot.is_contacting) {
+    AlignAvatarOnRightFoot();
+  } else {
+    AlignAvatarOnLeftFoot();
+  }
+}
+
+//------------------------------------------------------------------------------
 void Avatar_Controller::AlignAvatarOnLeftFoot() {
   D3DXVECTOR3 new_avatar_position;
 
@@ -1482,36 +1501,45 @@ Avatar_Component::Avatar_Collision_Block Avatar_Controller::GetLowestCollisionBl
 Avatar_Component::Avatar_Collision_Block Avatar_Controller::GetLowestMostForwardFootCollisionBlock(std::string direction) {
   Avatar_Component::Avatar_Collision_Block lowest_avatar_collision_block;
 
-  std::vector<Avatar_Component::Avatar_Collision_Block> avatar_collision_blocks;
-  avatar_collision_blocks = m_avatar->GetState().avatar_collision_blocks;
+  Avatar_Component::Avatar_Collision_Block right_foot = GetNamedCollisionBlock("Right_Foot", m_avatar->GetState().avatar_collision_blocks);
+  Avatar_Component::Avatar_Collision_Block left_foot =  GetNamedCollisionBlock("Left_Foot", m_avatar->GetState().avatar_collision_blocks);
 
-  std::vector<Avatar_Component::Avatar_Collision_Block>::iterator avatar_collision_block;
-  for (avatar_collision_block = avatar_collision_blocks.begin(); avatar_collision_block != avatar_collision_blocks.end(); avatar_collision_block++) {
-    if ((avatar_collision_block->id.compare("Right_Foot") == 0 || avatar_collision_block->id.compare("Left_Foot") == 0)) {
-      if (lowest_avatar_collision_block.id.compare("") == 0) { 
-        lowest_avatar_collision_block = (*avatar_collision_block); 
+  if (right_foot.is_contacting &&  left_foot.is_contacting) {
+    // Most forward
+    Bitmap_Component right_foot_bitmap = CollisionBlockToBitmapComponent(right_foot, *(m_avatar->GetPosition()));
+    Bitmap_Component left_foot_bitmap = CollisionBlockToBitmapComponent(left_foot, *(m_avatar->GetPosition()));
+    if (m_avatar->GetState().direction.compare("Right") == 0) {
+      if (right_foot_bitmap.GetPosition()->x > left_foot_bitmap.GetPosition()->x) {
+        lowest_avatar_collision_block = right_foot;
       } else {
-        float avatar_collision_block_bottom = avatar_collision_block->offset_from_avatar_centre.y - avatar_collision_block->size.y;
-        float lowest_avatar_collision_block_bottom = lowest_avatar_collision_block.offset_from_avatar_centre.y - lowest_avatar_collision_block.size.y;
-        if (avatar_collision_block_bottom < lowest_avatar_collision_block_bottom) {
-          lowest_avatar_collision_block = (*avatar_collision_block);
-        }
-        if (avatar_collision_block_bottom == lowest_avatar_collision_block_bottom) {
-          if (direction.compare("Right") == 0) {
-            float avatar_collision_block_right = avatar_collision_block->offset_from_avatar_centre.x + avatar_collision_block->size.x;
-            float lowest_avatar_collision_block_right = lowest_avatar_collision_block.offset_from_avatar_centre.x + lowest_avatar_collision_block.size.x;
-            if (avatar_collision_block_right > lowest_avatar_collision_block_right) {
-              lowest_avatar_collision_block = (*avatar_collision_block);
-            }
-          }
-          if (direction.compare("Left") == 0) {
-            float avatar_collision_block_right = avatar_collision_block->offset_from_avatar_centre.x - avatar_collision_block->size.x;
-            float lowest_avatar_collision_block_right = lowest_avatar_collision_block.offset_from_avatar_centre.x - lowest_avatar_collision_block.size.x;
-            if (avatar_collision_block_right < lowest_avatar_collision_block_right) {
-              lowest_avatar_collision_block = (*avatar_collision_block);
-            }
-          }
-        }
+        lowest_avatar_collision_block = left_foot;
+      }
+    } else {
+      if (right_foot_bitmap.GetPosition()->x < left_foot_bitmap.GetPosition()->x) {
+        lowest_avatar_collision_block = right_foot;
+      } else {
+        lowest_avatar_collision_block = left_foot;
+      }
+    }
+  } else if (right_foot.is_contacting) {
+    lowest_avatar_collision_block = right_foot;
+  } else if (left_foot.is_contacting) {
+    lowest_avatar_collision_block = left_foot;
+  } else {
+    // Most forward
+    Bitmap_Component right_foot_bitmap = CollisionBlockToBitmapComponent(right_foot, *(m_avatar->GetPosition()));
+    Bitmap_Component left_foot_bitmap = CollisionBlockToBitmapComponent(left_foot, *(m_avatar->GetPosition()));
+    if (m_avatar->GetState().direction.compare("Right") == 0) {
+      if (right_foot_bitmap.GetPosition()->x > left_foot_bitmap.GetPosition()->x) {
+        lowest_avatar_collision_block = right_foot;
+      } else {
+        lowest_avatar_collision_block = left_foot;
+      }
+    } else {
+      if (right_foot_bitmap.GetPosition()->x < left_foot_bitmap.GetPosition()->x) {
+        lowest_avatar_collision_block = right_foot;
+      } else {
+        lowest_avatar_collision_block = left_foot;
       }
     }
   }
