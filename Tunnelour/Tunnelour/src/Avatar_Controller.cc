@@ -542,7 +542,7 @@ void Avatar_Controller::RunFallingState() {
       }
       }
     } else if (current_state.state.compare("Falling_To_Death") == 0 || current_state.state.compare("Death") == 0 ) {
-      AlignAvatarOnLastAvatarCollisionBlock();
+      // Do Nothing
     } else {
       position = *m_avatar->GetPosition();
       D3DXVECTOR3 new_velocity = m_avatar->GetVelocity();
@@ -590,6 +590,7 @@ void Avatar_Controller::RunFallingState() {
       SetAvatarState("Charlie_Falling", "Falling_To_Death", m_avatar->GetState().direction);
       AlignAvatarOnLastAvatarCollisionBlock();
       MoveAvatarTileAdjacent("Top", out_colliding_floor_tiles.begin()->colliding_tile);
+      has_state_changed = true;
     } else {
       SetAvatarState("Charlie_Standing", "Standing", m_avatar->GetState().direction);
       AlignAvatarOnLastAvatarCollisionBlock();
