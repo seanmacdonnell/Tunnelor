@@ -616,22 +616,28 @@ void Avatar_Controller::RunJumpingState() {
   if (current_state.state.compare("Jumping") == 0) {
     D3DXVECTOR3 position = *m_avatar->GetPosition();
     D3DXVECTOR3 velocity = m_avatar->GetVelocity();
-    position += velocity;
-    m_y_fallen += velocity.y;
-    m_avatar->SetPosition(position);
 
     int state_index = current_state.state_index;
     if (state_index == 0) {
+      position.x += velocity.x;
       state_index = 1;
     } else if (state_index == 1) {
+      position += velocity;
+      m_y_fallen += velocity.y;
       state_index = 2;
     } else if (state_index == 2) {
+      position += velocity;
+      m_y_fallen += velocity.y;
       if (m_avatar->GetVelocity().y < 0) {
         state_index = 3;
       }
     } else if (state_index == 3) {
+      position += velocity;
+      m_y_fallen += velocity.y;
       state_index = 4;
     } else if  (state_index == 4) {
+      position += velocity;
+      m_y_fallen += velocity.y;
       state_index = 5;
     } else if   (state_index == 6) {
       if (current_command.state.compare("") != 0) { // There is a new command
@@ -680,6 +686,9 @@ void Avatar_Controller::RunJumpingState() {
       }
     }
 
+
+    m_avatar->SetPosition(position);
+
     bool is_floor_colliding = IsAvatarFloorColliding(&out_colliding_floor_tiles);
     if (is_floor_colliding) {
       SetAvatarStateAnimationFrame(6);
@@ -702,15 +711,18 @@ void Avatar_Controller::RunJumpingState() {
       if (state_index != 6) {
         if (m_avatar->GetState() == m_avatar->GetLastRenderedState()) {
           SetAvatarStateAnimationFrame(state_index);
+          AlignAvatarOnLastAvatarCollisionBlock();
         }
 
-        D3DXVECTOR3 new_velocity = m_avatar->GetVelocity();
-        new_velocity.y += ceil(((m_world_settings->GetGravityInPixPerMs() * m_last_frame_time) * -1));
-        if ((new_velocity.y/(m_last_frame_time * -1)) >= m_world_settings->GetMaxVelocityInPixPerMs()) { 
-          new_velocity.y = ceil((-1 * m_world_settings->GetMaxVelocityInPixPerMs() * m_last_frame_time)); 
-        }
+        if (state_index != 0 && state_index != 1) { 
+          D3DXVECTOR3 new_velocity = m_avatar->GetVelocity();
+          new_velocity.y += ceil(((m_world_settings->GetGravityInPixPerMs() * m_last_frame_time) * -1));
+          if ((new_velocity.y/(m_last_frame_time * -1)) >= m_world_settings->GetMaxVelocityInPixPerMs()) { 
+            new_velocity.y = ceil((-1 * m_world_settings->GetMaxVelocityInPixPerMs() * m_last_frame_time)); 
+          }
         
-        m_avatar->SetVelocity(new_velocity);
+          m_avatar->SetVelocity(new_velocity);
+        }
       }
 
       std::vector<Wall_Collision> out_colliding_wall_tiles;
