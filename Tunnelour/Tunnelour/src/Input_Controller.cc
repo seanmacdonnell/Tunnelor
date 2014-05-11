@@ -245,17 +245,17 @@ void Input_Controller::ProcessInput() {
 
     if (m_keyboardState[DIK_RIGHT] & 0x80)  {
       command.direction = "Right";
-      command.state = "Walking";
+      command.state = "Running";
       if (m_keyboardState[DIK_LSHIFT] & 0x80)  {
-        command.state = "Running";
+        command.state = "Walking";
       }
     }
 
     if (m_keyboardState[DIK_LEFT] & 0x80)  {
       command.direction = "Left";
-      command.state = "Walking";
+      command.state = "Running";
       if (m_keyboardState[DIK_LSHIFT] & 0x80)  {
-        command.state = "Running";
+        command.state = "Walking";
       }
     }
 
