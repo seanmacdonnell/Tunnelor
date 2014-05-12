@@ -60,6 +60,37 @@ Level_Controller::~Level_Controller() {
 
   if (m_game_over_screen_controller != 0) {
     delete m_game_over_screen_controller;
+    m_game_over_screen_controller = 0;
+  }
+
+  if (m_level_tile_controller != 0) {
+    delete m_level_tile_controller;
+    m_level_tile_controller = 0;
+  }
+
+  if (m_level_transition_controller != 0) {
+    delete m_level_transition_controller;
+    m_level_transition_controller = 0;
+  }
+
+  if (m_game_over_screen_controller != 0) {
+    delete m_game_over_screen_controller;
+    m_game_over_screen_controller = 0;
+  }
+
+  if (m_avatar_controller != 0) {
+    delete m_avatar_controller;
+    m_avatar_controller = 0;
+  }
+
+  if (m_screen_wipeout_controller != 0 ) {
+    delete m_screen_wipeout_controller;
+    m_screen_wipeout_controller = 0;
+  }
+
+  if (m_level != 0) {
+    delete m_level;
+    m_level = 0;
   }
 }
 

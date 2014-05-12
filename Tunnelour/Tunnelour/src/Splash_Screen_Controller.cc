@@ -98,7 +98,7 @@ bool Splash_Screen_Controller::Init(Component_Composite * const model) {
       // Create the Black Tile
       m_background = CreateTile(128);
       m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
-      m_background->SetScale(new D3DXVECTOR3((m_game_settings->GetResolution().x/128), (m_game_settings->GetResolution().y/128), 1.0f));
+      m_background->SetScale(D3DXVECTOR3((m_game_settings->GetResolution().x/128), (m_game_settings->GetResolution().y/128), 1.0f));
       m_model->Add(m_background);
     }
     if (m_game_name_heading == 0) {

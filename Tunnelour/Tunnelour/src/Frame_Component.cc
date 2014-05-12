@@ -107,8 +107,8 @@ D3DXVECTOR3 * const Frame_Component::GetScale() {
 }
 
 //---------------------------------------------------------------------------
-void Frame_Component::SetScale(D3DXVECTOR3 * const scale) {
-  m_scale = *scale;
+void Frame_Component::SetScale(D3DXVECTOR3 scale) {
+  m_scale = scale;
 }
 
 //---------------------------------------------------------------------------

@@ -305,7 +305,7 @@ Tile_Bitmap* Bitmap_Helper::CollisionBlockToBitmapComponent(Avatar_Component::Av
 
   D3DXVECTOR2 size = avatar_collision_block.size;
   collision_bitmap->SetSize(D3DXVECTOR2(middleground_line.tile_size_x, middleground_line.tile_size_y));
-  collision_bitmap->SetScale(new D3DXVECTOR3((avatar_collision_block.size.x/128), (avatar_collision_block.size.y/128), 1.0f));
+  collision_bitmap->SetScale(D3DXVECTOR3((avatar_collision_block.size.x/128), (avatar_collision_block.size.y/128), 1.0f));
   //collision_bitmap->SetSize(middleground_line.tile_size_x, middleground_line.tile_size_x);
 
   return collision_bitmap;

@@ -289,6 +289,7 @@ void Avatar_Controller::RunStandingState() {
         MoveAvatarTileAdjacent("Left", out_colliding_floor_tiles->begin()->colliding_tile);
       }
     }
+    delete out_colliding_floor_tiles;
     
     // If the avatar is not adjacent to the floor, he should fall
     std::vector<Bitmap_Component*> *adjacent_tiles = new std::vector<Bitmap_Component*>();
@@ -297,6 +298,7 @@ void Avatar_Controller::RunStandingState() {
       AlignAvatarOnLastAvatarCollisionBlock();
       RunAvatarState();
     }
+    delete adjacent_tiles;
   } else {
     RunAvatarState();
   }
@@ -564,6 +566,7 @@ void Avatar_Controller::RunRunningState() {
         }
         //ClearAvatarState();
       }
+      delete out_colliding_floor_tiles;
 
       // Detect if the avatar is overbalancing from walking
       std::vector<Bitmap_Component*> *adjacent_tiles = new std::vector<Bitmap_Component*>();
@@ -679,6 +682,7 @@ void Avatar_Controller::RunFallingState() {
       m_avatar->SetPosition(position);
     }
   }
+  delete out_avatar_collision_block;
 
   std::vector<Wall_Collision> out_colliding_wall_tiles;
   bool is_wall_colliding = false;
@@ -875,6 +879,7 @@ void Avatar_Controller::RunJumpingState() {
       }
     }
   }
+  delete out_avatar_collision_block;
 
   if (has_state_changed) {
     RunAvatarState();

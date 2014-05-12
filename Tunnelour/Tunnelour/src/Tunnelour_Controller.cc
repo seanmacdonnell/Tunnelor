@@ -50,11 +50,6 @@ bool Tunnelour_Controller::Init(Tunnelour::Component_Composite *const model) {
   controller = Add(new Tunnelour::Splash_Screen_Controller());
   controller->Init(m_model);
 
-
-
-  //controller = Add(new Tunnelour::Avatar_Controller());
-  //controller->Init(m_model);
-
   controller = Add(new Tunnelour::Camera_Controller());
   controller->Init(m_model);
 

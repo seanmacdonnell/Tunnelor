@@ -104,7 +104,7 @@ class Frame_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   // Description : Mutator for the Scale
   //---------------------------------------------------------------------------
-  void SetScale(D3DXVECTOR3 * const scale);
+  void SetScale(D3DXVECTOR3 scale);
 
   //---------------------------------------------------------------------------
   // Description : Mutator for the Size

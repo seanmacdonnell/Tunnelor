@@ -210,14 +210,14 @@
     <ClCompile Include="src\Screen_Wipeout_Controller.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
-    <ClCompile Include="src\Game_Over_Screen_Controller.cc">
-      <Filter>Include Files\Controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Game_Over_Screen_Controller_Mutator.cc">
-      <Filter>Include Files\Controllers</Filter>
-    </ClCompile>
     <ClCompile Include="src\Get_Game_Metrics_Component_Mutator.cc">
       <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Game_Over_Screen_Controller.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Game_Over_Screen_Controller_Mutator.cc">
+      <Filter>Source Files\Controllers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
