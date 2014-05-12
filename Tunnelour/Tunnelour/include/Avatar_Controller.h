@@ -146,7 +146,7 @@ class Avatar_Controller: public Controller,
   //---------------------------------------------------------------------------
   // Description : Returns true if the avatar is standing on a floor
   //---------------------------------------------------------------------------
-  bool IsAvatarFloorAdjacent();
+  bool IsAvatarFloorAdjacent(std::vector<Bitmap_Component*> *adjacent_tiles);
 
   //---------------------------------------------------------------------------
   // Description : Returns true if the avatar is colliding with a floor

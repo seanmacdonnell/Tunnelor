@@ -291,7 +291,8 @@ void Avatar_Controller::RunStandingState() {
     }
     
     // If the avatar is not adjacent to the floor, he should fall
-    if (!IsAvatarFloorAdjacent()) {
+    std::vector<Bitmap_Component*> *adjacent_tiles = new std::vector<Bitmap_Component*>();
+    if (!IsAvatarFloorAdjacent(adjacent_tiles)) {
       SetAvatarState("Charlie_Falling", "Falling_To_Standing", m_avatar->GetState().direction);
       AlignAvatarOnLastAvatarCollisionBlock();
       RunAvatarState();
@@ -375,15 +376,17 @@ void Avatar_Controller::RunWalkingState() {
       }
       ClearAvatarState();
     }
+    delete out_colliding_floor_tiles;
 
-    // Detect if the avatar is overbalancing from walking 
-    if (!IsAvatarFloorAdjacent()) {
+    // Detect if the avatar is overbalancing from walking
+    std::vector<Bitmap_Component*> *adjacent_tiles = new std::vector<Bitmap_Component*>();
+    if (!IsAvatarFloorAdjacent(adjacent_tiles)) {
       m_avatar->SetVelocity(D3DXVECTOR3(4, 0 , 0));
       SetAvatarState("Charlie_Falling", "Walking_To_Falling", m_avatar->GetState().direction);
       AlignAvatarOnLastAvatarCollisionBlock();
       has_state_changed = true;
     }
-    
+    delete adjacent_tiles;
   }
 
   if (has_state_changed) {
@@ -562,13 +565,31 @@ void Avatar_Controller::RunRunningState() {
         //ClearAvatarState();
       }
 
-      // Detect if the avatar is overbalancing from walking 
-      if (!IsAvatarFloorAdjacent()) {
-        m_avatar->SetVelocity(D3DXVECTOR3(4, 0 , 0));
-        SetAvatarState("Charlie_Falling", "Walking_To_Falling", m_avatar->GetState().direction);
-        AlignAvatarOnLastAvatarCollisionBlock();
-        has_state_changed = true;
+      // Detect if the avatar is overbalancing from walking
+      std::vector<Bitmap_Component*> *adjacent_tiles = new std::vector<Bitmap_Component*>();
+      if (!IsAvatarFloorAdjacent(adjacent_tiles)) {
+        if (current_state.state.compare("Stopping") == 0) {
+          if (current_state.direction.compare("Right") == 0) {
+            MoveAvatarTileAdjacent("Right", *(adjacent_tiles->begin()));
+            Avatar_Component::Avatar_Collision_Block avatar = GetNamedCollisionBlock("Avatar", current_state.avatar_collision_blocks);
+            D3DXVECTOR3 position = *m_avatar->GetPosition();
+            position.x -= avatar.size.x;
+            m_avatar->SetPosition(position);
+          } else  if (current_state.direction.compare("Left") == 0) {
+            MoveAvatarTileAdjacent("Left", *(adjacent_tiles->begin()));
+            Avatar_Component::Avatar_Collision_Block avatar = GetNamedCollisionBlock("Avatar", current_state.avatar_collision_blocks);
+            D3DXVECTOR3 position = *m_avatar->GetPosition();
+            position.x += avatar.size.x;
+            m_avatar->SetPosition(position);
+          }
+        } else {
+          m_avatar->SetVelocity(D3DXVECTOR3(4, 0 , 0));
+          SetAvatarState("Charlie_Falling", "Walking_To_Falling", m_avatar->GetState().direction);
+          AlignAvatarOnLastAvatarCollisionBlock();
+          has_state_changed = true;
+        }
       }
+      delete adjacent_tiles;
     }
   }
 
@@ -903,7 +924,8 @@ void Avatar_Controller::RunLevelTransitioningState() {
 }
 
 //------------------------------------------------------------------------------
-bool Avatar_Controller::IsAvatarFloorAdjacent() {
+bool Avatar_Controller::IsAvatarFloorAdjacent(std::vector<Bitmap_Component*> *adjacent_tiles) {
+  adjacent_tiles->clear();
   // Going to deal only with gravity only
   // Also only dealing with the lowest foot (Lowest collision Block).
   if (!m_floor_tiles.empty()) {
@@ -917,17 +939,16 @@ bool Avatar_Controller::IsAvatarFloorAdjacent() {
     avatar_avatar_collision_block_bitmap = CollisionBlockToBitmapComponent(avatar_avatar_collision_block, *(m_avatar->GetPosition()));
 
     // Create a list of floor tiles which are adjacent with the collision block
-    std::vector<Tile_Bitmap*> adjacent_tiles;
     std::vector<Tile_Bitmap*>::iterator floor_tile;
     for (floor_tile = m_floor_tiles.begin(); floor_tile != m_floor_tiles.end(); floor_tile++) {
       if (Bitmap_Helper::DoTheseTilesXCollide(*floor_tile, &avatar_avatar_collision_block_bitmap)) {
         if (Bitmap_Helper::AreTheseTilesYAdjacent(*floor_tile, &avatar_avatar_collision_block_bitmap)) {
-          adjacent_tiles.push_back(*floor_tile);
+          adjacent_tiles->push_back(*floor_tile);
         }
       }
     }
 
-    if (adjacent_tiles.empty()) {
+    if (adjacent_tiles->empty()) {
       return false;
     }
   } else {
