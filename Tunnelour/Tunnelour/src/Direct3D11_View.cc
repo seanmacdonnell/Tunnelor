@@ -322,6 +322,8 @@ void Direct3D11_View::Run() {
         m_game_metrics = mutator.GetGameMetrics();
       }
     }
+
+    delete viewmatrix;
   }
 }
 
