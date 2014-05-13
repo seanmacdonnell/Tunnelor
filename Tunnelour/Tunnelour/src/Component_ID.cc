@@ -22,7 +22,7 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 Component_ID::~Component_ID() {
   if (m_instance != 0) {
-      delete m_instance;
+    delete m_instance;
   }
 }
 

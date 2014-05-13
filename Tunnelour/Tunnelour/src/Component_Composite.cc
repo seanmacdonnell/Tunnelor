@@ -27,8 +27,6 @@ Component_Composite::Component_Composite() : Component() {
 Component_Composite::~Component_Composite() {
   while (!m_components.empty()) {
     Remove(m_components.front());
-    //delete m_components.front();
-    //m_components.pop_front();
   }
 }
 

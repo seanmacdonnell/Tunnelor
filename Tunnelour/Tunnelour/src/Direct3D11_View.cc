@@ -157,11 +157,47 @@ Direct3D11_View::~Direct3D11_View() {
   m_model->IgnoreType(this, "Text_Component");
   m_model->IgnoreType(this, "Avatar_Component");
 
+  
+  while (!m_renderables.Layer_00.empty()) {
+    delete m_renderables.Layer_00.back();
+    m_renderables.Layer_00.pop_back();
+  }
   m_renderables.Layer_00.clear();
+
+  while (!m_renderables.Layer_01.empty()) {
+    delete m_renderables.Layer_01.back();
+    m_renderables.Layer_01.pop_back();
+  }
   m_renderables.Layer_01.clear();
+
+  while (!m_renderables.Avatars.empty()) {
+    delete m_renderables.Avatars.back();
+    m_renderables.Avatars.pop_back();
+  }
+  m_renderables.Avatars.clear();
+
+  while (!m_renderables.Layer_02.empty()) {
+    delete m_renderables.Layer_02.back();
+    m_renderables.Layer_02.pop_back();
+  }
   m_renderables.Layer_02.clear();
+
+  while (!m_renderables.Layer_03.empty()) {
+    delete m_renderables.Layer_03.back();
+    m_renderables.Layer_03.pop_back();
+  }
   m_renderables.Layer_03.clear();
+
+  while (!m_renderables.Layer_04.empty()) {
+    delete m_renderables.Layer_04.back();
+    m_renderables.Layer_04.pop_back();
+  }
   m_renderables.Layer_04.clear();
+
+  while (!m_renderables.Layer_05.empty()) {
+    delete m_renderables.Layer_05.back();
+    m_renderables.Layer_05.pop_back();
+  }
   m_renderables.Layer_05.clear();
 
   m_camera = 0;

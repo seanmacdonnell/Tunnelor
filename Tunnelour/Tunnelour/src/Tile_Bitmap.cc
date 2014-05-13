@@ -22,9 +22,6 @@ namespace Tunnelour {
 // public:
 //------------------------------------------------------------------------------
 Tile_Bitmap::Tile_Bitmap(): Bitmap_Component() {
-  m_position = D3DXVECTOR3(0, 0, 0);
-  m_size = D3DXVECTOR2(0, 0);
-  m_texture->texture_path = L"";
   m_is_floor = false;
   m_is_right_wall = false;
   m_is_left_wall = false;
@@ -38,6 +35,15 @@ Tile_Bitmap::Tile_Bitmap(): Bitmap_Component() {
 
 //------------------------------------------------------------------------------
 Tile_Bitmap::~Tile_Bitmap() {
+  m_is_floor = false;
+  m_is_right_wall = false;
+  m_is_left_wall = false;
+  m_is_roof = false;
+  m_is_top_edge = false;
+  m_is_bottom_edge = false;
+  m_is_right_edge = false;
+  m_is_left_edge = false;
+  m_is_collidable = false;
 }
 
 //------------------------------------------------------------------------------
