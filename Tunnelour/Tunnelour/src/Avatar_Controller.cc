@@ -432,12 +432,12 @@ void Avatar_Controller::RunRunningState() {
     // There is a command that is different from the current state or direction
     if (current_command.state.compare("Jumping") == 0) {
       if (current_state.direction.compare("Right") == 0) {
-        float y_velocity = 44;
-        float x_velocity = 44;
+        float y_velocity = m_avatar->GetVelocity().x + (m_avatar->GetVelocity().x/2);
+        float x_velocity = m_avatar->GetVelocity().x + (m_avatar->GetVelocity().x/2);
         m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
       } else {  // Left
-        float y_velocity = 44;
-        float x_velocity = -44;
+        float y_velocity = m_avatar->GetVelocity().x - (m_avatar->GetVelocity().x/2);
+        float x_velocity = m_avatar->GetVelocity().x - (m_avatar->GetVelocity().x/2);
         m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
       }
 
@@ -731,8 +731,6 @@ void Avatar_Controller::RunJumpingState() {
   Avatar_Component::Avatar_State current_state = m_avatar->GetState();
   Avatar_Component::Avatar_State current_command = m_avatar->GetCommand();
 
-  std::vector<Wall_Collision> out_colliding_floor_tiles;
-  Bitmap_Component* out_avatar_collision_block = new Bitmap_Component();
   bool has_state_changed = false;
   if (current_state.state.compare("Jumping") == 0) {
     D3DXVECTOR3 position = *m_avatar->GetPosition();
@@ -791,13 +789,14 @@ void Avatar_Controller::RunJumpingState() {
           }
           has_state_changed = true;
           AlignAvatarOnLastAvatarCollisionBlock();
+          position = *m_avatar->GetPosition();
           m_y_fallen = 0;
       } else {
         // No Command, Change to standing
         if (m_y_fallen < -256) {
           SetAvatarState("Charlie_Falling", "Falling_To_Death", m_avatar->GetState().direction);
           AlignAvatarOnLastAvatarCollisionBlock();
-          MoveAvatarTileAdjacent("Top", out_colliding_floor_tiles.begin()->colliding_tile);
+          has_state_changed = true;
         } else {
           SetAvatarState("Charlie_Standing", "Standing", m_avatar->GetState().direction);
           AlignAvatarOnLastAvatarCollisionBlock();
@@ -807,9 +806,9 @@ void Avatar_Controller::RunJumpingState() {
       }
     }
 
-
     m_avatar->SetPosition(position);
 
+    std::vector<Wall_Collision> out_colliding_floor_tiles;
     bool is_floor_colliding = IsAvatarFloorColliding(&out_colliding_floor_tiles);
     if (is_floor_colliding) {
       SetAvatarStateAnimationFrame(6);
@@ -879,7 +878,6 @@ void Avatar_Controller::RunJumpingState() {
       }
     }
   }
-  delete out_avatar_collision_block;
 
   if (has_state_changed) {
     RunAvatarState();
