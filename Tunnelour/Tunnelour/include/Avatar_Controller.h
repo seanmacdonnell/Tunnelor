@@ -243,7 +243,7 @@ class Avatar_Controller: public Controller,
   //---------------------------------------------------------------------------
   // Description : Creates a Bitmap Component using the given collision block
   //---------------------------------------------------------------------------
-  Bitmap_Component CollisionBlockToBitmapComponent(Avatar_Component::Avatar_Collision_Block avatar_collision_block, D3DXVECTOR3 position);
+  Bitmap_Component* CollisionBlockToBitmapComponent(Avatar_Component::Avatar_Collision_Block avatar_collision_block, D3DXVECTOR3 position);
 
   //---------------------------------------------------------------------------
   // Description : Creates a Bitmap Component using the given collision block

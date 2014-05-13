@@ -39,24 +39,35 @@ Frame_Component::Frame_Component(): Component() {
 
 //------------------------------------------------------------------------------
 Frame_Component::~Frame_Component() {
-  if (m_frame->indices) {
-    delete m_frame->indices;
-  }
-
   // Release the index buffer.
-  if (m_frame->index_buffer) {
-    m_frame->index_buffer->Release();
-    m_frame->index_buffer = 0;
-  }
+  if (m_frame != 0) {
+    if (m_frame->index_buffer != 0) {
+      m_frame->index_buffer->Release();
+      m_frame->index_buffer = 0;
+    }
 
-  if (m_frame->vertices) {
-    delete m_frame->vertices;
-  }
+    if (m_frame->indices != 0) {
+      delete[] m_frame->indices;
+      m_frame->indices = 0;
+    }
 
-  // Release the vertex buffer.
-  if (m_frame->vertex_buffer) {
-    m_frame->vertex_buffer->Release();
-    m_frame->vertex_buffer = 0;
+    m_frame->index_count = 0;
+
+    // Release the vertex buffer.
+    if (m_frame->vertex_buffer != 0) {
+      m_frame->vertex_buffer->Release();
+      m_frame->vertex_buffer = 0;
+    }
+
+    if (m_frame->vertices != 0) {
+      delete[] m_frame->vertices;
+      m_frame->vertices = 0;
+    }
+
+    m_frame->vertex_count = 0;
+
+    delete m_frame;
+    m_frame = 0;
   }
 }
 

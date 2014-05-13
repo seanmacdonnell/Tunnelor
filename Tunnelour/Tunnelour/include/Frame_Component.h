@@ -151,7 +151,7 @@ class Frame_Component: public Tunnelour::Component {
   D3DXVECTOR3 m_scale;
   D3DXVECTOR2 m_size;
 
-  Frame  * m_frame;
+  Frame *m_frame;
 
   D3DXVECTOR3 m_centre;
 

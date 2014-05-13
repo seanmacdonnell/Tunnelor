@@ -36,15 +36,20 @@ Bitmap_Component::Bitmap_Component(): Frame_Component() {
 
 //------------------------------------------------------------------------------
 Bitmap_Component::~Bitmap_Component()  {
-  m_texture = new Tunnelour::Bitmap_Component::Texture();
-  m_texture->texture = 0;
-  m_texture->texture_path;
-  m_texture->transparency = 0.0f;
-  m_texture->top_left_position = D3DXVECTOR2(0, 0);
-  m_texture->tile_size = D3DXVECTOR2(0, 0);
-  m_texture->texture_size = D3DXVECTOR2(0, 0);
-  m_velocity = D3DXVECTOR3(0, 0 ,0);
-  m_angle = 0;
+  if (m_texture != 0) {
+    // texture is released by the view.
+    m_texture->texture = 0;
+    m_texture->texture_path;
+    m_texture->transparency = 0.0f;
+    m_texture->top_left_position = D3DXVECTOR2(0, 0);
+    m_texture->tile_size = D3DXVECTOR2(0, 0);
+    m_texture->texture_size = D3DXVECTOR2(0, 0);
+    m_velocity = D3DXVECTOR3(0, 0 ,0);
+    m_angle = 0;
+
+    delete m_texture;
+    m_texture = 0;
+  }
 }
 
 //------------------------------------------------------------------------------
