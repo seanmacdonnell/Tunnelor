@@ -436,8 +436,8 @@ void Avatar_Controller::RunRunningState() {
         float x_velocity = m_avatar->GetVelocity().x + (m_avatar->GetVelocity().x/2);
         m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
       } else {  // Left
-        float y_velocity = m_avatar->GetVelocity().x - (m_avatar->GetVelocity().x/2);
-        float x_velocity = m_avatar->GetVelocity().x - (m_avatar->GetVelocity().x/2);
+        float y_velocity = (m_avatar->GetVelocity().x + (m_avatar->GetVelocity().x/2)) * -1;
+        float x_velocity = m_avatar->GetVelocity().x + (m_avatar->GetVelocity().x/2);
         m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
       }
 
