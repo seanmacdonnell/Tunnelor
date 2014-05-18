@@ -195,7 +195,7 @@ class Avatar_Controller: public Controller,
   // Description : Syncs the avatar tile position with avatar collision block
   //             : of the last avatar animation frame.
   //---------------------------------------------------------------------------
-  void AlignAvatarOnLastAvatarCollisionBlockX();
+  void AlignAvatarOnLastAvatarCollisionBlockRightBottom();
 
   //---------------------------------------------------------------------------
   // Description : Repositions the avatar so he is standing adjacent to
