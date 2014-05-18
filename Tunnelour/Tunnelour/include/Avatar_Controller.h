@@ -197,6 +197,13 @@ class Avatar_Controller: public Controller,
   //---------------------------------------------------------------------------
   void AlignAvatarOnLastAvatarCollisionBlockRightBottom();
 
+
+  //---------------------------------------------------------------------------
+  // Description : Syncs the avatar tile position with avatar collision block
+  //             : of the last avatar animation frame.
+  //---------------------------------------------------------------------------
+  void AlignAvatarOnLastAvatarCollisionBlockLeftBottom();
+
   //---------------------------------------------------------------------------
   // Description : Repositions the avatar so he is standing adjacent to
   //             : a colliding wall tile.

@@ -624,6 +624,9 @@ void Avatar_Controller::RunFallingState() {
       } else if (current_state.state.compare("Down_Falling_Wall_Impact_Right") == 0) {
         SetAvatarState("Charlie_Falling", "Up_Facing_Falling", m_avatar->GetState().direction);
         AlignAvatarOnLastAvatarCollisionBlockRightBottom();
+        D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
+        D3DXVECTOR3 new_velocity = D3DXVECTOR3(-16, 0 ,0);
+        m_avatar->SetVelocity(new_velocity);
         state_index = 0;
         current_state = m_avatar->GetState();
       } else if (current_state.state.compare("Up_Facing_Falling_To_Death") == 0) {
@@ -633,7 +636,10 @@ void Avatar_Controller::RunFallingState() {
         current_state = m_avatar->GetState();
       } else if (current_state.state.compare("Up_Falling_Wall_Impact_Left") == 0) {
         SetAvatarState("Charlie_Falling", "Down_Facing_Falling", m_avatar->GetState().direction);
-        AlignAvatarOnLastAvatarCollisionBlockRightBottom();
+        AlignAvatarOnLastAvatarCollisionBlockLeftBottom();
+        D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
+        D3DXVECTOR3 new_velocity = D3DXVECTOR3(16, 0 ,0);
+        m_avatar->SetVelocity(new_velocity);
         state_index = 0;
         current_state = m_avatar->GetState();
       } else {
@@ -645,13 +651,15 @@ void Avatar_Controller::RunFallingState() {
   } else {
     if (m_avatar->GetState() == m_avatar->GetLastRenderedState()) {
       SetAvatarStateAnimationFrame(state_index);
-      AlignAvatarOnLastAvatarCollisionBlock();
+      AlignAvatarOnLastAvatarCollisionBlockRightBottom();
     }
   }
 
   if (current_state.state.compare("Down_Facing_Falling_To_Death") == 0 ||
       current_state.state.compare("Down_Facing_Death") == 0  ||
       current_state.state.compare("Up_Facing_Falling_To_Death") == 0  ||
+      current_state.state.compare("Down_Falling_Wall_Impact_Right") == 0  ||
+      current_state.state.compare("Up_Falling_Wall_Impact_Left") == 0  ||
       current_state.state.compare("Up_Facing_Death") == 0) {
     // Do Nothing
   } else {
@@ -673,26 +681,25 @@ void Avatar_Controller::RunFallingState() {
   std::vector<Wall_Collision> out_colliding_wall_tiles;
   bool is_wall_colliding = false;
   is_wall_colliding = IsAvatarWallColliding(&out_colliding_wall_tiles);
-  if (is_wall_colliding && current_state.state.compare("Up_Facing_Falling") != 0) {
+  if (is_wall_colliding) {
     if (out_colliding_wall_tiles.begin()->collision_side.compare("Left") == 0) {
       if (current_state.state.compare("Down_Falling_Wall_Impact_Right") != 0 && m_avatar->GetLastRenderedState().state.compare("Down_Falling_Wall_Impact_Right") != 0) {
         SetAvatarState("Charlie_Falling", "Down_Falling_Wall_Impact_Right", m_avatar->GetState().direction);
         AlignAvatarOnLastAvatarCollisionBlockRightBottom();
-      }
-      
+        D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
+        D3DXVECTOR3 new_velocity = D3DXVECTOR3(0, 0 ,0);
+        m_avatar->SetVelocity(new_velocity);
+      }      
       MoveAvatarTileAdjacent("Left", out_colliding_wall_tiles.begin()->colliding_tile);
-      D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
-      D3DXVECTOR3 new_velocity = D3DXVECTOR3(-16, 0 ,0);
-      m_avatar->SetVelocity(new_velocity);
     } else {
       if (current_state.state.compare("Up_Falling_Wall_Impact_Left") != 0 && m_avatar->GetLastRenderedState().state.compare("Up_Falling_Wall_Impact_Left") != 0) {
         SetAvatarState("Charlie_Falling", "Up_Falling_Wall_Impact_Left", m_avatar->GetState().direction);
-        AlignAvatarOnLastAvatarCollisionBlockRightBottom();
+        AlignAvatarOnLastAvatarCollisionBlockLeftBottom();
+        D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
+        D3DXVECTOR3 new_velocity = D3DXVECTOR3(0, 0 ,0);
+        m_avatar->SetVelocity(new_velocity);
       }
       MoveAvatarTileAdjacent("Right", out_colliding_wall_tiles.begin()->colliding_tile);
-      D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
-      D3DXVECTOR3 new_velocity = D3DXVECTOR3(16, 0 ,0);
-      m_avatar->SetVelocity(new_velocity);
     }
   }
 
@@ -1086,10 +1093,6 @@ bool Avatar_Controller::IsAvatarWallColliding(std::vector<Wall_Collision> *out_c
     // Create a list of floor tiles which are colliding with the collision block
     std::vector<Tile_Bitmap*>::iterator border_tile;
     for (border_tile = m_wall_tiles.begin(); border_tile != m_wall_tiles.end(); border_tile++) {
-       D3DXVECTOR3 avatar_bot_right = m_avatar->GetBottomRightPostion();
-       D3DXVECTOR3 avatar_top_left = m_avatar->GetTopLeftPostion();
-       D3DXVECTOR3 tile_top_left = (*border_tile)->GetTopLeftPostion();
-       D3DXVECTOR3 tile_bot_right = (*border_tile)->GetBottomRightPostion();
        if ((*border_tile)->IsRightWall() && m_avatar->GetBottomRightPostion().x > (*border_tile)->GetTopLeftPostion().x ||
            (*border_tile)->IsLeftWall() && m_avatar->GetTopLeftPostion().x < (*border_tile)->GetBottomRightPostion().x) {
         D3DXVECTOR2 Tile_Top_Left;
@@ -1412,7 +1415,7 @@ void Avatar_Controller::AlignAvatarOnLastAvatarCollisionBlockRightBottom() {
 
   if (current_bottom_right != last_bottom_right) {
     D3DXVECTOR3 difference;
-    difference.x = last_bottom_right.x - current_bottom_right.x ;
+    difference.x = last_bottom_right.x - current_bottom_right.x;
     difference.y = last_bottom_right.y - current_bottom_right.y;
     difference.z = 0;
 
@@ -1426,6 +1429,50 @@ void Avatar_Controller::AlignAvatarOnLastAvatarCollisionBlockRightBottom() {
   current_bottom_right = current_collision_bitmap->GetBottomRightPostion();
   if (current_bottom_right != last_bottom_right) {
     throw Exceptions::run_error("AlignAvatarOnLastAvatarCollisionBlockRightBottom: Failed to set avatar position correctly!");
+  }
+
+  delete current_collision_bitmap;
+  delete last_collision_bitmap;
+}
+
+//------------------------------------------------------------------------------
+void Avatar_Controller::AlignAvatarOnLastAvatarCollisionBlockLeftBottom() {
+  if (m_avatar->GetLastRenderedState().state.compare("") == 0) { return; }
+
+  D3DXVECTOR3 new_avatar_position;
+
+  Avatar_Component::Avatar_Collision_Block current_avatar_collision_block;
+  current_avatar_collision_block = GetNamedCollisionBlock("Avatar", m_avatar->GetState().avatar_collision_blocks);
+  Bitmap_Component *current_collision_bitmap = CollisionBlockToBitmapComponent(current_avatar_collision_block, *(m_avatar->GetPosition()));
+  D3DXVECTOR3 current_bottom_right = current_collision_bitmap->GetBottomRightPostion();
+  D3DXVECTOR3 current_top_left = current_collision_bitmap->GetTopLeftPostion();
+  D3DXVECTOR3 current_bottom_left = D3DXVECTOR3(current_top_left.x, current_bottom_right.y, 0);
+
+  Avatar_Component::Avatar_Collision_Block last_avatar_collision_block;
+  last_avatar_collision_block = GetNamedCollisionBlock("Avatar", m_avatar->GetLastRenderedState().avatar_collision_blocks);
+  Bitmap_Component *last_collision_bitmap = CollisionBlockToBitmapComponent(last_avatar_collision_block, *(m_avatar->GetPosition()));
+  D3DXVECTOR3 last_bottom_right = last_collision_bitmap->GetBottomRightPostion();
+  D3DXVECTOR3 last_top_left = last_collision_bitmap->GetTopLeftPostion();
+  D3DXVECTOR3 last_bottom_left = D3DXVECTOR3(last_top_left.x, last_bottom_right.y, 0);
+
+  if (current_bottom_left != last_bottom_left) {
+    D3DXVECTOR3 difference;
+    difference.x = last_bottom_left.x - current_bottom_left.x ;
+    difference.y = last_bottom_left.y - current_bottom_left.y;
+    difference.z = 0;
+
+    D3DXVECTOR3 new_avatar_position = *m_avatar->GetPosition();
+    new_avatar_position += difference;
+
+    m_avatar->SetPosition(new_avatar_position);
+  }
+
+  current_collision_bitmap = CollisionBlockToBitmapComponent(current_avatar_collision_block, *(m_avatar->GetPosition()));
+  current_bottom_right = current_collision_bitmap->GetBottomRightPostion();
+  current_top_left = current_collision_bitmap->GetTopLeftPostion();
+  current_bottom_left = D3DXVECTOR3(current_top_left.x, current_bottom_right.y, 0);
+  if (current_bottom_left != last_bottom_left) {
+    throw Exceptions::run_error("AlignAvatarOnLastAvatarCollisionBlockLeftBottom: Failed to set avatar position correctly!");
   }
 
   delete current_collision_bitmap;
