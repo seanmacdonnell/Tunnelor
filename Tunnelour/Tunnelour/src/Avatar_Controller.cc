@@ -221,16 +221,16 @@ void Avatar_Controller::RunStandingState() {
     if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0 ) {
       if (current_command.state.compare("Jumping") == 0) {
         float y_velocity = 48;
-        float x_velocity = 48;
+        float x_velocity = 0;
         if (current_command.direction.compare("Right") == 0) {
           m_avatar->SetVelocity(D3DXVECTOR3(x_velocity, y_velocity, 0));
         } else {  // Left
           m_avatar->SetVelocity(D3DXVECTOR3((x_velocity * -1), y_velocity, 0));
         }
         if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0) {
-          SetAvatarState("Charlie_Jumping", "Precision_Jump_Takeoff", current_command.direction);
+          SetAvatarState("Charlie_Jumping", "Vertical_Jump_Takeoff", current_command.direction);
         } else {
-          SetAvatarState("Charlie_Jumping", "Precision_Jump_Takeoff", m_avatar->GetState().direction);
+          SetAvatarState("Charlie_Jumping", "Vertical_Jump_Takeoff", m_avatar->GetState().direction);
         }
       } else {
         if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0 ) {
@@ -244,16 +244,16 @@ void Avatar_Controller::RunStandingState() {
       if (current_command.state.compare("Jumping") == 0) {
         m_avatar->SetAngle(static_cast<float>(1.0));  // in radians
         float y_velocity = 48;
-        float x_velocity = 48;
+        float x_velocity = 0;
         if (current_state.direction.compare("Right") == 0) {
           m_avatar->SetVelocity(D3DXVECTOR3(x_velocity, y_velocity, 0));
         } else {  // Left
           m_avatar->SetVelocity(D3DXVECTOR3((x_velocity * -1), y_velocity, 0));
         }
         if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0) {
-          SetAvatarState("Charlie_Jumping", "Precision_Jump_Takeoff", current_command.direction);
+          SetAvatarState("Charlie_Jumping", "Vertical_Jump_Takeoff", current_command.direction);
         } else {
-          SetAvatarState("Charlie_Jumping", "Precision_Jump_Takeoff", m_avatar->GetState().direction);
+          SetAvatarState("Charlie_Jumping", "Vertical_Jump_Takeoff", m_avatar->GetState().direction);
         }
       } else {
         if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0 ) {
@@ -794,16 +794,12 @@ void Avatar_Controller::RunJumpingState() {
     if (m_current_animation_subset.is_repeatable) {
       state_index = 0;
     } else {
-      if (current_state.state.compare("Precision_Jump_Takeoff") == 0) {
-        SetAvatarState("Charlie_Jumping", "Precision_Jump_Arc", current_state.direction);
+      if (current_state.state.compare("Vertical_Jump_Takeoff") == 0) {
+        SetAvatarState("Charlie_Jumping", "Vertical_Jump_Arc", current_state.direction);
         AlignAvatarOnLastAvatarCollisionBlock();
         has_state_changed = true;
         m_y_fallen = 0;
-      } else if (current_state.state.compare("Precision_Jump_Arc") == 0) {
-        SetAvatarState("Charlie_Jumping", "Precision_Or_Gap_Jump_Falling", current_state.direction);
-        AlignAvatarOnLastAvatarCollisionBlock();
-        has_state_changed = true;
-      } else if (current_state.state.compare("Jump_Landing_To_Motion") == 0) {
+      } else if (current_state.state.compare("Vertical_Jump_Landing") == 0) {
         if (current_command.state.compare("Jumping") == 0) {
           if (current_state.direction.compare("Right") == 0) {
             float y_velocity = m_avatar->GetVelocity().x + (m_avatar->GetVelocity().x/2);
@@ -841,10 +837,14 @@ void Avatar_Controller::RunJumpingState() {
   if (!has_state_changed) {
     if (current_state == last_state) {
       SetAvatarStateAnimationFrame(state_index);
-      AlignAvatarOnLastAvatarCollisionBlock();
+      if (current_state.state.compare("Vertical_Jump_Landing") == 0) {
+        AlignAvatarOnLastContactingFoot();
+      } else {
+        AlignAvatarOnLastAvatarCollisionBlock();
+      }
     }
     
-    if (current_state.state.compare("Precision_Jump_Arc") == 0 || current_state.state.compare("Precision_Or_Gap_Jump_Falling") == 0) {
+    if (current_state.state.compare("Vertical_Jump_Arc") == 0) {
       D3DXVECTOR3 position = *m_avatar->GetPosition();
       position += m_avatar->GetVelocity();
       m_y_fallen += m_avatar->GetVelocity().y;
@@ -898,18 +898,16 @@ void Avatar_Controller::RunJumpingState() {
       if (m_y_fallen < -256) {
         SetAvatarState("Charlie_Falling", "Down_Facing_Falling_To_Death", m_avatar->GetState().direction);
       } else {
-        SetAvatarState("Charlie_Jumping", "Jump_Landing_To_Motion", m_avatar->GetState().direction);
+        SetAvatarState("Charlie_Jumping", "Vertical_Jump_Landing", m_avatar->GetState().direction);
       }
-      if (current_state.direction.compare("Right") == 0) {
-        AlignAvatarOnLastContactingFoot();
-      } else {
-        AlignAvatarOnLastContactingFoot();
-      }
+ 
+      AlignAvatarOnLastContactingFoot();
+ 
       m_y_fallen = 0;
       MoveAvatarTileAdjacent("Top", out_colliding_floor_tiles->begin()->colliding_tile);
       has_state_changed = true;
       D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
-      D3DXVECTOR3 new_velocity = D3DXVECTOR3(0, 0 ,0);
+      D3DXVECTOR3 new_velocity = D3DXVECTOR3(old_velocity.x, 0 ,0);
       m_avatar->SetVelocity(new_velocity);
     }
     delete out_colliding_floor_tiles;
@@ -1342,7 +1340,11 @@ void Avatar_Controller::AlignAvatarOnLastContactingFoot() {
   last_left_foot =  GetNamedCollisionBlock("Left_Foot", m_avatar->GetLastState().avatar_collision_blocks);
 
   if (last_right_foot.is_contacting && last_left_foot.is_contacting) {
-    AlignAvatarOnLastAvatarCollisionBlock();
+    if (last_right_foot.offset_from_avatar_centre > last_left_foot.offset_from_avatar_centre) {
+      AlignAvatarOnRightFoot();
+    } else {
+      AlignAvatarOnLeftFoot();
+    }
   } else if (last_right_foot.is_contacting) {
     AlignAvatarOnRightFoot();
   } else {
@@ -1573,7 +1575,7 @@ void Avatar_Controller::UpdateTimer() {
   if (m_game_settings->IsDebugMode()) {
     milliseconds_per_frame = static_cast<int>(1000/1);
   } else {
-    milliseconds_per_frame = static_cast<int>(1000/24);
+    milliseconds_per_frame = static_cast<int>(1000/24);///m_current_animation_subset.frames_per_second);
   }
 
   INT64 currentTime;
