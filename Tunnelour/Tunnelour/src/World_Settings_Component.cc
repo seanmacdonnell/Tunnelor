@@ -22,7 +22,7 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 World_Settings_Component::World_Settings_Component(): Component() {
   m_type = "World_Settings_Component";
-  m_gravity = 0;
+  m_gravity_px_per_ms = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -34,27 +34,38 @@ void World_Settings_Component::Init() {
   // Default Values
   // Proper gravity is approx 1000cm/s(sq) which is approx 571px/s(sq)
   // 571/1000 = 0.571 which I am changing to 0.4
-  m_gravity = 0.4;
+  m_gravity_px_per_ms = 0.4;
+
+  // Magic number
+  m_gravity_px_per_frame = -8;
 
   // Default Values
   // Max Velocity is 200km/h or 5555cm/s
   // Which is 5.555cm\mil and 3.17px\mil changed to 4.
-  m_max_velocity = 4;
+  m_max_velocity_px_per_ms = 4;
+
+  // Magic number
+  m_max_velocity_px_per_frame = -512;
 }
 
 //------------------------------------------------------------------------------
 float World_Settings_Component::GetGravityInPixPerMs() {
-  return m_gravity;
+  return m_gravity_px_per_ms;
 }
 
 //------------------------------------------------------------------------------
-void World_Settings_Component::SetGravity(int gravity) {
-  m_gravity = gravity;
+float World_Settings_Component::GetGravityInPixPerFrame() {
+  return m_gravity_px_per_frame;
 }
 
 //------------------------------------------------------------------------------
 float World_Settings_Component::GetMaxVelocityInPixPerMs() {
-  return m_max_velocity;
+  return m_max_velocity_px_per_ms;
+}
+
+//------------------------------------------------------------------------------
+float World_Settings_Component::GetMaxVelocityInPixPerFrame() {
+  return m_max_velocity_px_per_frame;
 }
 
 //------------------------------------------------------------------------------

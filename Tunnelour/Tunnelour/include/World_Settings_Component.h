@@ -42,9 +42,14 @@ class World_Settings_Component: public Tunnelour::Component {
   virtual void Init();
 
   //---------------------------------------------------------------------------
-  // Description : Accessor for the gravity
+  // Description : Accessor for the gravity per millisecond
   //---------------------------------------------------------------------------
   float GetGravityInPixPerMs();
+
+  //---------------------------------------------------------------------------
+  // Description : Accessor for the gravity per frame
+  //---------------------------------------------------------------------------
+  float GetGravityInPixPerFrame();
 
   //---------------------------------------------------------------------------
   // Description : Accessor for the max velocity
@@ -52,9 +57,9 @@ class World_Settings_Component: public Tunnelour::Component {
   float GetMaxVelocityInPixPerMs();
 
   //---------------------------------------------------------------------------
-  // Description : Mutator for the gravity
+  // Description : Accessor for the max velocity per frame
   //---------------------------------------------------------------------------
-  void SetGravity(int gravity);
+  float GetMaxVelocityInPixPerFrame();
 
  protected:
 
@@ -62,8 +67,10 @@ class World_Settings_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   // Description : Class variables
   //---------------------------------------------------------------------------
-  float m_gravity;
-  float m_max_velocity;
+  float m_gravity_px_per_ms;
+  float m_gravity_px_per_frame;
+  float m_max_velocity_px_per_ms;
+  float m_max_velocity_px_per_frame;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_COLOR_COMPONENT_H_
