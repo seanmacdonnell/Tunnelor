@@ -417,20 +417,20 @@ void Avatar_Controller::RunRunningState() {
 
   float stop_trigger_threshold = 16;
   float Wall_Colliding_From_Mid_Speed_trigger_threshold = 24;
-  float Wall_Colliding_From_High_Speed_trigger_threshold = 32;
+  float Wall_Colliding_From_High_Speed_trigger_threshold = 48;
 
   if (current_state.state.compare("Running") == 0) {
     if (current_state.direction.compare("Right") == 0) {
-      if (current_state.state_index == 6 || current_state.state_index == 0) {
-        float new_x_velocity = m_avatar->GetVelocity().x + 8;
-        if (new_x_velocity > 32) { new_x_velocity = 32; }
+      if (current_state.state_index == 6 || current_state.state_index == 0 && current_state == last_state) {
+        float new_x_velocity = m_avatar->GetVelocity().x + 16;
+        if (new_x_velocity > 48) { new_x_velocity = 48; }
         m_avatar->SetVelocity(D3DXVECTOR3(new_x_velocity, 0 , 0));
       }
       
     } else {  // Left
-      if (current_state.state_index == 6 || current_state.state_index == 0) {
-        float new_x_velocity = m_avatar->GetVelocity().x - 8;
-        if (new_x_velocity < -32) { new_x_velocity = -32; }
+      if (current_state.state_index == 6 || current_state.state_index == 0 && current_state == last_state) {
+        float new_x_velocity = m_avatar->GetVelocity().x - 16;
+        if (new_x_velocity < -48) { new_x_velocity = -48; }
         m_avatar->SetVelocity(D3DXVECTOR3(new_x_velocity, 0 , 0));
       }
     }
