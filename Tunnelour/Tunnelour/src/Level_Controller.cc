@@ -384,7 +384,7 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
       token = strtok_s(NULL, "\"", &next_token);
       level_metadata.level_name = token;
     } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_Name");
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! (" + metadata_path + ") Expected: Level_Name");
     }
   }
   fgets(line, 225, pFile);
@@ -394,7 +394,7 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
       token = strtok_s(NULL, "\"", &next_token);
       level_metadata.blurb = token;
     } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_Blurb");
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! (" + metadata_path + ") Expected: Level_Blurb");
     }
   }
   fgets(line, 225, pFile);
@@ -404,7 +404,7 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
       token = strtok_s(NULL, " =\"", &next_token);
       level_metadata.filename = token;
     } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_CSV_Filename");
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! (" + metadata_path + ") Expected: Level_CSV_Filename");
     }
   }
   fgets(line, 225, pFile);
@@ -414,7 +414,7 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
       token = strtok_s(NULL, " =\"", &next_token);
       level_metadata.tileset_name = token;
     } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_TilesetName");
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! (" + metadata_path + ") Expected: Level_TilesetName");
     }
   }
   fgets(line, 225, pFile);
@@ -424,7 +424,7 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
       token = strtok_s(NULL, " =\"", &next_token);
       level_metadata.tunnel_top_left_x = static_cast<float>(atof(token));
     } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_TunnelStartTopLeftX");
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! (" + metadata_path + ") Expected: Level_TunnelStartTopLeftX");
     }
   }
   fgets(line, 225, pFile);
@@ -434,7 +434,7 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
       token = strtok_s(NULL, " =\"", &next_token);
       level_metadata.tunnel_top_left_y = static_cast<float>(atof(token));
     } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_TunnelStartTopLeftY");
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! (" + metadata_path + ") Expected: Level_TunnelStartTopLeftY");
     }
   }
   fgets(line, 225, pFile);
@@ -444,7 +444,7 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
       token = strtok_s(NULL, " =\"", &next_token);
       level_metadata.start_avatar_top_left_x = static_cast<float>(atof(token));
     } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_Start_AvatarX");
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! (" + metadata_path + ") Expected: Level_Start_AvatarX");
     }
   }
   fgets(line, 225, pFile);
@@ -454,7 +454,7 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
       token = strtok_s(NULL, " =\"", &next_token);
       level_metadata.start_avatar_top_left_y = static_cast<float>(atof(token));
     } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_Start_AvatarY");
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! (" + metadata_path + ") Expected: Level_Start_AvatarY");
     }
   }
   fgets(line, 225, pFile);
@@ -464,7 +464,7 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
       token = strtok_s(NULL, " =\"", &next_token);
       level_metadata.start_avatar_state = token;
     } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_Start_AvatarState");
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! (" + metadata_path + ") Expected: Level_Start_AvatarState");
     }
   }
   Level_Component::End_Condition *conditions = 0;
@@ -476,7 +476,7 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
       token = strtok_s(NULL, " =\"", &next_token);
       conditions->ID = token;
     } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_ID");
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! (" + metadata_path + ") Expected: Level_EndCondition_ID");
     }
   }
   fgets(line, 225, pFile);
@@ -490,7 +490,7 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
         conditions->and = false;
       }
     } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_IsAnd");
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! (" + metadata_path + ") Expected: Level_EndCondition_IsAnd");
     }
   }
   fgets(line, 225, pFile);
@@ -504,7 +504,7 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
         conditions->or = false;
       }
     } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_IsOr");
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! (" + metadata_path + ") Expected: Level_EndCondition_IsOr");
     }
   }
   int NoOfConditions = 0;
@@ -515,7 +515,7 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
       token = strtok_s(NULL, " =\"", &next_token);
       NoOfConditions = static_cast<int>(atof(token));
     } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_NoOfConditions");
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! (" + metadata_path + ") Expected: Level_EndCondition_NoOfConditions");
     }
   }
   for (int i = 0; i < NoOfConditions; i++) {
@@ -528,11 +528,11 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
         if (strcmp(token,"State") == 0) {
           condition = new Level_Component::End_Condition_Avatar_State();
         } else {
-           throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Level_EndCondition_Type type was not recognized");
+           throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! (" + metadata_path + ") Level_EndCondition_Type type was not recognized");
         }
         condition->type = token;
       } else {
-        throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_Type");
+        throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! (" + metadata_path + ") Expected: Level_EndCondition_Type");
       }
     }
     if (condition->type.compare("State") == 0) {
@@ -543,7 +543,7 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
           token = strtok_s(NULL, " =\"", &next_token);
           static_cast<Level_Component::End_Condition_Avatar_State*>(condition)->avatar_state = token;
         } else {
-          throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_WhenAvatarState");
+          throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! (" + metadata_path + ") Expected: Level_EndCondition_WhenAvatarState");
         }
       }
       fgets(line, 225, pFile);
@@ -557,7 +557,7 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
             static_cast<Level_Component::End_Condition_Avatar_State*>(condition)->when_state_complete = false;
           }
         } else {
-          throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_WhenAvatarStateComplete");
+          throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! (" + metadata_path + ") Expected: Level_EndCondition_WhenAvatarStateComplete");
         }
       }
       fgets(line, 225, pFile);
@@ -567,7 +567,7 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
           token = strtok_s(NULL, " =\"", &next_token);
           static_cast<Level_Component::End_Condition_Avatar_State*>(condition)->avatar_direction = token;
         } else {
-          throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_WhenAvatarDirection");
+          throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! (" + metadata_path + ") Expected: Level_EndCondition_WhenAvatarDirection");
         }
       }
       condition->has_been_met = false;
@@ -581,7 +581,7 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
       token = strtok_s(NULL, "\"", &next_token);
       conditions->next_level = token;
     } else {
-      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! Expected: Level_EndCondition_NextLevel");
+      throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! (" + metadata_path + ") Expected: Level_EndCondition_NextLevel");
     }
   }
   level_metadata.end_conditions.push_back(conditions);

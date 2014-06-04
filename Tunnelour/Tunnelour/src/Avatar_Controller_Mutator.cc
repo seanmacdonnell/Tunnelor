@@ -61,6 +61,10 @@ void Avatar_Controller_Mutator::Mutate(Component * const component) {
       m_wall_tiles.push_back(tile);
       m_found_wall_tiles = true;
     }
+    if (tile->IsWall() && tile->IsFloor()) {
+      m_ledge_tiles.push_back(tile);
+      m_found_ledge_tiles = true;
+    }
   } else if (component->GetType().compare("World_Settings_Component") == 0) {
     m_world_settings = static_cast<World_Settings_Component*>(component);
     m_found_world_settings = true;
@@ -83,6 +87,11 @@ std::vector<Tile_Bitmap*> Avatar_Controller_Mutator::GetFloorTiles() {
 //------------------------------------------------------------------------------
 std::vector<Tile_Bitmap*> Avatar_Controller_Mutator::GetWallTiles() {
   return m_wall_tiles;
+}
+
+//------------------------------------------------------------------------------
+std::vector<Tile_Bitmap*> Avatar_Controller_Mutator::GetLedgeTiles() {
+  return m_ledge_tiles;
 }
 
 //------------------------------------------------------------------------------

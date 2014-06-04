@@ -63,6 +63,11 @@ class Avatar_Controller_Mutator: public Component::Component_Mutator  {
   std::vector<Tile_Bitmap*> GetWallTiles();
 
   //-------------------------------------------------------------------------
+  // Description : Accessor for the Wall Tiles
+  //-------------------------------------------------------------------------
+  std::vector<Tile_Bitmap*> GetLedgeTiles();
+
+  //-------------------------------------------------------------------------
   // Description : Accessor for the World_Settings_Component
   //-------------------------------------------------------------------------
   World_Settings_Component* GetWorldSettings();
@@ -82,11 +87,13 @@ class Avatar_Controller_Mutator: public Component::Component_Mutator  {
   bool m_found_floor_tiles;
   bool m_found_world_settings;
   bool m_found_wall_tiles;
+  bool m_found_ledge_tiles;
   bool m_found_level;
 
   Game_Settings_Component *m_game_settings;
   std::vector<Tile_Bitmap*> m_floor_tiles;
   std::vector<Tile_Bitmap*> m_wall_tiles;
+  std::vector<Tile_Bitmap*> m_ledge_tiles;
   World_Settings_Component *m_world_settings;
   Level_Component *m_level;
 };

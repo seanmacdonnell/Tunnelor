@@ -139,6 +139,11 @@ class Avatar_Controller: public Controller,
   void RunJumpingState();
 
   //---------------------------------------------------------------------------
+  // Description : Changes and maintains the jumping state of the avatar
+  //---------------------------------------------------------------------------
+  void RunClimbingState();
+
+  //---------------------------------------------------------------------------
   // Description : Changes and maintains the transitioning state of the avatar
   //---------------------------------------------------------------------------
   void RunLevelTransitioningState();
@@ -178,6 +183,13 @@ class Avatar_Controller: public Controller,
   //             : of the last avatar animation frame.
   //---------------------------------------------------------------------------
   void AlignAvatarOnLastContactingFoot();
+
+  void AlignAvatarOnLastHand();
+
+  //---------------------------------------------------------------------------
+  // Description : 
+  //---------------------------------------------------------------------------
+  void AlignAvatarOnLastLedgeEdge(Wall_Collision ledge);
 
   //---------------------------------------------------------------------------
   // Description : Syncs the avatar tile position with the left foot position
@@ -267,6 +279,8 @@ class Avatar_Controller: public Controller,
 
   void ClearAvatarState();
 
+  bool CanAvatarGrabALedge(std::vector<Wall_Collision> *out_collisions);
+
   //---------------------------------------------------------------------------
   // Member Variables
   //---------------------------------------------------------------------------
@@ -281,6 +295,7 @@ class Avatar_Controller: public Controller,
   std::string m_falling_metadata_file_path;
   std::string m_level_transitioning_metadata_file_path;
   std::string m_jumping_metadata_file_path;
+  std::string m_climbing_metadata_file_path;
   std::string m_current_metadata_file_path;
   Tileset_Helper::Animation_Tileset_Metadata m_running_metadata;
   Tileset_Helper::Animation_Tileset_Metadata m_walking_metadata;
@@ -288,6 +303,7 @@ class Avatar_Controller: public Controller,
   Tileset_Helper::Animation_Tileset_Metadata m_falling_metadata;
   Tileset_Helper::Animation_Tileset_Metadata m_level_transitioning_metadata;
   Tileset_Helper::Animation_Tileset_Metadata m_jumping_metadata;
+  Tileset_Helper::Animation_Tileset_Metadata m_climbing_metadata;
   Tileset_Helper::Animation_Tileset_Metadata m_current_metadata;
   Tileset_Helper::Animation_Subset m_current_animation_subset;
   std::vector<Tileset_Helper::Animation_Tileset_Metadata> m_animation_metadata;
@@ -302,6 +318,7 @@ class Avatar_Controller: public Controller,
   
   std::vector<Tile_Bitmap*> m_floor_tiles;
   std::vector<Tile_Bitmap*> m_wall_tiles;
+  std::vector<Tile_Bitmap*> m_ledge_tiles;
 
   float m_avatar_z_position;
 
