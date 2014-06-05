@@ -197,7 +197,7 @@ bool Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(std::string metadata
           token = strtok_s(NULL, " =\"", &next_token);
           temp_subset.top_left_y = static_cast<float>(atof(token));
         } else {
-          throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! (" + metadata_file + ") Expected: SubSet_TopLeftY");
+          throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! (" + metadata_file + ") Expected: \"SubSet_TopLeftY\" got \"" + line + "\"");
           return false;
         }
       }

@@ -1067,6 +1067,8 @@ void Avatar_Controller::RunJumpingState() {
       m_avatar->SetPosition(position);
     }
 
+    std::vector<Wall_Collision> *out_colliding_ledge_tiles = new std::vector<Wall_Collision>();
+    bool can_avatar_grab_a_ledge = CanAvatarGrabALedge(out_colliding_ledge_tiles);
     std::vector<Wall_Collision> *out_colliding_wall_tiles = new std::vector<Wall_Collision>();
     bool is_wall_colliding = false;
     is_wall_colliding = IsAvatarWallColliding(out_colliding_wall_tiles);
@@ -1084,6 +1086,11 @@ void Avatar_Controller::RunJumpingState() {
           m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
         }
         MoveAvatarTileAdjacent(out_colliding_wall_tiles->begin()->collision_side, out_colliding_wall_tiles->begin()->colliding_tile);
+      } else if (can_avatar_grab_a_ledge) {
+        SetAvatarState("Charlie_Climbing", "Vertical_Jump_To_Hanging", m_avatar->GetState().direction);
+        AlignAvatarOnLastLedgeEdge(*(out_colliding_ledge_tiles->begin()));
+        has_state_changed = true;
+        m_y_fallen = 0;
       } else if (out_colliding_wall_tiles->begin()->collision_side.compare("Left") == 0) {
         if (m_avatar->GetState().direction.compare("Right") == 0) {
           SetAvatarState("Charlie_Falling", "Down_Falling_Wall_Impact_Right", m_avatar->GetState().direction);
@@ -1115,6 +1122,7 @@ void Avatar_Controller::RunJumpingState() {
       }
     }
     delete out_colliding_wall_tiles;
+    delete out_colliding_ledge_tiles;
 
     if (current_state.state.compare("Gap_Jump_Arc_Fall") == 0 ||
         current_state.state.compare("Gap_Jump_Falling") == 0 ||
@@ -1171,7 +1179,11 @@ void Avatar_Controller::RunJumpingState() {
 
     if (current_state.state.compare("Vertical_Jump_Takeoff") == 0 ||
         current_state.state.compare("Vertical_Jump_Arc") == 0 ||
-        current_state.state.compare("Vertical_Jump_Landing") == 0) {
+        current_state.state.compare("Vertical_Jump_Landing") == 0 ||
+        current_state.state.compare("Gap_Jump_Takeoff") == 0 ||
+        current_state.state.compare("Gap_Jump_Arc_Rise") == 0 ||
+        current_state.state.compare("Gap_Jump_Arc_Fall") == 0 ||
+        current_state.state.compare("Gap_Jump_Falling") == 0) {
       std::vector<Wall_Collision> *out_colliding_floor_tiles = new std::vector<Wall_Collision>();
       bool can_avatar_grab_a_ledge = CanAvatarGrabALedge(out_colliding_floor_tiles);
       if (can_avatar_grab_a_ledge) {
@@ -2372,7 +2384,7 @@ void Avatar_Controller::ClearAvatarState() {
 //------------------------------------------------------------------------------
 bool Avatar_Controller::CanAvatarGrabALedge(std::vector<Wall_Collision> *out_collisions) {
   // Magic number
-  double avatar_grab_range = 50;
+  double avatar_grab_range = 200;
 
   if (!m_ledge_tiles.empty()) {
     Avatar_Component::Avatar_Collision_Block avatar_hand;
