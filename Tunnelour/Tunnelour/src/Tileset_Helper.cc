@@ -300,7 +300,7 @@ bool Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(std::string metadata
             token = strtok_s(NULL, " =\"", &next_token);
             temp_frame_metadata.id = atoi(token);
           } else {
-            throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! (" + metadata_file + ") Expected: Frame_ID");
+            throw Tunnelour::Exceptions::init_error("Parse Tileset Metadata Failed! (" + metadata_file + ") Expected: \"Frame_ID\" got \"" + line + "\"");
             return false;
           }
         }
@@ -402,7 +402,7 @@ bool Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(std::string metadata
         temp_subset.frames.push_back(temp_frame_metadata);
       }
     
-      out_metadata->subsets.push_back(temp_subset);
+       out_metadata->subsets.push_back(temp_subset);
     }
   }
 
