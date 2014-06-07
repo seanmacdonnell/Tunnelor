@@ -658,7 +658,7 @@ void Avatar_Controller::RunRunningState() {
       // Detect if the avatar is intersecting with a wall
       std::vector<Wall_Collision> *out_colliding_wall_tiles = new std::vector<Wall_Collision>();
       if (IsAvatarWallColliding(out_colliding_wall_tiles)) {
-        if (current_state.state.compare("Wall_Colliding") != 0 || last_state.state.compare("Wall_Colliding")) {
+        if (current_state.state.compare("Wall_Colliding") != 0 && last_state.state.compare("Wall_Colliding") != 0) {
           if  (current_state.state.compare("Stopping") != 0 &&
                last_state.state.compare("Stopping") != 0 &&
                current_state.state.compare("Wall_Colliding_From_Mid_Speed_Takeoff") != 0 &&
