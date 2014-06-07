@@ -1264,7 +1264,12 @@ void Avatar_Controller::RunJumpingState() {
         current_state.state.compare("Gap_Jump_Takeoff") == 0 ||
         current_state.state.compare("Gap_Jump_Arc_Rise") == 0 ||
         current_state.state.compare("Gap_Jump_Arc_Fall") == 0 ||
-        current_state.state.compare("Gap_Jump_Falling") == 0) {
+        current_state.state.compare("Gap_Jump_Falling") == 0 ||
+        current_state.state.compare("Wall_Jump_Takeoff") == 0 ||
+        current_state.state.compare("Wall_Jump_Rise_Arc") == 0 ||
+        current_state.state.compare("Wall_Jump_Fall_Arc") == 0 ||
+        current_state.state.compare("Wall_Jump_Rising") == 0 ||
+        current_state.state.compare("Wall_Jump_Falling") == 0) {
       std::vector<Wall_Collision> *out_colliding_floor_tiles = new std::vector<Wall_Collision>();
       bool can_avatar_grab_a_ledge = CanAvatarGrabALedge(out_colliding_floor_tiles);
       if (can_avatar_grab_a_ledge) {
@@ -1688,11 +1693,19 @@ bool Avatar_Controller::IsAvatarWallColliding(std::vector<Wall_Collision> *out_c
 double Avatar_Controller::WhatsTheDistanceBetweenThesePoints(D3DXVECTOR2 point_1, D3DXVECTOR2 point_2)
 {
     //return sqrt((point_1.x - point_2.y)*(point_1.x - point_2.x) + (point_1.y - point_2.y)*(point_1.y - point_2.y));
-    point_1.x -= point_2.x;
-    point_1.x *= point_1.x; 
-    point_1.y -= point_2.y;
-    point_1.y *= point_1.y;
-    return sqrt(point_1.x * point_1.y);
+    //point_1.x -= point_2.x;
+    //point_1.x *= point_1.x; 
+    //point_1.y -= point_2.y;
+    //point_1.y *= point_1.y;
+    //return sqrt(point_1.x * point_1.y);
+    double x = point_1.x - point_2.x;
+    double y = point_1.y - point_2.y;
+    double dist;
+
+    dist = pow(x,2)+pow(y,2);           //calculating distance by euclidean formula
+    dist = sqrt(dist);                  //sqrt is function in math.h
+
+    return dist;
 }
 
 bool Avatar_Controller::DoTheseLinesIntersect(D3DXVECTOR2 line_a_begin, D3DXVECTOR2 line_a_end, D3DXVECTOR2 line_b_begin, D3DXVECTOR2 line_b_end, D3DXVECTOR2 *out_intersecting_point) {
@@ -2465,7 +2478,7 @@ void Avatar_Controller::ClearAvatarState() {
 //------------------------------------------------------------------------------
 bool Avatar_Controller::CanAvatarGrabALedge(std::vector<Wall_Collision> *out_collisions) {
   // Magic number
-  double avatar_grab_range = 200;
+  double avatar_grab_range = 40;
 
   if (!m_ledge_tiles.empty()) {
     Avatar_Component::Avatar_Collision_Block avatar_hand;
