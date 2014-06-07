@@ -431,7 +431,7 @@ void Avatar_Controller::RunRunningState() {
   Avatar_Component::Avatar_State last_state = m_avatar->GetLastRenderedState();
   Avatar_Component::Avatar_State current_command = m_avatar->GetCommand();
 
-  float stop_trigger_threshold = 16;
+  float stop_trigger_threshold = 8;
   float Wall_Colliding_From_Mid_Speed_trigger_threshold = 24;
   float Wall_Colliding_From_High_Speed_trigger_threshold = 48;
 
@@ -527,13 +527,16 @@ void Avatar_Controller::RunRunningState() {
       AlignAvatarOnLastAvatarCollisionBlock();
       has_state_changed = true;
     } else if (current_command.state.compare("") == 0) {
-      if (m_avatar->GetVelocity().x > stop_trigger_threshold || m_avatar->GetVelocity().x < (stop_trigger_threshold*-1)) {
-        SetAvatarState("Charlie_Running", "Stopping", m_avatar->GetState().direction);
-      } else {
-        SetAvatarState("Charlie_Standing", "Standing", current_state.direction);
+      if (current_state.state.compare("Wall_Colliding_From_Mid_Speed_Takeoff") != 0 &&
+        current_state.state.compare("Wall_Colliding_From_High_Speed_Takeoff") != 0) {
+        if (m_avatar->GetVelocity().x > stop_trigger_threshold || m_avatar->GetVelocity().x < (stop_trigger_threshold*-1)) {
+          SetAvatarState("Charlie_Running", "Stopping", m_avatar->GetState().direction);
+        } else {
+          SetAvatarState("Charlie_Standing", "Standing", current_state.direction);
+        }
+        AlignAvatarOnLastAvatarCollisionBlock();
+        has_state_changed = true;
       }
-      AlignAvatarOnLastAvatarCollisionBlock();
-      has_state_changed = true;
     } else if (current_state.state.compare("Wall_Colliding") == 0) {       
       if (current_command.direction.compare(current_state.direction) != 0) {
         if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0 ) {
@@ -545,20 +548,23 @@ void Avatar_Controller::RunRunningState() {
         AlignAvatarOnLastAvatarCollisionBlock();
       }
     } else {
-      if (current_command.direction.compare(current_state.direction) != 0) {
-        if (m_avatar->GetVelocity().x > stop_trigger_threshold || m_avatar->GetVelocity().x < (stop_trigger_threshold*-1)) {
-          SetAvatarState("Charlie_Running", "Stopping", m_avatar->GetState().direction);
-        } else {
-          if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0 ) {
-            SetAvatarState("Charlie_" + current_command.state, current_command.state, current_command.direction);
-            m_avatar->SetVelocity(D3DXVECTOR3(0, 0, 0));
+      if (current_state.state.compare("Wall_Colliding_From_Mid_Speed_Takeoff") != 0 &&
+        current_state.state.compare("Wall_Colliding_From_High_Speed_Takeoff") != 0) {
+        if (current_command.direction.compare(current_state.direction) != 0) {
+          if (m_avatar->GetVelocity().x > stop_trigger_threshold || m_avatar->GetVelocity().x < (stop_trigger_threshold*-1)) {
+            SetAvatarState("Charlie_Running", "Stopping", m_avatar->GetState().direction);
           } else {
-            SetAvatarState("Charlie_" + current_command.state, current_command.state, m_avatar->GetState().direction);
-            m_avatar->SetVelocity(D3DXVECTOR3(0, 0, 0));
+            if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0 ) {
+              SetAvatarState("Charlie_" + current_command.state, current_command.state, current_command.direction);
+              m_avatar->SetVelocity(D3DXVECTOR3(0, 0, 0));
+            } else {
+              SetAvatarState("Charlie_" + current_command.state, current_command.state, m_avatar->GetState().direction);
+              m_avatar->SetVelocity(D3DXVECTOR3(0, 0, 0));
+            }
           }
+          has_state_changed = true;
+          AlignAvatarOnLastAvatarCollisionBlock();
         }
-        has_state_changed = true;
-        AlignAvatarOnLastAvatarCollisionBlock();
       }
     }
   }
@@ -663,8 +669,16 @@ void Avatar_Controller::RunRunningState() {
                last_state.state.compare("Stopping") != 0 &&
                current_state.state.compare("Wall_Colliding_From_Mid_Speed_Takeoff") != 0 &&
                last_state.state.compare("Wall_Colliding_From_Mid_Speed_Takeoff") != 0 &&
+               current_state.state.compare("Wall_Colliding_From_Mid_Speed_Arc") != 0 &&
+               last_state.state.compare("Wall_Colliding_From_Mid_Speed_Arc") != 0 &&
+               current_state.state.compare("Wall_Colliding_From_Mid_Speed_Landing") != 0 &&
+               last_state.state.compare("Wall_Colliding_From_Mid_Speed_Landing") != 0 &&
                current_state.state.compare("Wall_Colliding_From_High_Speed_Takeoff") != 0 &&
-               last_state.state.compare("Wall_Colliding_From_High_Speed_Takeoff") != 0) {
+               last_state.state.compare("Wall_Colliding_From_High_Speed_Takeoff") != 0 &&
+               current_state.state.compare("Wall_Colliding_From_High_Speed_Arc") != 0 &&
+               last_state.state.compare("Wall_Colliding_From_High_Speed_Arc") != 0 &&
+               current_state.state.compare("Wall_Colliding_From_High_Speed_Landing") != 0 &&
+               last_state.state.compare("Wall_Colliding_From_High_Speed_Landing") != 0) {
             if (out_colliding_wall_tiles->begin()->collision_side.compare(current_state.direction) != 0) {
               if (m_avatar->GetVelocity().x == Wall_Colliding_From_High_Speed_trigger_threshold || m_avatar->GetVelocity().x == (Wall_Colliding_From_High_Speed_trigger_threshold*-1)) {
                 SetAvatarState("Charlie_Running", "Wall_Colliding_From_High_Speed_Takeoff", m_avatar->GetState().direction);
