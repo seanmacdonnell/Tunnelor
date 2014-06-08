@@ -1273,10 +1273,23 @@ void Avatar_Controller::RunJumpingState() {
       std::vector<Wall_Collision> *out_colliding_floor_tiles = new std::vector<Wall_Collision>();
       bool can_avatar_grab_a_ledge = CanAvatarGrabALedge(out_colliding_floor_tiles);
       if (can_avatar_grab_a_ledge) {
-        SetAvatarState("Charlie_Climbing", "Vertical_Jump_To_Hanging", m_avatar->GetState().direction);
-        AlignAvatarOnLastLedgeEdge(*(out_colliding_floor_tiles->begin()));
-        has_state_changed = true;
-        m_y_fallen = 0;
+        if (current_command.direction.compare(out_colliding_floor_tiles->begin()->collision_side) != 0) {
+          if (current_state.state.compare("Wall_Jump_Takeoff") == 0 ||
+              current_state.state.compare("Wall_Jump_Rise_Arc") == 0 ||
+              current_state.state.compare("Wall_Jump_Fall_Arc") == 0 ||
+              current_state.state.compare("Wall_Jump_Rising") == 0 ||
+              current_state.state.compare("Wall_Jump_Falling") == 0) {            
+            SetAvatarState("Charlie_Climbing", "Wall_Jump_To_Hanging", m_avatar->GetState().direction);
+            AlignAvatarOnLastLedgeEdge(*(out_colliding_floor_tiles->begin()));
+            has_state_changed = true;
+            m_y_fallen = 0;
+          } else {
+            SetAvatarState("Charlie_Climbing", "Vertical_Jump_To_Hanging", m_avatar->GetState().direction);
+            AlignAvatarOnLastLedgeEdge(*(out_colliding_floor_tiles->begin()));
+            has_state_changed = true;
+            m_y_fallen = 0;
+          }
+        }
       }
       delete out_colliding_floor_tiles;
     }
@@ -1325,7 +1338,11 @@ void Avatar_Controller::RunClimbingState() {
       if (m_current_animation_subset.is_repeatable) {
         state_index = 0;
       } else {
-        if (current_state.state.compare("Vertical_Jump_To_Hanging") == 0) {
+        if (current_state.state.compare("Wall_Jump_To_Hanging") == 0) {
+          SetAvatarState("Charlie_Climbing", "Hanging", m_avatar->GetState().direction);
+          AlignAvatarOnLastHand();
+          has_state_changed = true;
+        } else if (current_state.state.compare("Vertical_Jump_To_Hanging") == 0) {
           SetAvatarState("Charlie_Climbing", "Hanging", m_avatar->GetState().direction);
           AlignAvatarOnLastHand();
           has_state_changed = true;
@@ -2495,7 +2512,7 @@ void Avatar_Controller::ClearAvatarState() {
 //------------------------------------------------------------------------------
 bool Avatar_Controller::CanAvatarGrabALedge(std::vector<Wall_Collision> *out_collisions) {
   // Magic number
-  double avatar_grab_range = 40;
+  double avatar_grab_range = 60;
 
   if (!m_ledge_tiles.empty()) {
     Avatar_Component::Avatar_Collision_Block avatar_hand;
