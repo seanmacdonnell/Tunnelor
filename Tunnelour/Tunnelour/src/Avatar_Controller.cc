@@ -491,6 +491,21 @@ void Avatar_Controller::RunRunningState() {
         }
         has_state_changed = true;
         AlignAvatarOnLastAvatarCollisionBlock();
+      } else if (current_state.state.compare("Wall_Colliding") == 0) {
+        float y_velocity = 22;
+        float x_velocity = 4;
+        if (current_state.direction.compare("Right") == 0) {
+          m_avatar->SetVelocity(D3DXVECTOR3(x_velocity, y_velocity, 0));
+        } else {  // Left
+          m_avatar->SetVelocity(D3DXVECTOR3((x_velocity * -1), y_velocity, 0));
+        }
+        if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0) {
+          SetAvatarState("Charlie_Jumping", "Vertical_Jump_Takeoff", current_command.direction);
+        } else {
+          SetAvatarState("Charlie_Jumping", "Vertical_Jump_Takeoff", m_avatar->GetState().direction);
+        }
+        AlignAvatarOnLastAvatarCollisionBlock();
+        has_state_changed = true;
       } else {
         D3DXVECTOR3 position = *m_avatar->GetPosition();
         position += m_avatar->GetVelocity();
@@ -1274,8 +1289,7 @@ void Avatar_Controller::RunJumpingState() {
       bool can_avatar_grab_a_ledge = CanAvatarGrabALedge(out_colliding_floor_tiles);
       if (can_avatar_grab_a_ledge) {
         if (current_command.direction.compare(out_colliding_floor_tiles->begin()->collision_side) != 0) {
-          if (current_state.state.compare("Wall_Jump_Takeoff") == 0 ||
-              current_state.state.compare("Wall_Jump_Rise_Arc") == 0 ||
+          if (current_state.state.compare("Wall_Jump_Rise_Arc") == 0 ||
               current_state.state.compare("Wall_Jump_Fall_Arc") == 0 ||
               current_state.state.compare("Wall_Jump_Rising") == 0 ||
               current_state.state.compare("Wall_Jump_Falling") == 0) {            
