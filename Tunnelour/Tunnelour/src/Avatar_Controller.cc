@@ -434,20 +434,20 @@ void Avatar_Controller::RunRunningState() {
 
   float stop_trigger_threshold = 8;
   float Wall_Colliding_From_Mid_Speed_trigger_threshold = 24;
-  float Wall_Colliding_From_High_Speed_trigger_threshold = 48;
+  float Wall_Colliding_From_High_Speed_trigger_threshold = 42;
 
   if (current_state.state.compare("Running") == 0) {
     if (current_state.direction.compare("Right") == 0) {
       if (current_state.state_index == 6 || current_state.state_index == 0 && current_state != last_state) {
         float new_x_velocity = m_avatar->GetVelocity().x + 16;
-        if (new_x_velocity > 48) { new_x_velocity = 48; }
+        if (new_x_velocity > 42) { new_x_velocity = 42; }
         m_avatar->SetVelocity(D3DXVECTOR3(new_x_velocity, 0 , 0));
       }
       
     } else {  // Left
       if (current_state.state_index == 6 || current_state.state_index == 0 && current_state != last_state) {
         float new_x_velocity = m_avatar->GetVelocity().x - 16;
-        if (new_x_velocity < -48) { new_x_velocity = -48; }
+        if (new_x_velocity < -42) { new_x_velocity = -42; }
         m_avatar->SetVelocity(D3DXVECTOR3(new_x_velocity, 0 , 0));
       }
     }
@@ -652,7 +652,6 @@ void Avatar_Controller::RunRunningState() {
             current_state.state.compare("Wall_Colliding_From_High_Speed_Landing") == 0) {
           AlignAvatarOnLastContactingFoot();
         } else {
-          //AlignAvatarOnLastContactingFoot();
           if (m_avatar->GetVelocity().x > 0) {
             AlignAvatarOnLastAvatarCollisionBlockRightBottom();
           } else {
@@ -731,7 +730,7 @@ void Avatar_Controller::RunRunningState() {
         //ClearAvatarState();
       }
       delete out_colliding_wall_tiles;
-
+      
       // Detect if the avatar is overbalancing from walking
       std::vector<Bitmap_Component*> *adjacent_tiles = new std::vector<Bitmap_Component*>();
       if (!IsAvatarFloorAdjacent(adjacent_tiles) && 
@@ -746,7 +745,11 @@ void Avatar_Controller::RunRunningState() {
           std::vector<Bitmap_Component*> *adjacent_tile = new std::vector<Bitmap_Component*>();
           while (!IsAvatarFloorAdjacent(adjacent_tile)) {
             D3DXVECTOR3 position = *m_avatar->GetPosition();
-            position.y -= 1;
+            if (current_state.direction.compare("Right") == 0) {
+              position.x -= 1;
+            } else {
+              position.x += 1;
+            }
             m_avatar->SetPosition(position);
           }
           delete adjacent_tiles;
@@ -2038,7 +2041,7 @@ void Avatar_Controller::AlignAvatarOnLastAvatarCollisionBlock() {
 
   Avatar_Component::Avatar_Collision_Block last_avatar_collision_block;
   last_avatar_collision_block = GetNamedCollisionBlock("Avatar", m_avatar->GetLastState().avatar_collision_blocks);
-  Bitmap_Component *last_collision_bitmap = CollisionBlockToBitmapComponent(last_avatar_collision_block, *(m_avatar->GetPosition()));
+  Bitmap_Component *last_collision_bitmap = CollisionBlockToBitmapComponent(last_avatar_collision_block, m_avatar->GetLastRenderedPosition());
 
   if (current_collision_bitmap->GetBottomRightPostion().y != last_collision_bitmap->GetBottomRightPostion().y) {
     D3DXVECTOR3 right_foot_offset;
@@ -2087,6 +2090,13 @@ void Avatar_Controller::AlignAvatarOnLastAvatarCollisionBlockRightBottom() {
 
   Avatar_Component::Avatar_Collision_Block last_avatar_collision_block;
   last_avatar_collision_block = GetNamedCollisionBlock("Avatar", m_avatar->GetLastRenderedState().avatar_collision_blocks);
+  // This fixes a bug where the GetNamedCollisionBlock uses the current avatars direction to determine if the
+  // x offsets should be reversed (because the avatar would be facing left, and all the offsets are using right facing sprites
+  // but if the last state was facing in the opposite direction then the alignment calculation would be off, so
+  // this detects and fixes this alignment issue.
+  if (m_avatar->GetLastRenderedState().direction.compare(m_avatar->GetState().direction) != 0) {
+    last_avatar_collision_block.offset_from_avatar_centre.x = (last_avatar_collision_block.offset_from_avatar_centre.x * -1);
+  }
   Bitmap_Component *last_collision_bitmap = CollisionBlockToBitmapComponent(last_avatar_collision_block, m_avatar->GetLastRenderedPosition());
   D3DXVECTOR3 last_bottom_right = last_collision_bitmap->GetBottomRightPostion();
 
@@ -2464,7 +2474,7 @@ Avatar_Component::Avatar_Collision_Block Avatar_Controller::GetNamedCollisionBlo
       if (m_avatar->GetState().direction.compare("Left") == 0) {
         // This reverses the avatar offsets if the avatar is facing left.
         // This is because the avatar offsets are recorded using a right facing sprite.
-        //found_avatar_collision_block.offset_from_avatar_centre.x = (found_avatar_collision_block.offset_from_avatar_centre.x * -1);
+        found_avatar_collision_block.offset_from_avatar_centre.x = (found_avatar_collision_block.offset_from_avatar_centre.x * -1);
       }
     }
   }

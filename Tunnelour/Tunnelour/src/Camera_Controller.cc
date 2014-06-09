@@ -66,8 +66,12 @@ bool Camera_Controller::Run() {
     // Get the avatar collision block
     Avatar_Component::Avatar_Collision_Block avatar_collision_block = GetNamedCollisionBlock("Avatar", m_avatar->GetState().avatar_collision_blocks);
 
-    avatar_position.x = m_avatar->GetPosition()->x + avatar_collision_block.offset_from_avatar_centre.x;
-    avatar_position.y = m_avatar->GetPosition()->y + avatar_collision_block.offset_from_avatar_centre.y;
+    if (m_avatar->GetState().direction.compare("Right") == 0) {
+      avatar_position.x = m_avatar->GetPosition()->x + avatar_collision_block.offset_from_avatar_centre.x;
+    } else {
+      avatar_position.x = m_avatar->GetPosition()->x + (avatar_collision_block.offset_from_avatar_centre.x * -1);
+    }
+    avatar_position.y = m_avatar->GetPosition()->y; + avatar_collision_block.offset_from_avatar_centre.y;
     avatar_position.z = m_avatar->GetPosition()->z;
 
     // I did this because I was getting some funny bugs where tiles were 
