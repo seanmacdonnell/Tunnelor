@@ -40,6 +40,7 @@ Avatar_Controller::Avatar_Controller() : Controller() {
   m_wall_impacting = false;
   m_last_frame_time = 0;
   m_y_fallen = 0;
+  m_speed_offset = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -432,23 +433,36 @@ void Avatar_Controller::RunRunningState() {
   Avatar_Component::Avatar_State last_state = m_avatar->GetLastRenderedState();
   Avatar_Component::Avatar_State current_command = m_avatar->GetCommand();
 
-  float stop_trigger_threshold = 8;
-  float Wall_Colliding_From_Mid_Speed_trigger_threshold = 24;
-  float Wall_Colliding_From_High_Speed_trigger_threshold = 42;
+  float stop_trigger_threshold = -4;
+  float Wall_Colliding_From_Mid_Speed_trigger_threshold = 0;
+  float Wall_Colliding_From_High_Speed_trigger_threshold = 6;
 
   if (current_state.state.compare("Running") == 0) {
     if (current_state.direction.compare("Right") == 0) {
+      m_avatar->SetVelocity(D3DXVECTOR3(42, 0 , 0));
       if (current_state.state_index == 6 || current_state.state_index == 0 && current_state != last_state) {
+        m_speed_offset += 4;
+        if (m_speed_offset > 6) {
+          m_speed_offset = 6;
+        }
+        /*
         float new_x_velocity = m_avatar->GetVelocity().x + 16;
         if (new_x_velocity > 42) { new_x_velocity = 42; }
         m_avatar->SetVelocity(D3DXVECTOR3(new_x_velocity, 0 , 0));
+        */
       }
-      
     } else {  // Left
+      m_avatar->SetVelocity(D3DXVECTOR3(-42, 0 , 0));
       if (current_state.state_index == 6 || current_state.state_index == 0 && current_state != last_state) {
+        m_speed_offset += 4;
+        if (m_speed_offset > 6) {
+          m_speed_offset = 6;
+        }
+        /*
         float new_x_velocity = m_avatar->GetVelocity().x - 16;
         if (new_x_velocity < -42) { new_x_velocity = -42; }
         m_avatar->SetVelocity(D3DXVECTOR3(new_x_velocity, 0 , 0));
+        */
       }
     }
   } else if (current_state.state.compare("Stopping") == 0)  {
@@ -658,6 +672,8 @@ void Avatar_Controller::RunRunningState() {
             AlignAvatarOnLastAvatarCollisionBlockLeftBottom();
           }
         }
+      } else {
+        m_speed_offset = -8;
       }
     
       if (current_state.state.compare("Wall_Colliding_From_Mid_Speed_Arc") == 0 ||
@@ -700,11 +716,11 @@ void Avatar_Controller::RunRunningState() {
                current_state.state.compare("Wall_Colliding_From_High_Speed_Landing") != 0 &&
                last_state.state.compare("Wall_Colliding_From_High_Speed_Landing") != 0) {
             if (out_colliding_wall_tiles->begin()->collision_side.compare(current_state.direction) != 0) {
-              if (m_avatar->GetVelocity().x == Wall_Colliding_From_High_Speed_trigger_threshold || m_avatar->GetVelocity().x == (Wall_Colliding_From_High_Speed_trigger_threshold*-1)) {
+              if (m_speed_offset == Wall_Colliding_From_High_Speed_trigger_threshold || m_speed_offset == (Wall_Colliding_From_High_Speed_trigger_threshold*-1)) {
                 SetAvatarState("Charlie_Running", "Wall_Colliding_From_High_Speed_Takeoff", m_avatar->GetState().direction);
-              } else if (m_avatar->GetVelocity().x > Wall_Colliding_From_Mid_Speed_trigger_threshold || m_avatar->GetVelocity().x < (Wall_Colliding_From_Mid_Speed_trigger_threshold*-1)) {
+              } else if (m_speed_offset > Wall_Colliding_From_Mid_Speed_trigger_threshold || m_speed_offset < (Wall_Colliding_From_Mid_Speed_trigger_threshold*-1)) {
                 SetAvatarState("Charlie_Running", "Wall_Colliding_From_Mid_Speed_Takeoff", m_avatar->GetState().direction);
-              } else if (m_avatar->GetVelocity().x > stop_trigger_threshold || m_avatar->GetVelocity().x < (stop_trigger_threshold*-1)) {
+              } else if (m_speed_offset > stop_trigger_threshold || m_speed_offset < (stop_trigger_threshold*-1)) {
                 SetAvatarState("Charlie_Running", "Stopping", m_avatar->GetState().direction);
               } else {
                 SetAvatarState("Charlie_Running", "Wall_Colliding", m_avatar->GetState().direction);
@@ -817,6 +833,7 @@ void Avatar_Controller::RunRunningState() {
   }
 
   if (has_state_changed) {
+    m_speed_offset = 0;
     RunAvatarState();
   }
 }
@@ -2224,7 +2241,7 @@ void Avatar_Controller::UpdateTimer() {
   if (m_game_settings->IsDebugMode()) {
     milliseconds_per_frame = static_cast<int>(1000/1);
   } else {
-    milliseconds_per_frame = static_cast<int>(1000/24);///m_current_animation_subset.frames_per_second);
+    milliseconds_per_frame = static_cast<int>(1000/(24 + m_speed_offset));///m_current_animation_subset.frames_per_second);
   }
 
   INT64 currentTime;
