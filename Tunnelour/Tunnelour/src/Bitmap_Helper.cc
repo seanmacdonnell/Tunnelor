@@ -260,7 +260,22 @@ bool Bitmap_Helper::AreTheseTilesRightXAdjacent(Tunnelour::Bitmap_Component* Til
 Tile_Bitmap* Bitmap_Helper::CollisionBlockToBitmapComponent(Avatar_Component::Avatar_Collision_Block avatar_collision_block, Bitmap_Component *avatar, Tileset_Helper::Tileset_Metadata debug_tileset_metadata, std::wstring tileset_path) {
   Tile_Bitmap *collision_bitmap = new Tile_Bitmap();
 
-  Tileset_Helper::Line middleground_line = (*debug_tileset_metadata.tilesets.begin()->lines.begin());
+  bool found = false;
+  Tileset_Helper::Subset found_subset;
+  std::vector<Tileset_Helper::Subset>::iterator tileset;
+  for (tileset = debug_tileset_metadata.tilesets.begin(); tileset != debug_tileset_metadata.tilesets.end(); tileset++) {    
+    if (tileset->type.compare("Debug Border") == 0) {
+      found_subset = *tileset;
+      found = true;
+    }
+  }
+
+  Tileset_Helper::Line middleground_line;
+  if (found) {
+    middleground_line = *(found_subset.lines.begin());
+  } else {
+    middleground_line = (*debug_tileset_metadata.tilesets.begin()->lines.begin());
+  }
 
   collision_bitmap->GetTexture()->transparency = 0.0f;
 

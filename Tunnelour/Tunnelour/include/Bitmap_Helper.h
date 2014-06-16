@@ -87,6 +87,14 @@ class Bitmap_Helper {
   //---------------------------------------------------------------------------
   static Tile_Bitmap* CollisionBlockToBitmapComponent(Avatar_Component::Avatar_Collision_Block avatar_collision_block, Bitmap_Component *avatar, Tileset_Helper::Tileset_Metadata tileset_metadata, std::wstring tileset_path);
 
+
+  //---------------------------------------------------------------------------
+  // Description : Creates a bitmap component of the given avatar collision
+  //             : block.
+  //---------------------------------------------------------------------------
+  static Tile_Bitmap* CollisionBlockToBitmapBorderComponent(Avatar_Component::Avatar_Collision_Block avatar_collision_block, Bitmap_Component *avatar, Tileset_Helper::Tileset_Metadata tileset_metadata, std::wstring tileset_path);
+
+
  protected:
 
  private:

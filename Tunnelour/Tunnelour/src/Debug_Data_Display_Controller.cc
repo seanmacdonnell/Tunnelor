@@ -77,7 +77,7 @@ bool Debug_Data_Display_Controller::Init(Component_Composite * const model) {
     m_model->Add(m_game_metrics);
     // Create Collision Blocks For Avatar
     
-    m_debug_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Debug_Tileset_0_5.txt");
+    m_debug_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Debug_Tileset.txt");
     Tileset_Helper::LoadTilesetMetadataIntoStruct(m_debug_metadata_file_path, &m_debug_tileset_metadata);
 
   } else {
@@ -131,7 +131,7 @@ bool Debug_Data_Display_Controller::Run() {
         m_collision_bitmaps.push_back(avatar_collision_block_bitmap);
         m_model->Add(avatar_collision_block_bitmap);
         if (m_is_debug_mode) {
-          //avatar_collision_block_bitmap->GetTexture()->transparency = 1.0f;
+          avatar_collision_block_bitmap->GetTexture()->transparency = 1.0f;
         }
       }
     }
@@ -161,7 +161,7 @@ bool Debug_Data_Display_Controller::Run() {
         m_avatar_jumping_height_display->GetTexture()->transparency = 1.0f;
         std::vector<Tile_Bitmap*>::iterator collision_bitmap;
         for (collision_bitmap = m_collision_bitmaps.begin(); collision_bitmap != m_collision_bitmaps.end(); collision_bitmap++) {
-          //(*collision_bitmap)->GetTexture()->transparency = 1.0f;
+          (*collision_bitmap)->GetTexture()->transparency = 1.0f;
           (*collision_bitmap)->Init();
         }
         m_is_debug_mode = m_game_settings->IsDebugMode();
