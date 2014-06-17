@@ -683,8 +683,14 @@ void Avatar_Controller::RunRunningState() {
         } else {
           if (m_avatar->GetVelocity().x > 0) {
             AlignAvatarOnLastAvatarCollisionBlockRightBottom();
-          } else {
+          } else if (m_avatar->GetVelocity().x < 0) {
             AlignAvatarOnLastAvatarCollisionBlockLeftBottom();
+          } else if (current_state.direction.compare("Right") == 0) {
+            AlignAvatarOnLastAvatarCollisionBlockRightBottom();
+          } else if  (current_state.direction.compare("Left") == 0) {
+            AlignAvatarOnLastAvatarCollisionBlockLeftBottom();
+          } else {
+            AlignAvatarOnLastAvatarCollisionBlock();
           }
         }
       }
@@ -743,6 +749,7 @@ void Avatar_Controller::RunRunningState() {
                   SetAvatarState("Charlie_Running", "Wall_Colliding_From_Mid_Speed_Takeoff", m_avatar->GetState().direction);
                 } else {
                   SetAvatarState("Charlie_Running", "Stopping", m_avatar->GetState().direction);
+                  m_avatar->SetVelocity(D3DXVECTOR3(0, 0 , 0));
                 }
               }
               has_state_changed = true;
