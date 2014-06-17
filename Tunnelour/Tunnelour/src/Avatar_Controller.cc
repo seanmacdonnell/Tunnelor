@@ -1886,16 +1886,21 @@ void Avatar_Controller::AlignAvatarOnRightFoot() {
 
   Avatar_Component::Avatar_Collision_Block current_avatar_collision_block;
   current_avatar_collision_block = GetNamedCollisionBlock("Right_Foot", m_avatar->GetState().avatar_collision_blocks);
+  if (m_avatar->GetState().direction.compare(m_avatar->GetLastRenderedState().direction) != 0) {
+    current_avatar_collision_block.offset_from_avatar_centre.x = (current_avatar_collision_block.offset_from_avatar_centre.x * -1);
+  }
   Bitmap_Component *current_collision_bitmap = CollisionBlockToBitmapComponent(current_avatar_collision_block, *(m_avatar->GetPosition()));
   D3DXVECTOR3 current_position;
   current_position = current_collision_bitmap->GetBottomRightPostion();
 
   Avatar_Component::Avatar_Collision_Block last_avatar_collision_block;
   last_avatar_collision_block = GetNamedCollisionBlock("Right_Foot", m_avatar->GetLastRenderedState().avatar_collision_blocks);
+  if (m_avatar->GetState().direction.compare(m_avatar->GetLastRenderedState().direction) != 0) {
+    last_avatar_collision_block.offset_from_avatar_centre.x = (last_avatar_collision_block.offset_from_avatar_centre.x * -1);
+  }
   Bitmap_Component *last_collision_bitmap = CollisionBlockToBitmapComponent(last_avatar_collision_block, m_avatar->GetLastRenderedPosition());
   D3DXVECTOR3 last_position;
   last_position = last_collision_bitmap->GetBottomRightPostion();
-
 
   if (current_position != last_position) {
     D3DXVECTOR3 difference;
@@ -2557,10 +2562,10 @@ Avatar_Component::Avatar_Collision_Block Avatar_Controller::TilesetCollisionBloc
   if (m_avatar->GetState().direction.compare("Left") == 0) {
     // We need to reverse the x on the collision block.
     if (new_avatar_collision_block.id.compare("Left_Foot") == 0) {
-      new_avatar_collision_block.id = "Right_Foot";
+      //new_avatar_collision_block.id = "Right_Foot";
       new_avatar_collision_block.offset_from_avatar_centre.x = (new_avatar_collision_block.offset_from_avatar_centre.x * -1);
     } else if (new_avatar_collision_block.id.compare("Right_Foot") == 0) {
-      new_avatar_collision_block.id = "Left_Foot";
+      //new_avatar_collision_block.id = "Left_Foot";
       new_avatar_collision_block.offset_from_avatar_centre.x = (new_avatar_collision_block.offset_from_avatar_centre.x * -1);
     }
   }
