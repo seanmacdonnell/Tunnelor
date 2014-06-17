@@ -609,6 +609,7 @@ void Avatar_Controller::RunRunningState() {
       if (m_current_animation_subset.is_repeatable) {
         state_index = 0;
       } else {
+        /*
         if (current_state.state.compare("Stopping") == 0 ||
             current_state.state.compare("Wall_Colliding_From_Mid_Speed_Landing") == 0 ||
             current_state.state.compare("Wall_Colliding_From_High_Speed_Landing") == 0) {
@@ -625,7 +626,8 @@ void Avatar_Controller::RunRunningState() {
             AlignAvatarOnLastContactingFoot();
           }
           has_state_changed = true;
-        } else if (current_state.state.compare("Wall_Colliding_From_Mid_Speed_Takeoff") == 0) {
+        } else */
+        if (current_state.state.compare("Wall_Colliding_From_Mid_Speed_Takeoff") == 0) {
           SetAvatarState("Charlie_Running", "Wall_Colliding_From_Mid_Speed_Arc", current_state.direction);
           AlignAvatarOnLastAvatarCollisionBlock();
           D3DXVECTOR3 velocity = m_avatar->GetVelocity();
@@ -685,8 +687,6 @@ void Avatar_Controller::RunRunningState() {
             AlignAvatarOnLastAvatarCollisionBlockLeftBottom();
           }
         }
-      } else {
-        //m_speed_offset = -8;
       }
     
       if (current_state.state.compare("Wall_Colliding_From_Mid_Speed_Arc") == 0 ||
@@ -1853,7 +1853,7 @@ void Avatar_Controller::LoadTilesets(std::wstring wtileset_path) {
   m_animation_metadata.push_back(m_walking_metadata);
 
   // Standing
-  m_standing_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Standing_Animation_Tileset_1_2.txt");
+  m_standing_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Standing_Animation_Tileset.txt");
   Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(m_standing_metadata_file_path, &m_standing_metadata);
   m_animation_metadata.push_back(m_standing_metadata);
 
@@ -1887,17 +1887,20 @@ void Avatar_Controller::AlignAvatarOnRightFoot() {
   Avatar_Component::Avatar_Collision_Block current_avatar_collision_block;
   current_avatar_collision_block = GetNamedCollisionBlock("Right_Foot", m_avatar->GetState().avatar_collision_blocks);
   Bitmap_Component *current_collision_bitmap = CollisionBlockToBitmapComponent(current_avatar_collision_block, *(m_avatar->GetPosition()));
-  D3DXVECTOR3 current_bottom_right = current_collision_bitmap->GetBottomRightPostion();
+  D3DXVECTOR3 current_position;
+  current_position = current_collision_bitmap->GetBottomRightPostion();
 
   Avatar_Component::Avatar_Collision_Block last_avatar_collision_block;
   last_avatar_collision_block = GetNamedCollisionBlock("Right_Foot", m_avatar->GetLastRenderedState().avatar_collision_blocks);
   Bitmap_Component *last_collision_bitmap = CollisionBlockToBitmapComponent(last_avatar_collision_block, m_avatar->GetLastRenderedPosition());
-  D3DXVECTOR3 last_bottom_right = last_collision_bitmap->GetBottomRightPostion();
+  D3DXVECTOR3 last_position;
+  last_position = last_collision_bitmap->GetBottomRightPostion();
 
-  if (current_bottom_right != last_bottom_right) {
+
+  if (current_position != last_position) {
     D3DXVECTOR3 difference;
-    difference.x = last_bottom_right.x - current_bottom_right.x;
-    difference.y = last_bottom_right.y - current_bottom_right.y;
+    difference.x = last_position.x - current_position.x;
+    difference.y = last_position.y - current_position.y;
     difference.z = 0;
 
     D3DXVECTOR3 new_avatar_position = *m_avatar->GetPosition();
@@ -1907,8 +1910,8 @@ void Avatar_Controller::AlignAvatarOnRightFoot() {
   }
 
   current_collision_bitmap = CollisionBlockToBitmapComponent(current_avatar_collision_block, *(m_avatar->GetPosition()));
-  current_bottom_right = current_collision_bitmap->GetBottomRightPostion();
-  if (current_bottom_right != last_bottom_right) {
+  current_position = current_collision_bitmap->GetBottomRightPostion();
+  if (current_position != last_position) {
     throw Exceptions::run_error("AlignAvatarOnRightFoot: Failed to set avatar position correctly!");
   }
 
@@ -2512,11 +2515,6 @@ Avatar_Component::Avatar_Collision_Block Avatar_Controller::GetNamedCollisionBlo
   for (avatar_collision_block = avatar_collision_blocks.begin(); avatar_collision_block != avatar_collision_blocks.end(); avatar_collision_block++) {
     if (avatar_collision_block->id.compare(id) == 0) {
       found_avatar_collision_block = (*avatar_collision_block);
-      if (m_avatar->GetState().direction.compare("Left") == 0) {
-        // This reverses the avatar offsets if the avatar is facing left.
-        // This is because the avatar offsets are recorded using a right facing sprite.
-        found_avatar_collision_block.offset_from_avatar_centre.x = (found_avatar_collision_block.offset_from_avatar_centre.x * -1);
-      }
     }
   }
 

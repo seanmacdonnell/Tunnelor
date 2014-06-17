@@ -292,6 +292,7 @@ Tile_Bitmap* Bitmap_Helper::CollisionBlockToBitmapComponent(Avatar_Component::Av
   collision_bitmap_position.y = avatar->GetPosition()->y + avatar_collision_block.offset_from_avatar_centre.y;
   
   float random_line_tile = 0;
+  /*
   if (avatar_collision_block.id.compare("Left_Foot") == 0) {
     random_line_tile = 2;
     collision_bitmap_position.z = -2.0;
@@ -308,7 +309,7 @@ Tile_Bitmap* Bitmap_Helper::CollisionBlockToBitmapComponent(Avatar_Component::Av
     }
     collision_bitmap_position.z = -0.5;
   }
-
+  */
   collision_bitmap->SetPosition(collision_bitmap_position);
 
   float random_tile_x = random_line_tile * middleground_line.tile_size_x;
