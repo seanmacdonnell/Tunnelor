@@ -328,7 +328,7 @@ class Avatar_Controller: public Controller,
   bool m_wall_impacting;
   Avatar_Last_State m_last_state;
 
-  int m_speed_offset;
+  int m_distance_travelled;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_H_
