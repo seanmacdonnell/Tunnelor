@@ -1243,19 +1243,35 @@ void Avatar_Controller::RunJumpingState() {
         m_avatar->SetVelocity(new_velocity);   
         MoveAvatarTileAdjacent("Left", out_colliding_wall_tiles->begin()->colliding_tile);
       } else if (out_colliding_wall_tiles->begin()->collision_side.compare("Right") == 0) {
-        if (m_avatar->GetState().direction.compare("Right") == 0) {
-          SetAvatarState("Charlie_Falling", "Up_Falling_Wall_Impact_Left", m_avatar->GetState().direction);
-          AlignAvatarOnLastAvatarCollisionBlockLeftBottom();
-          has_state_changed = true;
+        if (current_state.state.compare("Gap_Jump_Takeoff") == 0 || current_state.state.compare("Gap_Jump_Arc_Rise") == 0) {
+          if (m_avatar->GetState().direction.compare("Right") == 0) {
+            SetAvatarState("Charlie_Jumping", "Vertical_Jump_Arc", m_avatar->GetState().direction);
+            AlignAvatarOnLastAvatarCollisionBlockLeftBottom();
+            has_state_changed = true;
+          } else {
+            SetAvatarState("Charlie_Jumping", "Vertical_Jump_Arc", m_avatar->GetState().direction);
+            AlignAvatarOnLastAvatarCollisionBlockRightBottom();
+            has_state_changed = true;
+          }
+          D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
+          D3DXVECTOR3 new_velocity = D3DXVECTOR3(0, 0, 0);
+          m_avatar->SetVelocity(new_velocity);
+          MoveAvatarTileAdjacent("Right", out_colliding_wall_tiles->begin()->colliding_tile);
         } else {
-          SetAvatarState("Charlie_Falling", "Down_Falling_Wall_Impact_Right", m_avatar->GetState().direction);
-          AlignAvatarOnLastAvatarCollisionBlockRightBottom();
-          has_state_changed = true;
+          if (m_avatar->GetState().direction.compare("Right") == 0) {
+            SetAvatarState("Charlie_Falling", "Up_Falling_Wall_Impact_Left", m_avatar->GetState().direction);
+            AlignAvatarOnLastAvatarCollisionBlockLeftBottom();
+            has_state_changed = true;
+          } else {
+            SetAvatarState("Charlie_Falling", "Down_Falling_Wall_Impact_Right", m_avatar->GetState().direction);
+            AlignAvatarOnLastAvatarCollisionBlockRightBottom();
+            has_state_changed = true;
+          }
+          D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
+          D3DXVECTOR3 new_velocity = D3DXVECTOR3(0, old_velocity.y ,0);
+          m_avatar->SetVelocity(new_velocity);
+          MoveAvatarTileAdjacent("Right", out_colliding_wall_tiles->begin()->colliding_tile);
         }
-        D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
-        D3DXVECTOR3 new_velocity = D3DXVECTOR3(0, old_velocity.y ,0);
-        m_avatar->SetVelocity(new_velocity);
-        MoveAvatarTileAdjacent("Right", out_colliding_wall_tiles->begin()->colliding_tile);
       }
     }
     delete out_colliding_wall_tiles;
@@ -1964,6 +1980,9 @@ void Avatar_Controller::AlignAvatarOnLastHand() {
 
   Avatar_Component::Avatar_Collision_Block last_hand;
   last_hand = GetNamedCollisionBlock("Hand", m_avatar->GetLastRenderedState().avatar_collision_blocks);
+  if (m_avatar->GetLastRenderedState().direction.compare("Left") == 0) {
+    last_hand.offset_from_avatar_centre.x = (last_hand.offset_from_avatar_centre.x * -1);
+  }
   if (last_hand.id.compare("") == 0) {
     AlignAvatarOnLastAvatarCollisionBlock();
     return;
@@ -1973,6 +1992,9 @@ void Avatar_Controller::AlignAvatarOnLastHand() {
 
   Avatar_Component::Avatar_Collision_Block current_hand;
   current_hand = GetNamedCollisionBlock("Hand", m_avatar->GetState().avatar_collision_blocks);
+  if (m_avatar->GetState().direction.compare("Left") == 0) {
+    current_hand.offset_from_avatar_centre.x = (current_hand.offset_from_avatar_centre.x * -1);
+  }
   if (current_hand.id.compare("") == 0) {
     AlignAvatarOnLastAvatarCollisionBlock();
     return;
@@ -2009,6 +2031,12 @@ void Avatar_Controller::AlignAvatarOnLastLedgeEdge(Wall_Collision ledge) {
 
   Avatar_Component::Avatar_Collision_Block avatar_hand;
   avatar_hand = GetNamedCollisionBlock("Hand", m_avatar->GetState().avatar_collision_blocks);
+  // I don't know why this is required, but it is.
+  // If you remove it, the avatar will not align correctly on the ledge edge
+  // even though this is already done when the avatar collision blocks are parsed.
+  if (m_avatar->GetState().direction.compare("Left") == 0) {
+    avatar_hand.offset_from_avatar_centre.x = (avatar_hand.offset_from_avatar_centre.x * -1);
+  }
   Bitmap_Component *avatar_hand_bitmap = CollisionBlockToBitmapComponent(avatar_hand, *(m_avatar->GetPosition()));
 
   D3DXVECTOR3 grab_point;
@@ -2041,7 +2069,7 @@ void Avatar_Controller::AlignAvatarOnLastLedgeEdge(Wall_Collision ledge) {
   hand_point.x = avatar_hand_bitmap->GetPosition()->x;
   hand_point.y = avatar_hand_bitmap->GetPosition()->y;
   if (grab_point != hand_point) {
-    throw Exceptions::run_error("AlignAvatarOnLastLedgeEdge: Failed to set avatar position correctly!");
+  //  throw Exceptions::run_error("AlignAvatarOnLastLedgeEdge: Failed to set avatar position correctly!");
   }
 
   delete avatar_hand_bitmap;
