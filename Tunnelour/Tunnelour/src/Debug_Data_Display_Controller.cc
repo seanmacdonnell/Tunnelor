@@ -117,7 +117,7 @@ bool Debug_Data_Display_Controller::Run() {
     if (!m_avatar->GetState().avatar_collision_blocks.empty()) {
       std::vector<Tile_Bitmap*>::iterator collision_bitmap;
       for (collision_bitmap = m_collision_bitmaps.begin(); collision_bitmap != m_collision_bitmaps.end(); collision_bitmap++) {
-        m_model->Remove((*collision_bitmap));
+        //m_model->Remove((*collision_bitmap));
       }
       m_collision_bitmaps.clear();
 
@@ -129,7 +129,7 @@ bool Debug_Data_Display_Controller::Run() {
         position->z = m_bitmap_z_position;
         avatar_collision_block_bitmap->SetPosition(*position);
         m_collision_bitmaps.push_back(avatar_collision_block_bitmap);
-        m_model->Add(avatar_collision_block_bitmap);
+        //m_model->Add(avatar_collision_block_bitmap);
         if (m_is_debug_mode) {
           avatar_collision_block_bitmap->GetTexture()->transparency = 1.0f;
         }

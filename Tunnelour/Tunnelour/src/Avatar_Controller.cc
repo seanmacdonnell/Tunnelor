@@ -468,7 +468,9 @@ void Avatar_Controller::RunRunningState() {
        (current_state.state.compare("Wall_Colliding_From_Mid_Speed_Landing") != 0 || current_state.state_index ==  (m_current_animation_subset.number_of_frames -1)) &&
        current_state.state.compare("Wall_Colliding_From_High_Speed_Arc") != 0 &&
        (current_state.state.compare("Wall_Colliding_From_High_Speed_Landing") != 0 || current_state.state_index ==  (m_current_animation_subset.number_of_frames -1)) &&
-       current_state.state.compare("Standing_To_Running") != 0) {
+       current_state.state.compare("Standing_To_Running") != 0 &&
+       current_state.state.compare("Wall_Colliding_From_Mid_Speed_Takeoff") != 0 &&
+       current_state.state.compare("Wall_Colliding_From_High_Speed_Takeoff") != 0) {
     // There is a command that is different from the current state or direction
     if (current_command.state.compare("Jumping") == 0) {
       if (current_state.state.compare("Wall_Colliding_From_Mid_Speed_Takeoff") == 0 ||
@@ -694,12 +696,13 @@ void Avatar_Controller::RunRunningState() {
       } else if (current_state.state.compare("Wall_Colliding_From_Mid_Speed_Takeoff") != 0 ||
                  current_state.state.compare("Wall_Colliding_From_High_Speed_Takeoff") != 0) {
         D3DXVECTOR3 position = *m_avatar->GetPosition();
-        position += m_avatar->GetVelocity();
+        D3DXVECTOR3 velocity = m_avatar->GetVelocity();
+        position += velocity;
         m_avatar->SetPosition(position);
-        if (m_avatar->GetVelocity().x < 0) {
-          m_distance_travelled += (m_avatar->GetVelocity().x * -1);
+        if (velocity.x < 0) {
+          m_distance_travelled += (velocity.x * -1);
         } else {
-          m_distance_travelled += m_avatar->GetVelocity().x;
+          m_distance_travelled += velocity.x;
         }
       }
   
@@ -829,6 +832,7 @@ void Avatar_Controller::RunRunningState() {
           
           has_state_changed = true;
           m_avatar->SetVelocity(D3DXVECTOR3(0, 0, 0));
+          m_distance_travelled = 0;
         } else if (current_state.state.compare("Wall_Colliding_From_High_Speed_Arc") == 0) {
           SetAvatarState("Charlie_Running", "Wall_Colliding_From_High_Speed_Landing", m_avatar->GetState().direction);
           AlignAvatarOnLastContactingFoot();
@@ -836,6 +840,7 @@ void Avatar_Controller::RunRunningState() {
           
           has_state_changed = true;
           m_avatar->SetVelocity(D3DXVECTOR3(0, 0, 0));
+          m_distance_travelled = 0;
         }
       }
       delete adjacent_tiles;
