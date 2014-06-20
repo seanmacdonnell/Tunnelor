@@ -476,11 +476,11 @@ void Avatar_Controller::RunRunningState() {
       if (current_state.state.compare("Wall_Colliding_From_Mid_Speed_Takeoff") == 0 ||
         current_state.state.compare("Wall_Colliding_From_High_Speed_Takeoff") == 0) {
         if (current_state.direction.compare("Right") == 0) {
-          float y_velocity = m_avatar->GetVelocity().x;
+          float y_velocity = 44;
           float x_velocity = 4;
           m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
         } else {  // Left
-          float y_velocity = (m_avatar->GetVelocity().x * -1);
+          float y_velocity = 44;
           float x_velocity = -4;
           m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
         }
@@ -1254,11 +1254,21 @@ void Avatar_Controller::RunJumpingState() {
       } else if (out_colliding_wall_tiles->begin()->collision_side.compare("Left") == 0) {
         if (current_command.state.compare("Jumping") == 0) {
           if (current_state.direction.compare("Right") == 0) {
-            float y_velocity = m_avatar->GetVelocity().y + 12;
+            float y_velocity = 0;
+            if (m_avatar->GetVelocity().y > 0) {
+              y_velocity = m_avatar->GetVelocity().y + 12;
+            } else {
+              y_velocity = 12;
+            }
             float x_velocity = 16;
             m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
           } else {  // Left
-            float y_velocity = m_avatar->GetVelocity().y + 12;
+            float y_velocity = 0;
+            if (m_avatar->GetVelocity().y > 0) {
+              y_velocity = m_avatar->GetVelocity().y + 12;
+            } else {
+              y_velocity = 12;
+            }
             float x_velocity = -16;
             m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
           }
@@ -1310,11 +1320,21 @@ void Avatar_Controller::RunJumpingState() {
       } else if (out_colliding_wall_tiles->begin()->collision_side.compare("Right") == 0) {
         if (current_command.state.compare("Jumping") == 0) {
           if (current_state.direction.compare("Right") == 0) {
-            float y_velocity = m_avatar->GetVelocity().y + 12;
+            float y_velocity = 0;
+            if (m_avatar->GetVelocity().y > 0) {
+              y_velocity = m_avatar->GetVelocity().y + 12;
+            } else {
+              y_velocity = 12;
+            }
             float x_velocity = 16;
             m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
           } else {  // Left
-            float y_velocity = m_avatar->GetVelocity().y + 12;
+            float y_velocity = 0;
+            if (m_avatar->GetVelocity().y > 0) {
+              y_velocity = m_avatar->GetVelocity().y + 12;
+            } else {
+              y_velocity = 12;
+            }
             float x_velocity = -16;
             m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
           }
@@ -1371,7 +1391,9 @@ void Avatar_Controller::RunJumpingState() {
         current_state.state.compare("Gap_Jump_Falling") == 0 ||
         current_state.state.compare("Vertical_Jump_Arc") == 0 ||
         current_state.state.compare("Wall_Jump_Fall_Arc") == 0 ||
-        current_state.state.compare("Wall_Jump_Falling") == 0) {
+        current_state.state.compare("Wall_Jump_Falling") == 0 ||
+        current_state.state.compare("Wall_Jump_Rise_Arc") == 0 ||
+        current_state.state.compare("Wall_Jump_Rising") == 0) {
 
       std::vector<Wall_Collision> *out_colliding_floor_tiles = new std::vector<Wall_Collision>();
       bool is_floor_colliding = IsAvatarFloorColliding(out_colliding_floor_tiles);
