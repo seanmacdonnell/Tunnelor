@@ -164,7 +164,13 @@ void Tile_Bitmap::SetIsRoof(bool is_roof) {
 
 //------------------------------------------------------------------------------
 bool Tile_Bitmap::IsWall() {
-  return m_is_right_wall || m_is_left_wall;
+  if (m_is_right_wall) {
+    return true;
+  } else if (m_is_left_wall) {
+    return true;
+  }
+
+  return false;
 }
 
 //------------------------------------------------------------------------------

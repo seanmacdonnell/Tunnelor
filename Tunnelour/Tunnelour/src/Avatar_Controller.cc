@@ -830,11 +830,11 @@ void Avatar_Controller::RunRunningState() {
         } else {
           if (current_state.direction.compare("Right") == 0) {
             float y_velocity = 0;
-            float x_velocity = m_avatar->GetVelocity().x;
+            float x_velocity = 38;
             m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
           } else {  // Left
             float y_velocity = 0;
-            float x_velocity = m_avatar->GetVelocity().x;
+            float x_velocity = -38;
             m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
           }
 
@@ -1398,7 +1398,7 @@ void Avatar_Controller::RunJumpingState() {
       std::vector<Wall_Collision> *out_colliding_floor_tiles = new std::vector<Wall_Collision>();
       bool is_floor_colliding = IsAvatarFloorColliding(out_colliding_floor_tiles);
       if (is_floor_colliding) {
-        if (m_y_fallen > -512) {
+        if (m_y_fallen < -512) {
           SetAvatarState("Charlie_Falling", "Down_Facing_Falling_To_Death", m_avatar->GetState().direction);
         } else {
           if (current_state.state.compare("Vertical_Jump_Arc") == 0) {
@@ -1655,10 +1655,17 @@ bool Avatar_Controller::IsAvatarFloorAdjacent(std::vector<Bitmap_Component*> *ad
     Avatar_Component::Avatar_Collision_Block avatar_avatar_collision_block;
     //avatar_avatar_collision_block = GetLowestMostForwardFootCollisionBlock(m_avatar->GetState().direction);
     avatar_avatar_collision_block = GetNamedCollisionBlock("Avatar", m_avatar->GetState().avatar_collision_blocks);
+    avatar_avatar_collision_block.size.x = (avatar_avatar_collision_block.size.x/2);
 
     // Make a bitmap for the lowest avatar collision block
     Bitmap_Component *avatar_avatar_collision_block_bitmap;
-    avatar_avatar_collision_block_bitmap = CollisionBlockToBitmapComponent(avatar_avatar_collision_block, *(m_avatar->GetPosition()));
+    D3DXVECTOR3 position = *(m_avatar->GetPosition());
+    if (m_avatar->GetState().direction.compare("Right") == 0) { 
+      position.x = position.x + avatar_avatar_collision_block.size.x;
+    } else {
+      position.x = position.x - avatar_avatar_collision_block.size.x;
+    }
+    avatar_avatar_collision_block_bitmap = CollisionBlockToBitmapComponent(avatar_avatar_collision_block, position);
 
     // Create a list of floor tiles which are adjacent with the collision block
     std::vector<Tile_Bitmap*>::iterator floor_tile;
@@ -2749,9 +2756,17 @@ bool Avatar_Controller::CanAvatarGrabALedge(std::vector<Wall_Collision> *out_col
     for (ledge_tile = m_ledge_tiles.begin(); ledge_tile != m_ledge_tiles.end(); ledge_tile++) {
       D3DXVECTOR2 grab_point;
       grab_point.y = (*ledge_tile)->GetTopLeftPostion().y;
-      if ((*ledge_tile)->IsRightWall()) {
+      bool is_right_wall = (*ledge_tile)->IsRightWall();
+      bool is_left_wall = (*ledge_tile)->IsLeftWall();
+      if (is_right_wall && is_left_wall) {
+        if (m_avatar->GetState().direction.compare("Right") == 0) {
+          grab_point.x = (*ledge_tile)->GetTopLeftPostion().x;
+        } else {
+          grab_point.x = (*ledge_tile)->GetBottomRightPostion().x;
+        }
+      } else if (is_right_wall) {
         grab_point.x = (*ledge_tile)->GetTopLeftPostion().x;
-      } else if ((*ledge_tile)->IsLeftWall()) {
+      } else if (is_left_wall) {
         grab_point.x = (*ledge_tile)->GetBottomRightPostion().x;
       }
 
@@ -2763,11 +2778,17 @@ bool Avatar_Controller::CanAvatarGrabALedge(std::vector<Wall_Collision> *out_col
       hand_grab_point_distance = WhatsTheDistanceBetweenThesePoints(hand_point, grab_point);
 
       if (hand_grab_point_distance <= avatar_grab_range) {
-        if ((m_avatar->GetState().direction.compare("Right") == 0 && (*ledge_tile)->IsRightWall()) ||
-            (m_avatar->GetState().direction.compare("Left") == 0 && (*ledge_tile)->IsLeftWall())) {
+        if ((m_avatar->GetState().direction.compare("Right") == 0 && (*ledge_tile)->IsRightWall() && m_avatar->GetCommand().direction.compare("Right") == 0) ||
+            (m_avatar->GetState().direction.compare("Left") == 0 && (*ledge_tile)->IsLeftWall())&& m_avatar->GetCommand().direction.compare("Left") == 0) {
           Avatar_Controller::Wall_Collision collision;
           collision.colliding_tile = *ledge_tile;
-          if ((*ledge_tile)->IsRightWall()) {
+          if (is_right_wall && is_left_wall) {
+            if (m_avatar->GetState().direction.compare("Right") == 0) {
+              collision.collision_side = "Left";
+            } else {
+              collision.collision_side = "Right";
+            }
+          } else if ((*ledge_tile)->IsRightWall()) {
             collision.collision_side = "Left";
           } else if ((*ledge_tile)->IsLeftWall()) {
             collision.collision_side = "Right";
