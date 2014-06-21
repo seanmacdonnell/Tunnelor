@@ -77,12 +77,12 @@ bool Camera_Controller::Run() {
     // I did this because I was getting some funny bugs where tiles were 
     // dissapearing from view for a frame if the camera followed the avatar
     // while she was jumping in an arc.
-    if (m_avatar->GetState().parent_state.compare("Charlie_Jumping") == 0) {
+    //if (m_avatar->GetState().parent_state.compare("Charlie_Jumping") == 0) {
+    //  camera_position.x = avatar_position.x;
+    //} else {
       camera_position.x = avatar_position.x;
-    } else {
-      camera_position.x = avatar_position.x;
-      camera_position.y = avatar_position.y - (avatar_collision_block.size.y / 2) + 128;
-    }
+      camera_position.y = avatar_position.y - (avatar_collision_block.size.y / 2) + 128 + 1;
+    //}
 
     m_camera->SetPosition(camera_position);
   }
