@@ -31,6 +31,15 @@ Tile_Bitmap::Tile_Bitmap(): Bitmap_Component() {
   m_is_right_edge = false;
   m_is_left_edge = false;
   m_is_collidable = false;
+
+  m_is_right_floor_end = false;
+  m_is_left_floor_end = false;
+  m_is_right_roof_end = false;
+  m_is_left_roof_end = false;
+  m_is_top_right_wall_end = false;
+  m_is_bot_right_wall_end = false;
+  m_is_top_left_wall_end = false;
+  m_is_bot_left_wall_end = false;
 }
 
 //------------------------------------------------------------------------------
@@ -153,6 +162,26 @@ void Tile_Bitmap::SetIsFloor(bool is_floor) {
 }
 
 //------------------------------------------------------------------------------
+bool Tile_Bitmap::IsRightFloorEnd() {
+  return m_is_right_floor_end;
+}
+
+//------------------------------------------------------------------------------
+void Tile_Bitmap::SetIsRightFloorEnd(bool is_right_floor_end) {
+  m_is_right_floor_end = is_right_floor_end;
+}
+
+//------------------------------------------------------------------------------
+bool Tile_Bitmap::IsLeftFloorEnd() {
+  return m_is_left_floor_end;
+}
+
+//------------------------------------------------------------------------------
+void Tile_Bitmap::SetIsLeftFloorEnd(bool is_left_floor_end) {
+  m_is_left_floor_end = is_left_floor_end;
+}
+
+//------------------------------------------------------------------------------
 bool Tile_Bitmap::IsRoof() {
   return m_is_roof;
 }
@@ -161,6 +190,27 @@ bool Tile_Bitmap::IsRoof() {
 void Tile_Bitmap::SetIsRoof(bool is_roof) {
   m_is_roof = is_roof;
 }
+
+//------------------------------------------------------------------------------
+bool Tile_Bitmap::IsRightRoofEnd() {
+  return m_is_right_roof_end;
+}
+
+//------------------------------------------------------------------------------
+void Tile_Bitmap::SetIsRightRoofEnd(bool is_right_roof_end) {
+  m_is_right_roof_end = is_right_roof_end;
+}
+
+//------------------------------------------------------------------------------
+bool Tile_Bitmap::IsLeftRoofEnd() {
+  return m_is_left_roof_end;
+}
+
+//------------------------------------------------------------------------------
+void Tile_Bitmap::SetIsLeftRoofEnd(bool is_left_roof_end) {
+  m_is_left_roof_end = is_left_roof_end;
+}
+
 
 //------------------------------------------------------------------------------
 bool Tile_Bitmap::IsWall() {
@@ -179,18 +229,59 @@ bool Tile_Bitmap::IsRightWall() {
 }
 
 //------------------------------------------------------------------------------
-bool Tile_Bitmap::IsLeftWall() {
-  return m_is_left_wall;
-}
-
-//------------------------------------------------------------------------------
 void Tile_Bitmap::SetIsRightWall(bool is_wall) {
   m_is_right_wall = is_wall;
 }
 
 //------------------------------------------------------------------------------
+bool Tile_Bitmap::IsTopRightWallEnd() {
+  return m_is_top_right_wall_end;
+}
+
+//------------------------------------------------------------------------------
+void Tile_Bitmap::SetIsTopRightWallEnd(bool is_top_right_wall_end) {
+  m_is_top_right_wall_end = is_top_right_wall_end;
+}
+
+//------------------------------------------------------------------------------
+bool Tile_Bitmap::IsBotRightWallEnd() {
+  return m_is_bot_right_wall_end;
+}
+
+//------------------------------------------------------------------------------
+void Tile_Bitmap::SetIsBotRightWallEnd(bool is_bot_right_wall_end) {
+  m_is_bot_right_wall_end = is_bot_right_wall_end;
+}
+
+
+//------------------------------------------------------------------------------
+bool Tile_Bitmap::IsLeftWall() {
+  return m_is_left_wall;
+}
+
+//------------------------------------------------------------------------------
 void Tile_Bitmap::SetIsLeftWall(bool is_wall) {
   m_is_left_wall = is_wall;
+}
+
+//------------------------------------------------------------------------------
+bool Tile_Bitmap::IsTopLeftWallEnd() {
+  return m_is_top_left_wall_end;
+}
+
+//------------------------------------------------------------------------------
+void Tile_Bitmap::SetIsTopLeftWallEnd(bool is_top_left_wall_end) {
+  m_is_top_left_wall_end = is_top_left_wall_end;
+}
+
+//------------------------------------------------------------------------------
+bool Tile_Bitmap::IsBotLeftWallEnd() {
+  return m_is_bot_left_wall_end;
+}
+
+//------------------------------------------------------------------------------
+void Tile_Bitmap::SetIsBotLeftWallEnd(bool is_bot_left_wall_end) {
+  m_is_bot_left_wall_end = is_bot_left_wall_end;
 }
 
 //------------------------------------------------------------------------------

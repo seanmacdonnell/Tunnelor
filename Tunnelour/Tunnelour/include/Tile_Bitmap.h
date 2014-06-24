@@ -47,19 +47,51 @@ class Tile_Bitmap: public Tunnelour::Bitmap_Component {
 
   void SetIsFloor(bool is_floor);
 
+  bool IsRightFloorEnd();
+
+  void SetIsRightFloorEnd(bool is_right_floor_end);
+
+  bool IsLeftFloorEnd();
+
+  void SetIsLeftFloorEnd(bool is_left_floor_end);
+
   bool IsRoof();
 
   void SetIsRoof(bool is_roof);
+
+  bool IsRightRoofEnd();
+
+  void SetIsRightRoofEnd(bool is_right_roof_end);
+
+  bool IsLeftRoofEnd();
+
+  void SetIsLeftRoofEnd(bool is_left_roof_end);
 
   bool IsWall();
 
   bool IsRightWall();
 
-  bool IsLeftWall();
-
   void SetIsRightWall(bool is_wall);
 
+  bool IsTopRightWallEnd();
+
+  void SetIsTopRightWallEnd(bool is_top_right_wall_end);
+
+  bool IsBotRightWallEnd();
+
+  void SetIsBotRightWallEnd(bool is_bot_right_wall_end);
+
+  bool IsLeftWall();
+
   void SetIsLeftWall(bool is_wall);
+
+  bool IsTopLeftWallEnd();
+
+  void SetIsTopLeftWallEnd(bool is_top_left_wall_end);
+
+  bool IsBotLeftWallEnd();
+
+  void SetIsBotLeftWallEnd(bool is_bot_left_wall_end);
 
   bool IsTopEdge();
 
@@ -99,6 +131,15 @@ class Tile_Bitmap: public Tunnelour::Bitmap_Component {
   bool m_is_right_edge;
   bool m_is_left_edge;
   bool m_is_collidable;
+
+  bool m_is_right_floor_end;
+  bool m_is_left_floor_end;
+  bool m_is_right_roof_end;
+  bool m_is_left_roof_end;
+  bool m_is_top_right_wall_end;
+  bool m_is_bot_right_wall_end;
+  bool m_is_top_left_wall_end;
+  bool m_is_bot_left_wall_end;
 };  // class Tile_Bitmap
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_TILE_BITMAP_H_

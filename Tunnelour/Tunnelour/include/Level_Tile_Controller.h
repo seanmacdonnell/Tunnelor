@@ -43,11 +43,29 @@ class Level_Tile_Controller: public Controller,
     bool found_right_wall;
     bool found_left_wall;
 
+    bool found_roof_right_end;
+    bool found_roof_left_end;
+    bool found_floor_right_end;
+    bool found_floor_left_end;
+    bool found_right_wall_top_end;
+    bool found_right_wall_bot_end;
+    bool found_left_wall_top_end;
+    bool found_left_wall_bot_end;
+
     Tile_Type() {
       found_roof = false;
       found_floor = false;
       found_right_wall = false;
       found_left_wall = false;
+
+      found_roof_right_end = false;
+      found_roof_left_end = false;
+      found_floor_right_end = false;
+      found_roof_left_end = false;
+      found_right_wall_top_end = false;
+      found_right_wall_bot_end = false;
+      found_left_wall_top_end = false;
+      found_left_wall_bot_end = false;
     }
 
     // equality comparison. doesn't modify object. therefore const.
@@ -55,7 +73,15 @@ class Level_Tile_Controller: public Controller,
       return (found_roof == a.found_roof &&
               found_floor == a.found_floor &&
               found_right_wall == a.found_right_wall &&
-              found_left_wall == a.found_left_wall);
+              found_left_wall == a.found_left_wall && 
+              found_roof_right_end == a.found_roof_right_end &&
+              found_roof_left_end == a.found_roof_left_end &&
+              found_floor_right_end == a.found_floor_right_end &&
+              found_floor_left_end == a.found_floor_left_end &&
+              found_right_wall_top_end == a.found_right_wall_top_end &&
+              found_right_wall_bot_end == a.found_right_wall_bot_end &&
+              found_left_wall_top_end == a.found_left_wall_top_end &&
+              found_left_wall_bot_end == a.found_left_wall_bot_end);
     }
   };
   //---------------------------------------------------------------------------
@@ -158,6 +184,7 @@ class Level_Tile_Controller: public Controller,
   
   std::string m_debug_metadata_file_path;
   std::string m_dirt_metadata_file_path;
+  std::string m_blue_cave_metadata_file_path;
   std::string m_the_void_metadata_file_path;
 
   std::string m_current_level_name;
