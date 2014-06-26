@@ -77,7 +77,7 @@ class Level_Tile_Controller: public Controller,
       found_roof_right_end = false;
       found_roof_left_end = false;
       found_floor_right_end = false;
-      found_roof_left_end = false;
+      found_floor_left_end = false;
       found_right_wall_top_end = false;
       found_right_wall_bot_end = false;
       found_left_wall_top_end = false;

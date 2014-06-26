@@ -586,20 +586,10 @@ void Level_Tile_Controller::LoadTilesetMetadata() {
   Tileset_Helper::LoadTilesetMetadataIntoStruct(m_debug_metadata_file_path, &debug_tileset_metadata);
   m_tilesets.push_back(debug_tileset_metadata);
 
-  Tileset_Helper::Tileset_Metadata dirt_tileset_metadata;
-  m_dirt_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Dirt_Tileset_6_1.txt");
-  Tileset_Helper::LoadTilesetMetadataIntoStruct(m_dirt_metadata_file_path, &dirt_tileset_metadata);
-  m_tilesets.push_back(dirt_tileset_metadata);
-
   Tileset_Helper::Tileset_Metadata blue_cave_tileset_metadata;
   m_blue_cave_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Blue_Cave_Tileset.txt");
   Tileset_Helper::LoadTilesetMetadataIntoStruct(m_blue_cave_metadata_file_path, &blue_cave_tileset_metadata);
   m_tilesets.push_back(blue_cave_tileset_metadata);
-
-  Tileset_Helper::Tileset_Metadata the_void_tileset_metadata;
-  m_the_void_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"The_Void_Tileset_0_0.txt");
-  Tileset_Helper::LoadTilesetMetadataIntoStruct(m_the_void_metadata_file_path, &the_void_tileset_metadata);
-  m_tilesets.push_back(the_void_tileset_metadata);
 
   if (m_game_settings->IsDebugMode()) {
     m_current_tileset = GetNamedTileset("Debug");
@@ -676,7 +666,7 @@ Tileset_Helper::Subset Level_Tile_Controller::GetCurrentBackgroundSubsetType(Lev
 Level_Tile_Controller::Middleground_Tile_Type Level_Tile_Controller::ParseSubsetTypesFromString(std::string type) {
   Middleground_Tile_Type found_types;
   std::size_t found;
-  found = type.find("End");
+  found = type.find(" End");
   if (found == std::string::npos) {
     found = type.find("Roof");
     if (found != std::string::npos) {
@@ -922,65 +912,61 @@ void Level_Tile_Controller::ResetMiddlegroundTileTexture(Tile_Bitmap *out_tile) 
   Tileset_Helper::Line tile_line = GetCurrentSizedMiddlegroundLine(out_tile->GetSize().x);
   int random_variable = 0;
 
-  //if (m_is_debug_mode) {
-    if (out_tile->IsLeftWall() || out_tile->IsRightWall() || out_tile->IsRoof() || out_tile->IsFloor()) {
-      std::string types;
-      if (out_tile->IsLeftWall()) {
-        types += "Left Wall";
-      }
-      if (out_tile->IsRightWall()) {
-        types += "Right Wall";
-      }
-      if (out_tile->IsRoof()) {
-        types += "Roof";
-      }
-      if (out_tile->IsFloor()) {
-        types += "Floor";
-      }
-      Middleground_Tile_Type Middleground_Tile_Type = ParseSubsetTypesFromString(types);
-      Tileset_Helper::Subset edge_subset = GetCurrentMiddlegroundSubsetType(Middleground_Tile_Type);
-      tile_line = GetSizedNamedLine(edge_subset, out_tile->GetSize().x);
-      random_variable = random_variable = rand() % tile_line.number_of_tiles;
-    } else if (out_tile->IsRightFloorEnd() || out_tile->IsLeftFloorEnd() ||
-               out_tile->IsRightRoofEnd() || out_tile->IsLeftRoofEnd() ||
-               out_tile->IsTopLeftWallEnd() || out_tile->IsBotLeftWallEnd() ||
-               out_tile->IsTopRightWallEnd() || out_tile->IsBotRightWallEnd()) {
-      std::string types;
-      if (out_tile->IsRightFloorEnd()) {
-        types += " Right Floor End ";
-      }
-      if (out_tile->IsLeftFloorEnd()) {
-        types += " Left Floor End ";
-      }
-      if (out_tile->IsRightRoofEnd()) {
-        types += " Right Roof End ";
-      }
-      if (out_tile->IsLeftRoofEnd()) {
-        types += " Left Roof End ";
-      }
-      if (out_tile->IsTopLeftWallEnd()) {
-        types += " Left Wall Top End ";
-      }
-      if (out_tile->IsBotLeftWallEnd()) {
-        types += " Left Wall Bot End ";
-      }
-      if (out_tile->IsTopRightWallEnd()) {
-        types += " Right Wall Top End ";
-      }
-      if (out_tile->IsBotRightWallEnd()) {
-        types += " Right Wall Bot End ";
-      }
-      Middleground_Tile_Type Middleground_Tile_Type = ParseSubsetTypesFromString(types);
-      Tileset_Helper::Subset edge_subset = GetCurrentMiddlegroundSubsetType(Middleground_Tile_Type);
-      tile_line = GetSizedNamedLine(edge_subset, out_tile->GetSize().x);
-      random_variable = random_variable = rand() % tile_line.number_of_tiles;
-    } else {
-      random_variable = random_variable = rand() % tile_line.number_of_tiles;;
-    }     
-  //} else {
-    //random_variable = rand() % tile_line.number_of_tiles;
-  //}
-
+  if (out_tile->IsLeftWall() || out_tile->IsRightWall() || out_tile->IsRoof() || out_tile->IsFloor()) {
+    Middleground_Tile_Type middleground_tile_type;
+    //std::string types;
+    if (out_tile->IsLeftWall()) {
+      middleground_tile_type.found_left_wall = true;
+    }
+    if (out_tile->IsRightWall()) {
+      middleground_tile_type.found_right_wall = true;
+    }
+    if (out_tile->IsRoof()) {
+      middleground_tile_type.found_roof = true;
+    }
+    if (out_tile->IsFloor()) {
+      middleground_tile_type.found_floor = true;
+    }
+    //Middleground_Tile_Type middleground_tile_type = ParseSubsetTypesFromString(types);
+    Tileset_Helper::Subset edge_subset = GetCurrentMiddlegroundSubsetType(middleground_tile_type);
+    tile_line = GetSizedNamedLine(edge_subset, out_tile->GetSize().x);
+    random_variable = random_variable = rand() % tile_line.number_of_tiles;
+  } else if (out_tile->IsRightFloorEnd() || out_tile->IsLeftFloorEnd() ||
+              out_tile->IsRightRoofEnd() || out_tile->IsLeftRoofEnd() ||
+              out_tile->IsTopLeftWallEnd() || out_tile->IsBotLeftWallEnd() ||
+              out_tile->IsTopRightWallEnd() || out_tile->IsBotRightWallEnd()) {
+    std::string types;
+    if (out_tile->IsRightFloorEnd()) {
+      types += "Right Floor End";
+    }
+    if (out_tile->IsLeftFloorEnd()) {
+      types += "Left Floor End";
+    }
+    if (out_tile->IsRightRoofEnd()) {
+      types += "Right Roof End";
+    }
+    if (out_tile->IsLeftRoofEnd()) {
+      types += "Left Roof End";
+    }
+    if (out_tile->IsTopLeftWallEnd()) {
+      types += "Left Wall Top End";
+    }
+    if (out_tile->IsBotLeftWallEnd()) {
+      types += "Left Wall Bot End";
+    }
+    if (out_tile->IsTopRightWallEnd()) {
+      types += "Right Wall Top End";
+    }
+    if (out_tile->IsBotRightWallEnd()) {
+      types += "Right Wall Bot End";
+    }
+    Middleground_Tile_Type Middleground_Tile_Type = ParseSubsetTypesFromString(types);
+    Tileset_Helper::Subset edge_subset = GetCurrentMiddlegroundSubsetType(Middleground_Tile_Type);
+    tile_line = GetSizedNamedLine(edge_subset, out_tile->GetSize().x);
+    random_variable = random_variable = rand() % tile_line.number_of_tiles;
+  } else {
+    random_variable = random_variable = rand() % tile_line.number_of_tiles;;
+  }     
 
   float left = random_variable * tile_line.tile_size_x + tile_line.top_left_x;
   float top = tile_line.top_left_y;
