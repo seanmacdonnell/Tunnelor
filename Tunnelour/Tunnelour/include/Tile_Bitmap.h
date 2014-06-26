@@ -115,6 +115,15 @@ class Tile_Bitmap: public Tunnelour::Bitmap_Component {
 
   void SetIsCollidable(bool is_collidable);
 
+  bool IsLeftExit();
+
+  void SetIsLeftExit(bool is_left_exit);
+
+  bool IsRightExit();
+
+  void SetIsRightExit(bool is_right_exit);
+
+
  protected:
 
  private:
@@ -140,6 +149,9 @@ class Tile_Bitmap: public Tunnelour::Bitmap_Component {
   bool m_is_bot_right_wall_end;
   bool m_is_top_left_wall_end;
   bool m_is_bot_left_wall_end;
+
+  bool m_is_left_exit;
+  bool m_is_right_exit;
 };  // class Tile_Bitmap
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_TILE_BITMAP_H_

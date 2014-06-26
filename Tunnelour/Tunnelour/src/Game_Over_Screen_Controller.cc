@@ -103,6 +103,7 @@ bool Game_Over_Screen_Controller::Init(Component_Composite * const model) {
       m_thank_you = new Text_Component();
       m_thank_you->GetText()->font_csv_file = m_text_font_path_size_64;
       m_thank_you->GetText()->text = "Thank you for playing";
+      m_thank_you->GetFont()->font_color = D3DXCOLOR(0.24705882352941178f, 0.4549019607843137f, 0.7098039215686275f, 1.0f);
       m_thank_you->GetTexture()->transparency = 1.0f;
       m_thank_you->SetPosition(0, 0, m_z_text_position);
       m_thank_you->GetFrame()->index_buffer = 0;
@@ -115,6 +116,7 @@ bool Game_Over_Screen_Controller::Init(Component_Composite * const model) {
       m_game_name_heading = new Text_Component();
       m_game_name_heading->GetText()->font_csv_file = m_heading_font_path;
       m_game_name_heading->GetText()->text = "TUNNELOR";
+      m_game_name_heading->GetFont()->font_color = D3DXCOLOR(0.24705882352941178f, 0.4549019607843137f, 0.7098039215686275f, 1.0f);
       m_game_name_heading->GetTexture()->transparency = 1.0f;
       m_game_name_heading->SetPosition(0, 0, m_z_text_position);
       m_game_name_heading->GetFrame()->index_buffer = 0;
@@ -127,6 +129,7 @@ bool Game_Over_Screen_Controller::Init(Component_Composite * const model) {
       m_version = new Text_Component();
       m_version->GetText()->font_csv_file = m_text_font_path;
       m_version->GetText()->text = "ALPHA";
+      m_version->GetFont()->font_color = D3DXCOLOR(0.3333333333333333, 0.611764705882353, 0.788235294117647, 1.0f);
       m_version->GetTexture()->transparency = 1.0f;
       m_version->SetPosition(0, 0, m_z_text_position);
       m_version->GetFrame()->index_buffer = 0;
@@ -138,7 +141,8 @@ bool Game_Over_Screen_Controller::Init(Component_Composite * const model) {
     if (m_author == 0) {
       m_author = new Text_Component();
       m_author->GetText()->font_csv_file = m_text_font_path;
-      m_author->GetText()->text = "Sean.MacDonnell@Gmail.com";
+      m_author->GetText()->text = "SEAN.MACDONNELL@GMAIL.COM";
+      m_author->GetFont()->font_color = D3DXCOLOR(0.3333333333333333, 0.611764705882353, 0.788235294117647, 1.0f);
       m_author->GetTexture()->transparency = 1.0f;
       m_author->SetPosition(0, 0, m_z_text_position);
       m_author->GetFrame()->index_buffer = 0;

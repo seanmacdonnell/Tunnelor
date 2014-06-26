@@ -145,7 +145,7 @@ void Avatar_Controller::HandleEventRemove(Tunnelour::Component * const component
         found_bitmap = bitmap; 
       }
     }
-    m_floor_tiles.erase(found_bitmap);
+    m_ledge_tiles.erase(found_bitmap);
   }
 }
 

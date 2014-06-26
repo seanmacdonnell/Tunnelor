@@ -19,6 +19,7 @@
 #include "Component.h"
 #include "Game_Settings_Component.h"
 #include "Avatar_Component.h"
+#include "Tile_Bitmap.h"
 
 namespace Tunnelour {
 class Input_Controller_Mutator: public Component::Component_Mutator  {
@@ -58,6 +59,7 @@ class Input_Controller_Mutator: public Component::Component_Mutator  {
   bool m_found_avatar_component;
   Game_Settings_Component *m_game_settings;
   Avatar_Component *m_avatar_controller;
+  std::vector<Tile_Bitmap*> m_exit_tiles;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_INPUT_CONTROLLER_MUTATOR_H_

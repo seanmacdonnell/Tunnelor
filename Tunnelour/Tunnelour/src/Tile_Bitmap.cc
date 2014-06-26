@@ -40,6 +40,9 @@ Tile_Bitmap::Tile_Bitmap(): Bitmap_Component() {
   m_is_bot_right_wall_end = false;
   m_is_top_left_wall_end = false;
   m_is_bot_left_wall_end = false;
+
+  m_is_left_exit = false;
+  m_is_right_exit = false;
 }
 
 //------------------------------------------------------------------------------
@@ -339,4 +342,25 @@ bool Tile_Bitmap::IsEdge() {
   return IsTopEdge() || IsBottomEdge() || IsRightEdge() || IsLeftEdge() ||
          IsFloor() || IsRoof() || IsWall();
 }
+
+//------------------------------------------------------------------------------
+bool Tile_Bitmap::IsLeftExit() {
+  return m_is_left_exit;
+}
+
+//------------------------------------------------------------------------------
+void Tile_Bitmap::SetIsLeftExit(bool is_left_exit) {
+  m_is_left_exit = is_left_exit;
+}
+
+//------------------------------------------------------------------------------
+bool Tile_Bitmap::IsRightExit() {
+  return m_is_right_exit;
+}
+
+//------------------------------------------------------------------------------
+void Tile_Bitmap::SetIsRightExit(bool is_right_exit) {
+  m_is_right_exit = is_right_exit;
+}
+
 }  // namespace Tunnelour

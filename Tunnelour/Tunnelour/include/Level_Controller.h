@@ -86,6 +86,7 @@ class Level_Controller: public Controller {
   int m_z_position;
 
   Level_Component::Level_Metadata m_next_level;
+  Level_Component::Level_Metadata m_current_level;
 
   Tunnelour::Background_Controller *m_background_controller;
   Tunnelour::Middleground_Controller *m_middleground_controller;
@@ -103,6 +104,8 @@ class Level_Controller: public Controller {
   bool m_has_splash_screen_faded;
 
   bool m_has_avatar_been_reset;
+
+  std::vector<Tile_Bitmap*> m_exit_tiles;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_LEVEL_CONTROLLER_H_

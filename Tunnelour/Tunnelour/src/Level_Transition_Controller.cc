@@ -64,8 +64,10 @@ Level_Transition_Controller::Level_Transition_Controller() : Controller() {
 //------------------------------------------------------------------------------
 Level_Transition_Controller::~Level_Transition_Controller() {
   m_game_settings = 0;
-  m_camera->Ignore(this);
-  m_camera = 0;
+  if (m_camera != 0) {
+    m_camera->Ignore(this);
+    m_camera = 0;
+  }
   m_level = 0;
   m_tileset_filename = "";
   m_is_debug_mode = false;
@@ -148,7 +150,7 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
       m_level_complete_heading->GetText()->text = m_level_complete_heading_text;
       m_level_complete_heading->GetTexture()->transparency = 1.0f;
       m_level_complete_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_level_complete_heading_y_offset, m_z_text_position);
-      //m_level_complete_heading->GetFont()->font_color = D3DXCOLOR(0.0f,1.0f,0.0f,1.0f);
+      m_level_complete_heading->GetFont()->font_color = D3DXCOLOR(0.24705882352941178f, 0.4549019607843137f, 0.7098039215686275f, 1.0f);
       m_level_complete_heading->GetFrame()->index_buffer = 0;
       m_level_complete_heading->GetTexture()->texture = 0;
       m_level_complete_heading->GetFrame()->vertex_buffer = 0;
@@ -163,6 +165,7 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
       m_next_level_heading->GetFrame()->index_buffer = 0;
       m_next_level_heading->GetTexture()->texture = 0;
       m_next_level_heading->GetFrame()->vertex_buffer = 0;
+      m_next_level_heading->GetFont()->font_color = D3DXCOLOR(0.3333333333333333, 0.611764705882353, 0.788235294117647, 1.0f);
       m_model->Add(m_next_level_heading);
     }
     if (m_next_level_name == 0) {
@@ -174,6 +177,7 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
       m_next_level_name->GetFrame()->index_buffer = 0;
       m_next_level_name->GetTexture()->texture = 0;
       m_next_level_name->GetFrame()->vertex_buffer = 0;
+      m_next_level_name->GetFont()->font_color = D3DXCOLOR(0.3333333333333333, 0.611764705882353, 0.788235294117647, 1.0f);
       m_model->Add(m_next_level_name);
     }
     if (m_next_level_blurb == 0) {
@@ -185,6 +189,7 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
       m_next_level_blurb->GetFrame()->index_buffer = 0;
       m_next_level_blurb->GetTexture()->texture = 0;
       m_next_level_blurb->GetFrame()->vertex_buffer = 0;
+      m_next_level_blurb->GetFont()->font_color = D3DXCOLOR(0.3333333333333333, 0.611764705882353, 0.788235294117647, 1.0f);
       m_model->Add(m_next_level_blurb);
     }
     if (m_loading == 0) {
@@ -196,6 +201,7 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
       m_loading->GetFrame()->index_buffer = 0;
       m_loading->GetTexture()->texture = 0;
       m_loading->GetFrame()->vertex_buffer = 0;
+      m_loading->GetFont()->font_color = D3DXCOLOR(0.3333333333333333, 0.611764705882353, 0.788235294117647, 1.0f);
       m_model->Add(m_loading);
       SetIsLoading(true);
     } 
@@ -368,11 +374,17 @@ void Level_Transition_Controller::SetNextLevelHeadingText(std::string next_level
 //------------------------------------------------------------------------------
 void Level_Transition_Controller::SetNextLevelNameText(std::string next_level_name_text) {
   m_next_level_name_text = next_level_name_text;
+  if (next_level_name_text.empty()) {
+    m_next_level_name_text = " ";
+  }
 }
 
 //------------------------------------------------------------------------------
 void Level_Transition_Controller::SetNextLevelBlurbText(std::string next_level_blurb_text) {
   m_next_level_blurb_text = next_level_blurb_text;
+  if (m_next_level_blurb_text.empty()) {
+    m_next_level_blurb_text = " ";
+  }
 }
 
 //------------------------------------------------------------------------------

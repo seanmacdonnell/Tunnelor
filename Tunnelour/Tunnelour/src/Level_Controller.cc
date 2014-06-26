@@ -17,6 +17,8 @@
 #include "String_Helper.h"
 #include "Exceptions.h"
 #include "Get_Avatar_Mutator.h"
+#include "Bitmap_Helper.h"
+
 
 
 namespace Tunnelour {
@@ -142,12 +144,27 @@ bool Level_Controller::Run() {
         m_screen_wipeout_controller = 0;
         if (m_level_transition_controller == 0) {
           m_level_transition_controller = new Level_Transition_Controller();
-          m_level_transition_controller->SetLevelCompleteHeadingText("LEVEL COMPLETE");
-          m_level_transition_controller->SetNextLevelHeadingText("Loading Next Level");
-          m_level_transition_controller->SetNextLevelNameText(m_next_level.level_name);
-          m_level_transition_controller->SetNextLevelBlurbText(m_next_level.blurb);
-          m_level_transition_controller->Init(m_model);
-          m_level_transition_controller->Run();
+          if (m_next_level.level_name.compare("QUIT") == 0) {
+            m_next_level = GetNamedLevel("QUIT");
+            if (m_game_over_screen_controller == 0) {
+              m_level_tile_controller->HideLevel();
+              m_avatar_controller->HideAvatar();
+              m_game_over_screen_controller = new Game_Over_Screen_Controller();
+              m_game_over_screen_controller->Init(m_model);
+              m_game_over_screen_controller->Run();
+            }
+          } else {
+            if (m_current_level.level_name.compare(m_next_level.level_name) != 0) {
+              m_level_transition_controller->SetLevelCompleteHeadingText("TUNNELOR");
+            } else {
+              m_level_transition_controller->SetLevelCompleteHeadingText("OOPS...");
+            }
+            m_level_transition_controller->SetNextLevelHeadingText("Get out of the Cave!");
+            m_level_transition_controller->SetNextLevelNameText(m_next_level.level_name);
+            m_level_transition_controller->SetNextLevelBlurbText(m_next_level.blurb);
+            m_level_transition_controller->Init(m_model);
+            m_level_transition_controller->Run();
+          }
         }
       }
     } else if (m_splash_screen_component->HasFaded() && !m_has_splash_screen_faded) {
@@ -155,8 +172,8 @@ bool Level_Controller::Run() {
       m_next_level = GetNamedLevel(m_level->GetCurrentLevel().level_name);
       if (m_level_transition_controller == 0) {
         m_level_transition_controller = new Level_Transition_Controller();
-        m_level_transition_controller->SetLevelCompleteHeadingText("TEST HARNESS");
-        m_level_transition_controller->SetNextLevelHeadingText("Loading First Test");
+        m_level_transition_controller->SetLevelCompleteHeadingText("TUNNELOR");
+        m_level_transition_controller->SetNextLevelHeadingText("Get out of the Cave!");
         m_level_transition_controller->SetNextLevelNameText(m_next_level.level_name);
         m_level_transition_controller->SetNextLevelBlurbText(m_next_level.blurb);
         m_level_transition_controller->Init(m_model);
@@ -171,22 +188,32 @@ bool Level_Controller::Run() {
     } else if (m_level_transition_controller != 0) {
       if (m_level_transition_controller->IsLoading()) {
         if (!m_has_transition_been_initalised) {
-          m_level->SetCurrentLevel(m_next_level);
+         if (m_current_level.level_name.compare(m_next_level.level_name) != 0) {
+           m_level->SetCurrentLevel(m_next_level);
+         }
           m_has_transition_been_initalised = true;
         } else if (!m_has_level_been_destroyed) {
-          m_level_tile_controller->DestroyLevel();
+          if (m_current_level.level_name.compare(m_next_level.level_name) != 0) {
+            m_level_tile_controller->DestroyLevel();
+          }
           m_has_level_been_destroyed = true;
         } else if (!m_has_level_been_created) {
-          m_level_tile_controller->CreateLevel();
+          if (m_current_level.level_name.compare(m_next_level.level_name) != 0) {
+            m_level_tile_controller->CreateLevel();
+            m_exit_tiles = m_level_tile_controller->GetExitTiles();
+          }
           m_has_level_been_created = true;
         } else if (!m_has_level_been_added) {
-          m_level_tile_controller->AddLevelToModel();
+          if (m_current_level.level_name.compare(m_next_level.level_name) != 0) {
+            m_level_tile_controller->AddLevelToModel();
+          }
           m_has_level_been_added = true;
         } else if(!m_has_level_been_shown) {
           m_level_tile_controller->Run();
           m_level_tile_controller->ShowLevel();
           m_has_level_been_shown = true;
         } else {
+          m_current_level = m_next_level;
           m_level_transition_controller->SetIsLoading(false);
           m_has_transition_been_initalised = false;
           m_has_level_been_destroyed = false;
@@ -305,8 +332,29 @@ bool Level_Controller::Run() {
             }
           }
         }
+        std::vector<Tile_Bitmap*>::iterator exit_tile;
+        for (exit_tile = m_exit_tiles.begin(); exit_tile != m_exit_tiles.end(); exit_tile++) {
+          if (Bitmap_Helper::DoTheseTilesIntersect(m_avatar, (*exit_tile))) {
+            m_level->SetIsComplete(true);
+            m_next_level = GetNamedLevel("QUIT");
+            if (m_screen_wipeout_controller == 0) {
+              m_screen_wipeout_controller = new Screen_Wipeout_Controller();
+              m_screen_wipeout_controller->Init(m_model);
+              m_screen_wipeout_controller->Run();
+            }
+                /*
+            m_next_level = GetNamedLevel("QUIT");
+            if (m_game_over_screen_controller == 0) {
+              m_level_tile_controller->HideLevel();
+              m_avatar_controller->HideAvatar();
+              m_game_over_screen_controller = new Game_Over_Screen_Controller();
+              m_game_over_screen_controller->Init(m_model);
+              m_game_over_screen_controller->Run();
+            }
+            */
+          }
+        }
       }
-    
       m_level_tile_controller->Run();
     }
   } else {

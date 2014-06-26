@@ -27,7 +27,7 @@ Game_Settings_Component::Game_Settings_Component(): Component() {
   m_screen_depth = 0.0f;
   m_screen_near = 0.0f;
   //m_color = D3DXCOLOR(1, 1, 1, 1);
-  m_color = D3DXCOLOR(0, 0, 0, 1);
+  m_color = D3DXCOLOR(0.043137254901960784, 0.0196078431372549, 0.058823529411764705, 1);
   m_tileset_path = L"";
   m_type = "Game_Settings_Component";
   m_hinstance = 0;

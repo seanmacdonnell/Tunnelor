@@ -49,6 +49,9 @@ void Level_Controller_Mutator::Mutate(Tunnelour::Component * const component) {
   } else if (component->GetType().compare("Splash_Screen_Component") == 0) {
     m_splash_screen_component = static_cast<Splash_Screen_Component*>(component);
     m_found_spash_screen = true;
+  } else if (component->GetType().compare("Splash_Screen_Component") == 0) {
+    m_splash_screen_component = static_cast<Splash_Screen_Component*>(component);
+    m_found_spash_screen = true;
   }
 }
 

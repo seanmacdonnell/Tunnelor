@@ -105,6 +105,11 @@ bool Splash_Screen_Controller::Init(Component_Composite * const model) {
       m_game_name_heading = new Text_Component();
       m_game_name_heading->GetText()->font_csv_file = m_heading_font_path;
       m_game_name_heading->GetText()->text = "TUNNELOR";
+      //m_game_name_heading->GetFont()->font_color = D3DXCOLOR(0.22745098039215686,0.3333333333333333,0.5490196078431373, 1.0f);
+      //m_game_name_heading->GetFont()->font_color = D3DXCOLOR(0.3333333333333333, 0.611764705882353, 0.788235294117647, 1.0f);
+      m_game_name_heading->GetFont()->font_color = D3DXCOLOR(0.24705882352941178f, 0.4549019607843137f, 0.7098039215686275f, 1.0f);
+      //m_game_name_heading->GetFont()->font_color = D3DXCOLOR(0.06274509803921569, 0.054901960784313725, 0.17254901960784313, 1.0f);
+      //m_game_name_heading->GetFont()->font_color = D3DXCOLOR(0.1803921568627451, 0.23921568627450981, 0.3764705882352941, 1.0f);
       m_game_name_heading->GetTexture()->transparency = 1.0f;
       m_game_name_heading->SetPosition(0, 0, m_z_text_position);
       m_game_name_heading->GetFrame()->index_buffer = 0;
@@ -117,6 +122,9 @@ bool Splash_Screen_Controller::Init(Component_Composite * const model) {
       m_version = new Text_Component();
       m_version->GetText()->font_csv_file = m_text_font_path;
       m_version->GetText()->text = "ALPHA";
+      m_version->GetFont()->font_color = D3DXCOLOR(0.3333333333333333, 0.611764705882353, 0.788235294117647, 1.0f);
+      //m_version->GetFont()->font_color = D3DXCOLOR(0.24705882352941178f, 0.4549019607843137f, 0.7098039215686275f, 1.0f);
+      //m_version->GetFont()->font_color = D3DXCOLOR(0.7529411764705882, 0.0, 0.0, 1.0f);
       m_version->GetTexture()->transparency = 1.0f;
       m_version->SetPosition(0, 0, m_z_text_position);
       m_version->GetFrame()->index_buffer = 0;
@@ -128,7 +136,10 @@ bool Splash_Screen_Controller::Init(Component_Composite * const model) {
     if (m_author == 0) {
       m_author = new Text_Component();
       m_author->GetText()->font_csv_file = m_text_font_path;
-      m_author->GetText()->text = "Sean.MacDonnell@Gmail.com";
+      m_author->GetText()->text = "SEAN.MACDONNELL@GMAIL.COM";
+      m_author->GetFont()->font_color = D3DXCOLOR(0.3333333333333333, 0.611764705882353, 0.788235294117647, 1.0f);
+      //m_author->GetFont()->font_color = D3DXCOLOR(0.24705882352941178f, 0.4549019607843137f, 0.7098039215686275f, 1.0f);
+      //m_author->GetFont()->font_color = D3DXCOLOR(0.7529411764705882, 0.0, 0.0, 1.0f);
       m_author->GetTexture()->transparency = 1.0f;
       m_author->SetPosition(0, 0, m_z_text_position);
       m_author->GetFrame()->index_buffer = 0;
