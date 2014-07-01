@@ -18,8 +18,7 @@
 #include "Exceptions.h"
 #include "Get_Avatar_Mutator.h"
 #include "Bitmap_Helper.h"
-
-
+#include "Score_Display_Controller.h"
 
 namespace Tunnelour {
 
@@ -41,6 +40,7 @@ Level_Controller::Level_Controller() : Controller() {
   m_level_transition_controller = 0;
   m_screen_wipeout_controller = 0;
   m_avatar_controller = 0; 
+  m_game_metrics_controller = 0;
   m_has_transition_been_initalised = false;
   m_has_level_been_destroyed = false;
   m_has_level_been_created = false;
@@ -49,6 +49,7 @@ Level_Controller::Level_Controller() : Controller() {
   m_has_splash_screen_faded = false;
   m_has_avatar_been_reset = false;
   m_game_over_screen_controller = 0;
+  m_score_display_controller = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -90,6 +91,16 @@ Level_Controller::~Level_Controller() {
     m_screen_wipeout_controller = 0;
   }
 
+  if (m_game_metrics_controller != 0) {
+    delete m_game_metrics_controller;
+    m_game_metrics_controller = 0;
+  }
+
+  if (m_score_display_controller != 0) {
+    delete m_score_display_controller;
+    m_score_display_controller = 0;
+  }
+
   if (m_level != 0) {
     delete m_level;
     m_level = 0;
@@ -126,6 +137,11 @@ bool Level_Controller::Init(Component_Composite * const model) {
       m_level_tile_controller->Init(m_model);
     }
 
+    if (m_game_metrics_controller == 0) {
+      m_game_metrics_controller = new Game_Metrics_Controller();
+      m_game_metrics_controller->Init(m_model);
+    }
+
     m_has_been_initialised = true;
   } else {
     return false;
@@ -146,12 +162,12 @@ bool Level_Controller::Run() {
           m_level_transition_controller = new Level_Transition_Controller();
           if (m_next_level.level_name.compare("QUIT") == 0) {
             m_next_level = GetNamedLevel("QUIT");
-            if (m_game_over_screen_controller == 0) {
+            if (m_score_display_controller == 0) {
               m_level_tile_controller->HideLevel();
               m_avatar_controller->HideAvatar();
-              m_game_over_screen_controller = new Game_Over_Screen_Controller();
-              m_game_over_screen_controller->Init(m_model);
-              m_game_over_screen_controller->Run();
+              m_score_display_controller =  new Score_Display_Controller();
+              m_score_display_controller->Init(m_model);
+              m_score_display_controller->Run();
             }
           } else {
             if (m_current_level.level_name.compare(m_next_level.level_name) != 0) {
@@ -178,6 +194,19 @@ bool Level_Controller::Run() {
         m_level_transition_controller->SetNextLevelBlurbText(m_next_level.blurb);
         m_level_transition_controller->Init(m_model);
         m_level_transition_controller->Run();
+      }
+    } else if (m_score_display_controller != 0) {
+      m_score_display_controller->Run();
+      if (m_score_display_controller->IsFinished()) {
+        if (m_game_over_screen_controller == 0) {
+          m_level_tile_controller->HideLevel();
+          m_avatar_controller->HideAvatar();
+          m_game_over_screen_controller = new Game_Over_Screen_Controller();
+          m_game_over_screen_controller->Init(m_model);
+          m_game_over_screen_controller->Run();
+        }
+        delete m_score_display_controller;
+        m_score_display_controller = 0;
       }
     } else if (m_game_over_screen_controller != 0) {
       if (!m_game_over_screen_controller->IsFinished()) {
@@ -226,6 +255,7 @@ bool Level_Controller::Run() {
             m_avatar_controller->Init(m_model);
           } else {
             m_avatar_controller->ResetAvatar();
+            m_game_metrics_controller->ResetGameMetrics();
           }
         }
       } else {
@@ -243,6 +273,7 @@ bool Level_Controller::Run() {
         m_level_transition_controller = 0;        
       } else if (m_level_transition_controller->IsFading() && !m_has_avatar_been_reset) {
         m_avatar_controller->ResetAvatar();
+        m_game_metrics_controller->ResetGameMetrics();
         m_has_avatar_been_reset = true;
       }
     } else if (m_avatar_controller != 0) {
@@ -342,21 +373,12 @@ bool Level_Controller::Run() {
               m_screen_wipeout_controller->Init(m_model);
               m_screen_wipeout_controller->Run();
             }
-                /*
-            m_next_level = GetNamedLevel("QUIT");
-            if (m_game_over_screen_controller == 0) {
-              m_level_tile_controller->HideLevel();
-              m_avatar_controller->HideAvatar();
-              m_game_over_screen_controller = new Game_Over_Screen_Controller();
-              m_game_over_screen_controller->Init(m_model);
-              m_game_over_screen_controller->Run();
-            }
-            */
           }
         }
       }
       m_level_tile_controller->Run();
     }
+    m_game_metrics_controller->Run();
   } else {
     return false;
   }

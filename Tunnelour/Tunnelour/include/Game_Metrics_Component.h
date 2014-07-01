@@ -66,6 +66,26 @@ class Game_Metrics_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   void SetFPSData(Tunnelour::Game_Metrics_Component::FPS_Data fps_data);
 
+  //---------------------------------------------------------------------------
+  // Description : Accessor for the resolution
+  //---------------------------------------------------------------------------
+  long double GetDistanceTraveled();
+
+  //---------------------------------------------------------------------------
+  // Description : Mutator for the distance
+  //---------------------------------------------------------------------------
+  void SetDistanceTraveled(long double distance);
+
+  //---------------------------------------------------------------------------
+  // Description : Accessor for the resolution
+  //---------------------------------------------------------------------------
+  long double GetSecondsPast();
+
+  //---------------------------------------------------------------------------
+  // Description : Mutator for the distance
+  //---------------------------------------------------------------------------
+  void SetSecondsPast(long double seconds_past);
+
  protected:
 
  private:
@@ -73,6 +93,8 @@ class Game_Metrics_Component: public Tunnelour::Component {
   // Description : Class variables
   //---------------------------------------------------------------------------
   Tunnelour::Game_Metrics_Component::FPS_Data m_fps_data;
+  long double m_distance_traveled;
+  long double m_seconds_past;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_GAME_METRICS_COMPONENT_H_

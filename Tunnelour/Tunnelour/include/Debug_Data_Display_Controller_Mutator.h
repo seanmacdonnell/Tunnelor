@@ -21,6 +21,7 @@
 #include "Avatar_Component.h"
 #include "Camera_Component.h"
 #include "Bitmap_Component.h"
+#include "Game_Metrics_Component.h"
 
 namespace Tunnelour {
 class Debug_Data_Display_Controller_Mutator: public Component::Component_Mutator  {
@@ -61,16 +62,23 @@ class Debug_Data_Display_Controller_Mutator: public Component::Component_Mutator
   Camera_Component* const GetCamera();
 
   //-------------------------------------------------------------------------
+  // Description : Accessors for the Game Metrics
+  //-------------------------------------------------------------------------
+  Game_Metrics_Component* const GetGameMetrics();
+
+  //-------------------------------------------------------------------------
   // Description : Did the mutator complete successfully?
   //-------------------------------------------------------------------------
   bool WasSuccessful();
 
  private:
-  bool m_found_game_settings, m_found_avatar_component, m_found_camera;
+  bool m_found_game_settings, m_found_avatar_component, m_found_camera, m_found_game_metrics;
   Game_Settings_Component *m_game_settings;
   Avatar_Component *m_avatar_component;
   Camera_Component * m_camera;
   std::vector<Bitmap_Component*> m_avatar_collision_blocks;
+  Game_Metrics_Component *m_game_metrics;
+
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_DEBUG_DATA_DISPLAY_CONTROLLER_MUTATOR_H_

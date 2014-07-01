@@ -14,6 +14,7 @@
 //
 
 #include "Camera_Controller.h"
+#include <math.h>       /* sin */
 
 namespace Tunnelour {
 
@@ -24,6 +25,7 @@ Camera_Controller::Camera_Controller() : Controller() {
   m_avatar = 0;
   m_game_settings = 0;
   m_camera = 0;
+  is_shaking = false;
 }
 
 //------------------------------------------------------------------------------
@@ -81,6 +83,24 @@ bool Camera_Controller::Run() {
     // know why the + 1 fixes the problem. but.. OK
     camera_position.y = avatar_position.y - (avatar_collision_block.size.y / 2) + 128 + 1;
 
+    if (m_avatar->GetState().state.compare("Up_Facing_Falling_To_Death") == 0 && m_avatar->GetState().state_index == 0) {
+      radius = 30.0;
+      randomAngle = rand()%360;
+      is_shaking = true;
+    }
+   
+    if (is_shaking) {
+      radius *=0.9; //diminish radius each frame
+      randomAngle += (150 + rand()%60);
+      float offset = (sin(randomAngle) * radius , cos(randomAngle) * radius); //create offset 2d vector
+      offset = ceil(offset);
+      //camera_position.x += offset; //set centre of viewport
+      camera_position.y -= offset; //set centre of viewport
+    }
+
+    if (radius == 0) {
+      is_shaking = false;
+    }
 
     m_camera->SetPosition(camera_position);
   }

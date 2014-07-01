@@ -129,6 +129,26 @@ class Debug_Data_Display_Controller: public Controller {
   void UpdateAvatarHeightDisplay();
 
   //---------------------------------------------------------------------------
+  // Description : Creates the avatar distance display
+  //---------------------------------------------------------------------------
+  void CreateAvatarDistanceTraveledDisplay();
+
+  //---------------------------------------------------------------------------
+  // Description : Updates the avatar distance display
+  //---------------------------------------------------------------------------
+  void UpdateAvatarDistanceTraveledDisplay();
+
+  //---------------------------------------------------------------------------
+  // Description : Creates the seconds past display
+  //---------------------------------------------------------------------------
+  void CreateAvatarSecondsPastDisplay();
+
+  //---------------------------------------------------------------------------
+  // Description : Updates the seconds past display
+  //---------------------------------------------------------------------------
+  void UpdateAvatarSecondsPastDisplay();
+
+  //---------------------------------------------------------------------------
   // Member Variables
   //---------------------------------------------------------------------------
   Game_Settings_Component *m_game_settings;
@@ -140,6 +160,8 @@ class Debug_Data_Display_Controller: public Controller {
   Text_Component *m_avatar_velocity_display;
   Text_Component *m_avatar_jumping_distance_display;
   Text_Component *m_avatar_jumping_height_display;
+  Text_Component *m_avatar_distance_traveled_display;
+  Text_Component *m_avatar_seconds_past_display;
   Camera_Component *m_camera;
   Avatar_Component *m_avatar;
   std::string m_font_path;

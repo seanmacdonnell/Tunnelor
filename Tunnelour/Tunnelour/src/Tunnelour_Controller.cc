@@ -23,6 +23,7 @@
 #include "Camera_Controller.h"
 #include "Level_Controller.h"
 #include "Splash_Screen_Controller.h"
+#include "Game_Metrics_Controller.h"
 
 namespace Tunnelour {
 
@@ -56,8 +57,11 @@ bool Tunnelour_Controller::Init(Tunnelour::Component_Composite *const model) {
   controller = Add(new Tunnelour::Level_Controller());
   controller->Init(m_model);
 
+  #ifdef _DEBUG
   controller = Add(new Tunnelour::Debug_Data_Display_Controller());
   controller->Init(m_model);
+  #endif
+
 
   return true;
 }

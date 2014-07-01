@@ -59,7 +59,9 @@ class Camera_Controller: public Controller,
   Avatar_Component *m_avatar;
   Game_Settings_Component *m_game_settings;
   Camera_Component *m_camera;
-
+  bool is_shaking;
+  double radius;
+  double randomAngle;
   //---------------------------------------------------------------------------
   // Description : Creates a Bitmap Component using the given collision block
   //---------------------------------------------------------------------------

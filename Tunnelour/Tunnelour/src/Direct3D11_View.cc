@@ -1046,6 +1046,7 @@ void Direct3D11_View::Render_Texts(std::vector<Direct3D11_View::Text_Renderable*
       vertexData.SysMemPitch = 0;
       vertexData.SysMemSlicePitch = 0;
 
+      std::string text = (renderables[i]->text->GetText()->text);
       // Now create the vertex buffer.
       if (FAILED(m_device->CreateBuffer(&vertexBufferDesc,
                                         &vertexData,

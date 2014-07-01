@@ -31,6 +31,8 @@
 #include "Avatar_Controller.h"
 #include "Screen_Wipeout_Controller.h"
 #include "Game_Over_Screen_Controller.h"
+#include "Game_Metrics_Controller.h"
+#include "Score_Display_Controller.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -95,6 +97,8 @@ class Level_Controller: public Controller {
   Tunnelour::Level_Transition_Controller *m_level_transition_controller;
   Tunnelour::Screen_Wipeout_Controller *m_screen_wipeout_controller;
   Tunnelour::Game_Over_Screen_Controller *m_game_over_screen_controller;
+  Tunnelour::Game_Metrics_Controller *m_game_metrics_controller;
+  Tunnelour::Score_Display_Controller *m_score_display_controller;
 
   bool m_has_transition_been_initalised;
   bool m_has_level_been_destroyed;

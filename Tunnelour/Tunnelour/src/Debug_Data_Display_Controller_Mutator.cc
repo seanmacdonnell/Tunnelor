@@ -50,6 +50,9 @@ void Debug_Data_Display_Controller_Mutator::Mutate(Component * const component) 
   } else  if (component->GetType().compare("Avatar_Component") == 0) {
     m_avatar_component = static_cast<Avatar_Component*>(component);
     m_found_avatar_component = true;
+  } else  if (component->GetType().compare("Game_Metrics_Component") == 0) {
+    m_game_metrics = static_cast<Game_Metrics_Component*>(component);
+    m_found_game_metrics = true;
   }
 }
 
@@ -65,11 +68,16 @@ Avatar_Component* const Debug_Data_Display_Controller_Mutator::GetAvatarComponen
 
 //------------------------------------------------------------------------------
 bool Debug_Data_Display_Controller_Mutator::WasSuccessful() {
-  return m_found_game_settings && m_found_avatar_component && m_found_camera;
+  return m_found_game_settings && m_found_avatar_component && m_found_camera && m_found_game_metrics;
 }
 
 //------------------------------------------------------------------------------
 Camera_Component* const Debug_Data_Display_Controller_Mutator::GetCamera() {
   return m_camera;
+}
+
+//------------------------------------------------------------------------------
+Game_Metrics_Component* const Debug_Data_Display_Controller_Mutator::GetGameMetrics() {
+  return m_game_metrics;
 }
 }  // namespace Tunnelour

@@ -24,11 +24,18 @@ Game_Metrics_Component::Game_Metrics_Component(): Component() {
   m_fps_data.count = 0;
   m_fps_data.fps = 0;
   m_fps_data.startTime = 0;
+  m_distance_traveled = 0;
+  m_seconds_past = 0.0;
   m_type = "Game_Metrics_Component";
 }
 
 //------------------------------------------------------------------------------
 Game_Metrics_Component::~Game_Metrics_Component() {
+  m_fps_data.count = 0;
+  m_fps_data.fps = 0;
+  m_fps_data.startTime = 0;
+  m_distance_traveled = 0;
+  m_seconds_past = 0.0;
 }
 
 //------------------------------------------------------------------------------
@@ -36,6 +43,8 @@ void Game_Metrics_Component::Init() {
   m_fps_data.count = 0;
   m_fps_data.fps = 0;
   m_fps_data.startTime = 0;
+  m_distance_traveled = 0;
+  m_seconds_past = 0.0;
 }
 
 //------------------------------------------------------------------------------
@@ -46,6 +55,26 @@ Tunnelour::Game_Metrics_Component::FPS_Data Game_Metrics_Component::GetFPSData()
 //------------------------------------------------------------------------------
 void Game_Metrics_Component::SetFPSData(Tunnelour::Game_Metrics_Component::FPS_Data fps_data) {
   m_fps_data = fps_data;
+}
+
+//------------------------------------------------------------------------------
+long double Game_Metrics_Component::GetDistanceTraveled() {
+  return m_distance_traveled;
+}
+
+//------------------------------------------------------------------------------
+void Game_Metrics_Component::SetDistanceTraveled(long double distance) {
+  m_distance_traveled = distance;
+}
+
+//------------------------------------------------------------------------------
+long double Game_Metrics_Component::GetSecondsPast() {
+  return m_seconds_past;
+}
+
+//------------------------------------------------------------------------------
+void Game_Metrics_Component::SetSecondsPast(long double seconds_past) {
+  m_seconds_past = seconds_past;
 }
 
 //------------------------------------------------------------------------------
