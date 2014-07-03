@@ -26,6 +26,7 @@ Camera_Component::Camera_Component(): Component() {
   m_up = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
   m_rotation = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
   m_fov = 0;
+  m_last_position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
   m_type = "Camera_Component";
 }
 
@@ -36,6 +37,7 @@ Camera_Component::~Camera_Component() {
   m_up = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
   m_rotation = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
   m_fov = 0;
+  m_last_position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 }
 
 //------------------------------------------------------------------------------
@@ -43,8 +45,8 @@ void Camera_Component::Init() {
   m_position = D3DXVECTOR3(0.0f, 0.0f, -10.0f);
   m_at = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
   m_up = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-  m_rotation = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-
+  m_rotation = D3DXVECTOR3(0.0f, 0.0f, 0.0f);  
+  m_last_position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
   m_is_initialised = true;
 }
 
@@ -125,5 +127,24 @@ void Camera_Component::SetFieldOfViewInRadians(float radians) {
   m_fov = radians;
   Notify();
 }
+
+
+//------------------------------------------------------------------------------
+D3DXVECTOR3 Camera_Component::GetLastPosition() {
+  return m_last_position;
+}
+
+//------------------------------------------------------------------------------
+void Camera_Component::SetLastPosition(D3DXVECTOR3 const & last_position) {
+  m_last_position = last_position;
+  Notify();
+}
+
+//------------------------------------------------------------------------------
+void Camera_Component::SetLastPosition(float x, float y, float z) {
+  m_last_position = D3DXVECTOR3(x, y, z);
+  Notify();
+}
+
 
 }  // namespace Tunnelour

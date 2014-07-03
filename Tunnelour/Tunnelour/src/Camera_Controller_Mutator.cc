@@ -41,6 +41,12 @@ void Camera_Controller_Mutator::Mutate(Tunnelour::Component * const component) {
   } else if (component->GetType().compare("Avatar_Component") == 0) {
     m_avatar_controller = static_cast<Avatar_Component*>(component);
     m_found_avatar_component = true;
+  } else if (component->GetType().compare("Bitmap_Component") == 0) {
+    Tile_Bitmap *tile = 0;
+    tile = static_cast<Tile_Bitmap*>(component);
+    if (tile->IsFloor()) {
+      m_floor_tiles.push_back(tile);
+    }
   }
 }
 
@@ -58,4 +64,10 @@ Avatar_Component* const Camera_Controller_Mutator::GetAvatarComponent() {
 bool Camera_Controller_Mutator::WasSuccessful() {
   return (m_found_game_settings && m_found_avatar_component);
 }
+
+//------------------------------------------------------------------------------
+std::vector<Tile_Bitmap*> Camera_Controller_Mutator::GetFloorTiles() {
+  return m_floor_tiles;
+}
+
 }  // namespace Tunnelour

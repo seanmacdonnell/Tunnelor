@@ -276,6 +276,9 @@ void Direct3D11_View::Run() {
                                             0);
 
     Render_Camera(m_camera, viewmatrix);
+    if (m_camera != 0) {
+      m_camera->SetLastPosition(m_camera->GetPosition());
+    }
 
     TurnOnAlphaBlending();
     

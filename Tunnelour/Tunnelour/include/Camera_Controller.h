@@ -29,7 +29,8 @@ namespace Tunnelour {
 //              : and movement of the camera_component.
 //-----------------------------------------------------------------------------
 class Camera_Controller: public Controller,
-                         public Component::Component_Observer {
+                         public Component::Component_Observer,
+                         public Component_Composite::Component_Composite_Type_Observer {
  public:
   //---------------------------------------------------------------------------
   // Description : Constructor
@@ -53,6 +54,30 @@ class Camera_Controller: public Controller,
 
   virtual void HandleEvent(Tunnelour::Component * const component);
 
+  //---------------------------------------------------------------------------
+  // Description : Called when handling an "Add" call in the model
+  //---------------------------------------------------------------------------
+  virtual void HandleEventAdd(Tunnelour::Component * const component);
+
+  //---------------------------------------------------------------------------
+  // Description : Called when handling a "Remove" call in the model
+  //---------------------------------------------------------------------------
+  virtual void HandleEventRemove(Tunnelour::Component * const component);
+
+  //---------------------------------------------------------------------------
+  // Description : Returns true if the avatar is standing on a floor
+  //---------------------------------------------------------------------------
+  bool IsAvatarFloorAdjacent(std::vector<Bitmap_Component*> *adjacent_tiles);
+
+  //---------------------------------------------------------------------------
+  // Description : Creates a Bitmap Component using the given collision block
+  //---------------------------------------------------------------------------
+  Bitmap_Component* CollisionBlockToBitmapComponent(Avatar_Component::Avatar_Collision_Block avatar_collision_block, D3DXVECTOR3 position);
+
+  int HowFarHasAvatarTravelled();
+  int CalculateSmoothSnapXOffset(float camera_position_x);
+  int CalculateSmoothSnapYOffset(float camera_position_y);
+  int WhatsTheDistanceBetweenThesAvatarAndTheCamera();
  protected:
 
  private:
@@ -62,10 +87,20 @@ class Camera_Controller: public Controller,
   bool is_shaking;
   double radius;
   double randomAngle;
+  std::vector<Tile_Bitmap*> m_floor_tiles;
+  Bitmap_Component *m_adjacent_floor_tile;
+  int m_distance_travelled;
+  int m_leash_length;
+  bool m_camera_stationary;
+  D3DXVECTOR2 m_stationary_avatar_position;
+
+  int m_offset_x_divisor;
+  int m_offset_y_divisor;
   //---------------------------------------------------------------------------
   // Description : Creates a Bitmap Component using the given collision block
   //---------------------------------------------------------------------------
   Avatar_Component::Avatar_Collision_Block GetNamedCollisionBlock(std::string id, std::vector<Avatar_Component::Avatar_Collision_Block> avatar_collision_blocks);
+  Avatar_Component::Avatar_State last_state;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_CAMERA_CONTROLLER_H_

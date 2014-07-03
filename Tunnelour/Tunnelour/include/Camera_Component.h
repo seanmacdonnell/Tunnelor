@@ -108,11 +108,23 @@ class Camera_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   void SetFieldOfViewInRadians(float radians);
 
+  //---------------------------------------------------------------------------
+  // Description : Returns the position vector
+  //---------------------------------------------------------------------------
+  D3DXVECTOR3 GetLastPosition();
+
+  //---------------------------------------------------------------------------
+  // Description : Sets the position vector
+  //---------------------------------------------------------------------------
+  void SetLastPosition(D3DXVECTOR3 const & last_position);
+  void SetLastPosition(float x, float y, float z);
+
  protected:
   D3DXVECTOR3 m_position;
   D3DXVECTOR3 m_at;
   D3DXVECTOR3 m_up;
   D3DXVECTOR3 m_rotation;
+  D3DXVECTOR3 m_last_position;
   float m_fov;
 
  private:

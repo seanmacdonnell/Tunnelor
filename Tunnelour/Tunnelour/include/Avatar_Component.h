@@ -100,6 +100,8 @@ class Avatar_Component: public Tunnelour::Bitmap_Component {
   Avatar_State GetCommand();
   void SetCommand(Avatar_State current_command);
 
+  
+
  protected:
 
  private:

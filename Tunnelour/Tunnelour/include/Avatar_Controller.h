@@ -163,7 +163,7 @@ class Avatar_Controller: public Controller,
   //---------------------------------------------------------------------------
   bool IsAvatarWallColliding(std::vector<Wall_Collision> *out_collisions);
 
-  double Avatar_Controller::WhatsTheDistanceBetweenThesePoints(D3DXVECTOR2 point_1, D3DXVECTOR2 point_2);
+  double WhatsTheDistanceBetweenThesePoints(D3DXVECTOR2 point_1, D3DXVECTOR2 point_2);
 
   bool DoTheseLinesIntersect(D3DXVECTOR2 line_a_begin, D3DXVECTOR2 line_a_end, D3DXVECTOR2 line_b_begin, D3DXVECTOR2 line_b_end, D3DXVECTOR2 *out_intersecting_point); 
 
@@ -342,6 +342,7 @@ class Avatar_Controller: public Controller,
   int m_distance_traveled;
 
   Bitmap_Component *m_currently_grabbed_tile;
+  bool m_is_moving_continuously;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_H_

@@ -19,6 +19,7 @@
 #include "Component.h"
 #include "Game_Settings_Component.h"
 #include "Avatar_Component.h"
+#include "Tile_Bitmap.h"
 
 namespace Tunnelour {
 class Camera_Controller_Mutator: public Component::Component_Mutator  {
@@ -58,11 +59,17 @@ class Camera_Controller_Mutator: public Component::Component_Mutator  {
   //-------------------------------------------------------------------------
   bool WasSuccessful();
 
+  //-------------------------------------------------------------------------
+  // Description : Accessor for the Floor Tiles
+  //-------------------------------------------------------------------------
+  std::vector<Tile_Bitmap*> GetFloorTiles();
+
  private:
   bool m_found_game_settings;
   bool m_found_avatar_component;
   Game_Settings_Component * m_game_settings;
   Avatar_Component * m_avatar_controller;
+  std::vector<Tile_Bitmap*> m_floor_tiles;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_CAMERA_CONTROLLER_MUTATOR_H_

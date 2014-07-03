@@ -1003,7 +1003,7 @@ void Level_Tile_Controller::ResetBackgroundTileTexture(Tile_Bitmap *out_tile) {
   }
 
   float left = random_variable * (tile_line.tile_size_x + tile_line.top_left_x);
-  float top = tile_line.top_left_y;
+  float top = tile_line.top_left_y;  
   out_tile->GetTexture()->top_left_position = D3DXVECTOR2(left, top);
   out_tile->GetTexture()->texture = 0;
   out_tile->GetFrame()->vertex_buffer = 0;
