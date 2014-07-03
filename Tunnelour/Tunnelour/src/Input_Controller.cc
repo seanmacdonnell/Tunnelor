@@ -298,6 +298,12 @@ void Input_Controller::ProcessInput() {
   } else {
     key_input.IsSpace = false;
   }
+
+  if (m_keyboardState[DIK_ESCAPE] & 0x80)  {
+    key_input.IsEsc = true;
+  } else {
+    key_input.IsEsc = false;
+  }
   m_input_component->SetCurrentKeyInput(key_input);
 
   return;

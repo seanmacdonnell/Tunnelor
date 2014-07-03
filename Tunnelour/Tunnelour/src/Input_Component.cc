@@ -22,7 +22,9 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 Input_Component::Input_Component(): Component() {
   m_current_key_input.IsSpace = false;
+  m_current_key_input.IsEsc = false;
   m_last_key_input.IsSpace = false;
+  m_last_key_input.IsEsc = false;
   m_type = "Input_Component";
 }
 

@@ -27,6 +27,7 @@ Level_Controller_Mutator::Level_Controller_Mutator() {
   m_camera = 0;
   m_splash_screen_component = 0;
   m_found_spash_screen = false;
+  m_found_input = false;
 }
 
 //------------------------------------------------------------------------------
@@ -49,9 +50,9 @@ void Level_Controller_Mutator::Mutate(Tunnelour::Component * const component) {
   } else if (component->GetType().compare("Splash_Screen_Component") == 0) {
     m_splash_screen_component = static_cast<Splash_Screen_Component*>(component);
     m_found_spash_screen = true;
-  } else if (component->GetType().compare("Splash_Screen_Component") == 0) {
-    m_splash_screen_component = static_cast<Splash_Screen_Component*>(component);
-    m_found_spash_screen = true;
+  } else if (component->GetType().compare("Input_Component") == 0) {
+    m_input = static_cast<Input_Component*>(component);
+    m_found_input = true;
   }
 }
 
@@ -71,7 +72,12 @@ Splash_Screen_Component* Level_Controller_Mutator::GetSplashScreen() {
 }
 
 //------------------------------------------------------------------------------
+Input_Component* Level_Controller_Mutator::GetInputComponent() {
+  return m_input;
+}
+
+//------------------------------------------------------------------------------
 bool Level_Controller_Mutator::WasSuccessful() {
-  return m_found_game_settings && m_found_camera && m_found_spash_screen;
+  return m_found_game_settings && m_found_camera && m_found_spash_screen && m_found_input;
 }
 }  // namespace Tunnelour

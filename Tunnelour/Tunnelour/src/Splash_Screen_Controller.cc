@@ -122,9 +122,9 @@ bool Splash_Screen_Controller::Init(Component_Composite * const model) {
       m_version = new Text_Component();
       m_version->GetText()->font_csv_file = m_text_font_path;
       m_version->GetText()->text = "ALPHA";
-      m_version->GetFont()->font_color = D3DXCOLOR(0.3333333333333333, 0.611764705882353, 0.788235294117647, 1.0f);
+      //m_version->GetFont()->font_color = D3DXCOLOR(0.3333333333333333, 0.611764705882353, 0.788235294117647, 1.0f);
       //m_version->GetFont()->font_color = D3DXCOLOR(0.24705882352941178f, 0.4549019607843137f, 0.7098039215686275f, 1.0f);
-      //m_version->GetFont()->font_color = D3DXCOLOR(0.7529411764705882, 0.0, 0.0, 1.0f);
+      m_version->GetFont()->font_color = D3DXCOLOR(0.7529411764705882, 0.0, 0.0, 1.0f);
       m_version->GetTexture()->transparency = 1.0f;
       m_version->SetPosition(0, 0, m_z_text_position);
       m_version->GetFrame()->index_buffer = 0;
@@ -171,7 +171,7 @@ bool Splash_Screen_Controller::Run() {
   if (m_game_name_heading != 0 && m_version != 0) {
     float position_y = m_game_name_heading->GetPosition()->y - (m_game_name_heading->GetSize().y / 2);
     position_y -= (m_version->GetSize().y /2);
-    float position_x = m_camera->GetPosition().x + 390;
+    float position_x = m_camera->GetPosition().x + 480;
     m_version->SetPosition(position_x, position_y, m_z_text_position);
   }
 
@@ -179,7 +179,7 @@ bool Splash_Screen_Controller::Run() {
     float position_y = m_version->GetPosition()->y - (m_version->GetSize().y / 2);
     position_y -= (m_author->GetSize().y /2);
     position_y -= 0;
-    float position_x = m_camera->GetPosition().x + 290;
+    float position_x = m_camera->GetPosition().x + 340;
     m_author->SetPosition(position_x, position_y, m_z_text_position);
   }
 
@@ -243,16 +243,15 @@ void Splash_Screen_Controller::HandleEvent(Tunnelour::Component * const componen
     if (m_game_name_heading != 0 && m_version != 0) {
       float position_y = m_game_name_heading->GetPosition()->y - (m_game_name_heading->GetSize().y / 2);
       position_y -= (m_version->GetSize().y /2);
-      position_y -= 50;
-      float position_x = m_camera->GetPosition().x + m_author->GetSize().x;
-      m_version->SetPosition(m_camera->GetPosition().x, position_y, m_z_text_position);
+      float position_x = m_camera->GetPosition().x + 480;
+      m_version->SetPosition(position_x, position_y, m_z_text_position);
     }
 
     if (m_version != 0 && m_author != 0) {
       float position_y = m_version->GetPosition()->y - (m_version->GetSize().y / 2);
       position_y -= (m_author->GetSize().y /2);
-      position_y -= 50;
-      float position_x = m_version->GetSize().x;
+      position_y -= 0;
+      float position_x = m_camera->GetPosition().x + 340;
       m_author->SetPosition(position_x, position_y, m_z_text_position);
     }
   }

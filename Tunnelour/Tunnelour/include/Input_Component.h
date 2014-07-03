@@ -29,6 +29,7 @@ class Input_Component: public Tunnelour::Component {
  public:
    struct Key_Input {
      bool IsSpace;
+     bool IsEsc;
    };
   //---------------------------------------------------------------------------
   // Description : Constructor

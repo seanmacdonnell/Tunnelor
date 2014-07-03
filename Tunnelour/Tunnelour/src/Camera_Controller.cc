@@ -141,7 +141,7 @@ bool Camera_Controller::Run() {
       if (m_adjacent_floor_tile != 0) {
         camera_position.y = m_adjacent_floor_tile->GetTopLeftPostion().y + 128 + 1;
       } else {
-        camera_position.y = m_avatar->GetBottomRightPostion().y + 1;// - (avatar_collision_block.size.y / 2) + 176 + 1;
+        camera_position.y = m_avatar->GetBottomRightPostion().y + 128 + 1;// - (avatar_collision_block.size.y / 2) + 176 + 1;
       }
       //camera_position.y += CalculateSmoothSnapYOffset(camera_position.y);
       //camera_position.y = m_camera->GetLastPosition().y + CalculateSmoothSnapYOffset(camera_position.y);

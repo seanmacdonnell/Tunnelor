@@ -128,7 +128,9 @@ bool Level_Controller::Init(Component_Composite * const model) {
     if (m_splash_screen_component == 0) {
       m_splash_screen_component = mutator.GetSplashScreen();
     }
-
+    if (m_input_component == 0) {
+      m_input_component = mutator.GetInputComponent();
+    }
     LoadLevelMetadata();
     m_font_path = "resource\\tilesets\\Ariel.fnt";
 
@@ -171,13 +173,13 @@ bool Level_Controller::Run() {
             }
           } else {
             if (m_current_level.level_name.compare(m_next_level.level_name) != 0) {
-              m_level_transition_controller->SetLevelCompleteHeadingText("TUNNELOR");
+              m_level_transition_controller->SetLevelCompleteHeadingText("WELCOME");
             } else {
-              m_level_transition_controller->SetLevelCompleteHeadingText("OOPS...");
+              m_level_transition_controller->SetLevelCompleteHeadingText("TRY AGAIN");
             }
-            m_level_transition_controller->SetNextLevelHeadingText("Get out of the Cave!");
-            m_level_transition_controller->SetNextLevelNameText(m_next_level.level_name);
-            m_level_transition_controller->SetNextLevelBlurbText(m_next_level.blurb);
+            m_level_transition_controller->SetNextLevelHeadingText("Find the exit!");
+            m_level_transition_controller->SetNextLevelNameText("Arrow Direction Keys To Move and Right Alt to Jump");
+            m_level_transition_controller->SetNextLevelBlurbText("Press ESC to reset the tunnel.");
             m_level_transition_controller->Init(m_model);
             m_level_transition_controller->Run();
           }
@@ -188,10 +190,10 @@ bool Level_Controller::Run() {
       m_next_level = GetNamedLevel(m_level->GetCurrentLevel().level_name);
       if (m_level_transition_controller == 0) {
         m_level_transition_controller = new Level_Transition_Controller();
-        m_level_transition_controller->SetLevelCompleteHeadingText("TUNNELOR");
-        m_level_transition_controller->SetNextLevelHeadingText("Get out of the Cave!");
-        m_level_transition_controller->SetNextLevelNameText(m_next_level.level_name);
-        m_level_transition_controller->SetNextLevelBlurbText(m_next_level.blurb);
+        m_level_transition_controller->SetLevelCompleteHeadingText("WELCOME");
+        m_level_transition_controller->SetNextLevelHeadingText("Find the exit!");
+        m_level_transition_controller->SetNextLevelNameText("Arrow Direction Keys To Move and Right Alt to Jump");
+        m_level_transition_controller->SetNextLevelBlurbText("Press ESC to reset the tunnel.");
         m_level_transition_controller->Init(m_model);
         m_level_transition_controller->Run();
       }
@@ -285,7 +287,15 @@ bool Level_Controller::Run() {
           m_avatar = mutator.GetAvatarComponent();
         }
       } else {
-        if (m_level->GetCurrentLevel().end_conditions.size() != 0) {
+        if (m_input_component != 0 && m_input_component->GetCurrentKeyInput().IsEsc) {
+          m_level->SetIsComplete(true);
+          m_next_level = GetNamedLevel(m_level->GetCurrentLevel().level_name);
+          if (m_screen_wipeout_controller == 0) {
+            m_screen_wipeout_controller = new Screen_Wipeout_Controller();
+            m_screen_wipeout_controller->Init(m_model);
+            m_screen_wipeout_controller->Run();
+          }
+        } else if (m_level->GetCurrentLevel().end_conditions.size() != 0) {
           std::vector<Level_Component::End_Condition*> end_conditions = m_level->GetCurrentLevel().end_conditions;
           std::vector<Level_Component::End_Condition*>::iterator end_condition;
           for (end_condition = end_conditions.begin(); end_condition != end_conditions.end(); end_condition++) {

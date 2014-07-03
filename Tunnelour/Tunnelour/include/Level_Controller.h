@@ -33,6 +33,7 @@
 #include "Game_Over_Screen_Controller.h"
 #include "Game_Metrics_Controller.h"
 #include "Score_Display_Controller.h"
+#include "Input_Component.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -99,6 +100,7 @@ class Level_Controller: public Controller {
   Tunnelour::Game_Over_Screen_Controller *m_game_over_screen_controller;
   Tunnelour::Game_Metrics_Controller *m_game_metrics_controller;
   Tunnelour::Score_Display_Controller *m_score_display_controller;
+  Tunnelour::Input_Component *m_input_component;
 
   bool m_has_transition_been_initalised;
   bool m_has_level_been_destroyed;
