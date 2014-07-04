@@ -1304,28 +1304,29 @@ void Avatar_Controller::RunJumpingState() {
         m_distance_traveled = 0;
       } else {
         if (current_command.state.compare("Jumping") == 0) {
-          if (current_state.direction.compare("Right") == 0) {
-            float y_velocity = 16;
-            if (m_avatar->GetVelocity().y > 0) {
-              if (m_distance_traveled > 256) {
-                y_velocity = m_avatar->GetVelocity().y; + 16;
+          float y_velocity = m_wall_jump_speed_offset;
+          float x_velocity = 0;
+          if (m_avatar->GetVelocity().y > 0) {
+              if (m_distance_traveled > 128) {
+              if (current_state.state.compare("Gap_Jump_Takeoff") == 0 ||
+                 (current_state.state.compare("Gap_Jump_Arc_Rise") == 0 && (current_state.state_index == 0 || current_state.state_index == 1))) {
+                y_velocity = m_vertical_jump_y_initial_Velocity + m_wall_jump_speed_offset;
+              } else {
+                y_velocity = m_avatar->GetVelocity().y + m_wall_jump_speed_offset;
               }
             }
-            float x_velocity = 16;
-            m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
-          } else {  // Left
-            float y_velocity = 16;
-            if (m_avatar->GetVelocity().y > 0) {
-              if (m_distance_traveled > 256) {
-                y_velocity = m_avatar->GetVelocity().y; + 16;
-              }
-            }
-            float x_velocity = -16;
-            m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
           }
+
+          if (current_state.direction.compare("Right") == 0) {
+            x_velocity = (x_velocity * -1);
+          }
+
+          m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
+          /*
           D3DXVECTOR3 position = *m_avatar->GetPosition();
           position += m_avatar->GetVelocity();
           m_avatar->SetPosition(position); 
+          */
           if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0 ) {
             SetAvatarState("Charlie_Jumping", "Wall_Jump_Takeoff", m_avatar->GetState().direction);
           } else {
