@@ -50,6 +50,7 @@ Level_Controller::Level_Controller() : Controller() {
   m_has_avatar_been_reset = false;
   m_game_over_screen_controller = 0;
   m_score_display_controller = 0;
+  m_input_component = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -287,7 +288,7 @@ bool Level_Controller::Run() {
           m_avatar = mutator.GetAvatarComponent();
         }
       } else {
-        if (m_input_component != 0 && m_input_component->GetCurrentKeyInput().IsEsc) {
+        if (m_input_component->GetCurrentKeyInput().IsEsc) {
           m_level->SetIsComplete(true);
           m_next_level = GetNamedLevel(m_level->GetCurrentLevel().level_name);
           if (m_screen_wipeout_controller == 0) {

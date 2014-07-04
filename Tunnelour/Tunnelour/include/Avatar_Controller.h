@@ -343,6 +343,11 @@ class Avatar_Controller: public Controller,
 
   Bitmap_Component *m_currently_grabbed_tile;
   bool m_is_moving_continuously;
+
+  int m_vertical_jump_y_initial_Velocity;
+  int m_vertical_jump_x_initial_Velocity;
+
+  int m_wall_jump_speed_offset;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_H_
