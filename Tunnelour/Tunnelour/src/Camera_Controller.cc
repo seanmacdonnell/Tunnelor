@@ -100,7 +100,7 @@ bool Camera_Controller::Run() {
     Avatar_Component::Avatar_State last_state = m_avatar->GetLastRenderedState();
 
 
-    if (current_state.state.compare("Initial") == 0) {
+    if (current_state.state.compare("Initial") == 0 || last_state.state.compare("Initial") == 0) {
       radius = 0;
       camera_position.x = avatar_position.x;
       camera_position.y = avatar_position.y - (avatar_collision_block.size.y / 2) + 176 + 1;
@@ -332,7 +332,7 @@ int Camera_Controller::CalculateSmoothSnapXOffset(float camera_position_x) {
   }
 
   if (dist > 512) {
-    offset = dist;
+    offset = 16 * multiplier;
   } else if (dist > 256) {
     offset = 8 * multiplier;
   } else if (dist > 128) {
