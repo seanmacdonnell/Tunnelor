@@ -48,7 +48,7 @@ void Game_Settings_Component::Init() {
   m_is_full_screen = false;
   m_vsync_enabled = false;
   m_screen_depth = 1000.0f;
-  m_screen_near = 0.1f;
+  m_screen_near = -1000.0f;
   m_tileset_path = L"resource\\tilesets\\";
   m_level_path = L"resource\\levels\\";
   m_is_debug_mode = false;

@@ -57,13 +57,15 @@ D3DXVECTOR3 Camera_Component::GetPosition() {
 
 //------------------------------------------------------------------------------
 void Camera_Component::SetPosition(D3DXVECTOR3 const & position) {
-  m_position = position;
+  m_position.x = position.x;
+  m_position.y = position.y;
+  m_position.z = -10;
   Notify();
 }
 
 //------------------------------------------------------------------------------
 void Camera_Component::SetPosition(float x, float y, float z) {
-  m_position = D3DXVECTOR3(x, y, z);
+  m_position = D3DXVECTOR3(x, y, -10);
   Notify();
 }
 

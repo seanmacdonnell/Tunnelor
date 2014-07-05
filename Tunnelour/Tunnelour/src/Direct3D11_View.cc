@@ -823,7 +823,8 @@ void Direct3D11_View::Init_D3D11() {
   }
 
   // Set the depth stencil state.
-  TurnZBufferOff();
+  //TurnZBufferOff();
+  TurnZBufferOn();
 
   // Initialize the depth stencil view.
   ZeroMemory(&depth_stencil_view_desc, sizeof(depth_stencil_view_desc));
@@ -893,6 +894,10 @@ void Direct3D11_View::Init_D3D11() {
                     static_cast<float>(m_game_settings->GetResolution().y),
                     m_game_settings->GetScreenNear(),
                     m_game_settings->GetScreenDepth());
+
+  //D3DXMatrixOrthoOffCenterLH(&m_ortho, (static_cast<float>(m_game_settings->GetResolution().x)/2) * -1 * 1.5, static_cast<float>(m_game_settings->GetResolution().x)/2 * 1.5,
+  //                                     (static_cast<float>(m_game_settings->GetResolution().y)/2) * -1 * 1.5, static_cast<float>(m_game_settings->GetResolution().y)/2 * 1.5,
+  //                                     m_game_settings->GetScreenNear(), m_game_settings->GetScreenDepth());
 
   // Clear the second depth stencil state before setting the parameters.
   ZeroMemory(&depthDisabledStencilDesc, sizeof(depthDisabledStencilDesc));
@@ -1326,6 +1331,8 @@ bool Direct3D11_View::IsThisBitmapComponentVisable(Bitmap_Renderable *bitmap) {
     return false;
   }
 
+  return true;
+  /*
   // At least one vertex in TileA is contained in the TileB.
   float a_tile_top, a_tile_bottom;
   a_tile_top = bitmap->position->y + static_cast<float>(bitmap->bitmap->GetSize().y / 2);
@@ -1377,6 +1384,7 @@ bool Direct3D11_View::IsThisBitmapComponentVisable(Bitmap_Renderable *bitmap) {
   }
 
   return false;
+  */
 }
 
 }  // namespace Tunnelour

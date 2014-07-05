@@ -32,7 +32,7 @@ Frame_Component::Frame_Component(): Component() {
 
   m_position = D3DXVECTOR3(0, 0, 0);
   m_scale = D3DXVECTOR3(1, 1, 1);
-  m_size = D3DXVECTOR2(0, 0);
+  m_size = D3DXVECTOR2(1, 1);
 
   m_type = "Frame_Component";
 }

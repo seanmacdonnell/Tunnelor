@@ -521,7 +521,7 @@ void Avatar_Controller::RunRunningState() {
           m_avatar->SetPosition(position); 
           */
           std::string direction;
-          if (current_command.direction.compare("") != 0) {
+          if (current_command.direction.compare("") == 0) {
             direction = m_avatar->GetState().direction;
           } else {
             direction = current_command.direction;
@@ -1260,12 +1260,17 @@ void Avatar_Controller::RunJumpingState() {
   if (!has_state_changed) {
     if (current_state == last_state) {
       SetAvatarStateAnimationFrame(state_index);
-      if (current_state.state.compare("Vertical_Jump_Landing") == 0 ||
+      if (current_state.state.compare("Wall_Jump_Takeoff") == 0 ||
+          current_state.state.compare("Vertical_Jump_Landing") == 0 ||
           current_state.state.compare("Vertical_Jump_Takeoff") == 0 ||
           current_state.state.compare("Gap_Jump_Takeoff") == 0 ||
-          current_state.state.compare("Gap_Jump_Landing") == 0 ||
-          current_state.state.compare("Wall_Jump_Takeoff") == 0) {
+          current_state.state.compare("Gap_Jump_Landing") == 0) {
         AlignAvatarOnLastContactingFoot();
+      } else if (current_state.state.compare("Wall_Jump_Rise_Arc") == 0 ||
+                 current_state.state.compare("Wall_Jump_Rising") == 0 ||
+                 current_state.state.compare("Wall_Jump_Fall_Arc") == 0 ||
+                 current_state.state.compare("Wall_Jump_Falling") == 0 ) {
+        MoveAvatarTileAdjacent(m_currently_adjacent_wall_tile.collision_side, m_currently_adjacent_wall_tile.colliding_tile);
       } else {
         if (m_avatar->GetState().direction.compare("Right") == 0) {
           AlignAvatarOnLastAvatarCollisionBlockRightBottom();
