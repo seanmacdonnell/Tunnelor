@@ -342,6 +342,7 @@ class Avatar_Controller: public Controller,
   int m_distance_traveled;
 
   Bitmap_Component *m_currently_grabbed_tile;
+  Wall_Collision m_currently_adjacent_wall_tile;
   bool m_is_moving_continuously;
 
   int m_vertical_jump_y_initial_Velocity;

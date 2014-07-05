@@ -328,7 +328,7 @@ int Camera_Controller::CalculateSmoothSnapXOffset(float camera_position_x) {
 
   int multiplier = 1;
   if (m_avatar->GetState().parent_state.compare("Charlie_Standing") != 0) {
-    multiplier = 4;
+    multiplier = 1;
   }
 
   if (dist > 512) {
