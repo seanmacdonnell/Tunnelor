@@ -1229,6 +1229,18 @@ void Avatar_Controller::RunJumpingState() {
             }
           } else if (current_command.state.compare("Running") == 0) {
             if (current_command.direction.compare(current_state.direction) == 0) {
+              m_is_moving_continuously = true;
+              if (current_state.direction.compare("Right") == 0) {
+                m_avatar->SetVelocity(D3DXVECTOR3(32, 0 , 0));
+              } else {  // Left
+                m_avatar->SetVelocity(D3DXVECTOR3(-32, 0 , 0));
+              }
+              D3DXVECTOR3 position = *m_avatar->GetPosition();
+              D3DXVECTOR3 velocity = m_avatar->GetVelocity();
+              position += velocity;
+              m_y_fallen += m_avatar->GetVelocity().y;
+              m_avatar->SetPosition(position);
+
               SetAvatarState("Charlie_" + current_command.state, current_command.state, current_command.direction);
               if (m_avatar->GetState().direction.compare("Right") == 0) {
                 AlignAvatarOnLastAvatarCollisionBlockRightBottom();
