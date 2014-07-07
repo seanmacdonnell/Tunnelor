@@ -323,11 +323,6 @@ void Avatar_Controller::RunStandingState() {
     // If the avatar is not adjacent to the floor, she should fall
     std::vector<Bitmap_Component*> *adjacent_tiles = new std::vector<Bitmap_Component*>();
     if (!IsAvatarFloorAdjacent(adjacent_tiles)) {
-      /*
-      D3DXVECTOR3 position = *(m_avatar->GetPosition());
-      position.y = position.y - 1;
-      m_avatar->SetPosition(position);
-      */
       if (m_avatar->GetState().direction.compare(m_avatar->GetLastRenderedState().direction) == 0) {
         if (current_state.direction.compare("Right") == 0) {
           float y_velocity = -4;
