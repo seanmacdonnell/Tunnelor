@@ -113,48 +113,26 @@ bool Camera_Controller::Run() {
         m_current_y_look_distance = 0;
       }
       if (m_input->GetCurrentKeyInput().IsRight) {
-        if (m_current_x_look_distance != m_max_x_look_distance) {
-          camera_position.x = avatar_position.x + m_max_x_look_distance;
-          m_current_x_look_distance = m_max_x_look_distance;
-        }
+        camera_position.x = avatar_position.x + m_max_x_look_distance;
+      } else if (m_input->GetCurrentKeyInput().IsLeft) {
+        camera_position.x = avatar_position.x - m_max_x_look_distance;
       } else {
-        if (m_current_x_look_distance == m_max_x_look_distance) {
-          camera_position.x = avatar_position.x;
-          m_current_x_look_distance = 0;
-        }
+        camera_position.x = avatar_position.x;
       }
-      if (m_input->GetCurrentKeyInput().IsLeft) {
-        if ((m_current_x_look_distance * -1) != m_max_x_look_distance) {
-          camera_position.x = avatar_position.x - m_max_x_look_distance;
-          m_current_x_look_distance = (m_max_x_look_distance * -1);
-        }
-      } else {
-        if ((m_current_x_look_distance * -1) == m_max_x_look_distance) {
-          camera_position.x = avatar_position.x;
-          m_current_x_look_distance = 0;
-        }
-      }
+
       if (m_input->GetCurrentKeyInput().IsDown) {
-        if ((m_current_y_look_distance * -1) != m_max_y_look_distance) {
-          camera_position.y = avatar_position.y - m_max_y_look_distance;
-          m_current_y_look_distance = (m_max_y_look_distance * -1);
-        }
+        camera_position.y = avatar_position.y - m_max_y_look_distance;
+      } else if (m_input->GetCurrentKeyInput().IsUp) {
+        camera_position.y = avatar_position.y + m_max_y_look_distance;
       } else {
-        if ((m_current_y_look_distance * -1) == m_max_y_look_distance) {
-          camera_position.y = m_adjacent_floor_tile->GetTopLeftPostion().y + 128 + 1;;
-          m_current_y_look_distance = 0;
-        }
+        camera_position.y = m_adjacent_floor_tile->GetTopLeftPostion().y + 128 + 1;;
       }
-      if (m_input->GetCurrentKeyInput().IsUp) {
-        if (m_current_y_look_distance != m_max_y_look_distance) {
-          camera_position.y = avatar_position.y + m_max_y_look_distance;
-          m_current_y_look_distance = m_max_y_look_distance;
-        }
-      } else {
-        if (m_current_y_look_distance == m_max_y_look_distance) {
-          camera_position.y = m_adjacent_floor_tile->GetTopLeftPostion().y + 128 + 1;;
-          m_current_y_look_distance = 0;
-        }
+
+      if (m_input->GetCurrentKeyInput().IsRight || m_input->GetCurrentKeyInput().IsLeft) {
+        camera_position.x = m_camera->GetLastPosition().x + CalculateSmoothSnapXOffset(camera_position.x);
+      }
+      if (m_input->GetCurrentKeyInput().IsUp || m_input->GetCurrentKeyInput().IsDown) {
+        camera_position.y = m_camera->GetLastPosition().y + CalculateSmoothSnapYOffset(camera_position.y);
       }
     } else {
       if (current_state.state.compare("Initial") == 0 || last_state.state.compare("Initial") == 0) {
@@ -188,22 +166,19 @@ bool Camera_Controller::Run() {
             camera_position.x = m_camera->GetLastPosition().x + CalculateSmoothSnapXOffset(camera_position.x);
           }
         }
-        //camera_position.x += CalculateSmoothSnapXOffset(camera_position.x);
-        //camera_position.x = m_camera->GetLastPosition().x ;
 
-        //camera_position.x = avatar_position.x + CalculateSmoothSnapXOffset();
         // This plus 1 (+1) is to fix a bug where black bars sometimes appear on the top
         // or the bottom of the viewspace. I don't know why these bars appear and I don't
         // know why the + 1 fixes the problem. but.. OK
         if (m_adjacent_floor_tile != 0) {
           camera_position.y = m_adjacent_floor_tile->GetTopLeftPostion().y + 128 + 1;
+          //camera_position.y = m_camera->GetLastPosition().y + CalculateSmoothSnapYOffset(camera_position.y);
         } else {
-          camera_position.y = m_avatar->GetBottomRightPostion().y + 128 + 1;// - (avatar_collision_block.size.y / 2) + 176 + 1;
+          camera_position.y = m_avatar->GetBottomRightPostion().y + 128 + 1;
         }
-        //camera_position.y += CalculateSmoothSnapYOffset(camera_position.y);
-        //camera_position.y = m_camera->GetLastPosition().y + CalculateSmoothSnapYOffset(camera_position.y);
-        /*
-        if (m_avatar->GetState().state.compare("Up_Facing_Falling_To_Death") == 0 && m_avatar->GetState().state_index == 0) {
+        
+        if ((m_avatar->GetState().state.compare("Up_Facing_Falling_To_Death") == 0 && m_avatar->GetState().state_index == 0) || 
+           (m_avatar->GetState().state.compare("Down_Facing_Falling_To_Death") == 0 && m_avatar->GetState().state_index == 0)) {
           radius = 30.0;
           randomAngle = rand()%360;
           is_shaking = true;
@@ -221,7 +196,7 @@ bool Camera_Controller::Run() {
         if (radius == 0) {
           is_shaking = false;
         }
-        */
+        
       }
     }
     m_camera->SetPosition(camera_position);
@@ -440,17 +415,34 @@ int Camera_Controller::CalculateSmoothSnapYOffset(float camera_position_y) {
   dist = pow(x,2)+pow(y,2);           //calculating distance by euclidean formula
   dist = sqrt(dist);                  //sqrt is function in math.h
 
-  if (dist > 512) {
-    offset = dist;
+  int multiplier = 2;
+  if (m_avatar->GetState().parent_state.compare("Charlie_Standing") != 0) {
+    multiplier = 4;
+  }
+
+  if (m_avatar->GetState().state.compare("Looking") == 0) {
+    multiplier = 6;
+  }
+
+  if (dist > 1024) {
+    offset = 32 * multiplier;  
+  } else if (dist > 512) {
+    offset = 16 * multiplier;
   } else if (dist > 256) {
-    offset = 6;
+    offset = 8 * multiplier;
   } else if (dist > 128) {
-    offset = 4;
+    offset = 6 * multiplier;
   } else if (dist > 64) {
-    offset = 2;
+    offset = 4 * multiplier;
   } else if (dist > 32) {
-    offset = 1;
+    offset = 2 * multiplier;
+  } else if (dist > 1) {
+    offset = 1 * multiplier;
   } else {
+    offset = dist;
+  }
+
+  if (offset > dist) {
     offset = dist;
   }
 

@@ -59,6 +59,9 @@ Level_Transition_Controller::Level_Transition_Controller() : Controller() {
   m_next_level_name_y_offset = 0.0f;
   m_next_level_blurb_y_offset = 0.0f;
   m_loading_y_offset = 0.0f;
+  m_looking_key = 0;
+  m_looking_key_text = "";
+  m_looking_key_y_offset = 0.0f;
 }
 
 //------------------------------------------------------------------------------
@@ -101,6 +104,10 @@ Level_Transition_Controller::~Level_Transition_Controller() {
     m_model->Remove(m_level_transition_component);
     m_level_transition_component = 0;
   }
+  if (m_looking_key != 0) {
+    m_model->Remove(m_looking_key);
+    m_looking_key = 0;
+  }
   m_loading_transparency = 0.0f;
 }
 
@@ -116,6 +123,7 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
     m_next_level_heading_y_offset = 50.0f;
     m_next_level_name_y_offset = -50.0f;
     m_next_level_blurb_y_offset = -150.0f;
+    m_looking_key_y_offset = -200.0f;
     m_loading_y_offset = -250.0f;
     m_game_settings = mutator.GetGameSettings();
     m_camera = mutator.GetCamera();
@@ -130,7 +138,7 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
     m_heading_font_path = "resource\\tilesets\\victor_192.fnt";
     //m_heading_font_path = "resource\\tilesets\\CC-Red-Alert-LAN.fnt";
     //m_text_font_path = "resource\\tilesets\\CC-Red-Alert-LAN.fnt";
-    m_text_font_path = "resource\\tilesets\\victor_64.fnt";
+    m_text_font_path = "resource\\tilesets\\victor_32.fnt";
     InitTimer();
     if (m_level_transition_component == 0) {
       m_level_transition_component = new Level_Transition_Component();
@@ -192,6 +200,19 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
       m_next_level_blurb->GetFont()->font_color = D3DXCOLOR(0.3333333333333333, 0.611764705882353, 0.788235294117647, 1.0f);
       m_model->Add(m_next_level_blurb);
     }
+    if (m_looking_key == 0) {
+      m_looking_key = new Text_Component();
+      m_looking_key->GetText()->font_csv_file = m_text_font_path;
+      m_looking_key->GetText()->text = m_next_level_blurb_text;
+      m_looking_key->GetText()->text = "Hold Space and use the direction keys to look around!";
+      m_looking_key->GetTexture()->transparency = 1.0f;
+      m_looking_key->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_looking_key_y_offset, m_z_text_position);
+      m_looking_key->GetFrame()->index_buffer = 0;
+      m_looking_key->GetTexture()->texture = 0;
+      m_looking_key->GetFrame()->vertex_buffer = 0;
+      m_looking_key->GetFont()->font_color = D3DXCOLOR(0.3333333333333333, 0.611764705882353, 0.788235294117647, 1.0f);
+      m_model->Add(m_looking_key);
+    }
     if (m_loading == 0) {
       m_loading = new Text_Component();
       m_loading->GetText()->font_csv_file = m_text_font_path;
@@ -214,7 +235,9 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
 //------------------------------------------------------------------------------
 bool Level_Transition_Controller::Run() {
   // Get game settings component from the model with the Mutator.
-  if (!m_has_been_initialised) { return false; }
+  if (!m_has_been_initialised) { 
+    Init(m_model); 
+  }
 
   if (m_background != 0) {
     m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
@@ -264,6 +287,11 @@ bool Level_Transition_Controller::Run() {
     }
   }
 
+  if (m_looking_key != 0) {
+    m_looking_key->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_looking_key_y_offset, m_z_text_position);
+  }
+
+
   if (m_loading != 0) {
     UpdateTimer();
     if (m_animation_tick && m_background != 0) {
@@ -302,6 +330,7 @@ bool Level_Transition_Controller::Run() {
     m_next_level_heading->GetTexture()->transparency = m_next_level_heading->GetTexture()->transparency - 0.05f;
     m_next_level_name->GetTexture()->transparency = m_next_level_name->GetTexture()->transparency - 0.05f;
     m_next_level_blurb->GetTexture()->transparency = m_next_level_blurb->GetTexture()->transparency - 0.05f;
+    m_looking_key->GetTexture()->transparency = m_looking_key->GetTexture()->transparency - 0.05f;
     if (m_loading->GetTexture()->transparency != 0.0f) {
       m_loading->GetTexture()->transparency = m_loading->GetTexture()->transparency - 0.1f;
     } else {
@@ -314,6 +343,7 @@ bool Level_Transition_Controller::Run() {
       m_next_level_heading->GetTexture()->transparency = 0.0f;
       m_next_level_name->GetTexture()->transparency = 0.0f;
       m_next_level_blurb->GetTexture()->transparency = 0.0f;
+      m_looking_key->GetTexture()->transparency = 0.0f;
       m_loading->GetTexture()->transparency = 0.0f;
       if (m_background != 0) {
         m_model->Remove(m_background);
@@ -334,6 +364,10 @@ bool Level_Transition_Controller::Run() {
       if (m_next_level_blurb != 0) {
         m_model->Remove(m_next_level_blurb);
         m_next_level_blurb = 0;
+      }
+      if (m_looking_key != 0) {
+        m_model->Remove(m_looking_key);
+        m_looking_key = 0;
       }
       if (m_loading != 0) {
         m_model->Remove(m_loading);
@@ -404,6 +438,9 @@ void Level_Transition_Controller::HandleEvent(Tunnelour::Component * const compo
     }
     if (m_next_level_blurb != 0) {
       m_next_level_blurb->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_next_level_blurb_y_offset, m_z_text_position);
+    }
+    if (m_looking_key != 0) {
+      m_looking_key->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_looking_key_y_offset, m_z_text_position);
     }
     if (m_loading != 0) {
       m_loading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_loading_y_offset, m_z_text_position);

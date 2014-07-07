@@ -122,6 +122,10 @@ class Level_Transition_Controller: public Controller,
   float m_next_level_blurb_y_offset;
   Text_Component *m_loading;
   float m_loading_y_offset;
+  Text_Component *m_looking_key;
+  std::string m_looking_key_text;
+  float m_looking_key_y_offset;
+
 
   //---------------------------------------------------------------------------
   // Description : Initialises the timer used for the animation ticks

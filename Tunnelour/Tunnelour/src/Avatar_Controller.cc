@@ -322,10 +322,40 @@ void Avatar_Controller::RunStandingState() {
     
     // If the avatar is not adjacent to the floor, she should fall
     std::vector<Bitmap_Component*> *adjacent_tiles = new std::vector<Bitmap_Component*>();
-    while (!IsAvatarFloorAdjacent(adjacent_tiles)) {
+    if (!IsAvatarFloorAdjacent(adjacent_tiles)) {
+      /*
       D3DXVECTOR3 position = *(m_avatar->GetPosition());
       position.y = position.y - 1;
       m_avatar->SetPosition(position);
+      */
+      if (m_avatar->GetState().direction.compare(m_avatar->GetLastRenderedState().direction) == 0) {
+        if (current_state.direction.compare("Right") == 0) {
+          float y_velocity = -4;
+          float x_velocity = 16;
+          m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
+        } else {  // Left
+          float y_velocity = -4;
+          float x_velocity = -16;
+          m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
+        }
+
+        SetAvatarState("Charlie_Jumping", "Gap_Jump_Arc_Fall", m_avatar->GetState().direction);
+      } else {
+        if (m_avatar->GetLastRenderedState().direction.compare("Right") == 0) {
+          float y_velocity = -4;
+          float x_velocity = 16;
+          m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
+        } else {  // Left
+          float y_velocity = -4;
+          float x_velocity = -16;
+          m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
+        }
+
+        SetAvatarState("Charlie_Jumping", "Gap_Jump_Arc_Fall", m_avatar->GetLastRenderedState().direction);
+      }
+
+      has_state_changed = true;
+      AlignAvatarOnLastContactingFoot();
     }
     delete adjacent_tiles;
   } else {
