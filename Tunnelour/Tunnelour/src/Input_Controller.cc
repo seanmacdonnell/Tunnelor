@@ -246,25 +246,20 @@ void Input_Controller::ProcessInput() {
     if (m_keyboardState[DIK_RIGHT] & 0x80)  {
       command.direction = "Right";
       command.state = "Running";
-      //if (m_keyboardState[DIK_LSHIFT] & 0x80)  {
-      //  command.state = "Walking";
-      //}
-    }
-
-    if (m_keyboardState[DIK_DOWN] & 0x80)  {
-      command.direction = "";
-      command.state = "Down";
-      //if (m_keyboardState[DIK_LSHIFT] & 0x80)  {
-      //  command.state = "Walking";
-      //}
     }
 
     if (m_keyboardState[DIK_LEFT] & 0x80)  {
       command.direction = "Left";
       command.state = "Running";
-      //if (m_keyboardState[DIK_LSHIFT] & 0x80)  {
-      //  command.state = "Walking";
-      //}
+    }
+
+    if (m_keyboardState[DIK_DOWN] & 0x80)  {
+      command.direction = "";
+      command.state = "Down";
+    }
+
+    if (m_keyboardState[DIK_LSHIFT] & 0x80)  {
+      command.state = "Looking";
     }
 
     if (m_keyboardState[DIK_LMENU] & 0x80)  {
@@ -304,6 +299,31 @@ void Input_Controller::ProcessInput() {
   } else {
     key_input.IsEsc = false;
   }
+
+  if (m_keyboardState[DIK_RIGHT] & 0x80)  {
+    key_input.IsRight = true;
+  } else {
+    key_input.IsRight = false;
+  }
+
+  if (m_keyboardState[DIK_LEFT] & 0x80)  {
+    key_input.IsLeft = true;
+  } else {
+    key_input.IsLeft = false;
+  }
+
+  if (m_keyboardState[DIK_DOWN] & 0x80)  {
+    key_input.IsDown = true;
+  } else {
+    key_input.IsDown = false;
+  }
+
+  if (m_keyboardState[DIK_UP] & 0x80)  {
+    key_input.IsUp = true;
+  } else {
+    key_input.IsUp = false;
+  }
+
   m_input_component->SetCurrentKeyInput(key_input);
 
   return;

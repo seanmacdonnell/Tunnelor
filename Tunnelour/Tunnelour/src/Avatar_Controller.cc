@@ -240,8 +240,15 @@ void Avatar_Controller::RunStandingState() {
 
   bool has_state_changed = false;
   m_is_moving_continuously = false;
+
+  if (current_command.state.compare("") == 0) {
+    current_command.state = "Standing";
+  }
+
   // If there is a command (Left, Right, Run, Etc.)
-  if (current_command.state.compare("") != 0) { 
+  if (current_command.state.compare("") != 0 && current_state.state.compare(current_command.state) != 0) { 
+    std::vector<Bitmap_Component*> *adjacent_tiles = new std::vector<Bitmap_Component*>();
+    IsAvatarFloorAdjacent(adjacent_tiles);
     if (current_command.state.compare("Jumping") == 0) {
       float y_velocity = m_vertical_jump_y_initial_Velocity;
       float x_velocity = m_vertical_jump_x_initial_Velocity;
@@ -264,8 +271,17 @@ void Avatar_Controller::RunStandingState() {
       SetAvatarState("Charlie_Running", "Standing_To_Running", current_command.direction);
       m_distance_traveled = 0;
       has_state_changed = true;
+    } else if (current_command.state.compare("Looking") == 0) {
+      SetAvatarState("Charlie_Standing", "Looking", m_avatar->GetState().direction);
+      has_state_changed = true;
+    } else if (current_command.state.compare("Standing") == 0) {
+      SetAvatarState("Charlie_Standing", "Standing", m_avatar->GetState().direction);
+      has_state_changed = true;
     }
     AlignAvatarOnLastContactingFoot();
+    if (!adjacent_tiles->empty()) {
+      MoveAvatarTileAdjacent("Top", *(adjacent_tiles->begin()));
+    }
   } else { // No command, run the standing animation,
     int state_index = current_state.state_index;
     state_index++;
@@ -332,7 +348,7 @@ void Avatar_Controller::RunWalkingState() {
   }
 
   if (current_command.state.compare("") != 0 && (current_state.state.compare(current_command.state) != 0 || current_state.direction != current_command.direction)) {
-    if (current_command.state.compare("Down") == 0) {
+    if (current_command.state.compare("Down") == 0 || current_command.state.compare("Looking") == 0) {
       current_command.state = "";
     }
     // There is a command that is different from the current state or direction
@@ -462,7 +478,7 @@ void Avatar_Controller::RunRunningState() {
        current_state.state.compare("Wall_Colliding_From_High_Speed_Arc") != 0 &&
        (current_state.state.compare("Wall_Colliding_From_High_Speed_Landing") != 0 || current_state.state_index == (m_current_animation_subset.number_of_frames -1)) &&
        current_state.state.compare("Standing_To_Running") != 0) {
-    if (current_command.state.compare("Down") == 0) {
+    if (current_command.state.compare("Down") == 0 || current_command.state.compare("Looking") == 0 ) {
       current_command.state = "";
     }
     if (current_command.state.compare("Jumping") == 0) {
@@ -1084,6 +1100,10 @@ void Avatar_Controller::RunJumpingState() {
   Avatar_Component::Avatar_State last_state = m_avatar->GetLastRenderedState();
   Avatar_Component::Avatar_State current_command = m_avatar->GetCommand();
   bool has_state_changed = false;
+
+  if (current_command.state.compare("Down") == 0 || current_command.state.compare("Looking") == 0 ) {
+    current_command.state = "";
+  }
 
   int state_index = current_state.state_index;
   state_index++;

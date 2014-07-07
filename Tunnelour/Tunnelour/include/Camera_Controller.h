@@ -101,6 +101,13 @@ class Camera_Controller: public Controller,
   //---------------------------------------------------------------------------
   Avatar_Component::Avatar_Collision_Block GetNamedCollisionBlock(std::string id, std::vector<Avatar_Component::Avatar_Collision_Block> avatar_collision_blocks);
   Avatar_Component::Avatar_State last_state;
+
+  int m_current_x_look_distance;
+  int m_current_y_look_distance;
+  int m_max_x_look_distance;
+  int m_max_y_look_distance;
+
+  Input_Component *m_input;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_CAMERA_CONTROLLER_H_

@@ -36,6 +36,10 @@ Camera_Controller::Camera_Controller() : Controller() {
   m_stationary_avatar_position.y = INT_MAX;
   m_offset_x_divisor = 16;
   m_offset_y_divisor = 32;
+  m_current_x_look_distance = 0;
+  m_current_y_look_distance = 0;
+  m_max_x_look_distance = 600;
+  m_max_y_look_distance = 300;
 }
 
 //------------------------------------------------------------------------------
@@ -46,6 +50,7 @@ Camera_Controller::~Camera_Controller() {
   m_game_settings = 0;
   m_camera = 0;
   m_adjacent_floor_tile = 0;
+  m_input = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -65,6 +70,7 @@ bool Camera_Controller::Init(Component_Composite * const model) {
     m_game_settings = mutator.GetGameSettings();
     m_has_been_initialised = true;
     m_floor_tiles = mutator.GetFloorTiles();
+    m_input = mutator.GetInputComponent();
   } else {
     return false;
   } 
@@ -99,72 +105,124 @@ bool Camera_Controller::Run() {
     Avatar_Component::Avatar_State current_command = m_avatar->GetCommand();
     Avatar_Component::Avatar_State last_state = m_avatar->GetLastRenderedState();
 
-
-    if (current_state.state.compare("Initial") == 0 || last_state.state.compare("Initial") == 0) {
-      radius = 0;
-      camera_position.x = avatar_position.x;
-      camera_position.y = avatar_position.y - (avatar_collision_block.size.y / 2) + 176 + 1;
-      m_stationary_avatar_position.x = m_avatar->GetPosition()->x;
-      m_stationary_avatar_position.y = m_avatar->GetPosition()->y;
-    } else {
-      int distance = HowFarHasAvatarTravelled();
-      if (current_state.parent_state.compare("Charlie_Standing") == 0 && last_state.parent_state.compare("Charlie_Standing") == 0 ||
-          current_state.direction.compare(last_state.direction) != 0) {
-        if (distance > m_leash_length) {
-          camera_position.x = avatar_position.x;
-          camera_position.x = m_camera->GetLastPosition().x + CalculateSmoothSnapXOffset(camera_position.x);
-          m_stationary_avatar_position.x = m_avatar->GetPosition()->x;
-          m_stationary_avatar_position.y = m_avatar->GetPosition()->y;
-        } else {
-          camera_position.x = m_stationary_avatar_position.x;
-          camera_position.x = m_camera->GetLastPosition().x + CalculateSmoothSnapXOffset(camera_position.x);
+    if (current_state.state.compare("Looking") == 0) {
+      if (last_state.state.compare("Looking") != 0) {
+        camera_position.x = avatar_position.x;
+        camera_position.y = m_adjacent_floor_tile->GetTopLeftPostion().y + 128 + 1;
+        m_current_x_look_distance = 0;
+        m_current_y_look_distance = 0;
+      }
+      if (m_input->GetCurrentKeyInput().IsRight) {
+        if (m_current_x_look_distance != m_max_x_look_distance) {
+          camera_position.x = avatar_position.x + m_max_x_look_distance;
+          m_current_x_look_distance = m_max_x_look_distance;
         }
       } else {
-        if (distance > m_leash_length || m_avatar->GetVelocity().x == 32 || m_avatar->GetVelocity().x == -32) {
-          if (avatar_position.x > m_camera->GetLastPosition().x) {
-             camera_position.x = avatar_position.x - m_leash_length;
+        if (m_current_x_look_distance == m_max_x_look_distance) {
+          camera_position.x = avatar_position.x;
+          m_current_x_look_distance = 0;
+        }
+      }
+      if (m_input->GetCurrentKeyInput().IsLeft) {
+        if ((m_current_x_look_distance * -1) != m_max_x_look_distance) {
+          camera_position.x = avatar_position.x - m_max_x_look_distance;
+          m_current_x_look_distance = (m_max_x_look_distance * -1);
+        }
+      } else {
+        if ((m_current_x_look_distance * -1) == m_max_x_look_distance) {
+          camera_position.x = avatar_position.x;
+          m_current_x_look_distance = 0;
+        }
+      }
+      if (m_input->GetCurrentKeyInput().IsDown) {
+        if ((m_current_y_look_distance * -1) != m_max_y_look_distance) {
+          camera_position.y = avatar_position.y - m_max_y_look_distance;
+          m_current_y_look_distance = (m_max_y_look_distance * -1);
+        }
+      } else {
+        if ((m_current_y_look_distance * -1) == m_max_y_look_distance) {
+          camera_position.y = m_adjacent_floor_tile->GetTopLeftPostion().y + 128 + 1;;
+          m_current_y_look_distance = 0;
+        }
+      }
+      if (m_input->GetCurrentKeyInput().IsUp) {
+        if (m_current_y_look_distance != m_max_y_look_distance) {
+          camera_position.y = avatar_position.y + m_max_y_look_distance;
+          m_current_y_look_distance = m_max_y_look_distance;
+        }
+      } else {
+        if (m_current_y_look_distance == m_max_y_look_distance) {
+          camera_position.y = m_adjacent_floor_tile->GetTopLeftPostion().y + 128 + 1;;
+          m_current_y_look_distance = 0;
+        }
+      }
+    } else {
+      if (current_state.state.compare("Initial") == 0 || last_state.state.compare("Initial") == 0) {
+        radius = 0;
+        camera_position.x = avatar_position.x;
+        camera_position.y = avatar_position.y - (avatar_collision_block.size.y / 2) + 176 + 1;
+        m_stationary_avatar_position.x = m_avatar->GetPosition()->x;
+        m_stationary_avatar_position.y = m_avatar->GetPosition()->y;
+      } else {
+        int distance = HowFarHasAvatarTravelled();
+        if (current_state.parent_state.compare("Charlie_Standing") == 0 && last_state.parent_state.compare("Charlie_Standing") == 0 ||
+            current_state.direction.compare(last_state.direction) != 0) {
+          if (distance > m_leash_length) {
+            camera_position.x = avatar_position.x;
+            camera_position.x = m_camera->GetLastPosition().x + CalculateSmoothSnapXOffset(camera_position.x);
+            m_stationary_avatar_position.x = m_avatar->GetPosition()->x;
+            m_stationary_avatar_position.y = m_avatar->GetPosition()->y;
           } else {
-             camera_position.x = avatar_position.x + m_leash_length;
+            camera_position.x = m_stationary_avatar_position.x;
+            camera_position.x = m_camera->GetLastPosition().x + CalculateSmoothSnapXOffset(camera_position.x);
           }
         } else {
-          camera_position.x = m_stationary_avatar_position.x;
-          camera_position.x = m_camera->GetLastPosition().x + CalculateSmoothSnapXOffset(camera_position.x);
+          if (distance > m_leash_length || m_avatar->GetVelocity().x == 32 || m_avatar->GetVelocity().x == -32) {
+            if (avatar_position.x > m_camera->GetLastPosition().x) {
+               camera_position.x = avatar_position.x - m_leash_length;
+            } else {
+               camera_position.x = avatar_position.x + m_leash_length;
+            }
+          } else {
+            camera_position.x = m_stationary_avatar_position.x;
+            camera_position.x = m_camera->GetLastPosition().x + CalculateSmoothSnapXOffset(camera_position.x);
+          }
         }
-      }
-      //camera_position.x += CalculateSmoothSnapXOffset(camera_position.x);
-      //camera_position.x = m_camera->GetLastPosition().x ;
+        //camera_position.x += CalculateSmoothSnapXOffset(camera_position.x);
+        //camera_position.x = m_camera->GetLastPosition().x ;
 
-      //camera_position.x = avatar_position.x + CalculateSmoothSnapXOffset();
-      // This plus 1 (+1) is to fix a bug where black bars sometimes appear on the top
-      // or the bottom of the viewspace. I don't know why these bars appear and I don't
-      // know why the + 1 fixes the problem. but.. OK
-      if (m_adjacent_floor_tile != 0) {
-        camera_position.y = m_adjacent_floor_tile->GetTopLeftPostion().y + 128 + 1;
-      } else {
-        camera_position.y = m_avatar->GetBottomRightPostion().y + 128 + 1;// - (avatar_collision_block.size.y / 2) + 176 + 1;
-      }
-      //camera_position.y += CalculateSmoothSnapYOffset(camera_position.y);
-      //camera_position.y = m_camera->GetLastPosition().y + CalculateSmoothSnapYOffset(camera_position.y);
-      /*
-      if (m_avatar->GetState().state.compare("Up_Facing_Falling_To_Death") == 0 && m_avatar->GetState().state_index == 0) {
-        radius = 30.0;
-        randomAngle = rand()%360;
-        is_shaking = true;
-      }
+        //camera_position.x = avatar_position.x + CalculateSmoothSnapXOffset();
+        // This plus 1 (+1) is to fix a bug where black bars sometimes appear on the top
+        // or the bottom of the viewspace. I don't know why these bars appear and I don't
+        // know why the + 1 fixes the problem. but.. OK
+        if (m_adjacent_floor_tile != 0) {
+          camera_position.y = m_adjacent_floor_tile->GetTopLeftPostion().y + 128 + 1;
+        } else {
+          camera_position.y = m_avatar->GetBottomRightPostion().y + 128 + 1;// - (avatar_collision_block.size.y / 2) + 176 + 1;
+        }
+        //camera_position.y += CalculateSmoothSnapYOffset(camera_position.y);
+        //camera_position.y = m_camera->GetLastPosition().y + CalculateSmoothSnapYOffset(camera_position.y);
+        /*
+        if (m_avatar->GetState().state.compare("Up_Facing_Falling_To_Death") == 0 && m_avatar->GetState().state_index == 0) {
+          radius = 30.0;
+          randomAngle = rand()%360;
+          is_shaking = true;
+        }
    
-      if (is_shaking) {
-        radius *=0.9; //diminish radius each frame
-        randomAngle += (150 + rand()%60);
-        float offset = (sin(randomAngle) * radius , cos(randomAngle) * radius) + 128; //create offset 2d vector
-        offset = ceil(offset);
-        //camera_position.x += offset; //set centre of viewport
-        camera_position.y -= offset; //set centre of viewport
-      }
+        if (is_shaking) {
+          radius *=0.9; //diminish radius each frame
+          randomAngle += (150 + rand()%60);
+          float offset = (sin(randomAngle) * radius , cos(randomAngle) * radius) + 128; //create offset 2d vector
+          offset = ceil(offset);
+          //camera_position.x += offset; //set centre of viewport
+          camera_position.y -= offset; //set centre of viewport
+        }
 
-      if (radius == 0) {
-        is_shaking = false;
+        if (radius == 0) {
+          is_shaking = false;
+        }
+        */
       }
-      */
     }
     m_camera->SetPosition(camera_position);
   }
@@ -328,25 +386,35 @@ int Camera_Controller::CalculateSmoothSnapXOffset(float camera_position_x) {
 
   int multiplier = 1;
   if (m_avatar->GetState().parent_state.compare("Charlie_Standing") != 0) {
-    multiplier = 1;
+    multiplier = 2;
   }
 
-  if (dist > 512) {
+  if (m_avatar->GetState().state.compare("Looking") == 0) {
+    multiplier = 6;
+  }
+
+  if (dist > 1024) {
+    offset = 32 * multiplier;  
+  } else if (dist > 512) {
     offset = 16 * multiplier;
   } else if (dist > 256) {
     offset = 8 * multiplier;
   } else if (dist > 128) {
-    offset = 4 * multiplier;
+    offset = 6 * multiplier;
   } else if (dist > 64) {
-    offset = 2 * multiplier;
+    offset = 4 * multiplier;
   } else if (dist > 32) {
-    offset = 1 * multiplier;
+    offset = 2 * multiplier;
   } else if (dist > 1) {
-    offset = 1;
+    offset = 1 * multiplier;
   } else {
     offset = dist;
   }
 
+  if (offset > dist) {
+    offset = dist;
+  }
+  
   if (camera_position_x < m_camera->GetLastPosition().x) {
     offset = offset*-1;
   }

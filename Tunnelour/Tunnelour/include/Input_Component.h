@@ -30,6 +30,19 @@ class Input_Component: public Tunnelour::Component {
    struct Key_Input {
      bool IsSpace;
      bool IsEsc;
+     bool IsRight;
+     bool IsLeft;
+     bool IsDown;
+     bool IsUp;
+
+     Key_Input() {
+       IsSpace = false;
+       IsEsc = false;
+       IsRight = false;
+       IsLeft = false;
+       IsDown = false;
+       IsUp = false;
+     }
    };
   //---------------------------------------------------------------------------
   // Description : Constructor

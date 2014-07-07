@@ -25,6 +25,8 @@ Camera_Controller_Mutator::Camera_Controller_Mutator() {
   m_found_avatar_component = false;
   m_game_settings = 0;
   m_avatar_controller = 0;
+  m_input = 0;
+  n_found_input_component = false;
 }
 
 //------------------------------------------------------------------------------
@@ -47,6 +49,9 @@ void Camera_Controller_Mutator::Mutate(Tunnelour::Component * const component) {
     if (tile->IsFloor()) {
       m_floor_tiles.push_back(tile);
     }
+  } else if (component->GetType().compare("Input_Component") == 0) {
+    m_input = static_cast<Input_Component*>(component);
+    n_found_input_component = true;
   }
 }
 
@@ -61,8 +66,15 @@ Avatar_Component* const Camera_Controller_Mutator::GetAvatarComponent() {
 }
 
 //------------------------------------------------------------------------------
+Input_Component* const Camera_Controller_Mutator::GetInputComponent() {
+  return m_input;
+}
+
+//------------------------------------------------------------------------------
 bool Camera_Controller_Mutator::WasSuccessful() {
-  return (m_found_game_settings && m_found_avatar_component);
+  return (m_found_game_settings &&
+          m_found_avatar_component &&
+          n_found_input_component);
 }
 
 //------------------------------------------------------------------------------
