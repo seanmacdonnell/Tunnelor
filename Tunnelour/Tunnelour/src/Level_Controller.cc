@@ -179,7 +179,7 @@ bool Level_Controller::Run() {
               m_level_transition_controller->SetLevelCompleteHeadingText("TRY AGAIN");
             }
             m_level_transition_controller->SetNextLevelHeadingText("Find the exit!");
-            m_level_transition_controller->SetNextLevelNameText("Arrow Direction Keys To Move and Right Alt to Jump");
+            m_level_transition_controller->SetNextLevelNameText("Arrow Direction Keys To Move and Left Alt to Jump");
             m_level_transition_controller->SetNextLevelBlurbText("Press ESC to reset the tunnel.");
             m_level_transition_controller->Init(m_model);
             m_level_transition_controller->Run();
@@ -193,7 +193,7 @@ bool Level_Controller::Run() {
         m_level_transition_controller = new Level_Transition_Controller();
         m_level_transition_controller->SetLevelCompleteHeadingText("WELCOME");
         m_level_transition_controller->SetNextLevelHeadingText("Find the exit!");
-        m_level_transition_controller->SetNextLevelNameText("Arrow Direction Keys To Move and Right Alt to Jump");
+        m_level_transition_controller->SetNextLevelNameText("Arrow Direction Keys To Move and Left Alt to Jump");
         m_level_transition_controller->SetNextLevelBlurbText("Press ESC to reset the tunnel.");
         m_level_transition_controller->Init(m_model);
         m_level_transition_controller->Run();

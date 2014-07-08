@@ -1582,7 +1582,7 @@ void Avatar_Controller::RunJumpingState() {
       std::vector<Wall_Collision> *out_colliding_floor_tiles = new std::vector<Wall_Collision>();
       bool can_avatar_grab_a_ledge = CanAvatarGrabALedge(out_colliding_floor_tiles);
       if (can_avatar_grab_a_ledge) {
-        if (current_command.direction.compare(out_colliding_floor_tiles->begin()->collision_side) != 0) {
+        //if (current_command.direction.compare(out_colliding_floor_tiles->begin()->collision_side) != 0) {
           if (current_state.state.compare("Wall_Jump_Rise_Arc") == 0 ||
               current_state.state.compare("Wall_Jump_Fall_Arc") == 0 ||
               current_state.state.compare("Wall_Jump_Rising") == 0 ||
@@ -1601,7 +1601,7 @@ void Avatar_Controller::RunJumpingState() {
             m_y_fallen = 0;
             m_distance_traveled = 0;
           }
-        }
+        //}
       }
       delete out_colliding_floor_tiles;
     }

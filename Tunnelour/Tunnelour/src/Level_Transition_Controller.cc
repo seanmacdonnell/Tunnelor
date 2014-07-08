@@ -204,7 +204,7 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
       m_looking_key = new Text_Component();
       m_looking_key->GetText()->font_csv_file = m_text_font_path;
       m_looking_key->GetText()->text = m_next_level_blurb_text;
-      m_looking_key->GetText()->text = "Hold Space and use the direction keys to look around!";
+      m_looking_key->GetText()->text = "Hold SHIFT and use the direction keys to look around!";
       m_looking_key->GetTexture()->transparency = 1.0f;
       m_looking_key->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_looking_key_y_offset, m_z_text_position);
       m_looking_key->GetFrame()->index_buffer = 0;
