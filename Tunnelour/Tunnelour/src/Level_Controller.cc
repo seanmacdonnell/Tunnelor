@@ -33,8 +33,6 @@ Level_Controller::Level_Controller() : Controller() {
   m_level_blurb = 0;
   m_camera = 0;
   m_z_position = -3;
-  m_background_controller = 0;
-  m_middleground_controller = 0;
   m_level_tile_controller = 0;
   m_splash_screen_component = 0;
   m_level_transition_controller = 0;

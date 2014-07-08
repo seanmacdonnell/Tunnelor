@@ -587,7 +587,7 @@ void Level_Tile_Controller::LoadTilesetMetadata() {
   m_tilesets.push_back(debug_tileset_metadata);
 
   Tileset_Helper::Tileset_Metadata blue_cave_tileset_metadata;
-  m_blue_cave_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Blue_Cave_Tileset.txt");
+  m_blue_cave_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Blue_Cave_Tileset_2.txt");
   Tileset_Helper::LoadTilesetMetadataIntoStruct(m_blue_cave_metadata_file_path, &blue_cave_tileset_metadata);
   m_tilesets.push_back(blue_cave_tileset_metadata);
 
@@ -910,6 +910,7 @@ Tileset_Helper::Line Level_Tile_Controller::GetCurrentSizedBackgroundLine(float 
 //---------------------------------------------------------------------------
 void Level_Tile_Controller::ResetMiddlegroundTileTexture(Tile_Bitmap *out_tile) {
   Tileset_Helper::Line tile_line = GetCurrentSizedMiddlegroundLine(out_tile->GetSize().x);
+  Tileset_Helper::Subset edge_subset;
   int random_variable = 0;
 
   if (out_tile->IsLeftWall() || out_tile->IsRightWall() || out_tile->IsRoof() || out_tile->IsFloor()) {
@@ -928,7 +929,7 @@ void Level_Tile_Controller::ResetMiddlegroundTileTexture(Tile_Bitmap *out_tile) 
       middleground_tile_type.found_floor = true;
     }
     //Middleground_Tile_Type middleground_tile_type = ParseSubsetTypesFromString(types);
-    Tileset_Helper::Subset edge_subset = GetCurrentMiddlegroundSubsetType(middleground_tile_type);
+    edge_subset = GetCurrentMiddlegroundSubsetType(middleground_tile_type);
     tile_line = GetSizedNamedLine(edge_subset, out_tile->GetSize().x);
     random_variable = random_variable = rand() % tile_line.number_of_tiles;
   } else if (out_tile->IsRightFloorEnd() || out_tile->IsLeftFloorEnd() ||
@@ -961,7 +962,7 @@ void Level_Tile_Controller::ResetMiddlegroundTileTexture(Tile_Bitmap *out_tile) 
       types += "Right Wall Bot End";
     }
     Middleground_Tile_Type Middleground_Tile_Type = ParseSubsetTypesFromString(types);
-    Tileset_Helper::Subset edge_subset = GetCurrentMiddlegroundSubsetType(Middleground_Tile_Type);
+    edge_subset = GetCurrentMiddlegroundSubsetType(Middleground_Tile_Type);
     tile_line = GetSizedNamedLine(edge_subset, out_tile->GetSize().x);
     random_variable = random_variable = rand() % tile_line.number_of_tiles;
   } else {
@@ -969,7 +970,9 @@ void Level_Tile_Controller::ResetMiddlegroundTileTexture(Tile_Bitmap *out_tile) 
   }     
 
   float left = random_variable * tile_line.tile_size_x + tile_line.top_left_x;
+  left += edge_subset.top_left_x_offset + (random_variable * edge_subset.top_left_x_offset);
   float top = tile_line.top_left_y;
+  top += edge_subset.top_left_y_offset;
   out_tile->GetTexture()->top_left_position = D3DXVECTOR2(left, top);
   out_tile->GetTexture()->texture = 0;
   out_tile->GetFrame()->vertex_buffer = 0;
@@ -979,6 +982,7 @@ void Level_Tile_Controller::ResetMiddlegroundTileTexture(Tile_Bitmap *out_tile) 
 //---------------------------------------------------------------------------
 void Level_Tile_Controller::ResetBackgroundTileTexture(Tile_Bitmap *out_tile) {
   Tileset_Helper::Line tile_line = GetCurrentSizedBackgroundLine(out_tile->GetSize().x);
+  Tileset_Helper::Subset edge_subset;
   int random_variable = 0;
   if (m_is_debug_mode) {
     if (out_tile->IsRightExit() || out_tile->IsLeftExit()) {
@@ -995,15 +999,20 @@ void Level_Tile_Controller::ResetBackgroundTileTexture(Tile_Bitmap *out_tile) {
       types += " Left Exit ";
     }
     Background_Tile_Type bacground_tile_type = ParseSubsetBackgroundTypesFromString(types);
-    Tileset_Helper::Subset edge_subset = GetCurrentBackgroundSubsetType(bacground_tile_type);
+    edge_subset = GetCurrentBackgroundSubsetType(bacground_tile_type);
     tile_line = GetSizedNamedLine(edge_subset, out_tile->GetSize().x);
     random_variable = random_variable = rand() % tile_line.number_of_tiles;
   } else {
+    std::string types = "";
+    Background_Tile_Type bacground_tile_type = ParseSubsetBackgroundTypesFromString(types);
+    edge_subset = GetCurrentBackgroundSubsetType(bacground_tile_type);
     random_variable = rand() % tile_line.number_of_tiles;
   }
 
-  float left = random_variable * (tile_line.tile_size_x + tile_line.top_left_x);
-  float top = tile_line.top_left_y;  
+  float left = random_variable * tile_line.tile_size_x + tile_line.top_left_x;
+  left += edge_subset.top_left_x_offset + (random_variable * edge_subset.top_left_x_offset);
+  float top = tile_line.top_left_y;
+  top += edge_subset.top_left_y_offset;
   out_tile->GetTexture()->top_left_position = D3DXVECTOR2(left, top);
   out_tile->GetTexture()->texture = 0;
   out_tile->GetFrame()->vertex_buffer = 0;

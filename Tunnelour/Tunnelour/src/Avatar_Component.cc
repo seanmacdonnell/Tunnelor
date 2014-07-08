@@ -165,7 +165,7 @@ void Avatar_Component::Init_Frame() {
   // Top left
   m_frame->vertices[0].position = D3DXVECTOR3(left, top, 0.0f);
   if (m_state.direction.compare("Right") == 0) {
-    m_frame->vertices[0].texture =  D3DXVECTOR2(m_texture->top_left_position.x / m_texture->texture_size.x,
+    m_frame->vertices[0].texture =  D3DXVECTOR2(m_texture->top_left_position.x / m_texture->texture_size.x ,
                                                 m_texture->top_left_position.y / m_texture->texture_size.y);
   } else {
     // TOP Left NOW TOP Right

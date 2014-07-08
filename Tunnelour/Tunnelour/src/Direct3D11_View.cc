@@ -895,8 +895,8 @@ void Direct3D11_View::Init_D3D11() {
                     m_game_settings->GetScreenNear(),
                     m_game_settings->GetScreenDepth());
 
-  //D3DXMatrixOrthoOffCenterLH(&m_ortho, (static_cast<float>(m_game_settings->GetResolution().x)/2) * -1 * 1.5, static_cast<float>(m_game_settings->GetResolution().x)/2 * 1.5,
-  //                                     (static_cast<float>(m_game_settings->GetResolution().y)/2) * -1 * 1.5, static_cast<float>(m_game_settings->GetResolution().y)/2 * 1.5,
+  //D3DXMatrixOrthoOffCenterLH(&m_ortho, (static_cast<float>(m_game_settings->GetResolution().x)/2) * -1 * 1.4, static_cast<float>(m_game_settings->GetResolution().x)/2 * 1.4,
+  //                                     (static_cast<float>(m_game_settings->GetResolution().y)/2) * -1 * 1.4, static_cast<float>(m_game_settings->GetResolution().y)/2 * 1.4,
   //                                     m_game_settings->GetScreenNear(), m_game_settings->GetScreenDepth());
 
   // Clear the second depth stencil state before setting the parameters.
@@ -1169,7 +1169,7 @@ void Direct3D11_View::Render_Bitmap(Bitmap_Renderable* bitmap,
   // Translate
   D3DXMatrixTranslation(&TranslateMatrix,
                         bitmap->position->x,
-                        bitmap->position->y,
+                        bitmap->position->y ,
                         bitmap->position->z);
 
 

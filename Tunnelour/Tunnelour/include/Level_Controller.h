@@ -23,8 +23,6 @@
 #include "Level_Component.h"
 #include "Text_Component.h"
 #include "Camera_Component.h"
-#include "Background_Controller.h"
-#include "Middleground_Controller.h"
 #include "Splash_Screen_Component.h"
 #include "Level_Tile_Controller.h"
 #include "Level_Transition_Controller.h"
@@ -91,8 +89,6 @@ class Level_Controller: public Controller {
   Level_Component::Level_Metadata m_next_level;
   Level_Component::Level_Metadata m_current_level;
 
-  Tunnelour::Background_Controller *m_background_controller;
-  Tunnelour::Middleground_Controller *m_middleground_controller;
   Tunnelour::Level_Tile_Controller *m_level_tile_controller;
   Tunnelour::Splash_Screen_Component *m_splash_screen_component;
   Tunnelour::Level_Transition_Controller *m_level_transition_controller;

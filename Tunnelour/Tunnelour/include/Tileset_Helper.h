@@ -72,9 +72,21 @@ class Tileset_Helper {
   struct Subset {
     std::string type;
     float top_left_x, top_left_y;
+    float top_left_x_offset, top_left_y_offset;
     float size_x, size_y;
     int number_of_lines;
     std::vector<Line> lines;
+
+    Subset() {
+      type = "";
+      top_left_x = 0;
+      top_left_y = 0;
+      top_left_x_offset = 0;
+      top_left_y_offset = 0;
+      size_x = 0;
+      size_y = 0;
+      number_of_lines = 0;
+    }
   };
 
   struct Tileset_Metadata {

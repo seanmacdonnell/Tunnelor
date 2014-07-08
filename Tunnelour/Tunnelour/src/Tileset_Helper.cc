@@ -592,6 +592,32 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
       fgets(line, 225, pFile);
       if (line != NULL) {
         token = strtok_s(line, " ", &next_token);
+        if (strcmp(token, "SubSet_TopLeftXOffset") == 0)   {
+          token = strtok_s(NULL, " =\"", &next_token);
+          temp_tileset.top_left_x_offset = static_cast<float>(atof(token));
+        } else {
+          std::string error = "Parse Tileset Metadata Failed!  (" + metadata_file + ") Expected: SubSet_TopLeftXOffset, got: ";
+          error += token;
+          throw Tunnelour::Exceptions::run_error(error);
+        }
+      }
+
+      fgets(line, 225, pFile);
+      if (line != NULL) {
+        token = strtok_s(line, " ", &next_token);
+        if (strcmp(token, "SubSet_TopLeftYOffset") == 0)   {
+          token = strtok_s(NULL, " =\"", &next_token);
+          temp_tileset.top_left_y_offset = static_cast<float>(atof(token));
+        } else {
+          std::string error = "Parse Tileset Metadata Failed!  (" + metadata_file + ") Expected: SubSet_TopLeftYOffset, got: ";
+          error += token;
+          throw Tunnelour::Exceptions::run_error(error);
+        }
+      }
+
+      fgets(line, 225, pFile);
+      if (line != NULL) {
+        token = strtok_s(line, " ", &next_token);
         if (strcmp(token, "SubSet_SizeX") == 0)   {
           token = strtok_s(NULL, " =\"", &next_token);
           temp_tileset.size_x = static_cast<float>(atof(token));
