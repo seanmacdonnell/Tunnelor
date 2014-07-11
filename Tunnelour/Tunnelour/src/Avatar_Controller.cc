@@ -1142,19 +1142,19 @@ void Avatar_Controller::RunJumpingState() {
             has_state_changed = true;
           }
         } else if (current_state.state.compare("Wall_Jump_Falling") == 0) {
-          if (m_y_fallen < -1024) {
+          if (m_y_fallen < -1280) {
             SetAvatarState("Charlie_Falling", "Down_Facing_Falling", m_avatar->GetState().direction);
             AlignAvatarOnLastAvatarCollisionBlock();
             has_state_changed = true;
           }
         } else if (current_state.state.compare("Gap_Jump_Falling") == 0) {
-          if (m_y_fallen < -1024) {
+          if (m_y_fallen < -1280) {
             SetAvatarState("Charlie_Falling", "Down_Facing_Falling", m_avatar->GetState().direction);
             AlignAvatarOnLastAvatarCollisionBlock();
             has_state_changed = true;
           }
         } else if (current_state.state.compare("Vertical_Jump_Arc") == 0) {
-          if (m_y_fallen < -1024) {
+          if (m_y_fallen < -1280) {
             SetAvatarState("Charlie_Falling", "Down_Facing_Falling", m_avatar->GetState().direction);
             AlignAvatarOnLastAvatarCollisionBlock();
             has_state_changed = true;
@@ -1457,7 +1457,7 @@ void Avatar_Controller::RunJumpingState() {
           } else {
             MoveAvatarTileAdjacent("Right", out_colliding_wall_tiles->begin()->colliding_tile);
           }
-        } else if (m_y_fallen < 1024) {
+        } else if (m_y_fallen < 1280) {
           if (m_avatar->GetState().direction.compare("Right") == 0) {
             SetAvatarState("Charlie_Jumping", "Vertical_Jump_Arc", m_avatar->GetState().direction);
             AlignAvatarOnLastAvatarCollisionBlockLeftBottom();
@@ -1511,7 +1511,7 @@ void Avatar_Controller::RunJumpingState() {
       std::vector<Wall_Collision> *out_colliding_floor_tiles = new std::vector<Wall_Collision>();
       bool is_floor_colliding = IsAvatarFloorColliding(out_colliding_floor_tiles);
       if (is_floor_colliding) {
-        if (m_y_fallen < -1024) {
+        if (m_y_fallen < -1280) {
           SetAvatarState("Charlie_Falling", "Down_Facing_Falling_To_Death", m_avatar->GetState().direction);
         } else {
           if (current_state.state.compare("Vertical_Jump_Arc") == 0) {
@@ -1538,7 +1538,7 @@ void Avatar_Controller::RunJumpingState() {
         D3DXVECTOR3 new_velocity = D3DXVECTOR3(old_velocity.x, 0 ,0);
         m_avatar->SetVelocity(new_velocity);
       } else if (IsAvatarFloorAdjacent(adjacent_tiles)) {
-        if (m_y_fallen < -1024) {
+        if (m_y_fallen < -1280) {
           SetAvatarState("Charlie_Falling", "Down_Facing_Falling_To_Death", m_avatar->GetState().direction);
         } else {
           if (current_state.state.compare("Vertical_Jump_Arc") == 0) {
