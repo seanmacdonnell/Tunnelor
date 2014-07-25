@@ -30,7 +30,7 @@ Camera_Controller::Camera_Controller() : Controller() {
   is_shaking = false;
   m_adjacent_floor_tile = 0;
   m_distance_travelled = 0;
-  m_leash_length = 96;
+  m_leash_length = 256;
   m_camera_stationary = false;
   m_stationary_avatar_position.x = INT_MAX;
   m_stationary_avatar_position.y = INT_MAX;
@@ -143,29 +143,30 @@ bool Camera_Controller::Run() {
         m_stationary_avatar_position.y = m_avatar->GetPosition()->y;
       } else {
         int distance = HowFarHasAvatarTravelled();
-        if (current_state.parent_state.compare("Charlie_Standing") == 0 && last_state.parent_state.compare("Charlie_Standing") == 0 ||
-            current_state.direction.compare(last_state.direction) != 0) {
+        if (current_state.parent_state.compare("Charlie_Standing") == 0 && last_state.parent_state.compare("Charlie_Standing") == 0 || current_state.direction.compare(last_state.direction) != 0) {
           if (distance > m_leash_length) {
             camera_position.x = avatar_position.x;
-            camera_position.x = m_camera->GetLastPosition().x + CalculateSmoothSnapXOffset(camera_position.x);
+            //camera_position.x = m_camera->GetLastPosition().x + CalculateSmoothSnapXOffset(camera_position.x);
             m_stationary_avatar_position.x = m_avatar->GetPosition()->x;
             m_stationary_avatar_position.y = m_avatar->GetPosition()->y;
           } else {
             camera_position.x = m_stationary_avatar_position.x;
-            camera_position.x = m_camera->GetLastPosition().x + CalculateSmoothSnapXOffset(camera_position.x);
+            //camera_position.x = m_camera->GetLastPosition().x + CalculateSmoothSnapXOffset(camera_position.x);
           }
         } else {
-          if (distance > m_leash_length || m_avatar->GetVelocity().x == 32 || m_avatar->GetVelocity().x == -32) {
-            if (avatar_position.x > m_camera->GetLastPosition().x) {
-               camera_position.x = avatar_position.x - m_leash_length;
+          if (distance > m_leash_length) {
+            if (current_state.direction.compare("Right") == 0) {
+              camera_position.x = avatar_position.x + m_leash_length;
             } else {
-               camera_position.x = avatar_position.x + m_leash_length;
+              camera_position.x = avatar_position.x - m_leash_length;
             }
           } else {
             camera_position.x = m_stationary_avatar_position.x;
-            camera_position.x = m_camera->GetLastPosition().x + CalculateSmoothSnapXOffset(camera_position.x);
+            //camera_position.x = m_camera->GetLastPosition().x + CalculateSmoothSnapXOffset(camera_position.x);
           }
         }
+
+        camera_position.x = m_camera->GetLastPosition().x + CalculateSmoothSnapXOffset(camera_position.x);
 
         // This plus 1 (+1) is to fix a bug where black bars sometimes appear on the top
         // or the bottom of the viewspace. I don't know why these bars appear and I don't
@@ -342,6 +343,25 @@ int Camera_Controller::HowFarHasAvatarTravelled() {
 }
 
 //------------------------------------------------------------------------------
+int Camera_Controller::HowFarHasAvatarTravelledLastFrame() {
+  D3DXVECTOR2 point_1;
+  point_1.x = m_avatar->GetPosition()->x;
+  point_1.y = 0;
+  D3DXVECTOR2 point_2;
+  point_2.x = m_avatar->GetLastRenderedPosition().x;
+  point_2.y = 0;
+
+  double x = point_1.x - point_2.x;
+  double y = point_1.y - point_2.y;
+  double dist;
+
+  dist = pow(x,2)+pow(y,2);           //calculating distance by euclidean formula
+  dist = sqrt(dist);                  //sqrt is function in math.h
+
+  return static_cast<int>(dist);
+}
+
+//------------------------------------------------------------------------------
 int Camera_Controller::CalculateSmoothSnapXOffset(float camera_position_x) {
   int offset = 0;
 
@@ -360,31 +380,30 @@ int Camera_Controller::CalculateSmoothSnapXOffset(float camera_position_x) {
   dist = sqrt(dist);                  //sqrt is function in math.h
 
   int multiplier = 1;
-  if (m_avatar->GetState().parent_state.compare("Charlie_Standing") != 0) {
-    multiplier = 2;
-  }
 
-  if (m_avatar->GetState().state.compare("Looking") == 0) {
-    multiplier = 6;
-  }
+  int distance_travelled = HowFarHasAvatarTravelledLastFrame();
 
   if (dist > 1024) {
-    offset = 32 * multiplier;  
+    offset = 8 * multiplier;  
   } else if (dist > 512) {
-    offset = 16 * multiplier;
-  } else if (dist > 256) {
-    offset = 8 * multiplier;
-  } else if (dist > 128) {
     offset = 6 * multiplier;
-  } else if (dist > 64) {
+  } else if (dist > 256) {
     offset = 4 * multiplier;
-  } else if (dist > 32) {
+  } else if (dist > 128) {
     offset = 2 * multiplier;
+  } else if (dist > 64) {
+    offset = 1 * multiplier;
+  } else if (dist > 32) {
+    offset = 1 * multiplier;
   } else if (dist > 1) {
     offset = 1 * multiplier;
   } else {
     offset = dist;
   }
+
+  if (offset < distance_travelled) {
+    offset += distance_travelled;
+  } 
 
   if (offset > dist) {
     offset = dist;
@@ -453,82 +472,6 @@ int Camera_Controller::CalculateSmoothSnapYOffset(float camera_position_y) {
   return offset;
 }
 
-/*
-At the moment this code is making a camera effect like an earthquake, so I am keeping it for later.
-//------------------------------------------------------------------------------
-int Camera_Controller::CalculateSmoothSnapXOffset(float camera_position_x) {
-  int offset = 0;
-
-  D3DXVECTOR2 point_1;
-  point_1.x = camera_position_x;
-  point_1.y = 0;
-  D3DXVECTOR2 point_2;
-  point_2.x = m_camera->GetLastPosition().x;
-  point_2.y = 0;
-
-  double x = point_1.x - point_2.x;
-  double y = point_1.y - point_2.y;
-  double dist = 0;
-
-  dist = pow(x,2)+pow(y,2);           //calculating distance by euclidean formula
-  dist = sqrt(dist);                  //sqrt is function in math.h
-
-  if (dist > 32) {
-    offset = dist/m_offset_x_divisor;
-    m_offset_x_divisor =- 16;
-  } else {
-    offset = dist;
-    m_offset_x_divisor = 32;
-  }
-
-  if (m_offset_x_divisor == 1) {
-    m_offset_x_divisor = 32;
-  }
-
-  if (camera_position_x > m_camera->GetLastPosition().x) {
-    offset = offset*-1;
-  }
-
-  return offset;
-}
-
-//------------------------------------------------------------------------------
-int Camera_Controller::CalculateSmoothSnapYOffset(float camera_position_y) {
-  int offset = 0;
-
-  D3DXVECTOR2 point_1;
-  point_1.y = camera_position_y;
-  point_1.x = 0;
-  D3DXVECTOR2 point_2;
-  point_2.x = 0;
-  point_2.y = m_camera->GetLastPosition().y;
-
-  double x = point_1.x - point_2.x;
-  double y = point_1.y - point_2.y;
-  double dist = 0;
-
-  dist = pow(x,2)+pow(y,2);           //calculating distance by euclidean formula
-  dist = sqrt(dist);                  //sqrt is function in math.h
-
-  if (dist > 32) {
-    offset = dist/m_offset_y_divisor;
-    m_offset_y_divisor =- 16;
-  } else {
-    offset = dist;
-    m_offset_y_divisor = 32;
-  }
-
-  if (m_offset_y_divisor == 1) {
-    m_offset_y_divisor = 32;
-  }
-
-  if (camera_position_y > m_camera->GetLastPosition().y) {
-    offset = offset * -1;
-  }
-
-  return offset;
-}
-*/
 //------------------------------------------------------------------------------
 int Camera_Controller::WhatsTheDistanceBetweenThesAvatarAndTheCamera() {
   D3DXVECTOR2 point_1;

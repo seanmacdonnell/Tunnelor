@@ -75,6 +75,7 @@ class Camera_Controller: public Controller,
   Bitmap_Component* CollisionBlockToBitmapComponent(Avatar_Component::Avatar_Collision_Block avatar_collision_block, D3DXVECTOR3 position);
 
   int HowFarHasAvatarTravelled();
+  int HowFarHasAvatarTravelledLastFrame();
   int CalculateSmoothSnapXOffset(float camera_position_x);
   int CalculateSmoothSnapYOffset(float camera_position_y);
   int WhatsTheDistanceBetweenThesAvatarAndTheCamera();
