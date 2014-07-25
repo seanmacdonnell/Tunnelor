@@ -255,7 +255,7 @@ bool Level_Controller::Run() {
             m_avatar_controller = new Tunnelour::Avatar_Controller();
             m_avatar_controller->Init(m_model);
           } else {
-            m_avatar_controller->ResetAvatar();
+            m_avatar_controller->ResetAvatarToDefaults();
             m_game_metrics_controller->ResetGameMetrics();
           }
         }
@@ -273,7 +273,7 @@ bool Level_Controller::Run() {
         delete m_level_transition_controller;
         m_level_transition_controller = 0;        
       } else if (m_level_transition_controller->IsFading() && !m_has_avatar_been_reset) {
-        m_avatar_controller->ResetAvatar();
+        m_avatar_controller->ResetAvatarToDefaults();
         m_game_metrics_controller->ResetGameMetrics();
         m_has_avatar_been_reset = true;
       }

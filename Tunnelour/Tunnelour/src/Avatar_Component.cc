@@ -30,9 +30,9 @@ Avatar_Component::Avatar_Component(): Bitmap_Component() {
   m_state.direction = "";
   m_state.state_index = 0;
 
-  m_last_state.state = "";
-  m_last_state.direction = "";
-  m_last_state.state_index = 0;
+  m_initial_state.state = "";
+  m_initial_state.direction = "";
+  m_initial_state.state_index = 0;
 
   m_last_rendered_state.state = "";
   m_last_rendered_state.direction = "";
@@ -51,9 +51,9 @@ Avatar_Component::~Avatar_Component() {
   m_state.direction = "";
   m_state.state_index = 0;
 
-  m_last_state.state = "";
-  m_last_state.direction = "";
-  m_last_state.state_index = 0;
+  m_initial_state.state = "";
+  m_initial_state.direction = "";
+  m_initial_state.state_index = 0;
 
   m_last_rendered_state.state = "";
   m_last_rendered_state.direction = "";
@@ -78,7 +78,7 @@ Avatar_Component::Avatar_State Avatar_Component::GetState() {
 
 //---------------------------------------------------------------------------
 Avatar_Component::Avatar_State Avatar_Component::GetLastState() {
-  return m_last_state;
+  return m_initial_state;
 }
 
 //---------------------------------------------------------------------------
@@ -93,7 +93,7 @@ void Avatar_Component::SetLastRenderedState(Avatar_Component::Avatar_State last_
 
 //---------------------------------------------------------------------------
 void Avatar_Component::SetState(Avatar_Component::Avatar_State state) {
-  m_last_state = m_state;
+  m_initial_state = m_state;
   m_state = state;
 }
 

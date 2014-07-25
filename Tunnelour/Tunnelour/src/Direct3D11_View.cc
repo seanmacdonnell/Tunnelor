@@ -19,7 +19,7 @@
 #include "Direct3D11_View_Mutator.h"
 #include "Direct3D11_View_FontShader.h"
 #include "String_Helper.h"
-#include "Bitmap_Helper.h"
+#include "Geometry_Helper.h"
 #include "Get_Game_Metrics_Component_Mutator.h"
 
 

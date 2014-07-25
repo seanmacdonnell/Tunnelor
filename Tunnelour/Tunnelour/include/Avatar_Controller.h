@@ -30,6 +30,10 @@
 #include "Tileset_Helper.h"
 #include "Level_Component.h"
 
+#include "Charlie_Standing_Controller.h"
+
+#include "Avatar_Helper.h"
+
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
@@ -39,19 +43,10 @@ namespace Tunnelour {
 class Avatar_Controller: public Controller,
                          public Component_Composite::Component_Composite_Type_Observer {
  public:
-  struct Collision {
-    Tile_Bitmap* a_tile;
-    Tile_Bitmap* b_tile;
-    D3DXVECTOR2 a_tile_collision_point;
-    D3DXVECTOR2 b_tile_collision_point;
-  };
-
-  struct Wall_Collision {
-    Bitmap_Component* colliding_tile;
-    std::string collision_side;
-  };
-
-  struct Avatar_Last_State {
+  //---------------------------------------------------------------------------
+  // Description : This struct contains a stored avatar state and position
+  //---------------------------------------------------------------------------
+  struct Avatar_Stored_State {
     Avatar_Component::Avatar_State state;
     D3DXVECTOR3 position;
   };
@@ -86,17 +81,22 @@ class Avatar_Controller: public Controller,
   //---------------------------------------------------------------------------
   virtual void HandleEventRemove(Tunnelour::Component * const component);
 
+  //---------------------------------------------------------------------------
+  // Description : Hides the avatar component so it isn't rendered
+  //---------------------------------------------------------------------------
   void HideAvatar();
 
+  //---------------------------------------------------------------------------
+  // Description : Shows the avatar component so it can be rendered
+  //---------------------------------------------------------------------------
   void ShowAvatar();
 
   //---------------------------------------------------------------------------
-  // Description : Resets the Avatar_Component tile to level defaults
+  // Description : Resets the Avatar_Component tile to defaults
   //---------------------------------------------------------------------------
-  void ResetAvatar();
+  void ResetAvatarToDefaults();
 
  protected:
-
  private:
   //---------------------------------------------------------------------------
   // Description : Generates the Avatar_Component tile
@@ -112,11 +112,6 @@ class Avatar_Controller: public Controller,
   // Description : Changes and maintains the state of the avatar
   //---------------------------------------------------------------------------
   void RunAvatarState();
-
-  //---------------------------------------------------------------------------
-  // Description : Changes and maintains the standing state of the avatar
-  //---------------------------------------------------------------------------
-  void RunStandingState();
 
   //---------------------------------------------------------------------------
   // Description : Changes and maintains the walking state of the avatar
@@ -156,16 +151,24 @@ class Avatar_Controller: public Controller,
   //---------------------------------------------------------------------------
   // Description : Returns true if the avatar is colliding with a floor
   //---------------------------------------------------------------------------
-  bool IsAvatarFloorColliding(std::vector<Wall_Collision> *out_collisions);
+  bool IsAvatarFloorColliding(std::vector<Avatar_Helper::Tile_Collision> *out_collisions);
 
   //---------------------------------------------------------------------------
   // Description : Returns true if the avatar is colliding with a floor
   //---------------------------------------------------------------------------
-  bool IsAvatarWallColliding(std::vector<Wall_Collision> *out_collisions);
+  bool IsAvatarWallColliding(std::vector<Avatar_Helper::Tile_Collision> *out_collisions);
 
+  //---------------------------------------------------------------------------
+  // Description : Returns the distance between two 2D points.
+  //---------------------------------------------------------------------------
   double WhatsTheDistanceBetweenThesePoints(D3DXVECTOR2 point_1, D3DXVECTOR2 point_2);
 
-  bool DoTheseLinesIntersect(D3DXVECTOR2 line_a_begin, D3DXVECTOR2 line_a_end, D3DXVECTOR2 line_b_begin, D3DXVECTOR2 line_b_end, D3DXVECTOR2 *out_intersecting_point); 
+  //---------------------------------------------------------------------------
+  // Description : Returns if two lines intersect, and their intersection
+  //               point.
+  // Return      : D3DXVECTOR2 *out_intersecting_point
+  //---------------------------------------------------------------------------
+  bool DoTheseLinesIntersect(D3DXVECTOR2 line_a_begin, D3DXVECTOR2 line_a_end, D3DXVECTOR2 line_b_begin, D3DXVECTOR2 line_b_end, D3DXVECTOR2 *out_intersecting_point);
 
   //---------------------------------------------------------------------------
   // Description : Loads all the tile animations into the controller
@@ -179,17 +182,22 @@ class Avatar_Controller: public Controller,
   void AlignAvatarOnRightFoot();
 
   //---------------------------------------------------------------------------
-  // Description : Syncs the avatar tile position with the right foot position
-  //             : of the last avatar animation frame.
+  // Description : Syncs the avatar tile position with the last contacting
+  //             : foot of the last avatar animation frame.
   //---------------------------------------------------------------------------
   void AlignAvatarOnLastContactingFoot();
 
+  //---------------------------------------------------------------------------
+  // Description : Syncs the avatar tile position with the last contacting
+  //             : hand of the last avatar animation frame.
+  //---------------------------------------------------------------------------
   void AlignAvatarOnLastHand();
 
   //---------------------------------------------------------------------------
-  // Description : 
+  // Description : Align the avatar so it isn't overbalancing on a 
+  //             : ledge edge.
   //---------------------------------------------------------------------------
-  void AlignAvatarOnLastLedgeEdge(Wall_Collision ledge);
+  void AlignAvatarOnLastLedgeEdge(Avatar_Helper::Tile_Collision ledge);
 
   //---------------------------------------------------------------------------
   // Description : Syncs the avatar tile position with the left foot position
@@ -228,7 +236,7 @@ class Avatar_Controller: public Controller,
   void AlignAvatarOnLastAvatarCollisionBlockLeftBottom();
 
   //---------------------------------------------------------------------------
-  // Description : Repositions the avatar so he is standing adjacent to
+  // Description : Repositions the avatar so she is standing adjacent to
   //             : a colliding wall tile.
   //---------------------------------------------------------------------------
   void MoveAvatarTileAdjacent(std::string direction, Bitmap_Component* tile);
@@ -284,13 +292,17 @@ class Avatar_Controller: public Controller,
   // Description : Creates an Avatar_Component::Avatar_Collision_Block from a
   //             : Tileset_Helper::Avatar_Collision_Block
   //---------------------------------------------------------------------------
-  Avatar_Component::Avatar_Collision_Block TilesetCollisionBlockToAvatarCollisionBlock(Tileset_Helper::Avatar_Collision_Block tileset_avatar_collision_block,
-                                                                                float tileset_animation_top_left_y,
-                                                                                int state_index);
+  Avatar_Component::Avatar_Collision_Block TilesetCollisionBlockToAvatarCollisionBlock(Tileset_Helper::Avatar_Collision_Block tileset_avatar_collision_block, float tileset_animation_top_left_y, int state_index);
 
-  void ClearAvatarState();
+  //---------------------------------------------------------------------------
+  // Description : Clears the current command from the avatar
+  //---------------------------------------------------------------------------
+  void ClearAvatarCommand();
 
-  bool CanAvatarGrabALedge(std::vector<Wall_Collision> *out_collisions);
+  //---------------------------------------------------------------------------
+  // Description : Returns true if the avatar can currently grab a ledge
+  //---------------------------------------------------------------------------
+  bool CanAvatarGrabALedge(std::vector<Avatar_Helper::Tile_Collision> *out_collisions);
 
   //---------------------------------------------------------------------------
   // Member Variables
@@ -337,18 +349,25 @@ class Avatar_Controller: public Controller,
 
   int m_y_fallen;
   bool m_wall_impacting;
-  Avatar_Last_State m_last_state;
+  Avatar_Stored_State m_initial_state;
 
   int m_distance_traveled;
 
   Bitmap_Component *m_currently_grabbed_tile;
-  Wall_Collision m_currently_adjacent_wall_tile;
+  Avatar_Helper::Tile_Collision m_currently_adjacent_wall_tile;
   bool m_is_moving_continuously;
 
   int m_vertical_jump_y_initial_Velocity;
   int m_vertical_jump_x_initial_Velocity;
 
   int m_wall_jump_speed_offset;
+
+  std::string m_avatar_initial_direction;
+  std::string m_avatar_initial_parent_state;
+  std::string m_avatar_initial_state;
+  D3DXVECTOR3 m_avatar_initial_position;
+
+  Charlie_Standing_Controller m_charlie_Standing_Controller;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_H_

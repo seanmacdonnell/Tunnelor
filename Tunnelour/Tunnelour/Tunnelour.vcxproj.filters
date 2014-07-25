@@ -231,6 +231,18 @@
     <ClCompile Include="src\Score_Display_Controller_Mutator.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
+    <ClCompile Include="src\Avatar_State_Controller.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Charlie_Standing_Controller.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Avatar_Helper.cc">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Geometry_Helper.cc">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Init_Controller.h">
@@ -415,6 +427,18 @@
     </ClInclude>
     <ClInclude Include="include\Score_Display_Controller_Mutator.h">
       <Filter>Source Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Avatar_State_Controller.h">
+      <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Charlie_Standing_Controller.h">
+      <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Avatar_Helper.h">
+      <Filter>Include Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Geometry_Helper.h">
+      <Filter>Include Files\Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
