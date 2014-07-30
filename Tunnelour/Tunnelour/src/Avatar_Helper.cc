@@ -626,5 +626,436 @@ bool Avatar_Helper::IsAvatarWallColliding(Avatar_Component *avatar, std::vector<
   return false;
 }
 
+//------------------------------------------------------------------------------
+void Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlock(Avatar_Component *avatar) {
+  if (avatar->GetLastState().state.compare("") == 0) { return; }
+
+  D3DXVECTOR3 new_avatar_position;
+
+  Avatar_Component::Avatar_Collision_Block current_avatar_collision_block;
+  current_avatar_collision_block = GetNamedCollisionBlock("Avatar", avatar->GetState().avatar_collision_blocks);
+  Bitmap_Component *current_collision_bitmap = CollisionBlockToBitmapComponent(current_avatar_collision_block, *(avatar->GetPosition()));
+
+  Avatar_Component::Avatar_Collision_Block last_avatar_collision_block;
+  last_avatar_collision_block = GetNamedCollisionBlock("Avatar", avatar->GetLastState().avatar_collision_blocks);
+  Bitmap_Component *last_collision_bitmap = CollisionBlockToBitmapComponent(last_avatar_collision_block, avatar->GetLastRenderedPosition());
+
+  if (current_collision_bitmap->GetBottomRightPostion().y != last_collision_bitmap->GetBottomRightPostion().y) {
+    D3DXVECTOR3 right_foot_offset;
+    right_foot_offset.x = static_cast<float>(last_avatar_collision_block.size.x -
+                                             current_avatar_collision_block.size.x);
+    if (avatar->GetState().direction.compare("Left") == 0) { right_foot_offset.x = right_foot_offset.x * -1; }
+    right_foot_offset.y = static_cast<float>(last_avatar_collision_block.size.y -
+                                             current_avatar_collision_block.size.y);
+    right_foot_offset.z = 0;
+
+
+    D3DXVECTOR3 current_avatar_position = *avatar->GetPosition();
+    new_avatar_position.x = current_avatar_position.x - (right_foot_offset.x / 2);
+    new_avatar_position.y = current_avatar_position.y - (right_foot_offset.y / 2);
+    new_avatar_position.z = current_avatar_position.z;
+
+    avatar->SetPosition(new_avatar_position);
+
+    D3DXVECTOR3 avatar_position_offset;
+    avatar_position_offset.x = current_avatar_collision_block.offset_from_avatar_centre.x;
+    avatar_position_offset.y = current_avatar_collision_block.offset_from_avatar_centre.y;
+    avatar_position_offset.z = 0;
+
+    current_avatar_position = *avatar->GetPosition();
+    new_avatar_position.x = current_avatar_position.x + avatar_position_offset.x;
+    new_avatar_position.y = current_avatar_position.y - avatar_position_offset.y;
+    new_avatar_position.z = current_avatar_position.z;
+
+    avatar->SetPosition(new_avatar_position);
+  }
+
+  delete current_collision_bitmap;
+  delete last_collision_bitmap;
+}
+
+//------------------------------------------------------------------------------
+bool Avatar_Helper::IsAvatarFloorColliding(Avatar_Component *avatar, std::vector<Avatar_Helper::Tile_Collision> *out_collisions, std::vector<Tile_Bitmap*> *floor_tiles) {
+  // Going to deal only with gravity only
+  // Also only dealing with the lowest foot
+  if (!floor_tiles->empty()) {
+    // Get the lowest block
+    Avatar_Component::Avatar_Collision_Block lowest_avatar_collision_block;
+    lowest_avatar_collision_block = Avatar_Helper::GetNamedCollisionBlock("Avatar", avatar->GetState().avatar_collision_blocks);
+
+    // Make a bitmap for the lowest avatar collision block
+    Bitmap_Component *out_avatar_collision_block = CollisionBlockToBitmapComponent(lowest_avatar_collision_block, *(avatar->GetPosition()));
+
+    // Create a list of floor tiles which are colliding with the collision block
+    std::vector<Tile_Bitmap*>::iterator border_tile;
+    for (border_tile = floor_tiles->begin(); border_tile != floor_tiles->end(); border_tile++) {
+      if (out_avatar_collision_block->GetBottomRightPostion().y < (*border_tile)->GetTopLeftPostion().y) {
+        std::vector<std::string> directons;
+        directons.push_back("Right");
+        directons.push_back("Left");
+        std::vector<std::string>::iterator direction;
+        for (direction = directons.begin(); direction != directons.end(); direction++) {
+          D3DXVECTOR2 Tile_Top_Left;
+          Tile_Top_Left.x = (*border_tile)->GetTopLeftPostion().x;
+          Tile_Top_Left.y = (*border_tile)->GetTopLeftPostion().y;
+          D3DXVECTOR2 Tile_Top_Right;
+          Tile_Top_Right.x = (*border_tile)->GetBottomRightPostion().x;
+          Tile_Top_Right.y = (*border_tile)->GetTopLeftPostion().y;
+          D3DXVECTOR2 Tile_Bottom_Left;
+          Tile_Bottom_Left.x = (*border_tile)->GetTopLeftPostion().x;
+          Tile_Bottom_Left.y = (*border_tile)->GetBottomRightPostion().y; 
+          D3DXVECTOR2 Tile_Bottom_Right;
+          Tile_Bottom_Right.x = (*border_tile)->GetBottomRightPostion().x;
+          Tile_Bottom_Right.y = (*border_tile)->GetBottomRightPostion().y; 
+
+          D3DXVECTOR2 Current_Avatar_Position;
+          if (direction->compare("Right") == 0) {
+            Current_Avatar_Position.x = out_avatar_collision_block->GetBottomRightPostion().x;
+          } else {
+            Current_Avatar_Position.x = out_avatar_collision_block->GetTopLeftPostion().x;
+          }
+          Current_Avatar_Position.y = out_avatar_collision_block->GetBottomRightPostion().y;
+
+          Avatar_Component::Avatar_Collision_Block lowest_last_collision_block;
+          lowest_last_collision_block = GetNamedCollisionBlock("Avatar", avatar->GetLastRenderedState().avatar_collision_blocks);
+          Bitmap_Component *lowest_last_collision_bitmap = CollisionBlockToBitmapComponent(lowest_last_collision_block, avatar->GetLastRenderedPosition());
+          D3DXVECTOR2 Last_Avatar_Position;
+          if (direction->compare("Right") == 0) {
+            Last_Avatar_Position.x = lowest_last_collision_bitmap->GetBottomRightPostion().x;
+          } else {
+            Last_Avatar_Position.x = lowest_last_collision_bitmap->GetTopLeftPostion().x;
+          }
+          Last_Avatar_Position.y = lowest_last_collision_bitmap->GetBottomRightPostion().y;
+
+          D3DXVECTOR2 floor_intersection;
+          bool isthereafloor_intersection = Geometry_Helper::DoTheseLinesIntersect(Tile_Top_Left, Tile_Top_Right, Current_Avatar_Position, Last_Avatar_Position, &floor_intersection);
+          double floor_intersection_disance = Geometry_Helper::WhatsTheDistanceBetweenThesePoints(Current_Avatar_Position, floor_intersection);
+
+          D3DXVECTOR2 left_wall_intersection;
+          bool istherealeft_wall_intersection = false;
+          double left_wall_intersection_disance = 0;
+          if ((*border_tile)->IsWall()) {
+            istherealeft_wall_intersection = Geometry_Helper::DoTheseLinesIntersect(Tile_Top_Left, Tile_Bottom_Left, Current_Avatar_Position, Last_Avatar_Position, &left_wall_intersection);
+            left_wall_intersection_disance = Geometry_Helper::WhatsTheDistanceBetweenThesePoints(Current_Avatar_Position, left_wall_intersection);
+          }
+
+          D3DXVECTOR2 right_wall_intersection;
+          bool istherearight_wall_intersection = false;
+          double right_wall_intersection_distance = 0;
+          if ((*border_tile)->IsWall()) { 
+            istherearight_wall_intersection = Geometry_Helper::DoTheseLinesIntersect(Tile_Top_Right, Tile_Bottom_Right, Current_Avatar_Position, Last_Avatar_Position, &right_wall_intersection);
+            right_wall_intersection_distance = Geometry_Helper::WhatsTheDistanceBetweenThesePoints(Current_Avatar_Position, right_wall_intersection);
+          }
+
+           if (isthereafloor_intersection) {
+            if (istherealeft_wall_intersection) {
+              if (floor_intersection_disance < left_wall_intersection_disance) {
+                Avatar_Helper::Tile_Collision collision;
+                collision.colliding_tile = *border_tile;
+                std::string collision_side = Bitmap_Helper::DoesTileACollideOnTheTopOrBottom(*border_tile, out_avatar_collision_block);
+                collision.collision_side = collision_side;
+                out_collisions->push_back(collision);
+              }
+            } else if (istherearight_wall_intersection) {
+              if (floor_intersection_disance < right_wall_intersection_distance) {
+                Avatar_Helper::Tile_Collision collision;
+                collision.colliding_tile = *border_tile;
+                std::string collision_side = Bitmap_Helper::DoesTileACollideOnTheTopOrBottom(*border_tile, out_avatar_collision_block);
+                collision.collision_side = collision_side;
+                out_collisions->push_back(collision);
+              }
+            } else {
+              Avatar_Helper::Tile_Collision collision;
+              collision.colliding_tile = *border_tile;
+              std::string collision_side = Bitmap_Helper::DoesTileACollideOnTheRightOrLeft(*border_tile, out_avatar_collision_block);
+              collision.collision_side = collision_side;
+              out_collisions->push_back(collision);
+            }
+          }
+
+          delete lowest_last_collision_bitmap;
+        }
+    }
+    }
+
+
+    delete out_avatar_collision_block;
+
+    // If colliding tiles is not empty
+    // This means the avatar is colliding with a tile.
+    if (!out_collisions->empty()) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+//------------------------------------------------------------------------------
+bool Avatar_Helper::CanAvatarGrabALedge(Avatar_Component *avatar, std::vector<Avatar_Helper::Tile_Collision> *out_collisions, std::vector<Tile_Bitmap*> *ledge_tiles) {
+  // Magic number
+  double avatar_grab_range = 60;
+
+  if (!ledge_tiles->empty()) {
+    Avatar_Component::Avatar_Collision_Block avatar_hand;
+    avatar_hand = GetNamedCollisionBlock("Arm", avatar->GetState().avatar_collision_blocks);
+    if (avatar_hand.id.compare("") == 0) { return false; }
+    Bitmap_Component *avatar_hand_bitmap = Avatar_Helper::CollisionBlockToBitmapComponent(avatar_hand, *(avatar->GetPosition()));
+
+    // Create a list of floor tiles which are colliding with the collision block
+    std::vector<Tile_Bitmap*>::iterator ledge_tile;
+    for (ledge_tile = ledge_tiles->begin(); ledge_tile != ledge_tiles->end(); ledge_tile++) {
+      D3DXVECTOR2 grab_point;
+      grab_point.y = (*ledge_tile)->GetTopLeftPostion().y;
+      bool is_right_wall = (*ledge_tile)->IsRightWall();
+      bool is_left_wall = (*ledge_tile)->IsLeftWall();
+      if (is_right_wall && is_left_wall) {
+        if (avatar->GetState().direction.compare("Right") == 0) {
+          grab_point.x = (*ledge_tile)->GetTopLeftPostion().x;
+        } else {
+          grab_point.x = (*ledge_tile)->GetBottomRightPostion().x;
+        }
+      } else if (is_right_wall) {
+        grab_point.x = (*ledge_tile)->GetTopLeftPostion().x;
+      } else if (is_left_wall) {
+        grab_point.x = (*ledge_tile)->GetBottomRightPostion().x;
+      }
+
+      D3DXVECTOR2 hand_point;
+      hand_point.x = avatar_hand_bitmap->GetPosition()->x;
+      hand_point.y = avatar_hand_bitmap->GetPosition()->y;
+
+      double hand_grab_point_distance = 0;
+      hand_grab_point_distance = Geometry_Helper::WhatsTheDistanceBetweenThesePoints(hand_point, grab_point);
+
+      if (hand_grab_point_distance <= avatar_grab_range) {
+        if ((avatar->GetState().direction.compare("Right") == 0 && (*ledge_tile)->IsRightWall() && avatar->GetCommand().direction.compare("Right") == 0) ||
+            (avatar->GetState().direction.compare("Left") == 0 && (*ledge_tile)->IsLeftWall())&& avatar->GetCommand().direction.compare("Left") == 0) {
+          Avatar_Helper::Tile_Collision collision;
+          collision.colliding_tile = *ledge_tile;
+          if (is_right_wall && is_left_wall) {
+            if (avatar->GetState().direction.compare("Right") == 0) {
+              collision.collision_side = "Left";
+            } else {
+              collision.collision_side = "Right";
+            }
+          } else if ((*ledge_tile)->IsRightWall()) {
+            collision.collision_side = "Left";
+          } else if ((*ledge_tile)->IsLeftWall()) {
+            collision.collision_side = "Right";
+          } 
+          out_collisions->push_back(collision);
+        }
+      }
+    }
+
+    // If colliding tiles is not empty
+    // This means the avatar is colliding with a tile.
+    if (!out_collisions->empty()) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+//------------------------------------------------------------------------------
+void Avatar_Helper::AlignAvatarOnLastLedgeEdge(Avatar_Component *avatar, Avatar_Helper::Tile_Collision ledge) {
+  if (avatar->GetLastState().state.compare("") == 0) { return; }
+
+  Avatar_Component::Avatar_Collision_Block avatar_hand;
+  avatar_hand = Avatar_Helper::GetNamedCollisionBlock("Hand", avatar->GetState().avatar_collision_blocks);
+  // I don't know why this is required, but it is.
+  // If you remove it, the avatar will not align correctly on the ledge edge
+  // even though this is already done when the avatar collision blocks are parsed.
+  if (avatar->GetState().direction.compare("Left") == 0) {
+    avatar_hand.offset_from_avatar_centre.x = (avatar_hand.offset_from_avatar_centre.x * -1);
+  }
+  Bitmap_Component *avatar_hand_bitmap = Avatar_Helper::CollisionBlockToBitmapComponent(avatar_hand, *(avatar->GetPosition()));
+
+  D3DXVECTOR3 grab_point;
+  grab_point.y = ledge.colliding_tile->GetTopLeftPostion().y;
+  if (ledge.collision_side.compare("Left") == 0) {
+    grab_point.x = ledge.colliding_tile->GetTopLeftPostion().x;
+  } else if (ledge.collision_side.compare("Right") == 0) {
+    grab_point.x = ledge.colliding_tile->GetBottomRightPostion().x;
+  }
+  grab_point.z = 0;
+
+  D3DXVECTOR3 hand_point;
+  hand_point.x = avatar_hand_bitmap->GetPosition()->x;
+  hand_point.y = avatar_hand_bitmap->GetPosition()->y;
+  hand_point.z = 0;
+
+  if (grab_point != hand_point) {
+    D3DXVECTOR3 difference;
+    difference.x = grab_point.x - hand_point.x;
+    difference.y = grab_point.y - hand_point.y;
+    difference.z = 0;
+
+    D3DXVECTOR3 new_avatar_position = *avatar->GetPosition();
+    new_avatar_position += difference;
+
+    avatar->SetPosition(new_avatar_position);
+  }
+
+  avatar_hand_bitmap = CollisionBlockToBitmapComponent(avatar_hand, *(avatar->GetPosition()));
+  hand_point.x = avatar_hand_bitmap->GetPosition()->x;
+  hand_point.y = avatar_hand_bitmap->GetPosition()->y;
+  if (grab_point != hand_point) {
+    throw Exceptions::run_error("AlignAvatarOnLastLedgeEdge: Failed to set avatar position correctly!");
+  }
+
+  delete avatar_hand_bitmap;
+}
+
+//------------------------------------------------------------------------------
+void Avatar_Helper::AlignAvatarOnLastHand(Avatar_Component *avatar) {
+  if (avatar->GetLastState().state.compare("") == 0) { return; }
+
+  Avatar_Component::Avatar_Collision_Block last_hand;
+  last_hand = Avatar_Helper::GetNamedCollisionBlock("Hand", avatar->GetLastRenderedState().avatar_collision_blocks);
+  if (avatar->GetLastRenderedState().direction.compare("Left") == 0) {
+    last_hand.offset_from_avatar_centre.x = (last_hand.offset_from_avatar_centre.x * -1);
+  }
+  if (last_hand.id.compare("") == 0) {
+    Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlock(avatar);
+    return;
+  }
+  Bitmap_Component *last_hand_bitmap = Avatar_Helper::CollisionBlockToBitmapComponent(last_hand, avatar->GetLastRenderedPosition());
+  D3DXVECTOR3 last_hand_position = *(last_hand_bitmap->GetPosition()); 
+
+  Avatar_Component::Avatar_Collision_Block current_hand;
+  current_hand = Avatar_Helper::GetNamedCollisionBlock("Hand", avatar->GetState().avatar_collision_blocks);
+  if (avatar->GetState().direction.compare("Left") == 0) {
+    current_hand.offset_from_avatar_centre.x = (current_hand.offset_from_avatar_centre.x * -1);
+  }
+  if (current_hand.id.compare("") == 0) {
+    Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlock(avatar);
+    return;
+  }
+  Bitmap_Component *current_hand_bitmap = Avatar_Helper::CollisionBlockToBitmapComponent(current_hand, *(avatar->GetPosition()));
+  D3DXVECTOR3 current_hand_position = *(current_hand_bitmap->GetPosition()); 
+
+  if (current_hand_position != last_hand_position) {
+    D3DXVECTOR3 difference;
+    difference.x = last_hand_position.x - current_hand_position.x;
+    difference.y = last_hand_position.y - current_hand_position.y;
+    difference.z = 0;
+
+    D3DXVECTOR3 new_avatar_position = *avatar->GetPosition();
+    new_avatar_position += difference;
+
+    avatar->SetPosition(new_avatar_position);
+  }
+
+  delete current_hand_bitmap;
+  current_hand_bitmap = Avatar_Helper::CollisionBlockToBitmapComponent(current_hand, *(avatar->GetPosition()));
+  current_hand_position = *(current_hand_bitmap->GetPosition()); 
+  if (current_hand_position != last_hand_position) {
+    throw Exceptions::run_error("AlignAvatarOnLastHand: Failed to set avatar position correctly!");
+  }
+
+  delete last_hand_bitmap;
+  delete current_hand_bitmap;
+}
+
+//------------------------------------------------------------------------------
+void Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlockRightTop(Avatar_Component *avatar) {
+  if (avatar->GetLastRenderedState().state.compare("") == 0) { return; }
+
+  D3DXVECTOR3 new_avatar_position;
+
+  Avatar_Component::Avatar_Collision_Block current_avatar_collision_block;
+  current_avatar_collision_block = GetNamedCollisionBlock("Avatar", avatar->GetState().avatar_collision_blocks);
+  Bitmap_Component *current_collision_bitmap = CollisionBlockToBitmapComponent(current_avatar_collision_block, *(avatar->GetPosition()));
+  D3DXVECTOR3 current_top_right;
+  current_top_right.y = current_collision_bitmap->GetTopLeftPostion().y;
+  current_top_right.x = current_collision_bitmap->GetBottomRightPostion().x;
+  current_top_right.z = 0;
+
+  Avatar_Component::Avatar_Collision_Block last_avatar_collision_block;
+  last_avatar_collision_block = GetNamedCollisionBlock("Avatar", avatar->GetLastRenderedState().avatar_collision_blocks);
+  // This fixes a bug where the GetNamedCollisionBlock uses the current avatars direction to determine if the
+  // x offsets should be reversed (because the avatar would be facing left, and all the offsets are using right facing sprites
+  // but if the last state was facing in the opposite direction then the alignment calculation would be off, so
+  // this detects and fixes this alignment issue.
+  if (avatar->GetLastRenderedState().direction.compare(avatar->GetState().direction) != 0) {
+    last_avatar_collision_block.offset_from_avatar_centre.x = (last_avatar_collision_block.offset_from_avatar_centre.x * -1);
+  }
+  Bitmap_Component *last_collision_bitmap = CollisionBlockToBitmapComponent(last_avatar_collision_block, avatar->GetLastRenderedPosition());
+  D3DXVECTOR3 last_top_right;
+  last_top_right.y = last_collision_bitmap->GetTopLeftPostion().y;
+  last_top_right.x = last_collision_bitmap->GetBottomRightPostion().x;
+  last_top_right.z = 0;
+
+  if (current_top_right != last_top_right) {
+    D3DXVECTOR3 difference;
+    difference.x = last_top_right.x - current_top_right.x;
+    difference.y = last_top_right.y - current_top_right.y;
+    difference.z = 0;
+
+    D3DXVECTOR3 new_avatar_position = *avatar->GetPosition();
+    new_avatar_position += difference;
+
+    avatar->SetPosition(new_avatar_position);
+  }
+
+  current_collision_bitmap = CollisionBlockToBitmapComponent(current_avatar_collision_block, *(avatar->GetPosition()));
+  current_top_right.y = current_collision_bitmap->GetTopLeftPostion().y;
+  current_top_right.x = current_collision_bitmap->GetBottomRightPostion().x;
+  current_top_right.z = 0;
+  if (current_top_right != last_top_right) {
+    throw Exceptions::run_error("AlignAvatarOnLastAvatarCollisionBlockRightTop: Failed to set avatar position correctly!");
+  }
+
+  delete current_collision_bitmap;
+  delete last_collision_bitmap;
+}
+
+//------------------------------------------------------------------------------
+void Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlockLeftTop(Avatar_Component *avatar) {
+  if (avatar->GetLastRenderedState().state.compare("") == 0) { return; }
+
+  D3DXVECTOR3 new_avatar_position;
+
+  Avatar_Component::Avatar_Collision_Block current_avatar_collision_block;
+  current_avatar_collision_block = GetNamedCollisionBlock("Avatar", avatar->GetState().avatar_collision_blocks);
+  Bitmap_Component *current_collision_bitmap = CollisionBlockToBitmapComponent(current_avatar_collision_block, *(avatar->GetPosition()));
+  D3DXVECTOR3 current_top_left = current_collision_bitmap->GetTopLeftPostion();
+
+  Avatar_Component::Avatar_Collision_Block last_avatar_collision_block;
+  last_avatar_collision_block = GetNamedCollisionBlock("Avatar", avatar->GetLastRenderedState().avatar_collision_blocks);
+  // This fixes a bug where the GetNamedCollisionBlock uses the current avatars direction to determine if the
+  // x offsets should be reversed (because the avatar would be facing left, and all the offsets are using right facing sprites
+  // but if the last state was facing in the opposite direction then the alignment calculation would be off, so
+  // this detects and fixes this alignment issue.
+  if (avatar->GetLastRenderedState().direction.compare(avatar->GetState().direction) != 0) {
+    last_avatar_collision_block.offset_from_avatar_centre.x = (last_avatar_collision_block.offset_from_avatar_centre.x * -1);
+  }
+  Bitmap_Component *last_collision_bitmap = CollisionBlockToBitmapComponent(last_avatar_collision_block, avatar->GetLastRenderedPosition());
+  D3DXVECTOR3 last_top_left = last_collision_bitmap->GetTopLeftPostion();
+
+  if (current_top_left != last_top_left) {
+    D3DXVECTOR3 difference;
+    difference.x = last_top_left.x - current_top_left.x;
+    difference.y = last_top_left.y - current_top_left.y;
+    difference.z = 0;
+
+    D3DXVECTOR3 new_avatar_position = *avatar->GetPosition();
+    new_avatar_position += difference;
+
+    avatar->SetPosition(new_avatar_position);
+  }
+
+  current_collision_bitmap = CollisionBlockToBitmapComponent(current_avatar_collision_block, *(avatar->GetPosition()));
+  current_top_left = current_collision_bitmap->GetTopLeftPostion();
+  if (current_top_left != last_top_left) {
+    throw Exceptions::run_error("AlignAvatarOnLastAvatarCollisionBlockLeftTop: Failed to set avatar position correctly!");
+  }
+
+  delete current_collision_bitmap;
+  delete last_collision_bitmap;
+}
 
 } // Tunnelour

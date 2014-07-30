@@ -31,6 +31,10 @@
 #include "Level_Component.h"
 
 #include "Charlie_Standing_Controller.h"
+#include "Charlie_Falling_Controller.h"
+#include "Charlie_Running_Controller.h"
+#include "Charlie_Jumping_Controller.h"
+#include "Charlie_Climbing_Controller.h"
 
 #include "Avatar_Helper.h"
 
@@ -114,138 +118,9 @@ class Avatar_Controller: public Controller,
   void RunAvatarState();
 
   //---------------------------------------------------------------------------
-  // Description : Changes and maintains the walking state of the avatar
-  //---------------------------------------------------------------------------
-  void RunWalkingState();
-
-  //---------------------------------------------------------------------------
-  // Description : Changes and maintains the walking state of the avatar
-  //---------------------------------------------------------------------------
-  void RunRunningState();
-
-  //---------------------------------------------------------------------------
-  // Description : Changes and maintains the falling state of the avatar
-  //---------------------------------------------------------------------------
-  void RunFallingState();
-
-  //---------------------------------------------------------------------------
-  // Description : Changes and maintains the jumping state of the avatar
-  //---------------------------------------------------------------------------
-  void RunJumpingState();
-
-  //---------------------------------------------------------------------------
-  // Description : Changes and maintains the jumping state of the avatar
-  //---------------------------------------------------------------------------
-  void RunClimbingState();
-
-  //---------------------------------------------------------------------------
-  // Description : Changes and maintains the transitioning state of the avatar
-  //---------------------------------------------------------------------------
-  void RunLevelTransitioningState();
-
-  //---------------------------------------------------------------------------
-  // Description : Returns true if the avatar is standing on a floor
-  //---------------------------------------------------------------------------
-  bool IsAvatarFloorAdjacent(std::vector<Bitmap_Component*> *adjacent_tiles);
-
-  //---------------------------------------------------------------------------
-  // Description : Returns true if the avatar is colliding with a floor
-  //---------------------------------------------------------------------------
-  bool IsAvatarFloorColliding(std::vector<Avatar_Helper::Tile_Collision> *out_collisions);
-
-  //---------------------------------------------------------------------------
-  // Description : Returns true if the avatar is colliding with a floor
-  //---------------------------------------------------------------------------
-  bool IsAvatarWallColliding(std::vector<Avatar_Helper::Tile_Collision> *out_collisions);
-
-  //---------------------------------------------------------------------------
-  // Description : Returns the distance between two 2D points.
-  //---------------------------------------------------------------------------
-  double WhatsTheDistanceBetweenThesePoints(D3DXVECTOR2 point_1, D3DXVECTOR2 point_2);
-
-  //---------------------------------------------------------------------------
-  // Description : Returns if two lines intersect, and their intersection
-  //               point.
-  // Return      : D3DXVECTOR2 *out_intersecting_point
-  //---------------------------------------------------------------------------
-  bool DoTheseLinesIntersect(D3DXVECTOR2 line_a_begin, D3DXVECTOR2 line_a_end, D3DXVECTOR2 line_b_begin, D3DXVECTOR2 line_b_end, D3DXVECTOR2 *out_intersecting_point);
-
-  //---------------------------------------------------------------------------
   // Description : Loads all the tile animations into the controller
   //---------------------------------------------------------------------------
   void LoadTilesets(std::wstring wtileset_path);
-
-  //---------------------------------------------------------------------------
-  // Description : Syncs the avatar tile position with the right foot position
-  //             : of the last avatar animation frame.
-  //---------------------------------------------------------------------------
-  void AlignAvatarOnRightFoot();
-
-  //---------------------------------------------------------------------------
-  // Description : Syncs the avatar tile position with the last contacting
-  //             : foot of the last avatar animation frame.
-  //---------------------------------------------------------------------------
-  void AlignAvatarOnLastContactingFoot();
-
-  //---------------------------------------------------------------------------
-  // Description : Syncs the avatar tile position with the last contacting
-  //             : hand of the last avatar animation frame.
-  //---------------------------------------------------------------------------
-  void AlignAvatarOnLastHand();
-
-  //---------------------------------------------------------------------------
-  // Description : Align the avatar so it isn't overbalancing on a 
-  //             : ledge edge.
-  //---------------------------------------------------------------------------
-  void AlignAvatarOnLastLedgeEdge(Avatar_Helper::Tile_Collision ledge);
-
-  //---------------------------------------------------------------------------
-  // Description : Syncs the avatar tile position with the left foot position
-  //             : of the last avatar animation frame.
-  //---------------------------------------------------------------------------
-  void AlignAvatarOnLeftFoot();
-
-  //---------------------------------------------------------------------------
-  // Description : Syncs the avatar tile position with avatar collision block
-  //             : of the last avatar animation frame.
-  //---------------------------------------------------------------------------
-  void AlignAvatarOnLastAvatarCollisionBlock();
-
-  //---------------------------------------------------------------------------
-  // Description : Syncs the avatar tile position with avatar collision block
-  //             : of the last avatar animation frame.
-  //---------------------------------------------------------------------------
-  void AlignAvatarOnLastAvatarCollisionBlockRightTop();
-
-  //---------------------------------------------------------------------------
-  // Description : Syncs the avatar tile position with avatar collision block
-  //             : of the last avatar animation frame.
-  //---------------------------------------------------------------------------
-  void AlignAvatarOnLastAvatarCollisionBlockLeftTop();
-
-  //---------------------------------------------------------------------------
-  // Description : Syncs the avatar tile position with avatar collision block
-  //             : of the last avatar animation frame.
-  //---------------------------------------------------------------------------
-  void AlignAvatarOnLastAvatarCollisionBlockRightBottom();
-
-  //---------------------------------------------------------------------------
-  // Description : Syncs the avatar tile position with avatar collision block
-  //             : of the last avatar animation frame.
-  //---------------------------------------------------------------------------
-  void AlignAvatarOnLastAvatarCollisionBlockLeftBottom();
-
-  //---------------------------------------------------------------------------
-  // Description : Repositions the avatar so she is standing adjacent to
-  //             : a colliding wall tile.
-  //---------------------------------------------------------------------------
-  void MoveAvatarTileAdjacent(std::string direction, Bitmap_Component* tile);
-
-  //---------------------------------------------------------------------------
-  // Description : Repositions the avatar so he is standing adjacent to
-  //             : a colliding floor tile.
-  //---------------------------------------------------------------------------
-  void MoveAvatarFloorAdjacent();
 
   //---------------------------------------------------------------------------
   // Description : Initialises the timer used for the animation ticks
@@ -258,51 +133,9 @@ class Avatar_Controller: public Controller,
   void UpdateTimer();
 
   //---------------------------------------------------------------------------
-  // Description : Changes the avatar animation and state and/or direction
-  //---------------------------------------------------------------------------
-  void SetAvatarState(std::string new_state_parent_name, std::string new_state_name, std::string direction);
-
-  //---------------------------------------------------------------------------
-  // Description : Updates the avatar state animation
-  //---------------------------------------------------------------------------
-  void SetAvatarStateAnimationFrame(int new_state_index);
-
-  //---------------------------------------------------------------------------
-  // Description : Returns the lowest collision block on the avatar
-  //---------------------------------------------------------------------------
-  Avatar_Component::Avatar_Collision_Block GetLowestCollisionBlock(std::vector<Avatar_Component::Avatar_Collision_Block> avatar_collision_blocks);
-
-  //---------------------------------------------------------------------------
-  // Description : Returns the lowest and most towards the direction 
-  //             : collision block on the avatar
-  //---------------------------------------------------------------------------
-  Avatar_Component::Avatar_Collision_Block GetLowestMostForwardFootCollisionBlock(std::string direction);
-
-  //---------------------------------------------------------------------------
-  // Description : Creates a Bitmap Component using the given collision block
-  //---------------------------------------------------------------------------
-  Bitmap_Component* CollisionBlockToBitmapComponent(Avatar_Component::Avatar_Collision_Block avatar_collision_block, D3DXVECTOR3 position);
-
-  //---------------------------------------------------------------------------
-  // Description : Creates a Bitmap Component using the given collision block
-  //---------------------------------------------------------------------------
-  Avatar_Component::Avatar_Collision_Block GetNamedCollisionBlock(std::string id, std::vector<Avatar_Component::Avatar_Collision_Block> avatar_collision_blocks);
-
-  //---------------------------------------------------------------------------
-  // Description : Creates an Avatar_Component::Avatar_Collision_Block from a
-  //             : Tileset_Helper::Avatar_Collision_Block
-  //---------------------------------------------------------------------------
-  Avatar_Component::Avatar_Collision_Block TilesetCollisionBlockToAvatarCollisionBlock(Tileset_Helper::Avatar_Collision_Block tileset_avatar_collision_block, float tileset_animation_top_left_y, int state_index);
-
-  //---------------------------------------------------------------------------
   // Description : Clears the current command from the avatar
   //---------------------------------------------------------------------------
   void ClearAvatarCommand();
-
-  //---------------------------------------------------------------------------
-  // Description : Returns true if the avatar can currently grab a ledge
-  //---------------------------------------------------------------------------
-  bool CanAvatarGrabALedge(std::vector<Avatar_Helper::Tile_Collision> *out_collisions);
 
   //---------------------------------------------------------------------------
   // Member Variables
@@ -367,7 +200,11 @@ class Avatar_Controller: public Controller,
   std::string m_avatar_initial_state;
   D3DXVECTOR3 m_avatar_initial_position;
 
-  Charlie_Standing_Controller m_charlie_Standing_Controller;
+  Charlie_Standing_Controller m_charlie_standing_controller;
+  Charlie_Falling_Controller m_charlie_falling_controller;
+  Charlie_Running_Controller m_charlie_running_controller;
+  Charlie_Jumping_Controller m_charlie_jumping_controller;
+  Charlie_Climbing_Controller m_charlie_climbing_controller;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_H_

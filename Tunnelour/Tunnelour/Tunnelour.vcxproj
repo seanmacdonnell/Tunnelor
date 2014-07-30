@@ -49,7 +49,7 @@
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
@@ -65,7 +65,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
@@ -95,6 +95,10 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Camera_Component.cc" />
     <ClCompile Include="src\Camera_Controller.cc" />
     <ClCompile Include="src\Camera_Controller_Mutator.cc" />
+    <ClCompile Include="src\Charlie_Climbing_Controller.cc" />
+    <ClCompile Include="src\Charlie_Falling_Controller.cc" />
+    <ClCompile Include="src\Charlie_Jumping_Controller.cc" />
+    <ClCompile Include="src\Charlie_Running_Controller.cc" />
     <ClCompile Include="src\Charlie_Standing_Controller.cc" />
     <ClCompile Include="src\Component.cc" />
     <ClCompile Include="src\Component_Composite.cc" />
@@ -160,6 +164,10 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Camera_Component.h" />
     <ClInclude Include="include\Camera_Controller.h" />
     <ClInclude Include="include\Camera_Controller_Mutator.h" />
+    <ClInclude Include="include\Charlie_Climbing_Controller.h" />
+    <ClInclude Include="include\Charlie_Falling_Controller.h" />
+    <ClInclude Include="include\Charlie_Jumping_Controller.h" />
+    <ClInclude Include="include\Charlie_Running_Controller.h" />
     <ClInclude Include="include\Charlie_Standing_Controller.h" />
     <ClInclude Include="include\Component.h" />
     <ClInclude Include="include\Component_Composite.h" />

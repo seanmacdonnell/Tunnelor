@@ -23,6 +23,8 @@
 #include "Controller.h"
 
 #include "Game_Settings_Component.h"
+#include "World_Settings_Component.h"
+
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -86,6 +88,18 @@ class Avatar_State_Controller: public Controller,
 
   void SetCurrentMetadata(Tileset_Helper::Animation_Tileset_Metadata *current_metadata);
 
+  void SetWorldSettings(World_Settings_Component *world_settings);
+
+  void SetLastFrameTime(int *last_frame_time);
+
+  void SetYFallen(int *y_fallen);
+
+  void SetDistanceTraveled(int *distance_traveled);
+
+  void SetIsMovingContinuously(bool *is_moving_continuously);
+
+  void SetCurrentlyGrabbedTile(Bitmap_Component *currently_grabbed_tile);
+
   //---------------------------------------------------------------------------
   // Description : Called when handling an "Add" call in the model
   //---------------------------------------------------------------------------
@@ -111,9 +125,13 @@ class Avatar_State_Controller: public Controller,
   Avatar_Helper::Tile_Collision *m_currently_adjacent_wall_tile;
   std::string *m_current_metadata_file_path;
   Tileset_Helper::Animation_Tileset_Metadata *m_current_metadata;
-
+  World_Settings_Component *m_world_settings;
+  int *m_last_frame_time;
+  int *m_y_fallen;
+  int *m_distance_traveled;
+  bool *m_is_moving_continuously;
+  Bitmap_Component *m_currently_grabbed_tile;
  private:
-
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_STATE_CONTROLLER_H_

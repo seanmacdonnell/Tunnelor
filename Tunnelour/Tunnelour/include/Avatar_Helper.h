@@ -85,6 +85,20 @@ class Avatar_Helper {
 
   static bool IsAvatarWallColliding(Avatar_Component *avatar, std::vector<Tile_Collision> *out_collisions, std::vector<Tile_Bitmap*> *wall_tiles);
 
+  static void AlignAvatarOnLastAvatarCollisionBlock(Avatar_Component *avatar);
+
+  static bool IsAvatarFloorColliding(Avatar_Component *avatar, std::vector<Avatar_Helper::Tile_Collision> *out_collisions, std::vector<Tile_Bitmap*> *floor_tiles);
+
+  static bool CanAvatarGrabALedge(Avatar_Component *avatar, std::vector<Avatar_Helper::Tile_Collision> *out_collisions, std::vector<Tile_Bitmap*> *ledge_tiles);
+
+  static void AlignAvatarOnLastLedgeEdge(Avatar_Component *avatar, Avatar_Helper::Tile_Collision ledge);
+
+  static void AlignAvatarOnLastHand(Avatar_Component *avatar);
+
+  static void AlignAvatarOnLastAvatarCollisionBlockRightTop(Avatar_Component *avatar);
+
+  static void AlignAvatarOnLastAvatarCollisionBlockLeftTop(Avatar_Component *avatar);
+
  protected:
 
  private:

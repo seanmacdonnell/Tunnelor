@@ -32,12 +32,26 @@ class Tileset_Helper {
      bool is_contacting;
      float top_left_x, top_left_y;
      float size_x, size_y;
+
+     Avatar_Collision_Block() {
+       id = "";
+       is_contacting = false;
+       top_left_x = 0;
+       top_left_y = 0;
+       size_x = 0;
+       size_y = 0;
+     }
    };
 
   struct Frame_Metadata {
     unsigned int id;
     unsigned int number_of_avatar_collision_blocks;
     std::vector<Avatar_Collision_Block> avatar_collision_blocks;
+
+    Frame_Metadata() {
+      id = 0;
+      number_of_avatar_collision_blocks = 0;
+    }
   };
 
   struct Animation_Subset {
@@ -50,16 +64,43 @@ class Tileset_Helper {
     unsigned int frames_per_second;
     bool is_repeatable;
     std::vector<Frame_Metadata> frames;
+
+    Animation_Subset() {
+      name = "";
+      type = "";
+      top_left_x = 0;
+      top_left_y = 0;
+      size_x = 0;
+      size_y = 0;
+      tile_size_x = 0;
+      tile_size_y = 0;
+      number_of_frames = 0;
+      frames_per_second = 0;
+      is_repeatable = false;
+    }
   };
 
   struct Animation_Tileset_Metadata {
     std::string name;
     std::string type;
     std::string filename;
-    float top_left_x, top_left_y;
-    float size_x, size_y;
+    float top_left_x;
+    float top_left_y;
+    float size_x;
+    float size_y;
     int number_of_subsets;
     std::vector<Animation_Subset> subsets;
+
+    Animation_Tileset_Metadata() {
+      name = "";
+      type + "";
+      filename + "";
+      top_left_x = 0;
+      top_left_y = 0;
+      size_x = 0;
+      size_y = 0;
+      number_of_subsets = 0;
+    }
   };
 
   struct Line {
@@ -67,6 +108,15 @@ class Tileset_Helper {
     float top_left_x, top_left_y;
     float tile_size_x, tile_size_y;
     int number_of_tiles;
+
+    Line() {
+      line_number = 0;
+      top_left_x = 0;
+      top_left_y = 0;
+      tile_size_x = 0;
+      tile_size_y = 0;
+      number_of_tiles = 0;;
+    }
   };
 
   struct Subset {
@@ -97,6 +147,17 @@ class Tileset_Helper {
     float size_x, size_y;
     int number_of_subsets;
     std::vector<Subset> tilesets;
+
+    Tileset_Metadata() {
+      name = "";
+      type = "";
+      filename = "";
+      top_left_x = 0;
+      top_left_y = 0;
+      size_x = 0;
+      size_y = 0;
+      number_of_subsets = 0;
+    }
   };
 
   //---------------------------------------------------------------------------

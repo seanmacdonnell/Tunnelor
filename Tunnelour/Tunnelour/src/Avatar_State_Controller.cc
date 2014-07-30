@@ -24,39 +24,52 @@ Avatar_State_Controller::Avatar_State_Controller() {
   m_model = 0;
   m_is_finished = false;
   m_has_been_initialised = false;
-  m_floor_tiles.empty();
-  m_wall_tiles.empty();
-  m_ledge_tiles.empty();
 
   m_game_settings = 0;
+
   m_avatar = 0;
+  m_floor_tiles.clear();
+  m_wall_tiles.clear();
+  m_ledge_tiles.clear();
   m_animation_metadata = 0;
   m_current_animation_subset = 0;
   m_currently_adjacent_wall_tile = 0;
-
-  m_current_metadata_file_path = 0;
+  std::string *m_current_metadata_file_path;
   m_current_metadata = 0;
-  m_current_animation_subset = 0;
+  m_world_settings = 0;
+  m_last_frame_time = 0;
+  m_y_fallen = 0;
+  m_distance_traveled = 0;
+  m_is_moving_continuously = 0;
+  m_currently_grabbed_tile = 0;
 }
 
 //------------------------------------------------------------------------------
 Avatar_State_Controller::~Avatar_State_Controller() {
-  m_model->IgnoreType(this, "Bitmap_Component");
-  m_model = 0;
+  if (m_model != 0) {
+    m_model->IgnoreType(this, "Bitmap_Component");
+    m_model = 0;
+  }
   m_is_finished = false;
   m_has_been_initialised = false;
-  m_floor_tiles.empty();
-  m_wall_tiles.empty();
-  m_ledge_tiles.empty();
 
   m_game_settings = 0;
+
   m_avatar = 0;
+  m_floor_tiles.clear();
+  m_wall_tiles.clear();
+  m_ledge_tiles.clear();
   m_animation_metadata = 0;
   m_current_animation_subset = 0;
   m_currently_adjacent_wall_tile = 0;
-
-  m_current_metadata_file_path = 0;
+  std::string *m_current_metadata_file_path;
   m_current_metadata = 0;
+  m_world_settings = 0;
+  m_last_frame_time = 0;
+  m_y_fallen = 0;
+  m_distance_traveled = 0;
+  m_is_moving_continuously = 0;
+  m_currently_grabbed_tile = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -80,6 +93,12 @@ bool Avatar_State_Controller::Run() {
       m_currently_adjacent_wall_tile != 0 &&
       m_current_metadata_file_path != 0 &&
       m_current_metadata != 0 &&
+      m_world_settings != 0 &&
+      m_last_frame_time != 0 &&
+      m_y_fallen != 0 &&
+      m_distance_traveled != 0 &&
+      m_is_moving_continuously != 0 &&
+      //m_currently_grabbed_tile != 0 && // This is 0 when not being grabbed
       !IsFinished()) {
     m_initial_state.state = m_avatar->GetState();
     m_initial_state.position = *(m_avatar->GetPosition());
@@ -96,7 +115,8 @@ void Avatar_State_Controller::Run_Avatar_State() {
 
 //------------------------------------------------------------------------------
 bool Avatar_State_Controller::HasAvatarStateChanged() {
-  if (m_avatar->GetState().parent_state.compare(m_initial_state.state.parent_state) != 0) {
+  if (m_avatar->GetState().parent_state.compare(m_initial_state.state.parent_state) != 0 ||
+      m_avatar->GetState().state.compare(m_initial_state.state.state) != 0) {
     return true;
   }
 
@@ -151,6 +171,36 @@ void Avatar_State_Controller::SetCurrentMetadataFilePath(std::string *current_me
 //------------------------------------------------------------------------------
 void Avatar_State_Controller::SetCurrentMetadata(Tileset_Helper::Animation_Tileset_Metadata *current_metadata) {
   m_current_metadata = current_metadata;
+}
+
+//------------------------------------------------------------------------------
+void Avatar_State_Controller::SetWorldSettings(World_Settings_Component *world_settings) {
+  m_world_settings = world_settings;
+}
+
+//------------------------------------------------------------------------------
+void Avatar_State_Controller::SetLastFrameTime(int *last_frame_time) {
+  m_last_frame_time = last_frame_time;
+}
+
+//------------------------------------------------------------------------------
+void Avatar_State_Controller::SetYFallen(int *y_fallen) {
+  m_y_fallen = y_fallen;
+}
+
+//------------------------------------------------------------------------------
+void Avatar_State_Controller::SetDistanceTraveled(int *distance_traveled) {
+  m_distance_traveled = distance_traveled;
+}
+
+//------------------------------------------------------------------------------
+void Avatar_State_Controller::SetIsMovingContinuously(bool *is_moving_continuously) {
+  m_is_moving_continuously = is_moving_continuously;
+}
+
+//------------------------------------------------------------------------------
+void Avatar_State_Controller::SetCurrentlyGrabbedTile(Bitmap_Component *currently_grabbed_tile) {
+  m_currently_grabbed_tile = currently_grabbed_tile;
 }
 
 //------------------------------------------------------------------------------
