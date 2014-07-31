@@ -1,4 +1,4 @@
-//  Copyright 2012 Sean MacDonnell
+//  Copyright 2014 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ Avatar_State_Controller::Avatar_State_Controller() {
   m_animation_metadata = 0;
   m_current_animation_subset = 0;
   m_currently_adjacent_wall_tile = 0;
-  std::string *m_current_metadata_file_path;
+  m_current_metadata_file_path = 0;
   m_current_metadata = 0;
   m_world_settings = 0;
   m_last_frame_time = 0;
@@ -54,7 +54,6 @@ Avatar_State_Controller::~Avatar_State_Controller() {
   m_has_been_initialised = false;
 
   m_game_settings = 0;
-
   m_avatar = 0;
   m_floor_tiles.clear();
   m_wall_tiles.clear();
@@ -62,7 +61,7 @@ Avatar_State_Controller::~Avatar_State_Controller() {
   m_animation_metadata = 0;
   m_current_animation_subset = 0;
   m_currently_adjacent_wall_tile = 0;
-  std::string *m_current_metadata_file_path;
+  m_current_metadata_file_path = 0;
   m_current_metadata = 0;
   m_world_settings = 0;
   m_last_frame_time = 0;
@@ -98,7 +97,7 @@ bool Avatar_State_Controller::Run() {
       m_y_fallen != 0 &&
       m_distance_traveled != 0 &&
       m_is_moving_continuously != 0 &&
-      //m_currently_grabbed_tile != 0 && // This is 0 when not being grabbed
+      // m_currently_grabbed_tile != 0 &&  // This is 0 when not being grabbed
       !IsFinished()) {
     m_initial_state.state = m_avatar->GetState();
     m_initial_state.position = *(m_avatar->GetPosition());
@@ -227,7 +226,7 @@ void Avatar_State_Controller::HandleEventRemove(Tunnelour::Component * const com
     std::vector<Tile_Bitmap*>::iterator bitmap;
     for (bitmap = m_wall_tiles.begin(); bitmap != m_wall_tiles.end(); bitmap++) {
       if ((*bitmap)->GetID() == target_bitmap->GetID()) {
-        found_bitmap = bitmap; 
+        found_bitmap = bitmap;
       }
     }
     m_wall_tiles.erase(found_bitmap);
@@ -236,7 +235,7 @@ void Avatar_State_Controller::HandleEventRemove(Tunnelour::Component * const com
     std::vector<Tile_Bitmap*>::iterator bitmap;
     for (bitmap = m_floor_tiles.begin(); bitmap != m_floor_tiles.end(); bitmap++) {
       if ((*bitmap)->GetID() == target_bitmap->GetID()) {
-        found_bitmap = bitmap; 
+        found_bitmap = bitmap;
       }
     }
     m_floor_tiles.erase(found_bitmap);
@@ -245,7 +244,7 @@ void Avatar_State_Controller::HandleEventRemove(Tunnelour::Component * const com
     std::vector<Tile_Bitmap*>::iterator bitmap;
     for (bitmap = m_ledge_tiles.begin(); bitmap != m_ledge_tiles.end(); bitmap++) {
       if ((*bitmap)->GetID() == target_bitmap->GetID()) {
-        found_bitmap = bitmap; 
+        found_bitmap = bitmap;
       }
     }
     m_ledge_tiles.erase(found_bitmap);

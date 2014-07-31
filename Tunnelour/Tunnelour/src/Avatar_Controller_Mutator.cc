@@ -1,4 +1,4 @@
-//  Copyright 2012 Sean MacDonnell
+//  Copyright 2014 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -23,10 +23,11 @@ namespace Tunnelour {
 Avatar_Controller_Mutator::Avatar_Controller_Mutator() {
   m_found_game_settings = false;
   m_game_settings = 0;
-  m_found_floor_tiles = false;
   m_floor_tiles.clear();
   m_found_world_settings = false;
   m_world_settings = 0;
+  m_wall_tiles.clear();
+  m_ledge_tiles.clear();
   m_found_level = false;
   m_level = 0;
 }
@@ -35,10 +36,11 @@ Avatar_Controller_Mutator::Avatar_Controller_Mutator() {
 Avatar_Controller_Mutator::~Avatar_Controller_Mutator() {
   m_found_game_settings = false;
   m_game_settings = 0;
-  m_found_floor_tiles = false;
   m_floor_tiles.clear();
   m_found_world_settings = false;
   m_world_settings = 0;
+  m_wall_tiles.clear();
+  m_ledge_tiles.clear();
   m_found_level = false;
   m_level = 0;
 }
@@ -55,15 +57,12 @@ void Avatar_Controller_Mutator::Mutate(Component * const component) {
     tile = static_cast<Tile_Bitmap*>(component);
     if (tile->IsFloor()) {
       m_floor_tiles.push_back(tile);
-      m_found_floor_tiles = true;
     }
     if (tile->IsWall()) {
       m_wall_tiles.push_back(tile);
-      m_found_wall_tiles = true;
     }
     if (tile->IsWall() && tile->IsFloor()) {
       m_ledge_tiles.push_back(tile);
-      m_found_ledge_tiles = true;
     }
   } else if (component->GetType().compare("World_Settings_Component") == 0) {
     m_world_settings = static_cast<World_Settings_Component*>(component);

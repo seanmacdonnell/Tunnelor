@@ -1,4 +1,4 @@
-//  Copyright 2012 Sean MacDonnell
+//  Copyright 2014 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -15,6 +15,9 @@
 
 #ifndef TUNNELOUR_AVATAR_STATE_CONTROLLER_H_
 #define TUNNELOUR_AVATAR_STATE_CONTROLLER_H_
+
+#include <vector>
+#include <string>
 
 #include "Component_Composite.h"
 #include "Avatar_Component.h"

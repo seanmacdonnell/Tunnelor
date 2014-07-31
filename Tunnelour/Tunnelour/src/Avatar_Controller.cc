@@ -1,4 +1,4 @@
-//  Copyright 2012 Sean MacDonnell
+//  Copyright 2014 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -17,12 +17,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <ctime>
-#include <string>
+#include <windows.h>
 
-#include "Exceptions.h"
-#include "String_Helper.h"
-#include "Bitmap_Helper.h"
+#include <ctime>
 
 namespace Tunnelour {
 
@@ -36,13 +33,6 @@ Avatar_Controller::Avatar_Controller() : Controller() {
   m_level = 0;
   m_world_settings = 0;
 
-  m_running_metadata_file_path = "";
-  m_walking_metadata_file_path = "";
-  m_standing_metadata_file_path = "";
-  m_falling_metadata_file_path = "";
-  m_level_transitioning_metadata_file_path = "";
-  m_jumping_metadata_file_path = "";
-  m_climbing_metadata_file_path = "";
   m_current_metadata_file_path = "";
 
   m_frequency = 0;
@@ -53,13 +43,8 @@ Avatar_Controller::Avatar_Controller() : Controller() {
   m_animation_tick = false;
   m_current_animation_fps = 0;
 
-  m_avatar_z_position = -2; // Middleground Z Space is -1
-
-  m_current_level_name = "";
-
   m_y_fallen = 0;
-  m_wall_impacting = false;
-  
+
   m_distance_traveled = 0;
 
   m_currently_grabbed_tile = 0;
@@ -73,25 +58,28 @@ Avatar_Controller::Avatar_Controller() : Controller() {
   m_avatar_initial_direction = "Right";
   m_avatar_initial_parent_state = "Charlie_Standing";
   m_avatar_initial_state = "Initial";
-  m_avatar_initial_position = D3DXVECTOR3(0,0,0);
+  m_avatar_initial_position = D3DXVECTOR3(0, 0, 0);
+
+  m_avatar_z_position = -2;  // Middleground Z Space is -1
+
+  m_running_file_name = L"Charlie_Running_Animation_Tileset.txt";
+  m_standing_file_name = L"Charlie_Standing_Animation_Tileset.txt";
+  m_falling_file_name = L"Charlie_Falling_Animation_Tileset.txt";
+  m_jumping_file_name = L"Charlie_Jumping_Animation_Tileset.txt";
+  m_climbing_file_name = L"Charlie_Climbing_Animation_Tileset.txt";
 }
 
 //------------------------------------------------------------------------------
 Avatar_Controller::~Avatar_Controller() {
-  m_model->IgnoreType(this, "Bitmap_Component");
-  m_model = 0;
+  if (m_model != 0) {
+    m_model->IgnoreType(this, "Bitmap_Component");
+    m_model = 0;
+  }
   m_avatar = 0;
   m_game_settings = 0;
   m_level = 0;
   m_world_settings = 0;
 
-  m_running_metadata_file_path = "";
-  m_walking_metadata_file_path = "";
-  m_standing_metadata_file_path = "";
-  m_falling_metadata_file_path = "";
-  m_level_transitioning_metadata_file_path = "";
-  m_jumping_metadata_file_path = "";
-  m_climbing_metadata_file_path = "";
   m_current_metadata_file_path = "";
 
   m_animation_metadata.clear();
@@ -108,13 +96,8 @@ Avatar_Controller::~Avatar_Controller() {
   m_wall_tiles.clear();
   m_ledge_tiles.clear();
 
-  m_avatar_z_position = -2; // Middleground Z Space is -1
-
-  m_current_level_name = "";
-
   m_y_fallen = 0;
-  m_wall_impacting = false;
-  
+
   m_distance_traveled = 0;
 
   m_currently_grabbed_tile = 0;
@@ -128,7 +111,7 @@ Avatar_Controller::~Avatar_Controller() {
   m_avatar_initial_direction = "Right";
   m_avatar_initial_parent_state = "Charlie_Standing";
   m_avatar_initial_state = "Initial";
-  m_avatar_initial_position = D3DXVECTOR3(0,0,0);
+  m_avatar_initial_position = D3DXVECTOR3(0, 0, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -136,7 +119,7 @@ bool Avatar_Controller::Init(Component_Composite * const model) {
   if (!m_has_been_initialised) {
     Avatar_Controller_Mutator mutator;
     if (m_model == 0) {
-      m_model = model; 
+      m_model = model;
       m_model->Apply(&mutator);
     }
     if (mutator.WasSuccessful()) {
@@ -167,9 +150,7 @@ bool Avatar_Controller::Run() {
   if (m_has_been_initialised) {
     UpdateTimer();
     if (m_animation_tick) {
-      m_initial_state.state = m_avatar->GetState();
-      m_initial_state.position = *(m_avatar->GetPosition());
-      RunAvatarState(); 
+      RunAvatarState();
     }
 
     result = true;
@@ -202,7 +183,7 @@ void Avatar_Controller::HandleEventRemove(Tunnelour::Component * const component
     std::vector<Tile_Bitmap*>::iterator bitmap;
     for (bitmap = m_wall_tiles.begin(); bitmap != m_wall_tiles.end(); bitmap++) {
       if ((*bitmap)->GetID() == target_bitmap->GetID()) {
-        found_bitmap = bitmap; 
+        found_bitmap = bitmap;
       }
     }
     m_wall_tiles.erase(found_bitmap);
@@ -211,7 +192,7 @@ void Avatar_Controller::HandleEventRemove(Tunnelour::Component * const component
     std::vector<Tile_Bitmap*>::iterator bitmap;
     for (bitmap = m_floor_tiles.begin(); bitmap != m_floor_tiles.end(); bitmap++) {
       if ((*bitmap)->GetID() == target_bitmap->GetID()) {
-        found_bitmap = bitmap; 
+        found_bitmap = bitmap;
       }
     }
     m_floor_tiles.erase(found_bitmap);
@@ -220,7 +201,7 @@ void Avatar_Controller::HandleEventRemove(Tunnelour::Component * const component
     std::vector<Tile_Bitmap*>::iterator bitmap;
     for (bitmap = m_ledge_tiles.begin(); bitmap != m_ledge_tiles.end(); bitmap++) {
       if ((*bitmap)->GetID() == target_bitmap->GetID()) {
-        found_bitmap = bitmap; 
+        found_bitmap = bitmap;
       }
     }
     m_ledge_tiles.erase(found_bitmap);
@@ -244,14 +225,20 @@ void Avatar_Controller::ResetAvatarToDefaults() {
   initial_state.direction = m_avatar_initial_direction;
   float avatar_x_position = m_level->GetCurrentLevel().start_avatar_top_left_x;
   float avatar_y_position = m_level->GetCurrentLevel().start_avatar_top_left_y;
-  m_current_level_name = m_level->GetCurrentLevel().level_name;
   m_avatar->SetState(initial_state);
-  m_avatar->SetPosition(D3DXVECTOR3(avatar_x_position, 
+  m_avatar->SetPosition(D3DXVECTOR3(avatar_x_position,
                                     avatar_y_position,
                                     m_avatar_z_position));
   m_avatar->SetVelocity(m_avatar_initial_position);
-  Avatar_Helper::SetAvatarState(m_avatar, m_game_settings->GetTilesetPath(), &m_animation_metadata, m_avatar_initial_parent_state, m_avatar_initial_state, initial_state.direction, &m_current_metadata_file_path, &m_current_metadata, &m_current_animation_subset);
-  ClearAvatarCommand();
+  Avatar_Helper::SetAvatarState(m_avatar,
+                                m_game_settings->GetTilesetPath(),
+                               &m_animation_metadata,
+                                m_avatar_initial_parent_state,
+                                m_avatar_initial_state,
+                                initial_state.direction,
+                                &m_current_metadata_file_path,
+                                &m_current_metadata,
+                                &m_current_animation_subset);
 }
 
 //------------------------------------------------------------------------------
@@ -422,39 +409,34 @@ void Avatar_Controller::RunAvatarState() {
 //------------------------------------------------------------------------------
 void Avatar_Controller::LoadTilesets(std::wstring wtileset_path) {
   // Running
-  m_running_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Running_Animation_Tileset.txt");
-  Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(m_running_metadata_file_path, &m_running_metadata);
-  m_animation_metadata.push_back(m_running_metadata);
-
-  // Walking
-  m_walking_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Walking_Animation_Tileset_1_7.txt");
-  Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(m_walking_metadata_file_path, &m_walking_metadata);
-  m_animation_metadata.push_back(m_walking_metadata);
+  std::string running_metadata_file_path = String_Helper::WStringToString(wtileset_path + m_running_file_name);
+  Tileset_Helper::Animation_Tileset_Metadata running_metadata;
+  Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(running_metadata_file_path, &running_metadata);
+  m_animation_metadata.push_back(running_metadata);
 
   // Standing
-  m_standing_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Standing_Animation_Tileset.txt");
-  Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(m_standing_metadata_file_path, &m_standing_metadata);
-  m_animation_metadata.push_back(m_standing_metadata);
+  std::string standing_metadata_file_path = String_Helper::WStringToString(wtileset_path + m_standing_file_name);
+  Tileset_Helper::Animation_Tileset_Metadata standing_metadata;
+  Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(standing_metadata_file_path, &standing_metadata);
+  m_animation_metadata.push_back(standing_metadata);
 
   // Falling
-  m_falling_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Falling_Animation_Tileset.txt");
-  Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(m_falling_metadata_file_path, &m_falling_metadata);
-  m_animation_metadata.push_back(m_falling_metadata);
-
-  // Thumbs Up (Level Complete)
-  m_level_transitioning_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Level_Transition_Animation_Tileset_1_0.txt");
-  Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(m_level_transitioning_metadata_file_path, &m_level_transitioning_metadata);
-  m_animation_metadata.push_back(m_level_transitioning_metadata);
+  std::string falling_metadata_file_path = String_Helper::WStringToString(wtileset_path + m_falling_file_name);
+  Tileset_Helper::Animation_Tileset_Metadata falling_metadata;
+  Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(falling_metadata_file_path, &falling_metadata);
+  m_animation_metadata.push_back(falling_metadata);
 
   // Jumping
-  m_jumping_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Jumping_Animation_Tileset.txt");
-  Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(m_jumping_metadata_file_path, &m_jumping_metadata);
-  m_animation_metadata.push_back(m_jumping_metadata);
+  std::string jumping_metadata_file_path = String_Helper::WStringToString(wtileset_path + m_jumping_file_name);
+  Tileset_Helper::Animation_Tileset_Metadata jumping_metadata;
+  Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(jumping_metadata_file_path, &jumping_metadata);
+  m_animation_metadata.push_back(jumping_metadata);
 
   // Climbing
-  m_climbing_metadata_file_path = String_Helper::WStringToString(wtileset_path + L"Charlie_Climbing_Animation_Tileset.txt");
-  Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(m_climbing_metadata_file_path, &m_climbing_metadata);
-  m_animation_metadata.push_back(m_climbing_metadata);
+  std::string climbing_metadata_file_path = String_Helper::WStringToString(wtileset_path + m_climbing_file_name);
+  Tileset_Helper::Animation_Tileset_Metadata climbing_metadata;
+  Tileset_Helper::LoadAnimationTilesetMetadataIntoStruct(climbing_metadata_file_path, &climbing_metadata);
+  m_animation_metadata.push_back(climbing_metadata);
 }
 
 //------------------------------------------------------------------------------
@@ -481,8 +463,7 @@ void Avatar_Controller::UpdateTimer() {
   if (m_game_settings->IsDebugMode()) {
     milliseconds_per_frame = static_cast<int>(1000/1);
   } else {
-    milliseconds_per_frame = static_cast<int>(1000/18);///m_current_animation_subset.frames_per_second);
-    //milliseconds_per_frame = static_cast<int>(1000/14);///m_current_animation_subset.frames_per_second);
+    milliseconds_per_frame = static_cast<int>(1000/18);
   }
 
   INT64 currentTime;
@@ -493,11 +474,11 @@ void Avatar_Controller::UpdateTimer() {
   timeDifference = static_cast<float>(currentTime - m_startTime);
 
   m_frameTime = timeDifference / m_ticksPerMs;
-  
+
   if (m_frameTime >= milliseconds_per_frame) {
     m_last_frame_time = static_cast<int>(m_frameTime);
     if (m_last_frame_time % 2) {
-      /* x is odd */ 
+      /* x is odd */
       m_last_frame_time += 1;
     }
     m_startTime = currentTime;
@@ -510,14 +491,4 @@ void Avatar_Controller::UpdateTimer() {
   }
 }
 
-//------------------------------------------------------------------------------
-void Avatar_Controller::ClearAvatarCommand() {
-  Avatar_Component::Avatar_State cleared_state;
-  cleared_state.state = "";
-  cleared_state.direction = "";
-  cleared_state.state_index = 0;
-  m_avatar->SetCommand(cleared_state);
-}
-
-
-}  // Tunnelour
+}  // namespace Tunnelour

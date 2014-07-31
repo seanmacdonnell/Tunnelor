@@ -1,4 +1,4 @@
-//  Copyright 2012 Sean MacDonnell
+//  Copyright 2014 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -16,27 +16,26 @@
 #ifndef TUNNELOUR_AVATAR_CONTROLLER_H_
 #define TUNNELOUR_AVATAR_CONTROLLER_H_
 
-#include <windows.h>
-#include <vector>
 #include <string>
 #include <vector>
 
 #include "Avatar_Component.h"
+#include "Avatar_Helper.h"
 #include "Avatar_Controller_Mutator.h"
+#include "Bitmap_Helper.h"
 #include "Component_Composite.h"
 #include "Controller.h"
-#include "Game_Settings_Component.h"
-#include "Tile_Bitmap.h"
-#include "Tileset_Helper.h"
-#include "Level_Component.h"
-
 #include "Charlie_Standing_Controller.h"
 #include "Charlie_Falling_Controller.h"
 #include "Charlie_Running_Controller.h"
 #include "Charlie_Jumping_Controller.h"
 #include "Charlie_Climbing_Controller.h"
-
-#include "Avatar_Helper.h"
+#include "Exceptions.h"
+#include "Game_Settings_Component.h"
+#include "Level_Component.h"
+#include "String_Helper.h"
+#include "Tile_Bitmap.h"
+#include "Tileset_Helper.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -47,14 +46,6 @@ namespace Tunnelour {
 class Avatar_Controller: public Controller,
                          public Component_Composite::Component_Composite_Type_Observer {
  public:
-  //---------------------------------------------------------------------------
-  // Description : This struct contains a stored avatar state and position
-  //---------------------------------------------------------------------------
-  struct Avatar_Stored_State {
-    Avatar_Component::Avatar_State state;
-    D3DXVECTOR3 position;
-  };
-
   //---------------------------------------------------------------------------
   // Description : Constructor
   //---------------------------------------------------------------------------
@@ -108,11 +99,6 @@ class Avatar_Controller: public Controller,
   void CreateAvatar();
 
   //---------------------------------------------------------------------------
-  // Description : Creates the Avatar_Component and adds it to the model
-  //---------------------------------------------------------------------------
-  void GenerateAvatar();
-
-  //---------------------------------------------------------------------------
   // Description : Changes and maintains the state of the avatar
   //---------------------------------------------------------------------------
   void RunAvatarState();
@@ -133,11 +119,6 @@ class Avatar_Controller: public Controller,
   void UpdateTimer();
 
   //---------------------------------------------------------------------------
-  // Description : Clears the current command from the avatar
-  //---------------------------------------------------------------------------
-  void ClearAvatarCommand();
-
-  //---------------------------------------------------------------------------
   // Member Variables
   //---------------------------------------------------------------------------
   Avatar_Component *m_avatar;
@@ -145,21 +126,7 @@ class Avatar_Controller: public Controller,
   Level_Component *m_level;
   World_Settings_Component *m_world_settings;
 
-  std::string m_running_metadata_file_path;
-  std::string m_walking_metadata_file_path;
-  std::string m_standing_metadata_file_path;
-  std::string m_falling_metadata_file_path;
-  std::string m_level_transitioning_metadata_file_path;
-  std::string m_jumping_metadata_file_path;
-  std::string m_climbing_metadata_file_path;
   std::string m_current_metadata_file_path;
-  Tileset_Helper::Animation_Tileset_Metadata m_running_metadata;
-  Tileset_Helper::Animation_Tileset_Metadata m_walking_metadata;
-  Tileset_Helper::Animation_Tileset_Metadata m_standing_metadata;
-  Tileset_Helper::Animation_Tileset_Metadata m_falling_metadata;
-  Tileset_Helper::Animation_Tileset_Metadata m_level_transitioning_metadata;
-  Tileset_Helper::Animation_Tileset_Metadata m_jumping_metadata;
-  Tileset_Helper::Animation_Tileset_Metadata m_climbing_metadata;
   Tileset_Helper::Animation_Tileset_Metadata m_current_metadata;
   Tileset_Helper::Animation_Subset m_current_animation_subset;
   std::vector<Tileset_Helper::Animation_Tileset_Metadata> m_animation_metadata;
@@ -171,18 +138,12 @@ class Avatar_Controller: public Controller,
   int m_last_frame_time;
   bool m_animation_tick;
   int m_current_animation_fps;
-  
+
   std::vector<Tile_Bitmap*> m_floor_tiles;
   std::vector<Tile_Bitmap*> m_wall_tiles;
   std::vector<Tile_Bitmap*> m_ledge_tiles;
 
-  float m_avatar_z_position;
-
-  std::string m_current_level_name;
-
   int m_y_fallen;
-  bool m_wall_impacting;
-  Avatar_Stored_State m_initial_state;
 
   int m_distance_traveled;
 
@@ -205,6 +166,14 @@ class Avatar_Controller: public Controller,
   Charlie_Running_Controller m_charlie_running_controller;
   Charlie_Jumping_Controller m_charlie_jumping_controller;
   Charlie_Climbing_Controller m_charlie_climbing_controller;
+
+  float m_avatar_z_position;
+
+  std::wstring m_running_file_name;
+  std::wstring m_standing_file_name;
+  std::wstring m_falling_file_name;
+  std::wstring m_jumping_file_name;
+  std::wstring m_climbing_file_name;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_AVATAR_CONTROLLER_H_

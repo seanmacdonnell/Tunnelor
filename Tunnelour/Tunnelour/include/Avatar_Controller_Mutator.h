@@ -1,4 +1,4 @@
-//  Copyright 2012 Sean MacDonnell
+//  Copyright 2014 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 #define TUNNELOUR_AVATAR_CONTROLLER_MUTATOR_H_
 
 #include <list>
+#include <vector>
 
 #include "Component.h"
 #include "Game_Settings_Component.h"
@@ -29,7 +30,7 @@ class Avatar_Controller_Mutator: public Component::Component_Mutator  {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
 //  Description : Avatar_Controller_Mutator is a mutator run on the model
-//                which collects the game settings component.
+//                which collects components for the Avatar_Controller
 //-----------------------------------------------------------------------------
  public:
   //-------------------------------------------------------------------------
@@ -63,7 +64,7 @@ class Avatar_Controller_Mutator: public Component::Component_Mutator  {
   std::vector<Tile_Bitmap*> GetWallTiles();
 
   //-------------------------------------------------------------------------
-  // Description : Accessor for the Wall Tiles
+  // Description : Accessor for the Ledge Tiles
   //-------------------------------------------------------------------------
   std::vector<Tile_Bitmap*> GetLedgeTiles();
 
@@ -84,10 +85,7 @@ class Avatar_Controller_Mutator: public Component::Component_Mutator  {
 
  private:
   bool m_found_game_settings;
-  bool m_found_floor_tiles;
   bool m_found_world_settings;
-  bool m_found_wall_tiles;
-  bool m_found_ledge_tiles;
   bool m_found_level;
 
   Game_Settings_Component *m_game_settings;
