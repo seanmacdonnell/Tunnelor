@@ -52,6 +52,18 @@
     <Filter Include="Source Files\Utility">
       <UniqueIdentifier>{89600886-6da9-477b-aba7-c53b12a7606f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Controllers\Avatar">
+      <UniqueIdentifier>{21b2cef9-a402-4013-ae43-7bf0d3435da8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Controllers\Camera">
+      <UniqueIdentifier>{fd040316-3d8b-4443-aa5a-6e09f73a1e1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\Controllers\Avatar">
+      <UniqueIdentifier>{e9255cb7-6b88-4cbf-aa77-ba41263835bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\Controllers\Camera">
+      <UniqueIdentifier>{d0a772cd-7de1-4b4a-8d3b-21cf484204fb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Direct3D11_View.cc">
@@ -126,12 +138,6 @@
     <ClCompile Include="src\Text_Component.cc">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
-    <ClCompile Include="src\Avatar_Controller.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Avatar_Controller_Mutator.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
     <ClCompile Include="src\Input_Controller.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
@@ -147,9 +153,6 @@
     <ClCompile Include="src\Game_Metrics_Component.cc">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
-    <ClCompile Include="src\Camera_Controller.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
     <ClCompile Include="src\Direct3D11_View_DebugShader.cpp">
       <Filter>Source Files\View</Filter>
     </ClCompile>
@@ -164,9 +167,6 @@
     </ClCompile>
     <ClCompile Include="src\World_Settings_Component.cc">
       <Filter>Source Files\Model</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Camera_Controller_Mutator.cc">
-      <Filter>Source Files\Controllers</Filter>
     </ClCompile>
     <ClCompile Include="src\Level_Controller.cc">
       <Filter>Source Files\Controllers</Filter>
@@ -231,9 +231,6 @@
     <ClCompile Include="src\Score_Display_Controller_Mutator.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
-    <ClCompile Include="src\Avatar_State_Controller.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
     <ClCompile Include="src\Charlie_Standing_Controller.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
@@ -254,6 +251,21 @@
     </ClCompile>
     <ClCompile Include="src\Charlie_Jumping_Controller.cc">
       <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Avatar_Controller.cc">
+      <Filter>Source Files\Controllers\Avatar</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Avatar_State_Controller.cc">
+      <Filter>Source Files\Controllers\Avatar</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Avatar_Controller_Mutator.cc">
+      <Filter>Source Files\Controllers\Avatar</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Camera_Controller_Mutator.cc">
+      <Filter>Source Files\Controllers\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Camera_Controller.cc">
+      <Filter>Source Files\Controllers\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -332,12 +344,6 @@
     <ClInclude Include="include\Text_Component.h">
       <Filter>Include Files\Model</Filter>
     </ClInclude>
-    <ClInclude Include="include\Avatar_Controller.h">
-      <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Avatar_Controller_Mutator.h">
-      <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
     <ClInclude Include="include\Input_Controller.h">
       <Filter>Include Files\Controllers</Filter>
     </ClInclude>
@@ -353,9 +359,6 @@
     <ClInclude Include="include\Game_Metrics_Component.h">
       <Filter>Include Files\Model</Filter>
     </ClInclude>
-    <ClInclude Include="include\Camera_Controller.h">
-      <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
     <ClInclude Include="include\Direct3D11_View_DebugShader.h">
       <Filter>Include Files\View</Filter>
     </ClInclude>
@@ -370,9 +373,6 @@
     </ClInclude>
     <ClInclude Include="include\World_Settings_Component.h">
       <Filter>Include Files\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Camera_Controller_Mutator.h">
-      <Filter>Include Files\Controllers</Filter>
     </ClInclude>
     <ClInclude Include="include\String_Helper.h">
       <Filter>Include Files\Utility</Filter>
@@ -440,9 +440,6 @@
     <ClInclude Include="include\Score_Display_Controller_Mutator.h">
       <Filter>Source Files\Controllers</Filter>
     </ClInclude>
-    <ClInclude Include="include\Avatar_State_Controller.h">
-      <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
     <ClInclude Include="include\Charlie_Standing_Controller.h">
       <Filter>Include Files\Controllers</Filter>
     </ClInclude>
@@ -463,6 +460,21 @@
     </ClInclude>
     <ClInclude Include="include\Charlie_Climbing_Controller.h">
       <Filter>Include Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Avatar_Controller.h">
+      <Filter>Include Files\Controllers\Avatar</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Avatar_State_Controller.h">
+      <Filter>Include Files\Controllers\Avatar</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Avatar_Controller_Mutator.h">
+      <Filter>Include Files\Controllers\Avatar</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Camera_Controller_Mutator.h">
+      <Filter>Include Files\Controllers\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Camera_Controller.h">
+      <Filter>Include Files\Controllers\Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

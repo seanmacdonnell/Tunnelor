@@ -1,4 +1,4 @@
-//  Copyright 2012 Sean MacDonnell
+//  Copyright 2014 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 #ifndef TUNNELOUR_CAMERA_CONTROLLER_MUTATOR_H_
 #define TUNNELOUR_CAMERA_CONTROLLER_MUTATOR_H_
 
+#include <vector>
+
 #include "Component.h"
 #include "Game_Settings_Component.h"
 #include "Avatar_Component.h"
@@ -27,7 +29,7 @@ class Camera_Controller_Mutator: public Component::Component_Mutator  {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
 //  Description : Camera_Controller_Mutator is a mutator run on the model
-//                which collects the relevant camera components
+//                which collects components relevant to the camera
 //-----------------------------------------------------------------------------
  public:
   //-------------------------------------------------------------------------
@@ -51,33 +53,33 @@ class Camera_Controller_Mutator: public Component::Component_Mutator  {
   Game_Settings_Component* const GetGameSettings();
 
   //-------------------------------------------------------------------------
-  // Description : Accessors for the Game_Settings_Component
+  // Description : Accessors for the Avatar_Component
   //-------------------------------------------------------------------------
   Avatar_Component* const GetAvatarComponent();
 
   //-------------------------------------------------------------------------
-  // Description : Accessors for the Input Component
+  // Description : Accessors for the Input_Component
   //-------------------------------------------------------------------------
   Input_Component* const GetInputComponent();
-
-  //-------------------------------------------------------------------------
-  // Description : Accessors for the Game_Settings_Component
-  //-------------------------------------------------------------------------
-  bool WasSuccessful();
 
   //-------------------------------------------------------------------------
   // Description : Accessor for the Floor Tiles
   //-------------------------------------------------------------------------
   std::vector<Tile_Bitmap*> GetFloorTiles();
 
+  //-------------------------------------------------------------------------
+  // Description : Returns whether this mutator was successful
+  //-------------------------------------------------------------------------
+  bool WasSuccessful();
+
  private:
   bool m_found_game_settings;
   bool m_found_avatar_component;
-  bool n_found_input_component;
+  bool m_found_input_component;
   Game_Settings_Component * m_game_settings;
-  Avatar_Component * m_avatar_controller;
-  std::vector<Tile_Bitmap*> m_floor_tiles;
+  Avatar_Component * m_avatar;
   Input_Component *m_input;
+  std::vector<Tile_Bitmap*> m_floor_tiles;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_CAMERA_CONTROLLER_MUTATOR_H_

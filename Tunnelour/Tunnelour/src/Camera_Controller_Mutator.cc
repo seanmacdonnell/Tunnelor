@@ -1,4 +1,4 @@
-//  Copyright 2012 Sean MacDonnell
+//  Copyright 2014 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -22,17 +22,22 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 Camera_Controller_Mutator::Camera_Controller_Mutator() {
   m_found_game_settings = false;
-  m_found_avatar_component = false;
   m_game_settings = 0;
-  m_avatar_controller = 0;
+  m_found_avatar_component = false;
+  m_avatar = 0;
+  m_found_input_component = false;
   m_input = 0;
-  n_found_input_component = false;
 }
 
 //------------------------------------------------------------------------------
 Camera_Controller_Mutator::~Camera_Controller_Mutator() {
   m_found_game_settings = false;
   m_game_settings = 0;
+  m_found_avatar_component = false;
+  m_avatar = 0;
+  m_found_input_component = false;
+  m_input = 0;
+  m_floor_tiles.clear();
 }
 
 //------------------------------------------------------------------------------
@@ -41,7 +46,7 @@ void Camera_Controller_Mutator::Mutate(Tunnelour::Component * const component) {
     m_game_settings = static_cast<Game_Settings_Component*>(component);
     m_found_game_settings = true;
   } else if (component->GetType().compare("Avatar_Component") == 0) {
-    m_avatar_controller = static_cast<Avatar_Component*>(component);
+    m_avatar = static_cast<Avatar_Component*>(component);
     m_found_avatar_component = true;
   } else if (component->GetType().compare("Bitmap_Component") == 0) {
     Tile_Bitmap *tile = 0;
@@ -51,7 +56,7 @@ void Camera_Controller_Mutator::Mutate(Tunnelour::Component * const component) {
     }
   } else if (component->GetType().compare("Input_Component") == 0) {
     m_input = static_cast<Input_Component*>(component);
-    n_found_input_component = true;
+    m_found_input_component = true;
   }
 }
 
@@ -62,7 +67,7 @@ Game_Settings_Component* const Camera_Controller_Mutator::GetGameSettings() {
 
 //------------------------------------------------------------------------------
 Avatar_Component* const Camera_Controller_Mutator::GetAvatarComponent() {
-  return m_avatar_controller;
+  return m_avatar;
 }
 
 //------------------------------------------------------------------------------
@@ -71,15 +76,15 @@ Input_Component* const Camera_Controller_Mutator::GetInputComponent() {
 }
 
 //------------------------------------------------------------------------------
-bool Camera_Controller_Mutator::WasSuccessful() {
-  return (m_found_game_settings &&
-          m_found_avatar_component &&
-          n_found_input_component);
+std::vector<Tile_Bitmap*> Camera_Controller_Mutator::GetFloorTiles() {
+  return m_floor_tiles;
 }
 
 //------------------------------------------------------------------------------
-std::vector<Tile_Bitmap*> Camera_Controller_Mutator::GetFloorTiles() {
-  return m_floor_tiles;
+bool Camera_Controller_Mutator::WasSuccessful() {
+  return (m_found_game_settings &&
+          m_found_avatar_component &&
+          m_found_input_component);
 }
 
 }  // namespace Tunnelour
