@@ -48,7 +48,7 @@ class Avatar_Component: public Tunnelour::Bitmap_Component {
   struct Avatar_State {
     std::string parent_state;
     std::string state;
-    int state_index;
+    unsigned int state_index;
     int max_state_index;
     std::string direction;
     std::vector<Avatar_Collision_Block> avatar_collision_blocks;

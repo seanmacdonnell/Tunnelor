@@ -1,4 +1,4 @@
-//  Copyright 2012 Sean MacDonnell
+//  Copyright 2014 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -14,9 +14,13 @@
 //
 
 #include "Camera_Controller.h"
-#include <math.h>       /* sin */
+
+#include <math.h>
+#include <limits>
+
 #include "Bitmap_Helper.h"
-#include <limits>       // std::numeric_limits
+#include "Avatar_Helper.h"
+#include "Tile_Bitmap.h"
 
 namespace Tunnelour {
 
@@ -27,36 +31,46 @@ Camera_Controller::Camera_Controller() : Controller() {
   m_avatar = 0;
   m_game_settings = 0;
   m_camera = 0;
-  is_shaking = false;
+  m_is_shaking = false;
   m_adjacent_floor_tile = 0;
   m_distance_travelled = 0;
   m_leash_length = 256;
-  m_camera_stationary = false;
-  m_stationary_avatar_position.x = INT_MAX;
-  m_stationary_avatar_position.y = INT_MAX;
-  m_offset_x_divisor = 16;
-  m_offset_y_divisor = 32;
-  m_current_x_look_distance = 0;
-  m_current_y_look_distance = 0;
+  m_stationary_avatar_position.x = 0;
+  m_stationary_avatar_position.y = 0;
   m_max_x_look_distance = 600;
   m_max_y_look_distance = 300;
+  m_input = 0;
 }
 
 //------------------------------------------------------------------------------
 Camera_Controller::~Camera_Controller() {
-  m_model->IgnoreType(this, "Bitmap_Component");
-  m_avatar->Ignore(this);
-  m_avatar = 0;
+  if (m_model != 0) {
+    m_model->IgnoreType(this, "Bitmap_Component");
+    m_model = 0;
+  }
+  if (m_avatar != 0) {
+    m_avatar->Ignore(this);
+    m_avatar = 0;
+  }
   m_game_settings = 0;
   m_camera = 0;
+  m_is_shaking = false;
+  m_floor_tiles.clear();
   m_adjacent_floor_tile = 0;
+  m_distance_travelled = 0;
+  m_leash_length = 0;
+  m_stationary_avatar_position.x = 0;
+  m_stationary_avatar_position.y = 0;
+  m_max_x_look_distance = 0;
+  m_max_y_look_distance = 0;
   m_input = 0;
 }
 
 //------------------------------------------------------------------------------
 bool Camera_Controller::Init(Component_Composite * const model) {
+  bool result = false;
   Controller::Init(model);
-  if (m_camera == 0) {
+  if (m_camera == 0 && m_model != 0) {
     m_camera = new Camera_Component();
     m_model->Add(m_camera);
     m_camera->Init();
@@ -71,162 +85,142 @@ bool Camera_Controller::Init(Component_Composite * const model) {
     m_has_been_initialised = true;
     m_floor_tiles = mutator.GetFloorTiles();
     m_input = mutator.GetInputComponent();
+    result = true;
   } else {
-    return false;
-  } 
-  return true;
+    result = false;
+  }
+  return result;
 }
 
 //------------------------------------------------------------------------------
 bool Camera_Controller::Run() {
+  bool result = false;;
   Camera_Controller_Mutator mutator;
-  if (!m_has_been_initialised) { return false; }
-  if (m_game_settings->IsCameraFollowing()) {
-    std::vector<Bitmap_Component*> *adjacent_tiles = new std::vector<Bitmap_Component*>();
-    if (IsAvatarFloorAdjacent(adjacent_tiles)) {
-      m_adjacent_floor_tile = (*adjacent_tiles->begin());
-    } else {
-      if (m_adjacent_floor_tile != 0) {
-        if (m_avatar->GetTopLeftPostion().y < m_adjacent_floor_tile->GetTopLeftPostion().y) {
-          m_adjacent_floor_tile = 0;
-        }
-      }
-    }
-    delete adjacent_tiles;
-
-    // Currently the camera is locked to the avatar.
-    D3DXVECTOR3 avatar_position = *m_avatar->GetPosition();
-    D3DXVECTOR3 camera_position = m_camera->GetPosition();
-
-    // Get the avatar collision block
-    Avatar_Component::Avatar_Collision_Block avatar_collision_block = GetNamedCollisionBlock("Avatar", m_avatar->GetState().avatar_collision_blocks);
-    
+  if (m_has_been_initialised) {
     Avatar_Component::Avatar_State current_state = m_avatar->GetState();
     Avatar_Component::Avatar_State current_command = m_avatar->GetCommand();
     Avatar_Component::Avatar_State last_state = m_avatar->GetLastRenderedState();
-
-    if (current_state.state.compare("Looking") == 0) {
-      if (last_state.state.compare("Looking") != 0) {
-        camera_position.x = avatar_position.x;
-        camera_position.y = m_adjacent_floor_tile->GetTopLeftPostion().y + 128 + 1;
-        m_current_x_look_distance = 0;
-        m_current_y_look_distance = 0;
-      }
-      if (m_input->GetCurrentKeyInput().IsRight) {
-        camera_position.x = avatar_position.x + m_max_x_look_distance;
-      } else if (m_input->GetCurrentKeyInput().IsLeft) {
-        camera_position.x = avatar_position.x - m_max_x_look_distance;
+    if (m_game_settings->IsCameraFollowing()) {
+      std::vector<Tile_Bitmap*> *adjacent_tiles = new std::vector<Tile_Bitmap*>();
+      if (Avatar_Helper::IsAvatarFloorAdjacent(m_avatar, adjacent_tiles, &m_floor_tiles)) {
+        m_adjacent_floor_tile = (*adjacent_tiles->begin());
       } else {
-        camera_position.x = avatar_position.x;
-      }
-
-      if (m_input->GetCurrentKeyInput().IsDown) {
-        camera_position.y = avatar_position.y - m_max_y_look_distance;
-      } else if (m_input->GetCurrentKeyInput().IsUp) {
-        camera_position.y = avatar_position.y + m_max_y_look_distance;
-      } else {
-        camera_position.y = m_adjacent_floor_tile->GetTopLeftPostion().y + 128 + 1;;
-      }
-
-      if (m_input->GetCurrentKeyInput().IsRight || m_input->GetCurrentKeyInput().IsLeft) {
-        camera_position.x = m_camera->GetLastPosition().x + CalculateSmoothSnapXOffset(camera_position.x);
-      }
-      if (m_input->GetCurrentKeyInput().IsUp || m_input->GetCurrentKeyInput().IsDown) {
-        camera_position.y = m_camera->GetLastPosition().y + CalculateSmoothSnapYOffset(camera_position.y);
-      }
-    } else {
-      if (current_state.state.compare("Initial") == 0 || last_state.state.compare("Initial") == 0) {
-        radius = 0;
-        camera_position.x = avatar_position.x;
-        camera_position.y = avatar_position.y - (avatar_collision_block.size.y / 2) + 176 + 1;
-        m_stationary_avatar_position.x = m_avatar->GetPosition()->x;
-        m_stationary_avatar_position.y = m_avatar->GetPosition()->y;
-      } else {
-        int distance = HowFarHasAvatarTravelled();
-        if (current_state.parent_state.compare("Charlie_Standing") == 0 && last_state.parent_state.compare("Charlie_Standing") == 0 || current_state.direction.compare(last_state.direction) != 0) {
-          if (distance > m_leash_length) {
-            camera_position.x = avatar_position.x;
-            //camera_position.x = m_camera->GetLastPosition().x + CalculateSmoothSnapXOffset(camera_position.x);
-            m_stationary_avatar_position.x = m_avatar->GetPosition()->x;
-            m_stationary_avatar_position.y = m_avatar->GetPosition()->y;
-          } else {
-            camera_position.x = m_stationary_avatar_position.x;
-            //camera_position.x = m_camera->GetLastPosition().x + CalculateSmoothSnapXOffset(camera_position.x);
+        if (m_adjacent_floor_tile != 0) {
+          if (m_avatar->GetTopLeftPostion().y < m_adjacent_floor_tile->GetTopLeftPostion().y) {
+            m_adjacent_floor_tile = 0;
           }
+        }
+      }
+      delete adjacent_tiles;
+
+      D3DXVECTOR3 avatar_position = *m_avatar->GetPosition();
+      D3DXVECTOR3 camera_position = m_camera->GetPosition();
+
+      Avatar_Component::Avatar_Collision_Block avatar_collision_block = Avatar_Helper::GetNamedCollisionBlock("Avatar", m_avatar->GetState().avatar_collision_blocks);
+
+
+      if (current_state.state.compare("Looking") == 0) {
+        if (last_state.state.compare("Looking") != 0) {
+          camera_position.x = avatar_position.x;
+          camera_position.y = m_adjacent_floor_tile->GetTopLeftPostion().y + 128 + 1;
+        }
+        if (m_input->GetCurrentKeyInput().IsRight) {
+          camera_position.x = avatar_position.x + m_max_x_look_distance;
+        } else if (m_input->GetCurrentKeyInput().IsLeft) {
+          camera_position.x = avatar_position.x - m_max_x_look_distance;
         } else {
-          if (distance > m_leash_length) {
-            if (current_state.direction.compare("Right") == 0) {
-              camera_position.x = avatar_position.x + m_leash_length;
+          camera_position.x = avatar_position.x;
+        }
+
+        if (m_input->GetCurrentKeyInput().IsDown) {
+          camera_position.y = avatar_position.y - m_max_y_look_distance;
+        } else if (m_input->GetCurrentKeyInput().IsUp) {
+          camera_position.y = avatar_position.y + m_max_y_look_distance;
+        } else {
+          camera_position.y = m_adjacent_floor_tile->GetTopLeftPostion().y + 128 + 1;;
+        }
+
+        if (m_input->GetCurrentKeyInput().IsRight || m_input->GetCurrentKeyInput().IsLeft) {
+          camera_position.x = m_camera->GetLastPosition().x + CalculateSmoothSnapXOffset(camera_position.x);
+        }
+
+        if (m_input->GetCurrentKeyInput().IsUp || m_input->GetCurrentKeyInput().IsDown) {
+          camera_position.y = m_camera->GetLastPosition().y + CalculateSmoothSnapYOffset(camera_position.y);
+        }
+      } else {
+        if (current_state.state.compare("Initial") == 0 || last_state.state.compare("Initial") == 0) {
+          m_radius = 0;
+          camera_position.x = avatar_position.x;
+          // This plus 1 (+1) is to fix a bug where black bars sometimes appear on the top
+          // or the bottom of the viewspace. I don't know why these bars appear and I don't
+          // know why the + 1 fixes the problem. but.. OK
+          camera_position.y = avatar_position.y - (avatar_collision_block.size.y / 2) + 128 + 1;
+          m_stationary_avatar_position.x = m_avatar->GetPosition()->x;
+          m_stationary_avatar_position.y = m_avatar->GetPosition()->y;
+        } else {
+          float distance = HowFarHasAvatarTravelled();
+          if (current_state.parent_state.compare("Charlie_Standing") == 0 && last_state.parent_state.compare("Charlie_Standing") == 0 || current_state.direction.compare(last_state.direction) != 0) {
+            if (distance > m_leash_length) {
+              camera_position.x = avatar_position.x;
+              m_stationary_avatar_position.x = m_avatar->GetPosition()->x;
+              m_stationary_avatar_position.y = m_avatar->GetPosition()->y;
             } else {
-              camera_position.x = avatar_position.x - m_leash_length;
+              camera_position.x = m_stationary_avatar_position.x;
             }
           } else {
-            camera_position.x = m_stationary_avatar_position.x;
-            //camera_position.x = m_camera->GetLastPosition().x + CalculateSmoothSnapXOffset(camera_position.x);
+            if (distance > m_leash_length) {
+              if (current_state.direction.compare("Right") == 0) {
+                camera_position.x = avatar_position.x + m_leash_length;
+              } else {
+                camera_position.x = avatar_position.x - m_leash_length;
+              }
+            } else {
+              camera_position.x = m_stationary_avatar_position.x;
+            }
+          }
+
+          camera_position.x = m_camera->GetLastPosition().x + CalculateSmoothSnapXOffset(camera_position.x);
+
+          // This plus 1 (+1) is to fix a bug where black bars sometimes appear on the top
+          // or the bottom of the viewspace. I don't know why these bars appear and I don't
+          // know why the + 1 fixes the problem. but.. OK
+          if (m_adjacent_floor_tile != 0) {
+            camera_position.y = m_adjacent_floor_tile->GetTopLeftPostion().y + 128 + 1;
+          } else {
+            camera_position.y = m_avatar->GetBottomRightPostion().y + 128 + 1;
+          }
+
+          if ((m_avatar->GetState().state.compare("Up_Facing_Falling_To_Death") == 0 && m_avatar->GetState().state_index == 0) ||
+             (m_avatar->GetState().state.compare("Down_Facing_Falling_To_Death") == 0 && m_avatar->GetState().state_index == 0)) {
+            m_radius = 30.0;
+            m_randomAngle = static_cast<float>(rand()%360);
+            m_is_shaking = true;
+          }
+
+          if (m_is_shaking) {
+            m_radius *= 0.9f;  // Diminish m_radius each frame
+            // This plus 1 (+1) is to fix a bug where black bars sometimes appear on the top
+            // or the bottom of the viewspace. I don't know why these bars appear and I don't
+            // know why the + 1 fixes the problem. but.. OK
+            m_randomAngle += (150 + rand()%60);
+            float offset = (sin(m_randomAngle) * m_radius , cos(m_randomAngle) * m_radius) + 128 + 1;
+            offset = ceil(offset);
+            camera_position.y -= static_cast<float>(offset);
+          }
+
+          if (m_radius == 0) {
+            m_is_shaking = false;
           }
         }
-
-        camera_position.x = m_camera->GetLastPosition().x + CalculateSmoothSnapXOffset(camera_position.x);
-
-        // This plus 1 (+1) is to fix a bug where black bars sometimes appear on the top
-        // or the bottom of the viewspace. I don't know why these bars appear and I don't
-        // know why the + 1 fixes the problem. but.. OK
-        if (m_adjacent_floor_tile != 0) {
-          camera_position.y = m_adjacent_floor_tile->GetTopLeftPostion().y + 128 + 1;
-          //camera_position.y = m_camera->GetLastPosition().y + CalculateSmoothSnapYOffset(camera_position.y);
-        } else {
-          camera_position.y = m_avatar->GetBottomRightPostion().y + 128 + 1;
-        }
-        
-        if ((m_avatar->GetState().state.compare("Up_Facing_Falling_To_Death") == 0 && m_avatar->GetState().state_index == 0) || 
-           (m_avatar->GetState().state.compare("Down_Facing_Falling_To_Death") == 0 && m_avatar->GetState().state_index == 0)) {
-          radius = 30.0;
-          randomAngle = rand()%360;
-          is_shaking = true;
-        }
-   
-        if (is_shaking) {
-          radius *=0.9; //diminish radius each frame
-          randomAngle += (150 + rand()%60);
-          float offset = (sin(randomAngle) * radius , cos(randomAngle) * radius) + 128; //create offset 2d vector
-          offset = ceil(offset);
-          //camera_position.x += offset; //set centre of viewport
-          camera_position.y -= offset; //set centre of viewport
-        }
-
-        if (radius == 0) {
-          is_shaking = false;
-        }
-        
       }
+      m_camera->SetPosition(camera_position);
     }
-    m_camera->SetPosition(camera_position);
+    result = true;
+  } else {
+    result = false;
   }
-
-  if (last_state !=  m_avatar->GetLastRenderedState()) {
-    last_state = m_avatar->GetLastRenderedState();
-  }
-
-  return true;
+  return result;
 }
-
-//---------------------------------------------------------------------------
-Avatar_Component::Avatar_Collision_Block Camera_Controller::GetNamedCollisionBlock(std::string id, std::vector<Avatar_Component::Avatar_Collision_Block> avatar_collision_blocks) {
-  Avatar_Component::Avatar_Collision_Block found_avatar_collision_block;
-
-  Avatar_Component::Avatar_Collision_Block* current_right_foot_avatar_collision_block = 0;
-
-  std::vector<Avatar_Component::Avatar_Collision_Block>::iterator avatar_collision_block;
-  for (avatar_collision_block = avatar_collision_blocks.begin(); avatar_collision_block != avatar_collision_blocks.end(); avatar_collision_block++) {
-    if (avatar_collision_block->id.compare(id) == 0) {
-      found_avatar_collision_block = (*avatar_collision_block);
-    }
-  }
-
-  return found_avatar_collision_block;
-}
-
-
 
 //------------------------------------------------------------------------------
 void Camera_Controller::HandleEvent(Tunnelour::Component * const component) {
@@ -253,7 +247,7 @@ void Camera_Controller::HandleEventRemove(Tunnelour::Component * const component
     std::vector<Tile_Bitmap*>::iterator bitmap;
     for (bitmap = m_floor_tiles.begin(); bitmap != m_floor_tiles.end(); bitmap++) {
       if ((*bitmap)->GetID() == target_bitmap->GetID()) {
-        found_bitmap = bitmap; 
+        found_bitmap = bitmap;
       }
     }
     m_floor_tiles.erase(found_bitmap);
@@ -261,70 +255,7 @@ void Camera_Controller::HandleEventRemove(Tunnelour::Component * const component
 }
 
 //------------------------------------------------------------------------------
-bool Camera_Controller::IsAvatarFloorAdjacent(std::vector<Bitmap_Component*> *adjacent_tiles) {
-  adjacent_tiles->clear();
-  // Going to deal only with gravity only
-  // Also only dealing with the lowest foot (Lowest collision Block).
-  if (!m_floor_tiles.empty()) {
-    // Find the lowest contact block
-    // Get the lowest block most right/left block
-    Avatar_Component::Avatar_Collision_Block avatar_avatar_collision_block;
-    if (m_avatar->GetState().state.compare("Stopping") == 0) {
-      avatar_avatar_collision_block = GetNamedCollisionBlock("Right_Foot", m_avatar->GetState().avatar_collision_blocks);
-    } else {
-      avatar_avatar_collision_block = GetNamedCollisionBlock("Avatar", m_avatar->GetState().avatar_collision_blocks);
-    }
-    Bitmap_Component *avatar_avatar_collision_block_bitmap;
-    avatar_avatar_collision_block_bitmap = CollisionBlockToBitmapComponent(avatar_avatar_collision_block, (*m_avatar->GetPosition()));
-
-    // Create a list of floor tiles which are adjacent with the collision block
-    std::vector<Tile_Bitmap*>::iterator floor_tile;
-    for (floor_tile = m_floor_tiles.begin(); floor_tile != m_floor_tiles.end(); floor_tile++) {
-      if (m_game_settings->IsDebugMode()) {
-        (*floor_tile)->GetTexture()->transparency = 1.0f;
-      }
-      if (Bitmap_Helper::DoTheseTilesXCollide(*floor_tile, avatar_avatar_collision_block_bitmap)) {
-        float floor_top = (*floor_tile)->GetTopLeftPostion().y;
-        float avatar_bottom = avatar_avatar_collision_block_bitmap->GetBottomRightPostion().y;
-        if (floor_top == avatar_bottom) {
-          adjacent_tiles->push_back(*floor_tile);
-          if (m_game_settings->IsDebugMode()) {
-            (*floor_tile)->GetTexture()->transparency = 0.5f;
-          }
-        }
-      }
-    }
-    delete avatar_avatar_collision_block_bitmap;
-
-    if (adjacent_tiles->empty()) {
-      return false;
-    }
-  } else {
-    return false;
-  }
-
-  // Adjacent tiles!
-  return true;
-}
-
-//------------------------------------------------------------------------------
-Bitmap_Component* Camera_Controller::CollisionBlockToBitmapComponent(Avatar_Component::Avatar_Collision_Block avatar_collision_block, D3DXVECTOR3 position) {
-  Bitmap_Component* collision_bitmap = new Bitmap_Component();
-
-  D3DXVECTOR3 collision_bitmap_position;
-  collision_bitmap_position.x = position.x + avatar_collision_block.offset_from_avatar_centre.x;
-  collision_bitmap_position.y = position.y + avatar_collision_block.offset_from_avatar_centre.y;
-  collision_bitmap_position.z = position.z;
-
-  collision_bitmap->SetPosition(collision_bitmap_position);
-
-  collision_bitmap->SetSize(avatar_collision_block.size.x, avatar_collision_block.size.y);
-
-  return collision_bitmap;
-}
-
-//------------------------------------------------------------------------------
-int Camera_Controller::HowFarHasAvatarTravelled() {
+float Camera_Controller::HowFarHasAvatarTravelled() {
   D3DXVECTOR2 point_1;
   point_1.x = m_avatar->GetPosition()->x;
   point_1.y = 0;
@@ -332,18 +263,18 @@ int Camera_Controller::HowFarHasAvatarTravelled() {
   point_2.x = m_stationary_avatar_position.x;
   point_2.y = 0;
 
-  double x = point_1.x - point_2.x;
-  double y = point_1.y - point_2.y;
-  double dist;
+  float x = point_1.x - point_2.x;
+  float y = point_1.y - point_2.y;
+  float dist;
 
-  dist = pow(x,2)+pow(y,2);           //calculating distance by euclidean formula
-  dist = sqrt(dist);                  //sqrt is function in math.h
+  dist = pow(x, 2) + pow(y, 2);  // Calculating distance by euclidean formula
+  dist = sqrt(dist);
 
-  return static_cast<int>(dist);
+  return dist;
 }
 
 //------------------------------------------------------------------------------
-int Camera_Controller::HowFarHasAvatarTravelledLastFrame() {
+float Camera_Controller::HowFarHasAvatarTravelledLastFrame() {
   D3DXVECTOR2 point_1;
   point_1.x = m_avatar->GetPosition()->x;
   point_1.y = 0;
@@ -351,19 +282,19 @@ int Camera_Controller::HowFarHasAvatarTravelledLastFrame() {
   point_2.x = m_avatar->GetLastRenderedPosition().x;
   point_2.y = 0;
 
-  double x = point_1.x - point_2.x;
-  double y = point_1.y - point_2.y;
-  double dist;
+  float x = point_1.x - point_2.x;
+  float y = point_1.y - point_2.y;
+  float dist;
 
-  dist = pow(x,2)+pow(y,2);           //calculating distance by euclidean formula
-  dist = sqrt(dist);                  //sqrt is function in math.h
+  dist = pow(x, 2) + pow(y, 2);  // Calculating distance by euclidean formula
+  dist = sqrt(dist);
 
-  return static_cast<int>(dist);
+  return dist;
 }
 
 //------------------------------------------------------------------------------
-int Camera_Controller::CalculateSmoothSnapXOffset(float camera_position_x) {
-  int offset = 0;
+float Camera_Controller::CalculateSmoothSnapXOffset(float camera_position_x) {
+  float offset = 0;
 
   D3DXVECTOR2 point_1;
   point_1.x = camera_position_x;
@@ -372,43 +303,43 @@ int Camera_Controller::CalculateSmoothSnapXOffset(float camera_position_x) {
   point_2.x = m_camera->GetLastPosition().x;
   point_2.y = 0;
 
-  double x = point_1.x - point_2.x;
-  double y = point_1.y - point_2.y;
-  double dist = 0;
+  float x = point_1.x - point_2.x;
+  float y = point_1.y - point_2.y;
+  float dist = 0;
 
-  dist = pow(x,2)+pow(y,2);           //calculating distance by euclidean formula
-  dist = sqrt(dist);                  //sqrt is function in math.h
+  dist = pow(x, 2) + pow(y, 2);  // Calculating distance by euclidean formula
+  dist = sqrt(dist);
 
-  int multiplier = 1;
+  float multiplier = 1.0f;
 
-  int distance_travelled = HowFarHasAvatarTravelledLastFrame();
+  float distance_travelled = HowFarHasAvatarTravelledLastFrame();
 
   if (dist > 1024) {
-    offset = 8 * multiplier;  
+    offset = 8.0f * multiplier;
   } else if (dist > 512) {
-    offset = 6 * multiplier;
+    offset = 6.0f * multiplier;
   } else if (dist > 256) {
-    offset = 4 * multiplier;
+    offset = 4.0f * multiplier;
   } else if (dist > 128) {
-    offset = 2 * multiplier;
+    offset = 2.0f * multiplier;
   } else if (dist > 64) {
-    offset = 1 * multiplier;
+    offset = 1.0f * multiplier;
   } else if (dist > 32) {
-    offset = 1 * multiplier;
+    offset = 1.0f * multiplier;
   } else if (dist > 1) {
-    offset = 1 * multiplier;
+    offset = 1.0f * multiplier;
   } else {
     offset = dist;
   }
 
   if (offset < distance_travelled) {
     offset += distance_travelled;
-  } 
+  }
 
   if (offset > dist) {
     offset = dist;
   }
-  
+
   if (camera_position_x < m_camera->GetLastPosition().x) {
     offset = offset*-1;
   }
@@ -417,8 +348,8 @@ int Camera_Controller::CalculateSmoothSnapXOffset(float camera_position_x) {
 }
 
 //------------------------------------------------------------------------------
-int Camera_Controller::CalculateSmoothSnapYOffset(float camera_position_y) {
-  int offset = 0;
+float Camera_Controller::CalculateSmoothSnapYOffset(float camera_position_y) {
+  float offset = 0;
 
   D3DXVECTOR2 point_1;
   point_1.y = camera_position_y;
@@ -427,38 +358,37 @@ int Camera_Controller::CalculateSmoothSnapYOffset(float camera_position_y) {
   point_2.x = 0;
   point_2.y = m_camera->GetLastPosition().y;
 
-  double x = point_1.x - point_2.x;
-  double y = point_1.y - point_2.y;
-  double dist = 0;
+  float x = point_1.x - point_2.x;
+  float y = point_1.y - point_2.y;
+  float dist = 0;
 
-  dist = pow(x,2)+pow(y,2);           //calculating distance by euclidean formula
-  dist = sqrt(dist);                  //sqrt is function in math.h
+  dist = pow(x, 2) + pow(y, 2);  // Calculating distance by euclidean formula
+  dist = sqrt(dist);
 
-  int multiplier = 2;
-  if (m_avatar->GetState().parent_state.compare("Charlie_Standing") != 0) {
-    multiplier = 4;
-  }
+  float multiplier = 1.0f;
 
-  if (m_avatar->GetState().state.compare("Looking") == 0) {
-    multiplier = 6;
-  }
+  float distance_travelled = HowFarHasAvatarTravelledLastFrame();
 
   if (dist > 1024) {
-    offset = 32 * multiplier;  
+    offset = 8.0f * multiplier;
   } else if (dist > 512) {
-    offset = 16 * multiplier;
+    offset = 6.0f * multiplier;
   } else if (dist > 256) {
-    offset = 8 * multiplier;
+    offset = 4.0f * multiplier;
   } else if (dist > 128) {
-    offset = 6 * multiplier;
+    offset = 2.0f * multiplier;
   } else if (dist > 64) {
-    offset = 4 * multiplier;
+    offset = 1.0f * multiplier;
   } else if (dist > 32) {
-    offset = 2 * multiplier;
+    offset = 1.0f * multiplier;
   } else if (dist > 1) {
-    offset = 1 * multiplier;
+    offset = 1.0f * multiplier;
   } else {
     offset = dist;
+  }
+
+  if (offset < distance_travelled) {
+    offset += distance_travelled;
   }
 
   if (offset > dist) {
@@ -473,29 +403,10 @@ int Camera_Controller::CalculateSmoothSnapYOffset(float camera_position_y) {
 }
 
 //------------------------------------------------------------------------------
-int Camera_Controller::WhatsTheDistanceBetweenThesAvatarAndTheCamera() {
-  D3DXVECTOR2 point_1;
-  point_1.x = m_avatar->GetPosition()->x;
-  point_1.y = m_avatar->GetPosition()->y;
-  D3DXVECTOR2 point_2;
-  point_2.x = m_camera->GetLastPosition().x;
-  point_2.y = m_camera->GetLastPosition().y;
-
-  double x = point_1.x - point_2.x;
-  double y = point_1.y - point_2.y;
-  double dist;
-
-  dist = pow(x,2)+pow(y,2);           //calculating distance by euclidean formula
-  dist = sqrt(dist);                  //sqrt is function in math.h
-
-  return static_cast<int>(dist);
-}
-
-//------------------------------------------------------------------------------
 // protected:
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 // private:
 //------------------------------------------------------------------------------
-}  // Tunnelour
+}  // namespace Tunnelour

@@ -1,4 +1,4 @@
-//  Copyright 2012 Sean MacDonnell
+//  Copyright 2014 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
 
 #ifndef TUNNELOUR_CAMERA_CONTROLLER_H_
 #define TUNNELOUR_CAMERA_CONTROLLER_H_
+
+#include <vector>
 
 #include "Game_Settings_Component.h"
 #include "Camera_Controller_Mutator.h"
@@ -52,6 +54,9 @@ class Camera_Controller: public Controller,
   //---------------------------------------------------------------------------
   virtual bool Run();
 
+  //---------------------------------------------------------------------------
+  // Description : Handing for when the avatar is repositioned
+  //---------------------------------------------------------------------------
   virtual void HandleEvent(Tunnelour::Component * const component);
 
   //---------------------------------------------------------------------------
@@ -65,49 +70,48 @@ class Camera_Controller: public Controller,
   virtual void HandleEventRemove(Tunnelour::Component * const component);
 
   //---------------------------------------------------------------------------
-  // Description : Returns true if the avatar is standing on a floor
+  // Description : Returns how far the avatar has traveled in x from
+  //               the stationary position.
   //---------------------------------------------------------------------------
-  bool IsAvatarFloorAdjacent(std::vector<Bitmap_Component*> *adjacent_tiles);
+  float HowFarHasAvatarTravelled();
 
   //---------------------------------------------------------------------------
-  // Description : Creates a Bitmap Component using the given collision block
+  // Description : Returns how far the avatar has traveled in x from
+  //               the last rendered position of the avatar.
   //---------------------------------------------------------------------------
-  Bitmap_Component* CollisionBlockToBitmapComponent(Avatar_Component::Avatar_Collision_Block avatar_collision_block, D3DXVECTOR3 position);
+  float HowFarHasAvatarTravelledLastFrame();
 
-  int HowFarHasAvatarTravelled();
-  int HowFarHasAvatarTravelledLastFrame();
-  int CalculateSmoothSnapXOffset(float camera_position_x);
-  int CalculateSmoothSnapYOffset(float camera_position_y);
-  int WhatsTheDistanceBetweenThesAvatarAndTheCamera();
- protected:
+  //---------------------------------------------------------------------------
+  // Description : Generates a value between the current camera position and
+  //               the desired camera position which will give a smooth
+  //               transition between the points.
+  // Returns     : An offset which is added to the last camera position.
+  //---------------------------------------------------------------------------
+  float CalculateSmoothSnapXOffset(float camera_position_x);
+
+  //---------------------------------------------------------------------------
+  // Description : Generates a value between the current camera position and
+  //               the desired camera position which will give a smooth
+  //               transition between the points.
+  // Returns     : An offset which is added to the last camera position.
+  //---------------------------------------------------------------------------
+  float CalculateSmoothSnapYOffset(float camera_position_y);
 
  private:
   Avatar_Component *m_avatar;
   Game_Settings_Component *m_game_settings;
   Camera_Component *m_camera;
-  bool is_shaking;
-  double radius;
-  double randomAngle;
+  bool m_is_shaking;
+  float m_radius;
+  float m_randomAngle;
   std::vector<Tile_Bitmap*> m_floor_tiles;
   Bitmap_Component *m_adjacent_floor_tile;
   int m_distance_travelled;
   int m_leash_length;
-  bool m_camera_stationary;
   D3DXVECTOR2 m_stationary_avatar_position;
-
-  int m_offset_x_divisor;
-  int m_offset_y_divisor;
-  //---------------------------------------------------------------------------
-  // Description : Creates a Bitmap Component using the given collision block
-  //---------------------------------------------------------------------------
-  Avatar_Component::Avatar_Collision_Block GetNamedCollisionBlock(std::string id, std::vector<Avatar_Component::Avatar_Collision_Block> avatar_collision_blocks);
-  Avatar_Component::Avatar_State last_state;
-
-  int m_current_x_look_distance;
-  int m_current_y_look_distance;
+  Avatar_Component::Avatar_State m_last_state;
   int m_max_x_look_distance;
   int m_max_y_look_distance;
-
   Input_Component *m_input;
 };
 }  // namespace Tunnelour

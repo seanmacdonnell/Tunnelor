@@ -83,8 +83,6 @@ Avatar_Component::Avatar_Collision_Block Avatar_Helper::GetNamedCollisionBlock(s
   Avatar_Component::Avatar_Collision_Block found_avatar_collision_block;
   found_avatar_collision_block.id = "";
 
-  Avatar_Component::Avatar_Collision_Block* current_right_foot_avatar_collision_block = 0;
-
   std::vector<Avatar_Component::Avatar_Collision_Block>::iterator avatar_collision_block;
   for (avatar_collision_block = avatar_collision_blocks.begin(); avatar_collision_block != avatar_collision_blocks.end(); avatar_collision_block++) {
     if (avatar_collision_block->id.compare(id) == 0) {
@@ -456,7 +454,7 @@ void Avatar_Helper::MoveAvatarTileAdjacent(Avatar_Component *avatar, std::string
 
 
 //------------------------------------------------------------------------------
-void Avatar_Helper::SetAvatarStateAnimationFrame(Avatar_Component *avatar, int new_state_index, Tileset_Helper::Animation_Subset *current_animation_subset) {
+void Avatar_Helper::SetAvatarStateAnimationFrame(Avatar_Component *avatar, unsigned int new_state_index, Tileset_Helper::Animation_Subset *current_animation_subset) {
   Avatar_Component::Avatar_State incremented_state;
 
   incremented_state.state = avatar->GetState().state;
@@ -566,15 +564,12 @@ bool Avatar_Helper::IsAvatarWallColliding(Avatar_Component *avatar, std::vector<
 
         D3DXVECTOR2 floor_intersection;
         bool isthereafloor_intersection = Geometry_Helper::DoTheseLinesIntersect(Tile_Top_Left, Tile_Top_Right, Current_Avatar_Position, Last_Avatar_Position, &floor_intersection);
-        double floor_intersection_disance = Geometry_Helper::WhatsTheDistanceBetweenThesePoints(Current_Avatar_Position, floor_intersection);
 
         D3DXVECTOR2 left_wall_intersection;
         bool istherealeft_wall_intersection = Geometry_Helper::DoTheseLinesIntersect(Tile_Top_Left, Tile_Bottom_Left, Current_Avatar_Position, Last_Avatar_Position, &left_wall_intersection);
-        double left_wall_intersection_disance = Geometry_Helper::WhatsTheDistanceBetweenThesePoints(Current_Avatar_Position, left_wall_intersection);;
 
         D3DXVECTOR2 right_wall_intersection;
         bool istherearight_wall_intersection = Geometry_Helper::DoTheseLinesIntersect(Tile_Top_Right, Tile_Bottom_Right, Current_Avatar_Position, Last_Avatar_Position, &right_wall_intersection);
-        double right_wall_intersection_distance = Geometry_Helper::WhatsTheDistanceBetweenThesePoints(Current_Avatar_Position, right_wall_intersection);;
 
         if (istherealeft_wall_intersection) {
           if (isthereafloor_intersection) {

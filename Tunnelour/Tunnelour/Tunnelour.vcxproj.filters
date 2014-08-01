@@ -249,10 +249,10 @@
     <ClCompile Include="src\Charlie_Running_Controller.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
-    <ClCompile Include="src\Charlie_Jumping_Controller.cc">
-      <Filter>Include Files\Controllers</Filter>
-    </ClCompile>
     <ClCompile Include="src\Charlie_Climbing_Controller.cc">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Charlie_Jumping_Controller.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
   </ItemGroup>

@@ -81,7 +81,7 @@ class Avatar_Helper {
 
   static void MoveAvatarTileAdjacent(Avatar_Component *avatar, std::string direction, Bitmap_Component* tile);
 
-  static void SetAvatarStateAnimationFrame(Avatar_Component *avatar, int new_state_index, Tileset_Helper::Animation_Subset *current_animation_subset);
+  static void SetAvatarStateAnimationFrame(Avatar_Component *avatar, unsigned int new_state_index, Tileset_Helper::Animation_Subset *current_animation_subset);
 
   static bool IsAvatarWallColliding(Avatar_Component *avatar, std::vector<Tile_Collision> *out_collisions, std::vector<Tile_Bitmap*> *wall_tiles);
 
