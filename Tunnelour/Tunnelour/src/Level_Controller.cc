@@ -6,10 +6,10 @@
 //
 //    http://www.apache.org/licenses/LICENSE-2.0
 //
-//  Unless required by applicable law or agreed to in writing, software
+//  Unless required by applicable law is_or agreed to in writing, software
 //  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express is_or implied.
+//  See the License for the specific language governing permissions is_and
 //  limitations under the License.
 //
 
@@ -37,7 +37,7 @@ Level_Controller::Level_Controller() : Controller() {
   m_splash_screen_component = 0;
   m_level_transition_controller = 0;
   m_screen_wipeout_controller = 0;
-  m_avatar_controller = 0; 
+  m_avatar_controller = 0;
   m_game_metrics_controller = 0;
   m_has_transition_been_initalised = false;
   m_has_level_been_destroyed = false;
@@ -85,7 +85,7 @@ Level_Controller::~Level_Controller() {
     m_avatar_controller = 0;
   }
 
-  if (m_screen_wipeout_controller != 0 ) {
+  if (m_screen_wipeout_controller != 0) {
     delete m_screen_wipeout_controller;
     m_screen_wipeout_controller = 0;
   }
@@ -177,7 +177,7 @@ bool Level_Controller::Run() {
               m_level_transition_controller->SetLevelCompleteHeadingText("TRY AGAIN");
             }
             m_level_transition_controller->SetNextLevelHeadingText("Find the exit!");
-            m_level_transition_controller->SetNextLevelNameText("Arrow Direction Keys To Move and Left Alt to Jump");
+            m_level_transition_controller->SetNextLevelNameText("Arrow Direction Keys To Move is_and Left Alt to Jump");
             m_level_transition_controller->SetNextLevelBlurbText("Press ESC to reset the tunnel.");
             m_level_transition_controller->Init(m_model);
             m_level_transition_controller->Run();
@@ -191,7 +191,7 @@ bool Level_Controller::Run() {
         m_level_transition_controller = new Level_Transition_Controller();
         m_level_transition_controller->SetLevelCompleteHeadingText("WELCOME");
         m_level_transition_controller->SetNextLevelHeadingText("Find the exit!");
-        m_level_transition_controller->SetNextLevelNameText("Arrow Direction Keys To Move and Left Alt to Jump");
+        m_level_transition_controller->SetNextLevelNameText("Arrow Direction Keys To Move is_and Left Alt to Jump");
         m_level_transition_controller->SetNextLevelBlurbText("Press ESC to reset the tunnel.");
         m_level_transition_controller->Init(m_model);
         m_level_transition_controller->Run();
@@ -238,7 +238,7 @@ bool Level_Controller::Run() {
             m_level_tile_controller->AddLevelToModel();
           }
           m_has_level_been_added = true;
-        } else if(!m_has_level_been_shown) {
+        } else if (!m_has_level_been_shown) {
           m_level_tile_controller->Run();
           m_level_tile_controller->ShowLevel();
           m_has_level_been_shown = true;
@@ -271,7 +271,7 @@ bool Level_Controller::Run() {
       m_level_transition_controller->Run();
       if (m_level_transition_controller->IsFinished()) {
         delete m_level_transition_controller;
-        m_level_transition_controller = 0;        
+        m_level_transition_controller = 0;
       } else if (m_level_transition_controller->IsFading() && !m_has_avatar_been_reset) {
         m_avatar_controller->ResetAvatarToDefaults();
         m_game_metrics_controller->ResetGameMetrics();
@@ -298,38 +298,38 @@ bool Level_Controller::Run() {
           std::vector<Level_Component::End_Condition*> end_conditions = m_level->GetCurrentLevel().end_conditions;
           std::vector<Level_Component::End_Condition*>::iterator end_condition;
           for (end_condition = end_conditions.begin(); end_condition != end_conditions.end(); end_condition++) {
-            bool and = true;
-            bool or = false;
+            bool is_and = true;
+            bool is_or = false;
             std::vector<Level_Component::Condition*>::iterator condition;
             for (condition = (*end_condition)->conditions.begin(); condition != (*end_condition)->conditions.end(); condition++) {
-              if ((*end_condition)->and) {
+              if ((*end_condition)->is_and) {
                 if ((*condition)->type.compare("State") == 0) {
                   Level_Component::End_Condition_Avatar_State *state_end_condition = static_cast<Level_Component::End_Condition_Avatar_State*>((*condition));
                   if ((m_avatar->GetLastRenderedState().state.compare(state_end_condition->avatar_state) == 0 && m_avatar->GetLastRenderedState().direction.compare(state_end_condition->avatar_direction) != 0) || (*condition)->has_been_met == true) {
                     if (m_avatar->GetLastRenderedState().state.compare(m_avatar->GetState().state) != 0 || m_avatar->GetLastRenderedState().direction.compare(m_avatar->GetState().direction) != 0) {
                       (*condition)->has_been_met = true;
                     } else {
-                      and = false;
+                      is_and = false;
                     }
                   } else {
-                    and = false;
+                    is_and = false;
                   }
                 } else {
-                  throw Tunnelour::Exceptions::run_error("Level_Controller: Unhandled State");
+                  throw Tunnelour::Exceptions::run_error("Level_Controller: Unhis_andled State");
                 }
-              } else if ((*end_condition)->or) {
+              } else if ((*end_condition)->is_or) {
                 if ((*condition)->type.compare("State") == 0) {
                   Level_Component::End_Condition_Avatar_State *state_end_condition = static_cast<Level_Component::End_Condition_Avatar_State*>((*condition));
                   if (m_avatar->GetLastRenderedState().state.compare(state_end_condition->avatar_state) == 0) {
                     if (m_avatar->GetLastRenderedState().direction.compare(state_end_condition->avatar_direction) == 0 || (*condition)->has_been_met == true) {
                       (*condition)->has_been_met = true;
-                      or = true;
+                      is_or = true;
                     }
                   }
                 }
               }
             }
-            if ((*end_condition)->and && and) {
+            if ((*end_condition)->is_and && is_and) {
               if ((*end_condition)->next_level.compare("QUIT") != 0) {
                 m_level->SetIsComplete(true);
                 m_next_level = GetNamedLevel((*end_condition)->next_level);
@@ -349,7 +349,7 @@ bool Level_Controller::Run() {
                   m_game_over_screen_controller->Run();
                 }
               }
-            } else if ((*end_condition)->or && or) {
+            } else if ((*end_condition)->is_or && is_or) {
               if ((*end_condition)->next_level.compare("QUIT") != 0) {
                 m_level->SetIsComplete(true);
                 m_next_level = GetNamedLevel((*end_condition)->next_level);
@@ -540,9 +540,9 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
     if (strcmp(token, "Level_EndCondition_IsAnd") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
       if (strcmp(token, "True") == 0) {
-        conditions->and = true;
+        conditions->is_and = true;
       } else {
-        conditions->and = false;
+        conditions->is_and = false;
       }
     } else {
       throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! (" + metadata_path + ") Expected: Level_EndCondition_IsAnd");
@@ -554,9 +554,9 @@ Level_Component::Level_Metadata Level_Controller::LoadLevelMetadataIntoStruct(st
     if (strcmp(token, "Level_EndCondition_IsOr") == 0)   {
       token = strtok_s(NULL, " =\"", &next_token);
       if (strcmp(token, "True") == 0) {
-        conditions->or = true;
+        conditions->is_or = true;
       } else {
-        conditions->or = false;
+        conditions->is_or = false;
       }
     } else {
       throw Tunnelour::Exceptions::init_error("Parse Metadata Failed! (" + metadata_path + ") Expected: Level_EndCondition_IsOr");
@@ -661,15 +661,12 @@ void Level_Controller::LoadLevelCSVIntoStruct(std::string metadata_path, Level_C
     throw Tunnelour::Exceptions::init_error(error);
   }
 
-  // obtain file size:
+  // Obtain file size:
   fseek(pFile, 0, SEEK_END);
   lSize = ftell(pFile);
   rewind(pFile);
 
-  char * token;
-  char * next_token;
-
-  //This is string::max_size
+  // This is string::max_size
   unsigned int max_size = 10000;
   char line[10000];
   while (fgets(line, max_size, pFile) != NULL) {
@@ -703,8 +700,6 @@ void Level_Controller::LoadLevelCSVIntoStruct(std::string metadata_path, Level_C
 //---------------------------------------------------------------------------
 Avatar_Component::Avatar_Collision_Block Level_Controller::GetNamedCollisionBlock(std::string id, std::list<Avatar_Component::Avatar_Collision_Block> avatar_collision_blocks) {
   Avatar_Component::Avatar_Collision_Block found_avatar_collision_block;
-
-  Avatar_Component::Avatar_Collision_Block* current_right_foot_avatar_collision_block = 0;
 
   std::list<Avatar_Component::Avatar_Collision_Block>::iterator avatar_collision_block;
   for (avatar_collision_block = avatar_collision_blocks.begin(); avatar_collision_block != avatar_collision_blocks.end(); avatar_collision_block++) {

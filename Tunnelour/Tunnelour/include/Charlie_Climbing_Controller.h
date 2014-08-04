@@ -1,4 +1,4 @@
-//  Copyright 2012 Sean MacDonnell
+//  Copyright 2014 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -21,8 +21,7 @@
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
-//  Description : Charlie_Climbing_Controller is a base type for controllers, they are designed
-//                to read and modify the Composite_Component class (the model)
+//  Description : Controls the avatar when they are in the "Climbing" state.
 //-----------------------------------------------------------------------------
 class Charlie_Climbing_Controller: public Avatar_State_Controller {
  public:
@@ -37,21 +36,21 @@ class Charlie_Climbing_Controller: public Avatar_State_Controller {
   virtual ~Charlie_Climbing_Controller();
 
   //---------------------------------------------------------------------------
-  // Description : Initialisation function for the Charlie_Climbing_Controller
+  // Description : Initialisation
   //---------------------------------------------------------------------------
   bool Init(Component_Composite *const model);
 
   //---------------------------------------------------------------------------
-  // Description : Virtual function in order to run the avatar state
+  // Description : Runs the State Control
   //---------------------------------------------------------------------------
   virtual void Run_Avatar_State();
 
  protected:
+
+ private:
   //---------------------------------------------------------------------------
   // Member Variables
   //---------------------------------------------------------------------------
-
- private:
   int m_avatar_z_position;
   int m_vertical_jump_y_initial_Velocity;
   int m_vertical_jump_x_initial_Velocity;

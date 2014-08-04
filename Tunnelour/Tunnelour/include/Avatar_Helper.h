@@ -67,7 +67,7 @@ class Avatar_Helper {
   
   static void Avatar_Helper::SetAvatarState(Avatar_Component *m_avatar, std::wstring tileset_path, std::vector<Tileset_Helper::Animation_Tileset_Metadata> *animation_metadata, std::string new_state_parent_name, std::string new_state_name, std::string direction, std::string *current_metadata_file_path, Tileset_Helper::Animation_Tileset_Metadata *current_metadata, Tileset_Helper::Animation_Subset *current_animation_subset);
 
-  static Avatar_Component::Avatar_Collision_Block TilesetCollisionBlockToAvatarCollisionBlock(Avatar_Component *avatar, Tileset_Helper::Avatar_Collision_Block tileset_avatar_collision_block, float tileset_animation_top_left_y, int state_index);
+  static Avatar_Component::Avatar_Collision_Block TilesetCollisionBlockToAvatarCollisionBlock(Avatar_Component *avatar, Tileset_Helper::Avatar_Collision_Block tileset_avatar_collision_block, float tileset_animation_top_left_y, int state_index, std::string direction);
   
   static void AlignAvatarOnLastContactingFoot(Avatar_Component *avatar);
 

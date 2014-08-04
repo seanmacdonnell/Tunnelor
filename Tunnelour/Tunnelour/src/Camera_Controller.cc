@@ -34,7 +34,7 @@ Camera_Controller::Camera_Controller() : Controller() {
   m_is_shaking = false;
   m_adjacent_floor_tile = 0;
   m_distance_travelled = 0;
-  m_leash_length = 256;
+  m_leash_length = 384;
   m_stationary_avatar_position.x = 0;
   m_stationary_avatar_position.y = 0;
   m_max_x_look_distance = 600;
@@ -159,7 +159,9 @@ bool Camera_Controller::Run() {
           m_stationary_avatar_position.y = m_avatar->GetPosition()->y;
         } else {
           float distance = HowFarHasAvatarTravelled();
-          if (current_state.parent_state.compare("Charlie_Standing") == 0 && last_state.parent_state.compare("Charlie_Standing") == 0 || current_state.direction.compare(last_state.direction) != 0) {
+          if (current_state.parent_state.compare("Charlie_Standing") == 0 && last_state.parent_state.compare("Charlie_Standing") == 0 ||
+              current_state.state.compare("Wall_Colliding_From_Mid_Speed_Takeoff") == 0 ||
+              current_state.direction.compare(last_state.direction) != 0) {
             if (distance > m_leash_length) {
               camera_position.x = avatar_position.x;
               m_stationary_avatar_position.x = m_avatar->GetPosition()->x;

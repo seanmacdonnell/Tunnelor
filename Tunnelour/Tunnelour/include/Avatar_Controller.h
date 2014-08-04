@@ -143,7 +143,7 @@ class Avatar_Controller: public Controller,
   std::vector<Tile_Bitmap*> m_wall_tiles;
   std::vector<Tile_Bitmap*> m_ledge_tiles;
 
-  int m_y_fallen;
+  float m_y_fallen;
 
   int m_distance_traveled;
 

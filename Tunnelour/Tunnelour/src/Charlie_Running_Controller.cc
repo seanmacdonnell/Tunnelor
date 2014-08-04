@@ -483,7 +483,6 @@ void Charlie_Running_Controller::Run_Avatar_State() {
           has_state_changed = true;
           Avatar_Helper::AlignAvatarOnLastContactingFoot(m_avatar);
         }
-
       }
       delete adjacent_tiles;
       

@@ -29,9 +29,9 @@ Geometry_Helper::~Geometry_Helper() {
 
 //------------------------------------------------------------------------------
 bool Geometry_Helper::DoTheseLinesIntersect(D3DXVECTOR2 line_a_begin, D3DXVECTOR2 line_a_end, D3DXVECTOR2 line_b_begin, D3DXVECTOR2 line_b_end, D3DXVECTOR2 *out_intersecting_point) {
-  if (line_a_begin.y == line_b_begin.y || line_a_begin.y == line_b_end.y) {
-    return false;
-  }
+  //if (line_a_begin.y == line_b_begin.y || line_a_begin.y == line_b_end.y) {
+  //  return false;
+  //}
 
     float denom = ((line_a_end.y - line_a_begin.y)*(line_b_end.x - line_b_begin.x)) -
                   ((line_a_end.x - line_a_begin.x)*(line_b_end.y - line_b_begin.y));

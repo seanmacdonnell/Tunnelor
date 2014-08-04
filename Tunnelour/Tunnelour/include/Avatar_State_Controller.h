@@ -95,7 +95,7 @@ class Avatar_State_Controller: public Controller,
 
   void SetLastFrameTime(int *last_frame_time);
 
-  void SetYFallen(int *y_fallen);
+  void SetYFallen(float *y_fallen);
 
   void SetDistanceTraveled(int *distance_traveled);
 
@@ -130,7 +130,7 @@ class Avatar_State_Controller: public Controller,
   Tileset_Helper::Animation_Tileset_Metadata *m_current_metadata;
   World_Settings_Component *m_world_settings;
   int *m_last_frame_time;
-  int *m_y_fallen;
+  float *m_y_fallen;
   int *m_distance_traveled;
   bool *m_is_moving_continuously;
   Bitmap_Component *m_currently_grabbed_tile;

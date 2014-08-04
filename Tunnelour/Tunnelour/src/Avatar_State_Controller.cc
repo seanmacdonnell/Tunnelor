@@ -183,7 +183,7 @@ void Avatar_State_Controller::SetLastFrameTime(int *last_frame_time) {
 }
 
 //------------------------------------------------------------------------------
-void Avatar_State_Controller::SetYFallen(int *y_fallen) {
+void Avatar_State_Controller::SetYFallen(float *y_fallen) {
   m_y_fallen = y_fallen;
 }
 

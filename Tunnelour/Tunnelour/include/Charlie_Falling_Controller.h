@@ -1,4 +1,4 @@
-//  Copyright 2012 Sean MacDonnell
+//  Copyright 2014 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -21,8 +21,7 @@
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
-//  Description : Charlie_Falling_Controller is a base type for controllers, they are designed
-//                to read and modify the Composite_Component class (the model)
+//  Description : Runs the Avatar Falling State
 //-----------------------------------------------------------------------------
 class Charlie_Falling_Controller: public Avatar_State_Controller {
  public:
@@ -37,12 +36,12 @@ class Charlie_Falling_Controller: public Avatar_State_Controller {
   virtual ~Charlie_Falling_Controller();
 
   //---------------------------------------------------------------------------
-  // Description : Initialisation function for the Charlie_Falling_Controller
+  // Description : Initialisation
   //---------------------------------------------------------------------------
   bool Init(Component_Composite *const model);
 
   //---------------------------------------------------------------------------
-  // Description : Virtual function in order to run the avatar state
+  // Description : Runs the Avatar State
   //---------------------------------------------------------------------------
   virtual void Run_Avatar_State();
 
@@ -56,6 +55,7 @@ class Charlie_Falling_Controller: public Avatar_State_Controller {
   int m_vertical_jump_y_initial_Velocity;
   int m_vertical_jump_x_initial_Velocity;
   int m_wall_jump_speed_offset;
+  float m_falling_point_of_safe_landing; 
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_CHARLIE_FALLING_CONTROLLER_H_

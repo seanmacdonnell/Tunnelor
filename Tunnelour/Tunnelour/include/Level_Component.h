@@ -55,8 +55,8 @@ class Level_Component: public Tunnelour::Component {
 
   struct End_Condition {
     std::string ID;
-    bool and;
-    bool or;
+    bool is_and;
+    bool is_or;
     std::vector<Condition*> conditions;
     std::string next_level;
   };

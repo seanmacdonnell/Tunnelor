@@ -1,4 +1,4 @@
-//  Copyright 2012 Sean MacDonnell
+//  Copyright 2014 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 //
 
 #include "Charlie_Climbing_Controller.h"
+
 #include "Avatar_Helper.h"
 #include "Exceptions.h"
 
@@ -23,8 +24,7 @@ namespace Tunnelour {
 // public:
 //------------------------------------------------------------------------------
 Charlie_Climbing_Controller::Charlie_Climbing_Controller() {
-  // Constant Variables
-  m_avatar_z_position = -2; // Middleground Z Space is -1
+  m_avatar_z_position = -2;  // Middleground Z Space is -1
   m_vertical_jump_y_initial_Velocity = 22;
   m_vertical_jump_x_initial_Velocity = 4;
   m_wall_jump_speed_offset = 16;
@@ -52,12 +52,15 @@ void Charlie_Climbing_Controller::Run_Avatar_State() {
   m_avatar->SetVelocity(D3DXVECTOR3(0, 0, 0));
 
   // If there is a command (Left, Right, Run, Etc.)
+  // The avatar will only respond to commands if they are in the Hanging state
   if (current_command.state.compare("") != 0 && current_state.state.compare("Hanging") == 0) {
-    if (current_state.direction.compare(current_command.direction) == 0) { // up ledge
+    if (current_state.direction.compare(current_command.direction) == 0) {
+      // Go up the ledge
       Avatar_Helper::SetAvatarState(m_avatar, m_game_settings->GetTilesetPath(), m_animation_metadata, "Charlie_Climbing", "Climbing", m_avatar->GetState().direction, m_current_metadata_file_path, m_current_metadata, m_current_animation_subset);
       Avatar_Helper::AlignAvatarOnLastHand(m_avatar);
       has_state_changed = true;
-    } else if (current_command.state.compare("Down") == 0) { // down ledge
+    } else if (current_command.state.compare("Down") == 0) {
+      // Fall off the ledge
       Avatar_Helper::SetAvatarState(m_avatar, m_game_settings->GetTilesetPath(), m_animation_metadata, "Charlie_Jumping", "Wall_Jump_Fall_Arc", m_avatar->GetState().direction, m_current_metadata_file_path, m_current_metadata, m_current_animation_subset);
       if (m_avatar->GetState().direction.compare("Right") == 0) {
         Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlockRightTop(m_avatar);
@@ -69,12 +72,16 @@ void Charlie_Climbing_Controller::Run_Avatar_State() {
       has_state_changed = true;
     }
   } else {
-    int state_index = current_state.state_index;
+    // Continue the current state
+    unsigned int state_index = current_state.state_index;
     state_index++;
     if (state_index > (m_current_animation_subset->number_of_frames - 1)) {
+      // State has finished!
       if (m_current_animation_subset->is_repeatable) {
+        // Repeat state
         state_index = 0;
       } else {
+        // Find the next state
         if (current_state.state.compare("Wall_Jump_To_Hanging") == 0) {
           Avatar_Helper::SetAvatarState(m_avatar, m_game_settings->GetTilesetPath(), m_animation_metadata, "Charlie_Climbing", "Hanging", m_avatar->GetState().direction, m_current_metadata_file_path, m_current_metadata, m_current_animation_subset);
           Avatar_Helper::AlignAvatarOnLastHand(m_avatar);
@@ -88,23 +95,21 @@ void Charlie_Climbing_Controller::Run_Avatar_State() {
           Avatar_Helper::AlignAvatarOnLastContactingFoot(m_avatar);
           has_state_changed = true;
         } else if (current_state.state.compare("Standing") == 0) {
-          m_avatar->SetVelocity(D3DXVECTOR3(0 ,0, 0));
+          m_avatar->SetVelocity(D3DXVECTOR3(0, 0, 0));
           if (current_command.state.compare("Jumping") == 0) {
             D3DXVECTOR3 position = *m_avatar->GetPosition();
             position += m_avatar->GetVelocity();
-            m_avatar->SetPosition(position); 
-
+            m_avatar->SetPosition(position);
             if (current_command.direction.compare("Right") == 0) {
               float y_velocity = 24;
               float x_velocity = 24;
-              m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
+              m_avatar->SetVelocity(D3DXVECTOR3(x_velocity, y_velocity, 0));
             } else {  // Left
               float y_velocity = 24;
               float x_velocity = -24;
-              m_avatar->SetVelocity(D3DXVECTOR3(x_velocity ,y_velocity, 0));
+              m_avatar->SetVelocity(D3DXVECTOR3(x_velocity, y_velocity, 0));
             }
-
-            if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0 ) {
+            if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0) {
               Avatar_Helper::SetAvatarState(m_avatar, m_game_settings->GetTilesetPath(), m_animation_metadata, "Charlie_Jumping", "Gap_Jump_Takeoff", current_command.direction, m_current_metadata_file_path, m_current_metadata, m_current_animation_subset);
             } else {
               Avatar_Helper::SetAvatarState(m_avatar, m_game_settings->GetTilesetPath(), m_animation_metadata, "Charlie_Jumping", "Gap_Jump_Takeoff", m_avatar->GetState().direction, m_current_metadata_file_path, m_current_metadata, m_current_animation_subset);

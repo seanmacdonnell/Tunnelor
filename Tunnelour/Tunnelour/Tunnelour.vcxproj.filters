@@ -246,9 +246,6 @@
     <ClCompile Include="src\Charlie_Running_Controller.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
-    <ClCompile Include="src\Charlie_Climbing_Controller.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
     <ClCompile Include="src\Charlie_Jumping_Controller.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
@@ -266,6 +263,9 @@
     </ClCompile>
     <ClCompile Include="src\Camera_Controller.cc">
       <Filter>Source Files\Controllers\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Charlie_Climbing_Controller.cc">
+      <Filter>Source Files\Controllers\Avatar</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -458,9 +458,6 @@
     <ClInclude Include="include\Charlie_Jumping_Controller.h">
       <Filter>Source Files\Controllers</Filter>
     </ClInclude>
-    <ClInclude Include="include\Charlie_Climbing_Controller.h">
-      <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
     <ClInclude Include="include\Avatar_Controller.h">
       <Filter>Include Files\Controllers\Avatar</Filter>
     </ClInclude>
@@ -475,6 +472,9 @@
     </ClInclude>
     <ClInclude Include="include\Camera_Controller.h">
       <Filter>Include Files\Controllers\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Charlie_Climbing_Controller.h">
+      <Filter>Include Files\Controllers\Avatar</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
