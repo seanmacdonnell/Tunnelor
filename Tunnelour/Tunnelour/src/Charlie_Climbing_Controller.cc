@@ -25,9 +25,9 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 Charlie_Climbing_Controller::Charlie_Climbing_Controller() {
   m_avatar_z_position = -2;  // Middleground Z Space is -1
-  m_vertical_jump_y_initial_Velocity = 22;
-  m_vertical_jump_x_initial_Velocity = 4;
-  m_wall_jump_speed_offset = 16;
+  m_vertical_jump_y_initial_velocity = 22;
+  m_vertical_jump_x_initial_velocity = 4;
+  m_wall_jump_y_initial_velocity = 16;
 }
 
 //------------------------------------------------------------------------------

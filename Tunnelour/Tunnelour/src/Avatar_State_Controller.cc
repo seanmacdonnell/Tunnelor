@@ -33,7 +33,7 @@ Avatar_State_Controller::Avatar_State_Controller() {
   m_ledge_tiles.clear();
   m_animation_metadata = 0;
   m_current_animation_subset = 0;
-  m_currently_adjacent_wall_tile = 0;
+  m_adjacent_wall = 0;
   m_current_metadata_file_path = 0;
   m_current_metadata = 0;
   m_world_settings = 0;
@@ -60,7 +60,7 @@ Avatar_State_Controller::~Avatar_State_Controller() {
   m_ledge_tiles.clear();
   m_animation_metadata = 0;
   m_current_animation_subset = 0;
-  m_currently_adjacent_wall_tile = 0;
+  m_adjacent_wall = 0;
   m_current_metadata_file_path = 0;
   m_current_metadata = 0;
   m_world_settings = 0;
@@ -89,7 +89,7 @@ bool Avatar_State_Controller::Run() {
       m_avatar != 0 &&
       m_animation_metadata != 0 &&
       m_current_animation_subset != 0 &&
-      m_currently_adjacent_wall_tile != 0 &&
+      m_adjacent_wall != 0 &&
       m_current_metadata_file_path != 0 &&
       m_current_metadata != 0 &&
       m_world_settings != 0 &&
@@ -159,7 +159,7 @@ void Avatar_State_Controller::SetCurrentAnimationSubset(Tileset_Helper::Animatio
 
 //------------------------------------------------------------------------------
 void Avatar_State_Controller::SetCurrentlyAdjacentWallTile(Avatar_Helper::Tile_Collision *currently_adjacent_wall_tile) {
-  m_currently_adjacent_wall_tile = currently_adjacent_wall_tile;
+  m_adjacent_wall = currently_adjacent_wall_tile;
 }
 
 //------------------------------------------------------------------------------

@@ -25,9 +25,9 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 Charlie_Falling_Controller::Charlie_Falling_Controller() {
   m_avatar_z_position = -2;  // Middleground Z Space is -1
-  m_vertical_jump_y_initial_Velocity = 22;
-  m_vertical_jump_x_initial_Velocity = 4;
-  m_wall_jump_speed_offset = 16;
+  m_vertical_jump_y_initial_velocity = 22;
+  m_vertical_jump_x_initial_velocity = 4;
+  m_wall_jump_y_initial_velocity = 16;
   m_falling_point_of_safe_landing = -256.0f;
 }
 
@@ -59,7 +59,6 @@ void Charlie_Falling_Controller::Run_Avatar_State() {
     } else {
       // Find the next state to transfer into
       if (current_state.state.compare("Down_Facing_Falling_To_Death") == 0) {
-        // DEAD
         Avatar_Helper::SetAvatarState(m_avatar, m_game_settings->GetTilesetPath(), m_animation_metadata, "Charlie_Falling", "Down_Facing_Death", m_avatar->GetState().direction, m_current_metadata_file_path, m_current_metadata, m_current_animation_subset);
         Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlock(m_avatar);
         state_index = 0;
@@ -106,6 +105,8 @@ void Charlie_Falling_Controller::Run_Avatar_State() {
       }
     }
   } else {
+    // If this isn't the first time the avatar has run through (because it would have been set
+    // by the SetAvatarState() before recalling the RunAvatarState()) update the state.
     if (m_avatar->GetState() == m_avatar->GetLastRenderedState()) {
       Avatar_Helper::SetAvatarStateAnimationFrame(m_avatar, state_index, m_current_animation_subset);
       Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlockRightBottom(m_avatar);
@@ -118,30 +119,39 @@ void Charlie_Falling_Controller::Run_Avatar_State() {
       current_state.state.compare("Down_Falling_Wall_Impact_Right") != 0  &&
       current_state.state.compare("Up_Falling_Wall_Impact_Left") != 0  &&
       current_state.state.compare("Up_Facing_Death") != 0) {
-    D3DXVECTOR3 position = *m_avatar->GetPosition();
-    position = *m_avatar->GetPosition();
+        // Move the avatar down with respect with gravity
+        // gravity doesn't affect the above states.
     D3DXVECTOR3 new_velocity = m_avatar->GetVelocity();
     new_velocity.y += m_world_settings->GetGravityInPixPerFrame();
+
+    // This ensures the velocity doesn't exceed world max velocity
     if ((new_velocity.y/((*m_last_frame_time) * -1)) >= m_world_settings->GetMaxVelocityInPixPerMs()) {
+      // -1 because the velocity is "down" the y axis
       new_velocity.y = ceil((-1 * m_world_settings->GetMaxVelocityInPixPerMs() * (*m_last_frame_time)));
     }
 
     m_avatar->SetVelocity(new_velocity);
+    D3DXVECTOR3 position = *m_avatar->GetPosition();
     position += new_velocity;
-    (*m_y_fallen) += m_avatar->GetVelocity().y;
     m_avatar->SetPosition(position);
+
+    // Add the velocity fallen to the total fallen variable
+    (*m_y_fallen) += m_avatar->GetVelocity().y;
   }
 
   std::vector<Avatar_Helper::Tile_Collision> out_colliding_wall_tiles;
   bool is_wall_colliding = false;
   is_wall_colliding = Avatar_Helper::IsAvatarWallColliding(m_avatar, &out_colliding_wall_tiles, &m_wall_tiles);
   if (is_wall_colliding) {
-    (*m_currently_adjacent_wall_tile) = *(out_colliding_wall_tiles.begin());
+    // Set the currently adjacent tile pointer.
+    (*m_adjacent_wall) = *(out_colliding_wall_tiles.begin());
+    // State transitions are different depending on whether the avatar is collising with
+    // a tile on the left or the right (of that tile)
     if (out_colliding_wall_tiles.begin()->collision_side.compare("Left") == 0) {
       if (current_state.state.compare("Down_Falling_Wall_Impact_Right") != 0 &&
           m_avatar->GetLastRenderedState().state.compare("Down_Falling_Wall_Impact_Right") != 0 &&
-         current_state.state.compare("Up_Falling_Wall_Impact_Left") != 0 &&
-         m_avatar->GetLastRenderedState().state.compare("Up_Falling_Wall_Impact_Left") != 0) {
+          current_state.state.compare("Up_Falling_Wall_Impact_Left") != 0 &&
+          m_avatar->GetLastRenderedState().state.compare("Up_Falling_Wall_Impact_Left") != 0) {
         if (current_state.state.compare("Down_Facing_Falling_To_Death") != 0 &&
             current_state.state.compare("Down_Facing_Death") != 0  &&
             current_state.state.compare("Up_Facing_Falling_To_Death") != 0  &&
@@ -153,6 +163,7 @@ void Charlie_Falling_Controller::Run_Avatar_State() {
             Avatar_Helper::SetAvatarState(m_avatar, m_game_settings->GetTilesetPath(), m_animation_metadata, "Charlie_Falling", "Up_Falling_Wall_Impact_Left", m_avatar->GetState().direction, m_current_metadata_file_path, m_current_metadata, m_current_animation_subset);
             Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlockLeftBottom(m_avatar);
           }
+          // This removes the horizontal velocity from the avatar
           D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
           D3DXVECTOR3 new_velocity = D3DXVECTOR3(0, old_velocity.y, 0);
           m_avatar->SetVelocity(new_velocity);
@@ -175,7 +186,7 @@ void Charlie_Falling_Controller::Run_Avatar_State() {
             Avatar_Helper::SetAvatarState(m_avatar, m_game_settings->GetTilesetPath(), m_animation_metadata, "Charlie_Falling", "Down_Falling_Wall_Impact_Right", m_avatar->GetState().direction, m_current_metadata_file_path, m_current_metadata, m_current_animation_subset);
             Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlockRightBottom(m_avatar);
           }
-
+          // This removes the horizontal velocity from the avatar
           D3DXVECTOR3 old_velocity = m_avatar->GetVelocity();
           D3DXVECTOR3 new_velocity = D3DXVECTOR3(0, old_velocity.y, 0);
           m_avatar->SetVelocity(new_velocity);
@@ -185,6 +196,8 @@ void Charlie_Falling_Controller::Run_Avatar_State() {
     }
   }
 
+  // If the avatar has fallen on the floor while in the falling state
+  // they are dead! Make it so.
   std::vector<Avatar_Helper::Tile_Collision> out_colliding_floor_tiles;
   Bitmap_Component* out_avatar_collision_block = new Bitmap_Component();
   bool is_colliding = Avatar_Helper::IsAvatarFloorColliding(m_avatar, &out_colliding_floor_tiles, &m_floor_tiles);

@@ -125,7 +125,7 @@ class Avatar_State_Controller: public Controller,
   std::vector<Tile_Bitmap*> m_ledge_tiles;
   std::vector<Tileset_Helper::Animation_Tileset_Metadata> *m_animation_metadata;
   Tileset_Helper::Animation_Subset *m_current_animation_subset;
-  Avatar_Helper::Tile_Collision *m_currently_adjacent_wall_tile;
+  Avatar_Helper::Tile_Collision *m_adjacent_wall;
   std::string *m_current_metadata_file_path;
   Tileset_Helper::Animation_Tileset_Metadata *m_current_metadata;
   World_Settings_Component *m_world_settings;

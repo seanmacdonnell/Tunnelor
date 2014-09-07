@@ -51,9 +51,9 @@ Avatar_Controller::Avatar_Controller() : Controller() {
 
   m_is_moving_continuously = false;
 
-  m_vertical_jump_y_initial_Velocity = 22;
-  m_vertical_jump_x_initial_Velocity = 4;
-  m_wall_jump_speed_offset = 16;
+  m_vertical_jump_y_initial_velocity = 22;
+  m_vertical_jump_x_initial_velocity = 4;
+  m_wall_jump_y_initial_velocity = 16;
 
   m_avatar_initial_direction = "Right";
   m_avatar_initial_parent_state = "Charlie_Standing";
@@ -104,9 +104,9 @@ Avatar_Controller::~Avatar_Controller() {
 
   m_is_moving_continuously = false;
 
-  m_vertical_jump_y_initial_Velocity = 22;
-  m_vertical_jump_x_initial_Velocity = 4;
-  m_wall_jump_speed_offset = 16;
+  m_vertical_jump_y_initial_velocity = 22;
+  m_vertical_jump_x_initial_velocity = 4;
+  m_wall_jump_y_initial_velocity = 16;
 
   m_avatar_initial_direction = "Right";
   m_avatar_initial_parent_state = "Charlie_Standing";
@@ -268,7 +268,7 @@ void Avatar_Controller::RunAvatarState() {
         m_charlie_standing_controller.SetGameSettings(m_game_settings);
         m_charlie_standing_controller.SetAnimationMetadata(&m_animation_metadata);
         m_charlie_standing_controller.SetCurrentAnimationSubset(&m_current_animation_subset);
-        m_charlie_standing_controller.SetCurrentlyAdjacentWallTile(&m_currently_adjacent_wall_tile);
+        m_charlie_standing_controller.SetCurrentlyAdjacentWallTile(&m_adjacent_wall);
         m_charlie_standing_controller.SetCurrentMetadataFilePath(&m_current_metadata_file_path);
         m_charlie_standing_controller.SetCurrentMetadata(&m_current_metadata);
         m_charlie_standing_controller.SetWorldSettings(m_world_settings);
@@ -296,7 +296,7 @@ void Avatar_Controller::RunAvatarState() {
         m_charlie_falling_controller.SetGameSettings(m_game_settings);
         m_charlie_falling_controller.SetAnimationMetadata(&m_animation_metadata);
         m_charlie_falling_controller.SetCurrentAnimationSubset(&m_current_animation_subset);
-        m_charlie_falling_controller.SetCurrentlyAdjacentWallTile(&m_currently_adjacent_wall_tile);
+        m_charlie_falling_controller.SetCurrentlyAdjacentWallTile(&m_adjacent_wall);
         m_charlie_falling_controller.SetCurrentMetadataFilePath(&m_current_metadata_file_path);
         m_charlie_falling_controller.SetCurrentMetadata(&m_current_metadata);
         m_charlie_falling_controller.SetWorldSettings(m_world_settings);
@@ -324,7 +324,7 @@ void Avatar_Controller::RunAvatarState() {
         m_charlie_running_controller.SetGameSettings(m_game_settings);
         m_charlie_running_controller.SetAnimationMetadata(&m_animation_metadata);
         m_charlie_running_controller.SetCurrentAnimationSubset(&m_current_animation_subset);
-        m_charlie_running_controller.SetCurrentlyAdjacentWallTile(&m_currently_adjacent_wall_tile);
+        m_charlie_running_controller.SetCurrentlyAdjacentWallTile(&m_adjacent_wall);
         m_charlie_running_controller.SetCurrentMetadataFilePath(&m_current_metadata_file_path);
         m_charlie_running_controller.SetCurrentMetadata(&m_current_metadata);
         m_charlie_running_controller.SetWorldSettings(m_world_settings);
@@ -352,7 +352,7 @@ void Avatar_Controller::RunAvatarState() {
         m_charlie_jumping_controller.SetGameSettings(m_game_settings);
         m_charlie_jumping_controller.SetAnimationMetadata(&m_animation_metadata);
         m_charlie_jumping_controller.SetCurrentAnimationSubset(&m_current_animation_subset);
-        m_charlie_jumping_controller.SetCurrentlyAdjacentWallTile(&m_currently_adjacent_wall_tile);
+        m_charlie_jumping_controller.SetCurrentlyAdjacentWallTile(&m_adjacent_wall);
         m_charlie_jumping_controller.SetCurrentMetadataFilePath(&m_current_metadata_file_path);
         m_charlie_jumping_controller.SetCurrentMetadata(&m_current_metadata);
         m_charlie_jumping_controller.SetWorldSettings(m_world_settings);
@@ -380,7 +380,7 @@ void Avatar_Controller::RunAvatarState() {
         m_charlie_climbing_controller.SetGameSettings(m_game_settings);
         m_charlie_climbing_controller.SetAnimationMetadata(&m_animation_metadata);
         m_charlie_climbing_controller.SetCurrentAnimationSubset(&m_current_animation_subset);
-        m_charlie_climbing_controller.SetCurrentlyAdjacentWallTile(&m_currently_adjacent_wall_tile);
+        m_charlie_climbing_controller.SetCurrentlyAdjacentWallTile(&m_adjacent_wall);
         m_charlie_climbing_controller.SetCurrentMetadataFilePath(&m_current_metadata_file_path);
         m_charlie_climbing_controller.SetCurrentMetadata(&m_current_metadata);
         m_charlie_climbing_controller.SetWorldSettings(m_world_settings);

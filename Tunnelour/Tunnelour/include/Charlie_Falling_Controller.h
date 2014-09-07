@@ -52,10 +52,10 @@ class Charlie_Falling_Controller: public Avatar_State_Controller {
 
  private:
   int m_avatar_z_position;
-  int m_vertical_jump_y_initial_Velocity;
-  int m_vertical_jump_x_initial_Velocity;
-  int m_wall_jump_speed_offset;
-  float m_falling_point_of_safe_landing; 
+  int m_vertical_jump_y_initial_velocity;
+  int m_vertical_jump_x_initial_velocity;
+  int m_wall_jump_y_initial_velocity;
+  float m_falling_point_of_safe_landing;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_CHARLIE_FALLING_CONTROLLER_H_

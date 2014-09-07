@@ -52,9 +52,9 @@ class Charlie_Climbing_Controller: public Avatar_State_Controller {
   // Member Variables
   //---------------------------------------------------------------------------
   int m_avatar_z_position;
-  int m_vertical_jump_y_initial_Velocity;
-  int m_vertical_jump_x_initial_Velocity;
-  int m_wall_jump_speed_offset;
+  int m_vertical_jump_y_initial_velocity;
+  int m_vertical_jump_x_initial_velocity;
+  int m_wall_jump_y_initial_velocity;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_CHARLIE_CLIMBING_CONTROLLER_H_

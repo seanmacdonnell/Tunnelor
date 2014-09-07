@@ -25,9 +25,9 @@ namespace Tunnelour {
 Charlie_Standing_Controller::Charlie_Standing_Controller() {
   // Constant Variables
   m_avatar_z_position = -2; // Middleground Z Space is -1
-  m_vertical_jump_y_initial_Velocity = 22;
-  m_vertical_jump_x_initial_Velocity = 4;
-  m_wall_jump_speed_offset = 16;
+  m_vertical_jump_y_initial_velocity = 22;
+  m_vertical_jump_x_initial_velocity = 4;
+  m_wall_jump_y_initial_velocity = 16;
 }
 
 //------------------------------------------------------------------------------
@@ -60,8 +60,8 @@ void Charlie_Standing_Controller::Run_Avatar_State() {
     std::vector<Tile_Bitmap*> *adjacent_tiles = new std::vector<Tile_Bitmap*>();
     Avatar_Helper::IsAvatarFloorAdjacent(m_avatar, adjacent_tiles, &m_floor_tiles);
     if (current_command.state.compare("Jumping") == 0) {
-      float y_velocity = m_vertical_jump_y_initial_Velocity;
-      float x_velocity = m_vertical_jump_x_initial_Velocity;
+      float y_velocity = m_vertical_jump_y_initial_velocity;
+      float x_velocity = m_vertical_jump_x_initial_velocity;
       if (current_command.direction.compare("Right") == 0 || current_command.direction.compare("Left") == 0) {
         Avatar_Helper::SetAvatarState(m_avatar, m_game_settings->GetTilesetPath(), m_animation_metadata, "Charlie_Jumping", "Vertical_Jump_Takeoff", current_command.direction, m_current_metadata_file_path, m_current_metadata, m_current_animation_subset);
         if (current_command.direction.compare("Right") == 0) {
@@ -118,7 +118,7 @@ void Charlie_Standing_Controller::Run_Avatar_State() {
     // Detect if the avatar is intersecting with a wall
     std::vector<Avatar_Helper::Tile_Collision> *out_colliding_wall_tiles = new std::vector<Avatar_Helper::Tile_Collision>();
     if (Avatar_Helper::IsAvatarWallColliding(m_avatar, out_colliding_wall_tiles, &m_wall_tiles)) {
-      m_currently_adjacent_wall_tile = &(*(out_colliding_wall_tiles->begin()));
+      m_adjacent_wall = &(*(out_colliding_wall_tiles->begin()));
       // Move back avatar
       if ((*out_colliding_wall_tiles->begin()).collision_side.compare("Right") == 0) {
         Avatar_Helper::MoveAvatarTileAdjacent(m_avatar, "Right", out_colliding_wall_tiles->begin()->colliding_tile);

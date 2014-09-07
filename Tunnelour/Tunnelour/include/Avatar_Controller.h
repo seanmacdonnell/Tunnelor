@@ -148,13 +148,13 @@ class Avatar_Controller: public Controller,
   int m_distance_traveled;
 
   Bitmap_Component *m_currently_grabbed_tile;
-  Avatar_Helper::Tile_Collision m_currently_adjacent_wall_tile;
+  Avatar_Helper::Tile_Collision m_adjacent_wall;
   bool m_is_moving_continuously;
 
-  int m_vertical_jump_y_initial_Velocity;
-  int m_vertical_jump_x_initial_Velocity;
+  int m_vertical_jump_y_initial_velocity;
+  int m_vertical_jump_x_initial_velocity;
 
-  int m_wall_jump_speed_offset;
+  int m_wall_jump_y_initial_velocity;
 
   std::string m_avatar_initial_direction;
   std::string m_avatar_initial_parent_state;

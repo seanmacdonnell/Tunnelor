@@ -38,7 +38,8 @@ namespace String_Helper {
 //  Description : Converts a char to a wstring
 //-----------------------------------------------------------------------------
 inline std::wstring CharToWChar(const char* pstrSrc) {
-    /* // OLDER UNSAFE VERSION OF THIS ALGORITHM
+    // OLDER UNSAFE VERSION OF THIS ALGORITHM
+    /*
     const size_t cSize = strlen(pstrSrc)+1;
     std::wstring wc( cSize, L'#' );
     mbstowcs( &wc[0], pstrSrc, cSize );
