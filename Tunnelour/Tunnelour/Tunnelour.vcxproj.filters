@@ -240,12 +240,6 @@
     <ClCompile Include="src\Geometry_Helper.cc">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="src\Charlie_Running_Controller.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Charlie_Jumping_Controller.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
     <ClCompile Include="src\Avatar_Controller.cc">
       <Filter>Source Files\Controllers\Avatar</Filter>
     </ClCompile>
@@ -265,6 +259,12 @@
       <Filter>Source Files\Controllers\Avatar</Filter>
     </ClCompile>
     <ClCompile Include="src\Charlie_Falling_Controller.cc">
+      <Filter>Source Files\Controllers\Avatar</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Charlie_Jumping_Controller.cc">
+      <Filter>Source Files\Controllers\Avatar</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Charlie_Running_Controller.cc">
       <Filter>Source Files\Controllers\Avatar</Filter>
     </ClCompile>
   </ItemGroup>
@@ -449,9 +449,6 @@
     <ClInclude Include="include\Geometry_Helper.h">
       <Filter>Include Files\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="include\Charlie_Running_Controller.h">
-      <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
     <ClInclude Include="include\Avatar_Controller.h">
       <Filter>Include Files\Controllers\Avatar</Filter>
     </ClInclude>
@@ -474,7 +471,10 @@
       <Filter>Include Files\Controllers\Avatar</Filter>
     </ClInclude>
     <ClInclude Include="include\Charlie_Jumping_Controller.h">
-      <Filter>Include Files\Controllers</Filter>
+      <Filter>Include Files\Controllers\Avatar</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Charlie_Running_Controller.h">
+      <Filter>Include Files\Controllers\Avatar</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
