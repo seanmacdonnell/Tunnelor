@@ -1,4 +1,4 @@
-//  Copyright 2012 Sean MacDonnell
+//  Copyright 2014 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
-//  Description : Charlie_Standing_Controller is a base type for controllers, they are designed
-//                to read and modify the Composite_Component class (the model)
+//  Description : This class controls actions of the avatar while they are
+//                in the standing state
 //-----------------------------------------------------------------------------
 class Charlie_Standing_Controller: public Avatar_State_Controller {
  public:
@@ -52,10 +52,25 @@ class Charlie_Standing_Controller: public Avatar_State_Controller {
   //---------------------------------------------------------------------------
 
  private:
-  int m_avatar_z_position;
-  int m_vertical_jump_y_initial_velocity;
-  int m_vertical_jump_x_initial_velocity;
-  int m_wall_jump_y_initial_velocity;
+  const float m_avatar_z_position;
+  const float m_vertical_jump_y_initial_velocity;
+  const float m_vertical_jump_x_initial_velocity;
+  const float m_gap_jump_y_initial_velocity;
+  const float m_gap_jump_x_initial_velocity;
+  const float m_takeoff_gap_jump_y_initial_velocity;
+  const float m_takeoff_gap_jump_x_initial_velocity;
+  const float m_running_x_velocity;
+  const float m_takeoff_running_x_velocity;
+  const float m_takeoff_running_x_distance;
+  const float m_stopping_from_running_distance;
+  const float m_overbalancing_x_velocity;
+  const float m_overbalancing_y_velocity;
+  const float m_wall_jump_y_initial_velocity;
+  const float m_wall_jump_x_initial_velocity;
+  const float m_wall_jump_boost_distance_threshold;
+  const float m_wall_colliding_y_initial_velocity;
+  const float m_wall_colliding_x_initial_velocity;
+  const float m_safe_falling_limit;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_CHARLIE_STANDING_CONTROLLER_H_

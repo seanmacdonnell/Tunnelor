@@ -64,6 +64,12 @@
     <Filter Include="Include Files\Controllers\Camera">
       <UniqueIdentifier>{d0a772cd-7de1-4b4a-8d3b-21cf484204fb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Controllers\Display">
+      <UniqueIdentifier>{749321cd-0f30-4a2f-94b5-42879f4c2767}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\Controllers\Display">
+      <UniqueIdentifier>{e12215a3-ebac-4f48-bea2-d38122982cce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Direct3D11_View.cc">
@@ -231,9 +237,6 @@
     <ClCompile Include="src\Score_Display_Controller_Mutator.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
-    <ClCompile Include="src\Charlie_Standing_Controller.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
     <ClCompile Include="src\Avatar_Helper.cc">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
@@ -265,6 +268,9 @@
       <Filter>Source Files\Controllers\Avatar</Filter>
     </ClCompile>
     <ClCompile Include="src\Charlie_Running_Controller.cc">
+      <Filter>Source Files\Controllers\Avatar</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Charlie_Standing_Controller.cc">
       <Filter>Source Files\Controllers\Avatar</Filter>
     </ClCompile>
   </ItemGroup>
@@ -440,9 +446,6 @@
     <ClInclude Include="include\Score_Display_Controller_Mutator.h">
       <Filter>Source Files\Controllers</Filter>
     </ClInclude>
-    <ClInclude Include="include\Charlie_Standing_Controller.h">
-      <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
     <ClInclude Include="include\Avatar_Helper.h">
       <Filter>Include Files\Utility</Filter>
     </ClInclude>
@@ -474,6 +477,9 @@
       <Filter>Include Files\Controllers\Avatar</Filter>
     </ClInclude>
     <ClInclude Include="include\Charlie_Running_Controller.h">
+      <Filter>Include Files\Controllers\Avatar</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Charlie_Standing_Controller.h">
       <Filter>Include Files\Controllers\Avatar</Filter>
     </ClInclude>
   </ItemGroup>

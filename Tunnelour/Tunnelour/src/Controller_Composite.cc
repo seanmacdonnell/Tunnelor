@@ -1,4 +1,4 @@
-//  Copyright 2012 Sean MacDonnell
+//  Copyright 2014 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -53,8 +53,6 @@ void Controller_Composite::Remove(Tunnelour::Controller *controller) {
 
 //---------------------------------------------------------------------------
 bool Controller_Composite::Run() {
-  // This algorithm was provided by John Barker
-  // Run controllers who are not finished, and remove controllers that are.
   std::list<Tunnelour::Controller*>::iterator it;
   for (it = m_controllers.begin(); it != m_controllers.end(); it++) {
     if ((*it)->IsFinished()) {
@@ -64,7 +62,7 @@ bool Controller_Composite::Run() {
     } else {
       if ((*it)->HasBeenInitalised()) {
         if (!(*it)->Run()) {
-          std::string error = "a controller has failed to run!";
+          std::string error = "A controller has failed to run!";
           throw Exceptions::init_error(error);
         }
       } else {

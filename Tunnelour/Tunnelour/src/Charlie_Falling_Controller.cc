@@ -199,7 +199,6 @@ void Charlie_Falling_Controller::Run_Avatar_State() {
   // If the avatar has fallen on the floor while in the falling state
   // they are dead! Make it so.
   std::vector<Avatar_Helper::Tile_Collision> out_colliding_floor_tiles;
-  Bitmap_Component* out_avatar_collision_block = new Bitmap_Component();
   bool is_colliding = Avatar_Helper::IsAvatarFloorColliding(m_avatar, &out_colliding_floor_tiles, &m_floor_tiles);
   if (is_colliding) {
     if ((*m_y_fallen) < m_falling_point_of_safe_landing) {

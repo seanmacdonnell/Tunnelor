@@ -1,4 +1,4 @@
-//  Copyright 2012 Sean MacDonnell
+//  Copyright 2014 Sean MacDonnell
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ class Controller {
   //---------------------------------------------------------------------------
   Component_Composite *m_model;
 
-  // Set m_is_finished to true when this controller is no longer required to run
+  // Set m_is_finished to true when this controller is no longer required
   bool m_is_finished;
   bool m_has_been_initialised;
 
