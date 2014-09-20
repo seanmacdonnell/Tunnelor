@@ -17,6 +17,8 @@
 #define TUNNELOUR_DEBUG_DATA_DISPLAY_CONTROLLER_H_
 
 #include <string>
+#include <vector>
+
 #include "Text_Component.h"
 #include "Controller.h"
 #include "Game_Settings_Component.h"
@@ -89,52 +91,52 @@ class Debug_Data_Display_Controller: public Controller {
   void UpdateAvatarPositionDisplay();
 
   //---------------------------------------------------------------------------
-  // Description : Creates the avatar position display
+  // Description : Creates the avatar state display
   //---------------------------------------------------------------------------
   void CreateAvatarStateDisplay();
 
   //---------------------------------------------------------------------------
-  // Description : Updates the avatar position display
+  // Description : Updates the avatar state display
   //---------------------------------------------------------------------------
   void UpdateAvatarStateDisplay();
 
   //---------------------------------------------------------------------------
-  // Description : Creates the avatar position display
+  // Description : Creates the avatar velocity display
   //---------------------------------------------------------------------------
   void CreateAvatarVelocityDisplay();
 
   //---------------------------------------------------------------------------
-  // Description : Updates the avatar position display
+  // Description : Updates the avatar velocity display
   //---------------------------------------------------------------------------
   void UpdateAvatarVelocityDisplay();
 
   //---------------------------------------------------------------------------
-  // Description : Creates the avatar position display
+  // Description : Creates the avatar distance display
   //---------------------------------------------------------------------------
   void CreateAvatarDistanceDisplay();
 
   //---------------------------------------------------------------------------
-  // Description : Updates the avatar position display
+  // Description : Updates the avatar distance display
   //---------------------------------------------------------------------------
   void UpdateAvatarDistanceDisplay();
 
   //---------------------------------------------------------------------------
-  // Description : Creates the avatar position display
+  // Description : Creates the avatar height display
   //---------------------------------------------------------------------------
   void CreateAvatarHeightDisplay();
 
   //---------------------------------------------------------------------------
-  // Description : Updates the avatar position display
+  // Description : Updates the avatar height display
   //---------------------------------------------------------------------------
   void UpdateAvatarHeightDisplay();
 
   //---------------------------------------------------------------------------
-  // Description : Creates the avatar distance display
+  // Description : Creates the avatar distance traveled display
   //---------------------------------------------------------------------------
   void CreateAvatarDistanceTraveledDisplay();
 
   //---------------------------------------------------------------------------
-  // Description : Updates the avatar distance display
+  // Description : Updates the avatar distance traveled display
   //---------------------------------------------------------------------------
   void UpdateAvatarDistanceTraveledDisplay();
 
@@ -162,18 +164,22 @@ class Debug_Data_Display_Controller: public Controller {
   Text_Component *m_avatar_jumping_height_display;
   Text_Component *m_avatar_distance_traveled_display;
   Text_Component *m_avatar_seconds_past_display;
-  Camera_Component *m_camera;
-  Avatar_Component *m_avatar;
-  std::string m_font_path;
   long double m_fps;
   bool m_is_debug_mode;
+  Avatar_Component *m_avatar;
+  std::string m_font_path;
+  float m_jumping_distance;
+  float m_jumping_height;
+  Camera_Component *m_camera;
   Tileset_Helper::Tileset_Metadata m_debug_tileset_metadata;
   std::string m_debug_metadata_file_path;
   std::vector<Tile_Bitmap*> m_collision_bitmaps;
-  float z_position;
-  float m_bitmap_z_position;
-  float m_jumping_distance;
-  float m_jumping_height;
+  
+  //---------------------------------------------------------------------------
+  // Constant Member Variables
+  //---------------------------------------------------------------------------
+  const float m_text_z_position;
+  const float m_collision_block_z_position;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_DEBUG_DATA_DISPLAY_CONTROLLER_H_
