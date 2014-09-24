@@ -21,15 +21,15 @@
 #include "Avatar_Component.h"
 #include "Controller.h"
 #include "Game_Metrics_Component.h"
+#include "World_Settings_Component.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
-//  Description : This controller is responsible for the generation
-//              : and movement of the game_metrics_component.
+//  Description : The Game_Metrics_Controller records the avatars
+//              : distance travelled (in pixels) and the current time.
 //-----------------------------------------------------------------------------
-class Game_Metrics_Controller: public Controller,
-                         public Component::Component_Observer {
+class Game_Metrics_Controller: public Controller {
  public:
   //---------------------------------------------------------------------------
   // Description : Constructor
@@ -51,10 +51,6 @@ class Game_Metrics_Controller: public Controller,
   //---------------------------------------------------------------------------
   virtual bool Run();
 
-  virtual void HandleEvent(Tunnelour::Component * const component);
-  
-  int WhatsTheDistanceBetweenThesePoints(D3DXVECTOR2 point_1, D3DXVECTOR2 point_2);
-
   void ResetGameMetrics();
 
  protected:
@@ -66,11 +62,7 @@ class Game_Metrics_Controller: public Controller,
   Avatar_Component *m_avatar;
   Game_Settings_Component *m_game_settings;
   Game_Metrics_Component *m_game_metrics;
-
-  //---------------------------------------------------------------------------
-  // Description : Creates a Bitmap Component using the given collision block
-  //---------------------------------------------------------------------------
-  Avatar_Component::Avatar_Collision_Block GetNamedCollisionBlock(std::string id, std::vector<Avatar_Component::Avatar_Collision_Block> avatar_collision_blocks);
+  World_Settings_Component *m_world_settings;
   INT64 m_frequency;
   float m_ticksPerMs;
   INT64 m_startTime;

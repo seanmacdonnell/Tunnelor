@@ -19,6 +19,7 @@
 #include "Component.h"
 #include "Game_Settings_Component.h"
 #include "Avatar_Component.h"
+#include "World_Settings_Component.h"
 
 namespace Tunnelour {
 class Game_Metrics_Controller_Mutator: public Component::Component_Mutator  {
@@ -49,9 +50,14 @@ class Game_Metrics_Controller_Mutator: public Component::Component_Mutator  {
   Game_Settings_Component* const GetGameSettings();
 
   //-------------------------------------------------------------------------
-  // Description : Accessors for the Game_Settings_Component
+  // Description : Accessors for the Avatar_Settings_Component
   //-------------------------------------------------------------------------
   Avatar_Component* const GetAvatarComponent();
+
+  //-------------------------------------------------------------------------
+  // Description : Accessors for the World_Settings_Component
+  //-------------------------------------------------------------------------
+  World_Settings_Component* const GetWorldSettings();
 
   //-------------------------------------------------------------------------
   // Description : Accessors for the Game_Settings_Component
@@ -61,8 +67,10 @@ class Game_Metrics_Controller_Mutator: public Component::Component_Mutator  {
  private:
   bool m_found_game_settings;
   bool m_found_avatar_component;
+  bool m_found_world_settings;
   Game_Settings_Component * m_game_settings;
   Avatar_Component * m_avatar_controller;
+  World_Settings_Component* m_world_settings;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_GAME_METRICS_CONTROLLER_MUTATOR_H_

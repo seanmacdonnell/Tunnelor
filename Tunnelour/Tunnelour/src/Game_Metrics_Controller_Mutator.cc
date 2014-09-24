@@ -25,12 +25,16 @@ Game_Metrics_Controller_Mutator::Game_Metrics_Controller_Mutator() {
   m_found_avatar_component = false;
   m_game_settings = 0;
   m_avatar_controller = 0;
+  m_found_world_settings = false;
+  m_world_settings = 0;
 }
 
 //------------------------------------------------------------------------------
 Game_Metrics_Controller_Mutator::~Game_Metrics_Controller_Mutator() {
   m_found_game_settings = false;
+  m_found_avatar_component = false;
   m_game_settings = 0;
+  m_avatar_controller = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -41,6 +45,9 @@ void Game_Metrics_Controller_Mutator::Mutate(Tunnelour::Component * const compon
   } else if (component->GetType().compare("Avatar_Component") == 0) {
     m_avatar_controller = static_cast<Avatar_Component*>(component);
     m_found_avatar_component = true;
+  } else if (component->GetType().compare("World_Settings_Component") == 0) {
+    m_world_settings = static_cast<World_Settings_Component*>(component);
+    m_found_world_settings = true;
   }
 }
 
@@ -55,7 +62,14 @@ Avatar_Component* const Game_Metrics_Controller_Mutator::GetAvatarComponent() {
 }
 
 //------------------------------------------------------------------------------
+World_Settings_Component* const Game_Metrics_Controller_Mutator::GetWorldSettings() {
+  return m_world_settings;
+}
+
+//------------------------------------------------------------------------------
 bool Game_Metrics_Controller_Mutator::WasSuccessful() {
-  return (m_found_game_settings && m_found_avatar_component);
+  return (m_found_game_settings &&
+          m_found_avatar_component &&
+          m_found_world_settings);
 }
 }  // namespace Tunnelour

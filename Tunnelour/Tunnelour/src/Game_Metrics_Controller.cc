@@ -14,6 +14,7 @@
 //
 
 #include "Game_Metrics_Controller.h"
+#include "Geometry_Helper.h"
 
 namespace Tunnelour {
 
@@ -45,13 +46,13 @@ bool Game_Metrics_Controller::Init(Component_Composite * const model) {
   m_model->Apply(&mutator);
   if (mutator.WasSuccessful()) {
     m_avatar = mutator.GetAvatarComponent();
-    m_avatar->Observe(this);
     m_game_settings = mutator.GetGameSettings();
+    m_world_settings = mutator.GetWorldSettings();
     InitTimer();
     m_has_been_initialised = true;
   } else {
     return false;
-  } 
+  }
   return true;
 }
 
@@ -59,49 +60,32 @@ bool Game_Metrics_Controller::Init(Component_Composite * const model) {
 bool Game_Metrics_Controller::Run() {
   Game_Metrics_Controller_Mutator mutator;
   if (m_has_been_initialised) {
-      D3DXVECTOR2 current_avatar_position;
-      current_avatar_position.x = m_avatar->GetPosition()->x;
-      current_avatar_position.y = 0;//m_avatar->GetPosition()->y;
-      D3DXVECTOR2 last_avatar_position;
-      last_avatar_position.x = m_avatar->GetLastRenderedPosition().x;
-      last_avatar_position.y = 0;//m_avatar->GetLastRenderedPosition().y;
+    D3DXVECTOR2 current_avatar_position;
+    current_avatar_position.x = m_avatar->GetPosition()->x;
+    current_avatar_position.y = 0;
+    D3DXVECTOR2 last_avatar_position;
+    last_avatar_position.x = m_avatar->GetLastRenderedPosition().x;
+    last_avatar_position.y = 0;
 
+    long double distance_traveled = 0;
+    distance_traveled = Geometry_Helper::WhatsTheDistanceBetweenThesePoints(current_avatar_position,
+                                                                            last_avatar_position);
 
-      double distance_traveled = 0;
-      distance_traveled = WhatsTheDistanceBetweenThesePoints(current_avatar_position, last_avatar_position);
+    // The distance can't be higher than the max velocity per frame
+    // If its the case the avatar has likely been reset.
+    // GetMaxVelocityInPixPerFrame is a negative number
+    if (distance_traveled <= (m_world_settings->GetMaxVelocityInPixPerFrame() * -1)) {
+      long double distance_traveled_metres = distance_traveled * m_world_settings->GetPixelToMeterFactor();
+      distance_traveled_metres += m_game_metrics->GetDistanceTraveled();
+      m_game_metrics->SetDistanceTraveled(distance_traveled_metres);
+    }
 
-      // 512 is the max velocity per frame, the distance can't be higher than this
-      // if its the case the avatar has likely been reset.
-      if (distance_traveled <= 512) {
-        m_game_metrics->SetDistanceTraveled(m_game_metrics->GetDistanceTraveled() + (distance_traveled * 0.0175));
-      }
-
-      UpdateTimer();
+    UpdateTimer();
   } else {
     Init(m_model);
     return false;
   }
   return true;
-}
-
-//------------------------------------------------------------------------------
-void Game_Metrics_Controller::HandleEvent(Tunnelour::Component * const component) {
-  if (component->GetType().compare("Avatar_Component") == 0) {
-    //Run();
-  }
-}
-
-//------------------------------------------------------------------------------
-int Game_Metrics_Controller::WhatsTheDistanceBetweenThesePoints(D3DXVECTOR2 point_1, D3DXVECTOR2 point_2) {
-  //calculating distance by euclidean formula
-  double x = point_1.x - point_2.x;
-  double y = point_1.y - point_2.y;
-  double dist;
-
-  dist = pow(x,2)+pow(y,2);
-  dist = sqrt(dist);
-
-  return static_cast<int>(dist);
 }
 
 //------------------------------------------------------------------------------
@@ -151,4 +135,4 @@ void Game_Metrics_Controller::UpdateTimer() {
 //------------------------------------------------------------------------------
 // private:
 //------------------------------------------------------------------------------
-}  // Tunnelour
+}  // namespace Tunnelour

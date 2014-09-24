@@ -67,11 +67,6 @@ Avatar_Component* const Debug_Data_Display_Controller_Mutator::GetAvatarComponen
 }
 
 //------------------------------------------------------------------------------
-bool Debug_Data_Display_Controller_Mutator::WasSuccessful() {
-  return m_found_game_settings && m_found_avatar_component && m_found_camera && m_found_game_metrics;
-}
-
-//------------------------------------------------------------------------------
 Camera_Component* const Debug_Data_Display_Controller_Mutator::GetCamera() {
   return m_camera;
 }
@@ -79,5 +74,13 @@ Camera_Component* const Debug_Data_Display_Controller_Mutator::GetCamera() {
 //------------------------------------------------------------------------------
 Game_Metrics_Component* const Debug_Data_Display_Controller_Mutator::GetGameMetrics() {
   return m_game_metrics;
+}
+
+//------------------------------------------------------------------------------
+bool Debug_Data_Display_Controller_Mutator::WasSuccessful() {
+  return (m_found_game_settings && 
+          m_found_avatar_component && 
+          m_found_camera && 
+          m_found_game_metrics);
 }
 }  // namespace Tunnelour

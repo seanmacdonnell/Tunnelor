@@ -16,6 +16,7 @@
 #ifndef TUNNELOUR_DEBUG_DATA_DISPLAY_CONTROLLER_MUTATOR_H_
 #define TUNNELOUR_DEBUG_DATA_DISPLAY_CONTROLLER_MUTATOR_H_
 
+#include <vector>
 #include "Component.h"
 #include "Game_Settings_Component.h"
 #include "Avatar_Component.h"
@@ -52,7 +53,7 @@ class Debug_Data_Display_Controller_Mutator: public Component::Component_Mutator
   Game_Settings_Component* const GetGameSettings();
 
   //-------------------------------------------------------------------------
-  // Description : Accessors for the Game_Settings_Component
+  // Description : Accessors for the Avatar_Component
   //-------------------------------------------------------------------------
   Avatar_Component* const GetAvatarComponent();
 
@@ -72,13 +73,15 @@ class Debug_Data_Display_Controller_Mutator: public Component::Component_Mutator
   bool WasSuccessful();
 
  private:
-  bool m_found_game_settings, m_found_avatar_component, m_found_camera, m_found_game_metrics;
+  bool m_found_game_settings;
+  bool m_found_avatar_component;
+  bool m_found_camera;
+  bool m_found_game_metrics;
   Game_Settings_Component *m_game_settings;
   Avatar_Component *m_avatar_component;
   Camera_Component * m_camera;
   std::vector<Bitmap_Component*> m_avatar_collision_blocks;
   Game_Metrics_Component *m_game_metrics;
-
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_DEBUG_DATA_DISPLAY_CONTROLLER_MUTATOR_H_

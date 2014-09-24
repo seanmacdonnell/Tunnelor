@@ -153,17 +153,11 @@
     <ClCompile Include="src\Avatar_Component.cc">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
-    <ClCompile Include="src\Debug_Data_Display_Controller.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
     <ClCompile Include="src\Game_Metrics_Component.cc">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
     <ClCompile Include="src\Direct3D11_View_DebugShader.cpp">
       <Filter>Source Files\View</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Debug_Data_Display_Controller_Mutator.cc">
-      <Filter>Source Files\Controllers</Filter>
     </ClCompile>
     <ClCompile Include="src\Tileset_Helper.cc">
       <Filter>Source Files\Utility</Filter>
@@ -273,6 +267,12 @@
     <ClCompile Include="src\Charlie_Standing_Controller.cc">
       <Filter>Source Files\Controllers\Avatar</Filter>
     </ClCompile>
+    <ClCompile Include="src\Debug_Data_Display_Controller.cc">
+      <Filter>Source Files\Controllers\Display</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Debug_Data_Display_Controller_Mutator.cc">
+      <Filter>Source Files\Controllers\Display</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Init_Controller.h">
@@ -359,17 +359,11 @@
     <ClInclude Include="include\Avatar_Component.h">
       <Filter>Include Files\Model</Filter>
     </ClInclude>
-    <ClInclude Include="include\Debug_Data_Display_Controller.h">
-      <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
     <ClInclude Include="include\Game_Metrics_Component.h">
       <Filter>Include Files\Model</Filter>
     </ClInclude>
     <ClInclude Include="include\Direct3D11_View_DebugShader.h">
       <Filter>Include Files\View</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Debug_Data_Display_Controller_Mutator.h">
-      <Filter>Include Files\Controllers</Filter>
     </ClInclude>
     <ClInclude Include="include\Tileset_Helper.h">
       <Filter>Include Files\Utility</Filter>
@@ -481,6 +475,12 @@
     </ClInclude>
     <ClInclude Include="include\Charlie_Standing_Controller.h">
       <Filter>Include Files\Controllers\Avatar</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Debug_Data_Display_Controller.h">
+      <Filter>Include Files\Controllers\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Debug_Data_Display_Controller_Mutator.h">
+      <Filter>Include Files\Controllers\Display</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

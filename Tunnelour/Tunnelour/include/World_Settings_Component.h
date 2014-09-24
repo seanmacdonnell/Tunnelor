@@ -61,6 +61,11 @@ class World_Settings_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   float GetMaxVelocityInPixPerFrame();
 
+  //---------------------------------------------------------------------------
+  // Description : Accessor for the factor of pixels to metres 
+  //---------------------------------------------------------------------------
+  long double GetPixelToMeterFactor();
+
  protected:
 
  private:
@@ -71,6 +76,8 @@ class World_Settings_Component: public Tunnelour::Component {
   float m_gravity_px_per_frame;
   float m_max_velocity_px_per_ms;
   float m_max_velocity_px_per_frame;
+  long double m_pixels_to_metres;
+
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_COLOR_COMPONENT_H_

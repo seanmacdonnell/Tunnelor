@@ -28,7 +28,7 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 // public:
 //------------------------------------------------------------------------------
-Debug_Data_Display_Controller::Debug_Data_Display_Controller() : Controller(), 
+Debug_Data_Display_Controller::Debug_Data_Display_Controller() : Controller(),
   // Const variables
   m_text_z_position(-3),
   m_collision_block_z_position(-4) {
@@ -148,9 +148,9 @@ bool Debug_Data_Display_Controller::Run() {
       vector<Avatar_Component::Avatar_Collision_Block>::iterator avatar_collision_block;
       vector<Avatar_Component::Avatar_Collision_Block> avatar_collision_blocks = m_avatar->GetState().avatar_collision_blocks;
       for (avatar_collision_block = avatar_collision_blocks.begin(); avatar_collision_block != avatar_collision_blocks.end(); avatar_collision_block++) {
-        Tile_Bitmap *avatar_collision_block_bitmap = Bitmap_Helper::CollisionBlockToBitmapComponent((*avatar_collision_block), 
-                                                                                                      m_avatar, 
-                                                                                                      m_debug_tileset_metadata, 
+        Tile_Bitmap *avatar_collision_block_bitmap = Bitmap_Helper::CollisionBlockToBitmapComponent((*avatar_collision_block),
+                                                                                                      m_avatar,
+                                                                                                      m_debug_tileset_metadata,
                                                                                                       m_game_settings->GetTilesetPath());
         D3DXVECTOR3 *position = avatar_collision_block_bitmap->GetPosition();
         position->z = m_collision_block_z_position;
