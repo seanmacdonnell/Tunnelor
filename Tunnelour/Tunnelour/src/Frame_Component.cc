@@ -123,6 +123,11 @@ void Frame_Component::SetScale(D3DXVECTOR3 scale) {
 }
 
 //---------------------------------------------------------------------------
+void Frame_Component::SetScale(float x, float y, float z) {
+  m_scale = D3DXVECTOR3(x, y, z);
+}
+
+//---------------------------------------------------------------------------
 D3DXVECTOR2 Frame_Component::GetSize() {
   D3DXVECTOR3 modified_size;
   modified_size.x = m_size.x * m_scale.x;

@@ -123,7 +123,7 @@ bool Avatar_Controller::Init(Component_Composite * const model) {
       m_model->Apply(&mutator);
     }
     if (mutator.WasSuccessful()) {
-      InitTimer();
+      StartTimer();
       m_game_settings = mutator.GetGameSettings();
       m_world_settings = mutator.GetWorldSettings();
       m_level = mutator.GetLevel();
@@ -148,7 +148,7 @@ bool Avatar_Controller::Init(Component_Composite * const model) {
 bool Avatar_Controller::Run() {
   bool result = false;
   if (m_has_been_initialised) {
-    UpdateTimer();
+    IsItTimeToAnimateAFrame();
     if (m_animation_tick) {
       RunAvatarState();
     }
@@ -440,7 +440,7 @@ void Avatar_Controller::LoadTilesets(std::wstring wtileset_path) {
 }
 
 //------------------------------------------------------------------------------
-bool Avatar_Controller::InitTimer() {
+bool Avatar_Controller::StartTimer() {
   // Check to see if this system supports high performance timers.
   QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&m_frequency));
 
@@ -457,7 +457,7 @@ bool Avatar_Controller::InitTimer() {
 }
 
 //------------------------------------------------------------------------------
-void Avatar_Controller::UpdateTimer() {
+void Avatar_Controller::IsItTimeToAnimateAFrame() {
   int milliseconds_per_frame = 0;
   // 1000/24 is the miliseconds per frame from 24 frames per second
   if (m_game_settings->IsDebugMode()) {

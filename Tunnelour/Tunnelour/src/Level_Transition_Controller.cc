@@ -139,7 +139,7 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
     //m_heading_font_path = "resource\\tilesets\\CC-Red-Alert-LAN.fnt";
     //m_text_font_path = "resource\\tilesets\\CC-Red-Alert-LAN.fnt";
     m_text_font_path = "resource\\tilesets\\victor_32.fnt";
-    InitTimer();
+    StartTimer();
     if (m_level_transition_component == 0) {
       m_level_transition_component = new Level_Transition_Component();
       m_level_transition_component->Init();
@@ -293,7 +293,7 @@ bool Level_Transition_Controller::Run() {
 
 
   if (m_loading != 0) {
-    UpdateTimer();
+    IsItTimeToAnimateAFrame();
     if (m_animation_tick && m_background != 0) {
       if (m_loading->GetTexture()->transparency > 0.0f) {
         m_loading_transparency = m_loading->GetTexture()->transparency;
@@ -553,7 +553,7 @@ Tileset_Helper::Line Level_Transition_Controller::GetCurrentSizedLine(float size
 }
 
 //------------------------------------------------------------------------------
-bool Level_Transition_Controller::InitTimer() {
+bool Level_Transition_Controller::StartTimer() {
   // Check to see if this system supports high performance timers.
   QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&m_frequency));
 
@@ -570,7 +570,7 @@ bool Level_Transition_Controller::InitTimer() {
 }
 
 //------------------------------------------------------------------------------
-void Level_Transition_Controller::UpdateTimer() {
+void Level_Transition_Controller::IsItTimeToAnimateAFrame() {
   int milliseconds_per_frame = static_cast<int>(1000/2);
 
   INT64 currentTime;

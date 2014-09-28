@@ -122,7 +122,7 @@ bool Score_Display_Controller::Init(Component_Composite * const model) {
     m_current_tileset_subset = GetCurrentForegroundSubset();
     m_heading_font_path = "resource\\tilesets\\victor_192.fnt";
     m_text_font_path = "resource\\tilesets\\victor_64.fnt";
-    InitTimer();
+    StartTimer();
     m_game_metrics = mutator.GetGameMetrics();
     if (m_background == 0) {
       // Create the Spash Black Tile
@@ -216,7 +216,7 @@ bool Score_Display_Controller::Run() {
     m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
   }
  
-  UpdateTimer();
+  IsItTimeToAnimateAFrame();
   if (m_animation_tick && m_background != 0) {
     if (m_loading->GetTexture()->transparency > 0.0f) {
       m_loading_transparency = m_loading->GetTexture()->transparency;
@@ -416,7 +416,7 @@ Tileset_Helper::Line Score_Display_Controller::GetCurrentSizedLine(float size) {
 }
 
 //------------------------------------------------------------------------------
-bool Score_Display_Controller::InitTimer() {
+bool Score_Display_Controller::StartTimer() {
   // Check to see if this system supports high performance timers.
   QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&m_frequency));
 
@@ -433,7 +433,7 @@ bool Score_Display_Controller::InitTimer() {
 }
 
 //------------------------------------------------------------------------------
-void Score_Display_Controller::UpdateTimer() {
+void Score_Display_Controller::IsItTimeToAnimateAFrame() {
   int milliseconds_per_frame = static_cast<int>(1000/2);
 
   INT64 currentTime;

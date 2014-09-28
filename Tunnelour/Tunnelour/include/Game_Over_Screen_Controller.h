@@ -33,10 +33,10 @@ namespace Tunnelour {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
 //  Description : This controller is responsible for the generation of the
-//                introduction to Tunnelor
+//                game over screen!
 //-----------------------------------------------------------------------------
 class Game_Over_Screen_Controller: public Controller,
-                                public Component::Component_Observer {
+                                   public Component::Component_Observer {
  public:
   //---------------------------------------------------------------------------
   // Description : Constructor
@@ -63,68 +63,61 @@ class Game_Over_Screen_Controller: public Controller,
  protected:
 
  private:
+  //---------------------------------------------------------------------------
+  // Private Functions
+  //---------------------------------------------------------------------------
+  void LoadTilesetMetadata();
+  Tile_Bitmap* CreateTile(float base_tile_size);
+
+  //---------------------------------------------------------------------------
+  // Private Constant Variables
+  //---------------------------------------------------------------------------
+  const float m_z_bitmap_position;
+  const float m_z_text_position;
+
+  //---------------------------------------------------------------------------
+  // Private Variables
+  //---------------------------------------------------------------------------
   std::vector<Tileset_Helper::Tileset_Metadata> m_tilesets;
   Tileset_Helper::Tileset_Metadata m_current_tileset;
   Tileset_Helper::Subset m_current_tileset_subset;
-  void LoadTilesetMetadata();
-  Tileset_Helper::Tileset_Metadata GetNamedTileset(std::string name);
-  Tileset_Helper::Subset GetCurrentForegroundSubset();
-  Tile_Bitmap* CreateTile(float base_tile_size);
-  Tileset_Helper::Line GetCurrentSizedLine(float size);
-
-  //---------------------------------------------------------------------------
-  // Description : Switches the tileset from Debug to Dirt and vise versa
-  //---------------------------------------------------------------------------
-  Game_Settings_Component* m_game_settings;
   Camera_Component *m_camera;
+  Game_Settings_Component* m_game_settings;
   Level_Component *m_level;
   std::string m_tileset_filename;
-  bool m_is_debug_mode;
   std::string m_black_metadata_file_path;
-  std::string m_white_metadata_file_path;
-
   Tile_Bitmap* m_background;
-  std::string m_heading_font_path;
-  std::string m_text_font_path;
-  std::string m_text_font_path_size_64;
-  int m_z_bitmap_position;
-  int m_z_text_position;
-
-  Text_Component *m_thank_you;
   Text_Component *m_game_name_heading;
   Text_Component *m_author;
   Text_Component *m_version;
+  Text_Component *m_thank_you;
+  std::string m_heading_font_path;
+  std::string m_text_font_path;
+  std::string m_text_font_path_size_64;
 
   //---------------------------------------------------------------------------
-  // Description : Initialises the timer used for the animation ticks
+  // Description : Initialises the timers used for the animation ticks
   //---------------------------------------------------------------------------
-  bool InitTimer();
+  bool StartTimers();
 
   //---------------------------------------------------------------------------
   // Description : Updates and determines if the animation needs to update
   //---------------------------------------------------------------------------
-  void UpdateTimer();
-  void UpdateFadeoutTimer();
-
+  void IsItTimeToAnimateAFrame();
+  void IsItTimeToFadeout();
   INT64 m_frequency;
   float m_ticksPerMs;
   INT64 m_startTime;
   float m_frameTime;
   bool m_animation_tick;
-  int m_current_animation_fps;
-
   float m_fadeout_frameTime;
   bool m_fadeout_animation_tick;
   INT64 m_fadeout_startTime;
-
-  INT64 m_fadeout_frequency;
-  
-  bool m_fadeout;
-
   Input_Component *m_input;
-  bool m_has_space_been_pressed;
   float m_loading_transparency;
   bool m_is_fading;
+  bool m_is_debug_mode;
+  bool m_has_space_been_pressed;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOR_GAME_OVER_SCREEN_CONTROLLER_H_

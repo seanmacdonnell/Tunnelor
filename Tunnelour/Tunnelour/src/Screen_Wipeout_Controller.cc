@@ -80,7 +80,7 @@ bool Screen_Wipeout_Controller::Init(Component_Composite * const model) {
     m_current_tileset = GetNamedTileset("Black");
     m_current_tileset_subset = GetCurrentForegroundSubset();
     m_has_been_initialised = true;
-    InitTimer();
+    StartTimer();
     if (m_top_slash == 0) {
       // Create the Spash Black Tile
       m_top_slash = CreateTile(128);
@@ -107,7 +107,7 @@ bool Screen_Wipeout_Controller::Run() {
   if (!m_has_been_initialised) { return false; }
 
   if (m_top_slash != 0 && m_bottom_slash != 0) {
-    UpdateTimer();
+    IsItTimeToAnimateAFrame();
     if (m_animation_tick) {
       m_top_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + (m_game_settings->GetResolution().y/1.5), m_z_bitmap_position);
       m_bottom_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y - (m_game_settings->GetResolution().y/1.5), m_z_bitmap_position);
@@ -253,7 +253,7 @@ Tileset_Helper::Line Screen_Wipeout_Controller::GetCurrentSizedLine(float size) 
 }
 
 //------------------------------------------------------------------------------
-bool Screen_Wipeout_Controller::InitTimer() {
+bool Screen_Wipeout_Controller::StartTimer() {
   // Check to see if this system supports high performance timers.
   QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&m_frequency));
 
@@ -270,7 +270,7 @@ bool Screen_Wipeout_Controller::InitTimer() {
 }
 
 //------------------------------------------------------------------------------
-void Screen_Wipeout_Controller::UpdateTimer() {
+void Screen_Wipeout_Controller::IsItTimeToAnimateAFrame() {
   int milliseconds_per_frame = static_cast<int>(1000/5);
 
   INT64 currentTime;

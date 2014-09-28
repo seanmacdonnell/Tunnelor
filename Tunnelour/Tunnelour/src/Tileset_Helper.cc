@@ -749,6 +749,45 @@ bool Tileset_Helper::LoadTilesetMetadataIntoStruct(std::string metadata_file, Ti
   return true;
 }
 
+//---------------------------------------------------------------------------
+Tileset_Helper::Line Tileset_Helper::GetCurrentSizedLine(float size, Tileset_Helper::Subset &tileset_subset) {
+  Tileset_Helper::Line middleground_line;
+  std::vector<Tileset_Helper::Line>::iterator line;
+  for (line = tileset_subset.lines.begin(); line != tileset_subset.lines.end(); line++) {
+    if (line->tile_size_x == size) {
+      if (line->tile_size_y == size) {
+        middleground_line = *line;
+      }
+    }
+  }
+  return middleground_line;
+}
 
+//---------------------------------------------------------------------------
+Tileset_Helper::Tileset_Metadata Tileset_Helper::GetNamedTileset(std::string name, std::vector<Tileset_Helper::Tileset_Metadata> tilesets) {
+  Tileset_Helper::Tileset_Metadata found_tileset_metadata;
 
+  std::vector<Tileset_Helper::Tileset_Metadata>::iterator tileset_metadata;
+  for (tileset_metadata = tilesets.begin(); tileset_metadata != tilesets.end(); tileset_metadata++) {
+    if (tileset_metadata->name.compare(name) == 0) {
+      found_tileset_metadata = (*tileset_metadata);
+    }
+  }
+
+  return found_tileset_metadata;
+}
+
+//---------------------------------------------------------------------------
+Tileset_Helper::Subset Tileset_Helper::GetForegroundSubset(Tileset_Helper::Tileset_Metadata tileset_metadata) {
+  Tileset_Helper::Subset found_subset;
+
+  std::vector<Tileset_Helper::Subset>::iterator tileset;
+  for (tileset = tileset_metadata.tilesets.begin(); tileset != tileset_metadata.tilesets.end(); tileset++) {
+    if (tileset->type.compare("Foreground") == 0) {
+      found_subset = *tileset;
+    }
+  }
+
+  return found_subset;
+}
 } // Tunnelour

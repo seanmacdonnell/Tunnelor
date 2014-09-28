@@ -111,12 +111,12 @@ class Score_Display_Controller: public Controller,
   //---------------------------------------------------------------------------
   // Description : Initialises the timer used for the animation ticks
   //---------------------------------------------------------------------------
-  bool InitTimer();
+  bool StartTimer();
 
   //---------------------------------------------------------------------------
   // Description : Updates and determines if the animation needs to update
   //---------------------------------------------------------------------------
-  void UpdateTimer();
+  void IsItTimeToAnimateAFrame();
 
   INT64 m_frequency;
   float m_ticksPerMs;

@@ -88,7 +88,7 @@ bool Splash_Screen_Controller::Init(Component_Composite * const model) {
     m_heading_font_path = "resource\\tilesets\\victor_320.fnt";
     //m_text_font_path = "resource\\tilesets\\CC-Red-Alert-LAN.fnt";
     m_text_font_path = "resource\\tilesets\\victor_32.fnt";
-    InitTimer();
+    StartTimer();
     if (m_splash_screen_component == 0) {
       m_splash_screen_component = new Splash_Screen_Component();
       m_splash_screen_component->Init();
@@ -183,7 +183,7 @@ bool Splash_Screen_Controller::Run() {
     m_author->SetPosition(position_x, position_y, m_z_text_position);
   }
 
-  UpdateTimer();
+  IsItTimeToAnimateAFrame();
   if (m_animation_tick) {
     // Start Fading
     m_splash_screen_component->SetIsFading(true);
@@ -362,7 +362,7 @@ Tileset_Helper::Line Splash_Screen_Controller::GetCurrentSizedLine(float size) {
 }
 
 //------------------------------------------------------------------------------
-bool Splash_Screen_Controller::InitTimer() {
+bool Splash_Screen_Controller::StartTimer() {
   // Check to see if this system supports high performance timers.
   QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&m_frequency));
 
@@ -380,7 +380,7 @@ bool Splash_Screen_Controller::InitTimer() {
 }
 
 //------------------------------------------------------------------------------
-void Splash_Screen_Controller::UpdateTimer() {
+void Splash_Screen_Controller::IsItTimeToAnimateAFrame() {
   int milliseconds_per_frame = static_cast<int>(5000);
 
   INT64 currentTime;

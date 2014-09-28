@@ -107,6 +107,11 @@ class Frame_Component: public Tunnelour::Component {
   void SetScale(D3DXVECTOR3 scale);
 
   //---------------------------------------------------------------------------
+  // Description : Mutator for the Scale
+  //---------------------------------------------------------------------------
+  void SetScale(float x, float y, float z);
+
+  //---------------------------------------------------------------------------
   // Description : Mutator for the Size
   //---------------------------------------------------------------------------
   D3DXVECTOR2 GetSize();

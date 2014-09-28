@@ -169,6 +169,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Charlie_Jumping_Controller.h" />
     <ClInclude Include="include\Charlie_Running_Controller.h" />
     <ClInclude Include="include\Charlie_Standing_Controller.h" />
+    <ClInclude Include="include\Colour_Helper.h" />
     <ClInclude Include="include\Component.h" />
     <ClInclude Include="include\Component_Composite.h" />
     <ClInclude Include="include\Component_ID.h" />

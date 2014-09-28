@@ -180,6 +180,21 @@ class Tileset_Helper {
   //---------------------------------------------------------------------------
   static bool LoadTilesetMetadataIntoStruct(std::string metadata_file, Tileset_Helper::Tileset_Metadata *out_metadata);
 
+  //---------------------------------------------------------------------------
+  // Description : Returns the line which matches the given size
+  //---------------------------------------------------------------------------
+  static Tileset_Helper::Line GetCurrentSizedLine(float size, Tileset_Helper::Subset &tileset_subset);
+
+  //---------------------------------------------------------------------------
+  // Description : Returns the line which matches the given name
+  //---------------------------------------------------------------------------
+  static Tileset_Helper::Tileset_Metadata GetNamedTileset(std::string name, std::vector<Tileset_Helper::Tileset_Metadata> tilesets);
+
+  //---------------------------------------------------------------------------
+  // Description :  Returns the subset with the foreground type
+  //---------------------------------------------------------------------------
+  static Tileset_Helper::Subset Tileset_Helper::GetForegroundSubset(Tileset_Helper::Tileset_Metadata tileset_metadata);
+
  protected:
 
  private:

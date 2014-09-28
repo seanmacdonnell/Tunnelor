@@ -111,12 +111,12 @@ class Avatar_Controller: public Controller,
   //---------------------------------------------------------------------------
   // Description : Initialises the timer used for the animation ticks
   //---------------------------------------------------------------------------
-  bool InitTimer();
+  bool StartTimer();
 
   //---------------------------------------------------------------------------
   // Description : Updates and determines if the animation needs to update
   //---------------------------------------------------------------------------
-  void UpdateTimer();
+  void IsItTimeToAnimateAFrame();
 
   //---------------------------------------------------------------------------
   // Member Variables

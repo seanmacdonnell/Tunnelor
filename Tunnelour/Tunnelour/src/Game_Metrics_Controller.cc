@@ -48,7 +48,7 @@ bool Game_Metrics_Controller::Init(Component_Composite * const model) {
     m_avatar = mutator.GetAvatarComponent();
     m_game_settings = mutator.GetGameSettings();
     m_world_settings = mutator.GetWorldSettings();
-    InitTimer();
+    StartTimer();
     m_has_been_initialised = true;
   } else {
     return false;
@@ -80,7 +80,7 @@ bool Game_Metrics_Controller::Run() {
       m_game_metrics->SetDistanceTraveled(distance_traveled_metres);
     }
 
-    UpdateTimer();
+    IsItTimeToAnimateAFrame();
   } else {
     Init(m_model);
     return false;
@@ -92,12 +92,12 @@ bool Game_Metrics_Controller::Run() {
 void Game_Metrics_Controller::ResetGameMetrics() {
   m_game_metrics->SetDistanceTraveled(0);
   m_game_metrics->SetSecondsPast(0);
-  InitTimer();
+  StartTimer();
 }
 
 
 //------------------------------------------------------------------------------
-bool Game_Metrics_Controller::InitTimer() {
+bool Game_Metrics_Controller::StartTimer() {
   // Check to see if this system supports high performance timers.
   QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&m_frequency));
 
@@ -114,7 +114,7 @@ bool Game_Metrics_Controller::InitTimer() {
 }
 
 //------------------------------------------------------------------------------
-void Game_Metrics_Controller::UpdateTimer() {
+void Game_Metrics_Controller::IsItTimeToAnimateAFrame() {
   INT64 currentTime;
   float timeDifference;
 

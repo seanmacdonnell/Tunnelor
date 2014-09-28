@@ -56,8 +56,8 @@ class Game_Metrics_Controller: public Controller {
  protected:
 
  private:
-  bool InitTimer();
-  void UpdateTimer();
+  bool StartTimer();
+  void IsItTimeToAnimateAFrame();
 
   Avatar_Component *m_avatar;
   Game_Settings_Component *m_game_settings;
