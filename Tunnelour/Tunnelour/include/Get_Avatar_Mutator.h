@@ -24,7 +24,7 @@ class Get_Avatar_Mutator: public Component::Component_Mutator  {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
 //  Description : Get_Avatar_Mutator is a mutator run on the model
-//                which collects the relevant camera components
+//                which collects the relevant components
 //-----------------------------------------------------------------------------
  public:
   //-------------------------------------------------------------------------

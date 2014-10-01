@@ -35,7 +35,7 @@ namespace Tunnelour {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
 //  Description : This controller is responsible for the generation of the
-//                introduction to Tunnelor
+//                tunnelour introduction.
 //-----------------------------------------------------------------------------
 class Screen_Wipeout_Controller: public Controller,
                                  public Component::Component_Observer {
@@ -65,18 +65,27 @@ class Screen_Wipeout_Controller: public Controller,
  protected:
 
  private:
+  //---------------------------------------------------------------------------
+  // Private Functions
+  //---------------------------------------------------------------------------
+  void LoadTilesetMetadata();
+  Tile_Bitmap* CreateTile(float base_tile_size);
+  bool StartTimer();
+  void IsItTimeToAnimateAFrame();
+
+  //---------------------------------------------------------------------------
+  // Constant Variables
+  //---------------------------------------------------------------------------
+  const float m_z_bitmap_position;
+  const float m_z_text_position;
+
+  //---------------------------------------------------------------------------
+  // Member Variables
+  //---------------------------------------------------------------------------
   std::vector<Tileset_Helper::Tileset_Metadata> m_tilesets;
   Tileset_Helper::Tileset_Metadata m_current_tileset;
   Tileset_Helper::Subset m_current_tileset_subset;
-  void LoadTilesetMetadata();
-  Tileset_Helper::Tileset_Metadata GetNamedTileset(std::string name);
-  Tileset_Helper::Subset GetCurrentForegroundSubset();
-  Tile_Bitmap* CreateTile(float base_tile_size);
-  Tileset_Helper::Line GetCurrentSizedLine(float size);
 
-  //---------------------------------------------------------------------------
-  // Description : Switches the tileset from Debug to Dirt and vise versa
-  //---------------------------------------------------------------------------
   Game_Settings_Component* m_game_settings;
   Camera_Component *m_camera;
 
@@ -87,18 +96,6 @@ class Screen_Wipeout_Controller: public Controller,
   Tile_Bitmap* m_top_slash;
   Tile_Bitmap* m_bottom_slash;
   Tile_Bitmap* m_background;
-  int m_z_bitmap_position;
-  int m_z_text_position;
-
-  //---------------------------------------------------------------------------
-  // Description : Initialises the timer used for the animation ticks
-  //---------------------------------------------------------------------------
-  bool StartTimer();
-
-  //---------------------------------------------------------------------------
-  // Description : Updates and determines if the animation needs to update
-  //---------------------------------------------------------------------------
-  void IsItTimeToAnimateAFrame();
 
   INT64 m_frequency;
   float m_ticksPerMs;

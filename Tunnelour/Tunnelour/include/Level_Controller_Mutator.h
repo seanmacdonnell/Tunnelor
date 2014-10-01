@@ -27,7 +27,7 @@ class Level_Controller_Mutator: public Component::Component_Mutator  {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
 //  Description : Level_Controller_Mutator is a mutator run on the model
-//                which collects the relevant camera components
+//                which collects the relevant components
 //-----------------------------------------------------------------------------
  public:
   //-------------------------------------------------------------------------
@@ -46,21 +46,27 @@ class Level_Controller_Mutator: public Component::Component_Mutator  {
   void Mutate(Tunnelour::Component * const component);
 
   //-------------------------------------------------------------------------
-  // Description : Accessors for the Game_Settings_Component
+  // Description : Accessor for the Game_Settings_Component
   //-------------------------------------------------------------------------
   Game_Settings_Component* const GetGameSettings();
 
   //-------------------------------------------------------------------------
-  // Description : Accessors for the Game_Settings_Component
+  // Description : Accessor for the camera
   //-------------------------------------------------------------------------
   Camera_Component* const GetCamera();
 
+  //-------------------------------------------------------------------------
+  // Description : Accessor for the splash screen
+  //-------------------------------------------------------------------------
   Splash_Screen_Component* GetSplashScreen();
 
+  //-------------------------------------------------------------------------
+  // Description : Accessors for the input
+  //-------------------------------------------------------------------------
   Input_Component* GetInputComponent();
 
   //-------------------------------------------------------------------------
-  // Description : Accessors for the Game_Settings_Component
+  // Description : Was this mutator successful?
   //-------------------------------------------------------------------------
   bool WasSuccessful();
 
@@ -71,7 +77,7 @@ class Level_Controller_Mutator: public Component::Component_Mutator  {
   bool m_found_input;
   Game_Settings_Component * m_game_settings;
   Camera_Component * m_camera;
-  Tunnelour::Splash_Screen_Component *m_splash_screen_component;
+  Tunnelour::Splash_Screen_Component *m_splash_screen;
   Input_Component *m_input;
 };
 }  // namespace Tunnelour

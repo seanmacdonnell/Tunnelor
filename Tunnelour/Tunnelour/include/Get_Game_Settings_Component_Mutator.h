@@ -13,64 +13,48 @@
 //  limitations under the License.
 //
 
-#ifndef TUNNELOUR_GAME_METRICS_CONTROLLER_MUTATOR_H_
-#define TUNNELOUR_GAME_METRICS_CONTROLLER_MUTATOR_H_
+#ifndef TUNNELOUR_GET_GAME_SETTINGS_COMPONENT_MUTATOR_H_
+#define TUNNELOUR_GET_GAME_SETTINGS_COMPONENT_MUTATOR_H_
 
 #include "Component.h"
 #include "Game_Settings_Component.h"
-#include "Avatar_Component.h"
-#include "World_Settings_Component.h"
 
 namespace Tunnelour {
-class Game_Metrics_Controller_Mutator: public Component::Component_Mutator  {
+class Get_Game_Settings_Component_Mutator: public Component::Component_Mutator  {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
-//  Description : Game_Metrics_Controller_Mutator is run on the model
-//                and collects the relevant components
+//  Description : Get_Game_Settings_Component_Mutator is a mutator run on
+//                the model which collects the components.
 //-----------------------------------------------------------------------------
  public:
   //-------------------------------------------------------------------------
   // Description : Constructor
   //-------------------------------------------------------------------------
-  Game_Metrics_Controller_Mutator();
+  Get_Game_Settings_Component_Mutator();
 
   //-------------------------------------------------------------------------
   // Description : Deconstructor
   //-------------------------------------------------------------------------
-  virtual ~Game_Metrics_Controller_Mutator();
+  virtual ~Get_Game_Settings_Component_Mutator();
 
   //-------------------------------------------------------------------------
   // Description : Mutator function, pass it a component to mutate.
   //-------------------------------------------------------------------------
-  void Mutate(Tunnelour::Component* const component);
+  void Mutate(Component *const component);
 
   //-------------------------------------------------------------------------
   // Description : Accessors for the Game_Settings_Component
   //-------------------------------------------------------------------------
-  Game_Settings_Component* const GetGameSettings();
+  Game_Settings_Component *const GetGameSettings();
 
   //-------------------------------------------------------------------------
-  // Description : Accessors for the Avatar_Settings_Component
+  // Description : Did this mutator run successfully?
   //-------------------------------------------------------------------------
-  Avatar_Component* const GetAvatarComponent();
-
-  //-------------------------------------------------------------------------
-  // Description : Accessors for the World_Settings_Component
-  //-------------------------------------------------------------------------
-  World_Settings_Component* const GetWorldSettings();
-
-  //-------------------------------------------------------------------------
-  // Description : Accessors for the Game_Settings_Component
-  //-------------------------------------------------------------------------
-  bool WasSuccessful();
+  bool Get_Game_Settings_Component_Mutator::WasSuccessful();
 
  private:
   bool m_found_game_settings;
-  bool m_found_avatar_component;
-  bool m_found_world_settings;
-  Game_Settings_Component * m_game_settings;
-  Avatar_Component * m_avatar_controller;
-  World_Settings_Component* m_world_settings;
+  Game_Settings_Component *m_game_settings;
 };
 }  // namespace Tunnelour
-#endif  // TUNNELOUR_GAME_METRICS_CONTROLLER_MUTATOR_H_
+#endif  // TUNNELOUR_GET_GAME_SETTINGS_COMPONENT_MUTATOR_H_

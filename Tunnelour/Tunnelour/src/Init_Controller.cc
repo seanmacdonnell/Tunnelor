@@ -31,8 +31,8 @@ Init_Controller::~Init_Controller() {
 }
 
 //------------------------------------------------------------------------------
-bool Init_Controller::Init(Component_Composite * const model) {
-  Controller::Init(model);
+bool Init_Controller::Init(Component_Composite* const model) {
+  m_model = model;
   m_has_been_initialised = true;
   return true;
 }

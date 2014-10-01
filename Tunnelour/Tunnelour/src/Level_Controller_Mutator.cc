@@ -23,20 +23,24 @@ namespace Tunnelour {
 Level_Controller_Mutator::Level_Controller_Mutator() {
   m_found_game_settings = false;
   m_found_camera = false;
-  m_game_settings = 0;
-  m_camera = 0;
-  m_splash_screen_component = 0;
   m_found_spash_screen = false;
   m_found_input = false;
+  m_game_settings = 0;
+  m_camera = 0;
+  m_splash_screen = 0;
+  m_input = 0;
 }
 
 //------------------------------------------------------------------------------
 Level_Controller_Mutator::~Level_Controller_Mutator() {
   m_found_game_settings = false;
   m_found_camera = false;
+  m_found_spash_screen = false;
+  m_found_input = false;
   m_game_settings = 0;
   m_camera = 0;
-  m_splash_screen_component = 0;
+  m_splash_screen = 0;
+  m_input = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -48,7 +52,7 @@ void Level_Controller_Mutator::Mutate(Tunnelour::Component * const component) {
     m_camera = static_cast<Camera_Component*>(component);
     m_found_camera = true;
   } else if (component->GetType().compare("Splash_Screen_Component") == 0) {
-    m_splash_screen_component = static_cast<Splash_Screen_Component*>(component);
+    m_splash_screen = static_cast<Splash_Screen_Component*>(component);
     m_found_spash_screen = true;
   } else if (component->GetType().compare("Input_Component") == 0) {
     m_input = static_cast<Input_Component*>(component);
@@ -68,7 +72,7 @@ Camera_Component* const Level_Controller_Mutator::GetCamera() {
 
 //------------------------------------------------------------------------------
 Splash_Screen_Component* Level_Controller_Mutator::GetSplashScreen() {
-  return m_splash_screen_component;
+  return m_splash_screen;
 }
 
 //------------------------------------------------------------------------------
@@ -78,6 +82,9 @@ Input_Component* Level_Controller_Mutator::GetInputComponent() {
 
 //------------------------------------------------------------------------------
 bool Level_Controller_Mutator::WasSuccessful() {
-  return m_found_game_settings && m_found_camera && m_found_spash_screen && m_found_input;
+  return (m_found_game_settings &&
+          m_found_camera &&
+          m_found_spash_screen &&
+          m_found_input);
 }
 }  // namespace Tunnelour

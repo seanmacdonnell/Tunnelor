@@ -25,74 +25,50 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 // public:
 //------------------------------------------------------------------------------
-Level_Controller::Level_Controller() : Controller() {
+Level_Controller::Level_Controller() : Controller(),
+  m_z_position(-3) {
   m_avatar = 0;
+  m_camera = 0;
   m_game_settings = 0;
+  m_splash_screen_component = 0;
+
   m_level = 0;
+
   m_level_name_heading = 0;
   m_level_blurb = 0;
-  m_camera = 0;
-  m_z_position = -3;
+  m_font_path = "";
+
   m_level_tile_controller = 0;
-  m_splash_screen_component = 0;
   m_level_transition_controller = 0;
   m_screen_wipeout_controller = 0;
-  m_avatar_controller = 0;
+  m_game_over_screen_controller = 0;
   m_game_metrics_controller = 0;
+  m_score_display_controller = 0;
+  m_avatar_controller = 0;
+
+  m_input_component = 0;
+
   m_has_transition_been_initalised = false;
   m_has_level_been_destroyed = false;
   m_has_level_been_created = false;
   m_has_level_been_added = false;
   m_has_level_been_shown = false;
   m_has_splash_screen_faded = false;
+
   m_has_avatar_been_reset = false;
-  m_game_over_screen_controller = 0;
-  m_score_display_controller = 0;
-  m_input_component = 0;
 }
 
 //------------------------------------------------------------------------------
 Level_Controller::~Level_Controller() {
-  m_avatar = 0;
+  m_camera = 0;
   m_game_settings = 0;
   m_level = 0;
-  m_level_name_heading = 0;
-  m_level_blurb = 0;
-  m_camera = 0;
-
-  if (m_game_over_screen_controller != 0) {
-    delete m_game_over_screen_controller;
-    m_game_over_screen_controller = 0;
-  }
-
-  if (m_level_tile_controller != 0) {
-    delete m_level_tile_controller;
-    m_level_tile_controller = 0;
-  }
-
-  if (m_level_transition_controller != 0) {
-    delete m_level_transition_controller;
-    m_level_transition_controller = 0;
-  }
-
-  if (m_game_over_screen_controller != 0) {
-    delete m_game_over_screen_controller;
-    m_game_over_screen_controller = 0;
-  }
-
+  m_input_component = 0;
+  
   if (m_avatar_controller != 0) {
     delete m_avatar_controller;
+    m_avatar = 0;
     m_avatar_controller = 0;
-  }
-
-  if (m_screen_wipeout_controller != 0) {
-    delete m_screen_wipeout_controller;
-    m_screen_wipeout_controller = 0;
-  }
-
-  if (m_game_metrics_controller != 0) {
-    delete m_game_metrics_controller;
-    m_game_metrics_controller = 0;
   }
 
   if (m_score_display_controller != 0) {
@@ -100,10 +76,39 @@ Level_Controller::~Level_Controller() {
     m_score_display_controller = 0;
   }
 
-  if (m_level != 0) {
-    delete m_level;
-    m_level = 0;
+  if (m_game_metrics_controller != 0) {
+    delete m_game_metrics_controller;
+    m_game_metrics_controller = 0;
   }
+
+  if (m_game_over_screen_controller != 0) {
+    delete m_game_over_screen_controller;
+    m_game_over_screen_controller = 0;
+  }
+
+  if (m_screen_wipeout_controller != 0) {
+    delete m_screen_wipeout_controller;
+    m_screen_wipeout_controller = 0;
+  }
+
+  if (m_level_transition_controller != 0) {
+    delete m_level_transition_controller;
+    m_level_transition_controller = 0;
+  }
+
+  if (m_level_tile_controller != 0) {
+    delete m_level_tile_controller;
+    m_level_tile_controller = 0;
+  }
+
+  m_has_transition_been_initalised = false;
+  m_has_level_been_destroyed = false;
+  m_has_level_been_created = false;
+  m_has_level_been_added = false;
+  m_has_level_been_shown = false;
+  m_has_splash_screen_faded = false;
+
+  m_has_avatar_been_reset = false;
 }
 
 //------------------------------------------------------------------------------
@@ -115,14 +120,15 @@ bool Level_Controller::Init(Component_Composite * const model) {
     m_model->Add(m_level);
     m_level->Init();
   }
+
   Level_Controller_Mutator mutator;
   m_model->Apply(&mutator);
   if (mutator.WasSuccessful()) {
-    if (m_game_settings == 0) {
-      m_game_settings = mutator.GetGameSettings();
-    }
     if (m_camera == 0) {
       m_camera = mutator.GetCamera();
+    }
+    if (m_game_settings == 0) {
+      m_game_settings = mutator.GetGameSettings();
     }
     if (m_splash_screen_component == 0) {
       m_splash_screen_component = mutator.GetSplashScreen();
@@ -130,6 +136,7 @@ bool Level_Controller::Init(Component_Composite * const model) {
     if (m_input_component == 0) {
       m_input_component = mutator.GetInputComponent();
     }
+
     LoadLevelMetadata();
     m_font_path = "resource\\tilesets\\Ariel.fnt";
 

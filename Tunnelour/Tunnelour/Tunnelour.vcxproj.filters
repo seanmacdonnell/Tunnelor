@@ -70,6 +70,18 @@
     <Filter Include="Include Files\Controllers\Display">
       <UniqueIdentifier>{e12215a3-ebac-4f48-bea2-d38122982cce}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Controllers\Mutators">
+      <UniqueIdentifier>{450920bd-ab14-437d-a3db-33a8e693d967}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\Controllers\Mutators">
+      <UniqueIdentifier>{1724ecb2-7d71-4ba4-bf85-6bcff5484104}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Controllers\Level">
+      <UniqueIdentifier>{698eafda-3b54-4e70-90e4-9ef0ea39c5a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\Controllers\Level">
+      <UniqueIdentifier>{77184d95-d7b1-401e-8740-444971c7fab4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Direct3D11_View.cc">
@@ -147,9 +159,6 @@
     <ClCompile Include="src\Input_Controller.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
-    <ClCompile Include="src\Input_Controller_Mutator.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
     <ClCompile Include="src\Avatar_Component.cc">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
@@ -168,17 +177,8 @@
     <ClCompile Include="src\World_Settings_Component.cc">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
-    <ClCompile Include="src\Level_Controller.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Level_Controller_Mutator.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
     <ClCompile Include="src\Level_Component.cc">
       <Filter>Source Files\Model</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Get_Avatar_Mutator.cc">
-      <Filter>Source Files\Controllers</Filter>
     </ClCompile>
     <ClCompile Include="src\Splash_Screen_Controller.cc">
       <Filter>Source Files\Controllers</Filter>
@@ -192,32 +192,11 @@
     <ClCompile Include="src\Input_Component.cc">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
-    <ClCompile Include="src\Level_Transition_Component.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Level_Transition_Controller.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Level_Transition_Controller_Mutator.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Level_Tile_Controller.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Level_Tile_Controller_Mutator.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
     <ClCompile Include="src\Screen_Wipeout_Controller.cc">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
     <ClCompile Include="src\Get_Game_Metrics_Component_Mutator.cc">
       <Filter>Source Files\Model</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Game_Over_Screen_Controller.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Game_Over_Screen_Controller_Mutator.cc">
-      <Filter>Source Files\Controllers</Filter>
     </ClCompile>
     <ClCompile Include="src\Score_Display_Controller.cc">
       <Filter>Source Files\Controllers</Filter>
@@ -236,12 +215,6 @@
     </ClCompile>
     <ClCompile Include="src\Avatar_State_Controller.cc">
       <Filter>Source Files\Controllers\Avatar</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Avatar_Controller_Mutator.cc">
-      <Filter>Source Files\Controllers\Avatar</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Camera_Controller_Mutator.cc">
-      <Filter>Source Files\Controllers\Camera</Filter>
     </ClCompile>
     <ClCompile Include="src\Camera_Controller.cc">
       <Filter>Source Files\Controllers\Camera</Filter>
@@ -264,14 +237,53 @@
     <ClCompile Include="src\Debug_Data_Display_Controller.cc">
       <Filter>Source Files\Controllers\Display</Filter>
     </ClCompile>
-    <ClCompile Include="src\Debug_Data_Display_Controller_Mutator.cc">
-      <Filter>Source Files\Controllers\Display</Filter>
-    </ClCompile>
     <ClCompile Include="src\Game_Metrics_Controller.cc">
       <Filter>Source Files\Controllers\Display</Filter>
     </ClCompile>
-    <ClCompile Include="src\Game_Metrics_Controller_Mutator.cc">
+    <ClCompile Include="src\Game_Over_Screen_Controller.cc">
       <Filter>Source Files\Controllers\Display</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Avatar_Controller_Mutator.cc">
+      <Filter>Source Files\Controllers\Mutators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Get_Avatar_Mutator.cc">
+      <Filter>Source Files\Controllers\Mutators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Debug_Data_Display_Controller_Mutator.cc">
+      <Filter>Source Files\Controllers\Mutators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Game_Over_Screen_Controller_Mutator.cc">
+      <Filter>Source Files\Controllers\Mutators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Camera_Controller_Mutator.cc">
+      <Filter>Source Files\Controllers\Mutators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Game_Metrics_Controller_Mutator.cc">
+      <Filter>Source Files\Controllers\Mutators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Get_Game_Settings_Component_Mutator.cc">
+      <Filter>Source Files\Controllers\Mutators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Level_Controller.cc">
+      <Filter>Source Files\Controllers\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Level_Tile_Controller.cc">
+      <Filter>Source Files\Controllers\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Level_Transition_Controller.cc">
+      <Filter>Source Files\Controllers\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Level_Transition_Component.cc">
+      <Filter>Source Files\Controllers\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Level_Transition_Controller_Mutator.cc">
+      <Filter>Source Files\Controllers\Mutators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Level_Controller_Mutator.cc">
+      <Filter>Source Files\Controllers\Mutators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Level_Tile_Controller_Mutator.cc">
+      <Filter>Source Files\Controllers\Mutators</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -353,9 +365,6 @@
     <ClInclude Include="include\Input_Controller.h">
       <Filter>Include Files\Controllers</Filter>
     </ClInclude>
-    <ClInclude Include="include\Input_Controller_Mutator.h">
-      <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
     <ClInclude Include="include\Avatar_Component.h">
       <Filter>Include Files\Model</Filter>
     </ClInclude>
@@ -377,17 +386,8 @@
     <ClInclude Include="include\String_Helper.h">
       <Filter>Include Files\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="include\Level_Controller.h">
-      <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Level_Controller_Mutator.h">
-      <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
     <ClInclude Include="include\Level_Component.h">
       <Filter>Include Files\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Get_Avatar_Mutator.h">
-      <Filter>Include Files\Controllers</Filter>
     </ClInclude>
     <ClInclude Include="include\Splash_Screen_Controller.h">
       <Filter>Include Files\Controllers</Filter>
@@ -401,28 +401,7 @@
     <ClInclude Include="include\Input_Component.h">
       <Filter>Include Files\Model</Filter>
     </ClInclude>
-    <ClInclude Include="include\Level_Transition_Component.h">
-      <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Level_Transition_Controller.h">
-      <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Level_Transition_Controller_Mutator.h">
-      <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Level_Tile_Controller.h">
-      <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Level_Tile_Controller_Mutator.h">
-      <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
     <ClInclude Include="include\Screen_Wipeout_Controller.h">
-      <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Game_Over_Screen_Controller.h">
-      <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Game_Over_Screen_Controller_Mutator.h">
       <Filter>Include Files\Controllers</Filter>
     </ClInclude>
     <ClInclude Include="include\Get_Game_Metrics_Component_Mutator.h">
@@ -446,12 +425,6 @@
     <ClInclude Include="include\Avatar_State_Controller.h">
       <Filter>Include Files\Controllers\Avatar</Filter>
     </ClInclude>
-    <ClInclude Include="include\Avatar_Controller_Mutator.h">
-      <Filter>Include Files\Controllers\Avatar</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Camera_Controller_Mutator.h">
-      <Filter>Include Files\Controllers\Camera</Filter>
-    </ClInclude>
     <ClInclude Include="include\Camera_Controller.h">
       <Filter>Include Files\Controllers\Camera</Filter>
     </ClInclude>
@@ -473,17 +446,56 @@
     <ClInclude Include="include\Debug_Data_Display_Controller.h">
       <Filter>Include Files\Controllers\Display</Filter>
     </ClInclude>
-    <ClInclude Include="include\Debug_Data_Display_Controller_Mutator.h">
-      <Filter>Include Files\Controllers\Display</Filter>
-    </ClInclude>
     <ClInclude Include="include\Game_Metrics_Controller.h">
-      <Filter>Include Files\Controllers\Display</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Game_Metrics_Controller_Mutator.h">
       <Filter>Include Files\Controllers\Display</Filter>
     </ClInclude>
     <ClInclude Include="include\Colour_Helper.h">
       <Filter>Include Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Game_Over_Screen_Controller.h">
+      <Filter>Include Files\Controllers\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Avatar_Controller_Mutator.h">
+      <Filter>Include Files\Controllers\Mutators</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Get_Avatar_Mutator.h">
+      <Filter>Include Files\Controllers\Mutators</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Camera_Controller_Mutator.h">
+      <Filter>Include Files\Controllers\Mutators</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Debug_Data_Display_Controller_Mutator.h">
+      <Filter>Include Files\Controllers\Mutators</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Game_Over_Screen_Controller_Mutator.h">
+      <Filter>Include Files\Controllers\Mutators</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Game_Metrics_Controller_Mutator.h">
+      <Filter>Include Files\Controllers\Mutators</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Get_Game_Settings_Component_Mutator.h">
+      <Filter>Include Files\Controllers\Mutators</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Level_Controller.h">
+      <Filter>Include Files\Controllers\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Level_Transition_Controller.h">
+      <Filter>Include Files\Controllers\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Level_Tile_Controller.h">
+      <Filter>Include Files\Controllers\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Level_Transition_Component.h">
+      <Filter>Include Files\Controllers\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Level_Controller_Mutator.h">
+      <Filter>Include Files\Controllers\Mutators</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Level_Tile_Controller_Mutator.h">
+      <Filter>Include Files\Controllers\Mutators</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Level_Transition_Controller_Mutator.h">
+      <Filter>Include Files\Controllers\Mutators</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

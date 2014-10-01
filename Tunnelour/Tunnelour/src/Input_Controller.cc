@@ -16,7 +16,7 @@
 #include "Input_Controller.h"
 #include "Camera_Component.h"
 #include "Game_Settings_Component.h"
-#include "Input_Controller_Mutator.h"
+#include "Get_Game_Settings_Component_Mutator.h"
 #include "Exceptions.h"
 #include "Get_Avatar_Mutator.h"
 
@@ -27,9 +27,16 @@ namespace Tunnelour {
 //------------------------------------------------------------------------------
 Input_Controller::Input_Controller() : Controller() {
   m_game_settings = 0;
+  m_input_component = 0;
+  m_directInput = 0;
+  m_keyboard = 0;
+  m_mouse = 0;
+  m_screenWidth = 0;
+  m_screenHeight = 0;
+  m_mouseX = 0;
+  m_mouseY = 0;
   m_avatar_component = 0;
   m_dik_grave_pressed = false;
-  m_input_component = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -55,12 +62,18 @@ Input_Controller::~Input_Controller() {
   }
 
   m_game_settings = 0;
+  m_input_component = 0;
+  m_screenWidth = 0;
+  m_screenHeight = 0;
+  m_mouseX = 0;
+  m_mouseY = 0;
   m_avatar_component = 0;
   m_dik_grave_pressed = false;
 }
 
 //------------------------------------------------------------------------------
 bool Input_Controller::Init(Component_Composite * const model) {
+  bool result = true;
   Controller::Init(model);
   if (m_input_component == 0) {
     m_input_component = new Input_Component();
@@ -68,7 +81,7 @@ bool Input_Controller::Init(Component_Composite * const model) {
     m_model->Add(m_input_component);
   }
 
-  Input_Controller_Mutator mutator;
+  Get_Game_Settings_Component_Mutator mutator;
   m_model->Apply(&mutator);
   if (mutator.WasSuccessful()) {
     m_mouseX = 0;
@@ -81,15 +94,15 @@ bool Input_Controller::Init(Component_Composite * const model) {
       }
     }
   } else {
-    return false;
+    result = false;
   }
-  return true;
+  return result;
 }
 
 //------------------------------------------------------------------------------
 bool Input_Controller::InitDirectInput() {
   if (m_game_settings->GetHInstance() && m_game_settings->GetHWnd()) {
-    // Store the screen size which will be used for positioning the mouse cursor.
+    // Store the screen size which will be used for positioning the mouse
     m_screenWidth = static_cast<int>(m_game_settings->GetResolution().x);
     m_screenHeight = static_cast<int>(m_game_settings->GetResolution().y);
 
@@ -105,14 +118,13 @@ bool Input_Controller::InitDirectInput() {
 
     // Initialize the direct input interface for the keyboard.
     if (FAILED(m_directInput->CreateDevice(GUID_SysKeyboard,
-                                          &m_keyboard,
-                                          NULL))) {
+                                           &m_keyboard,
+                                           NULL))) {
       std::string error = "Input_Controller CreateDevice Keyboard Failed!";
       throw Exceptions::run_error(error);
     }
 
-    // Set the data format.
-    // In this case since it is a keyboard we can use
+    // Set the data format since it is a keyboard we can use
     // the predefined data format.
     if (FAILED(m_keyboard->SetDataFormat(&c_dfDIKeyboard))) {
       std::string error = "Input_Controller SetDataFormat Failed!";
@@ -122,28 +134,32 @@ bool Input_Controller::InitDirectInput() {
     // Set the cooperative level of the keyboard
     // to not share with other programs.
     if (FAILED(m_keyboard->SetCooperativeLevel(m_game_settings->GetHWnd(),
-                                              DISCL_FOREGROUND | DISCL_EXCLUSIVE))) {
+                                               DISCL_FOREGROUND | DISCL_EXCLUSIVE))) {
       std::string error = "Input_Controller SetCooperativeLevel Failed!";
       throw Exceptions::run_error(error);
     }
 
     // Now acquire the keyboard.
     if (FAILED(m_keyboard->Acquire())) {
-      // std::string error = "Input_Controller Acquire Failed!";
-      // throw Exceptions::run_error(error);
+      // I only want to see this error when the game is in full screen
+      // otherwise it can reacquire.
+      if (m_game_settings->IsFullScreen()) {
+        std::string error = "Input_Controller Acquire Failed!";
+        throw Exceptions::run_error(error);
+      }
       return false;
     }
 
     // Initialize the direct input interface for the mouse.
     if (FAILED(m_directInput->CreateDevice(GUID_SysMouse,
-                                          &m_mouse,
-                                          NULL))) {
+                                           &m_mouse,
+                                           NULL))) {
       std::string error = "Input_Controller CreateDevice Mouse Failed!";
       throw Exceptions::run_error(error);
     }
 
     // Set the data format for the mouse using
-    // the pre-defined mouse data format.
+    // the predefined mouse data format.
     if (FAILED(m_mouse->SetDataFormat(&c_dfDIMouse))) {
       std::string error = "Input_Controller CreateDevice Mouse Failed!";
       throw Exceptions::run_error(error);
@@ -152,15 +168,19 @@ bool Input_Controller::InitDirectInput() {
     // Set the cooperative level of the mouse
     // to share with other programs.
     if (FAILED(m_mouse->SetCooperativeLevel(m_game_settings->GetHWnd(),
-                                           DISCL_FOREGROUND | DISCL_NONEXCLUSIVE))) {
+                                            DISCL_FOREGROUND | DISCL_NONEXCLUSIVE))) {
       std::string error = "Input_Controller SetCooperativeLevel Failed!";
       throw Exceptions::run_error(error);
     }
 
     // Acquire the mouse.
     if (FAILED(m_mouse->Acquire())) {
-      // std::string error = "Input_Controller Acquire Failed!";
-      // throw Exceptions::run_error(error);
+      // I only want to see this error when the game is in full screen
+      // otherwise it can reacquire.
+      if (m_game_settings->IsFullScreen()) {
+        std::string error = "Input_Controller Acquire Failed!";
+        throw Exceptions::run_error(error);
+      }
       return false;
     }
   }
@@ -173,12 +193,10 @@ bool Input_Controller::Run() {
   if (!m_has_been_initialised) {
     return false;
   } else {
-    // Read the current state of the keyboard.
     if (!ReadKeyboard()) {
       throw Exceptions::run_error("Input_Controller ReadKeyboard Failed!");
     }
 
-    // Read the current state of the mouse.
     if (!ReadMouse()) {
       throw Exceptions::run_error("Input_Controller ReadMouse Failed!");
     }
@@ -197,7 +215,7 @@ bool Input_Controller::ReadKeyboard() {
   result = m_keyboard->GetDeviceState(sizeof(m_keyboardState),
                                     (LPVOID)&m_keyboardState);
   if (FAILED(result)) {
-    // If the keyboard lost focus or was not acquired then try to get control back.
+    // If the keyboard lost focus try to get control back.
     if ((result == DIERR_INPUTLOST) || (result == DIERR_NOTACQUIRED)) {
       m_keyboard->Acquire();
     } else {
@@ -213,9 +231,10 @@ bool Input_Controller::ReadMouse() {
   HRESULT result;
 
   // Read the mouse device.
-  result = m_mouse->GetDeviceState(sizeof(DIMOUSESTATE), (LPVOID)&m_mouseState);
+  result = m_mouse->GetDeviceState(sizeof(DIMOUSESTATE),
+                                 (LPVOID)&m_mouseState);
   if (FAILED(result)) {
-    // If the mouse lost focus or was not acquired then try to get control back.
+    // If the mouse lost focus then try to get control back.
     if ((result == DIERR_INPUTLOST) || (result == DIERR_NOTACQUIRED)) {
       m_mouse->Acquire();
     }  else {
@@ -228,6 +247,7 @@ bool Input_Controller::ReadMouse() {
 
 //------------------------------------------------------------------------------
 void Input_Controller::ProcessInput() {
+  /* THIS STUFF DOESEN'T EXIST YET
   // Update the location of the mouse cursor based on the change of
   // the mouse location during the frame.
   m_mouseX += m_mouseState.lX;
@@ -239,7 +259,7 @@ void Input_Controller::ProcessInput() {
 
   if (m_mouseX > m_screenWidth)  { m_mouseX = m_screenWidth; }
   if (m_mouseY > m_screenHeight) { m_mouseY = m_screenHeight; }
-
+  */
   if (m_avatar_component != 0) {
     Avatar_Component::Avatar_State command;
 

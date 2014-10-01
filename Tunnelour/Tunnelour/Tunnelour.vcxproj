@@ -49,9 +49,10 @@
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -124,10 +125,10 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Geometry_Helper.cc" />
     <ClCompile Include="src\Get_Avatar_Mutator.cc" />
     <ClCompile Include="src\Get_Game_Metrics_Component_Mutator.cc" />
+    <ClCompile Include="src\Get_Game_Settings_Component_Mutator.cc" />
     <ClCompile Include="src\Init_Controller.cc" />
     <ClCompile Include="src\Input_Component.cc" />
     <ClCompile Include="src\Input_Controller.cc" />
-    <ClCompile Include="src\Input_Controller_Mutator.cc" />
     <ClCompile Include="src\Level_Component.cc" />
     <ClCompile Include="src\Level_Controller.cc" />
     <ClCompile Include="src\Level_Controller_Mutator.cc" />
@@ -195,10 +196,10 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Geometry_Helper.h" />
     <ClInclude Include="include\Get_Avatar_Mutator.h" />
     <ClInclude Include="include\Get_Game_Metrics_Component_Mutator.h" />
+    <ClInclude Include="include\Get_Game_Settings_Component_Mutator.h" />
     <ClInclude Include="include\Init_Controller.h" />
     <ClInclude Include="include\Input_Component.h" />
     <ClInclude Include="include\Input_Controller.h" />
-    <ClInclude Include="include\Input_Controller_Mutator.h" />
     <ClInclude Include="include\Level_Component.h" />
     <ClInclude Include="include\Level_Controller.h" />
     <ClInclude Include="include\Level_Controller_Mutator.h" />

@@ -26,9 +26,8 @@ namespace Tunnelour {
 class Game_Over_Screen_Controller_Mutator: public Component::Component_Mutator  {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
-//  Description : Game_Over_Screen_Controller_Mutator is a mutator run on the model
-//                which collects the game settings component and the 
-//                camera component.
+//  Description : Game_Over_Screen_Controller_Mutator is run on the model
+//                which collects the relevant components
 //-----------------------------------------------------------------------------
  public:
   //-------------------------------------------------------------------------
@@ -61,6 +60,9 @@ class Game_Over_Screen_Controller_Mutator: public Component::Component_Mutator  
   //-------------------------------------------------------------------------
   Level_Component *const GetLevel();
 
+  //-------------------------------------------------------------------------
+  // Description : Accesor for the Input Component
+  //-------------------------------------------------------------------------
   Input_Component *const GetInput();
 
   //-------------------------------------------------------------------------
@@ -69,7 +71,10 @@ class Game_Over_Screen_Controller_Mutator: public Component::Component_Mutator  
   bool WasSuccessful();
 
  private:
-  bool m_found_game_settings, m_found_camera, m_found_level, m_found_input;
+  bool m_found_game_settings;
+  bool m_found_camera;
+  bool m_found_level;
+  bool m_found_input;
   Game_Settings_Component *m_game_settings;
   Camera_Component *m_camera;
   Level_Component *m_level;

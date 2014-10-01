@@ -37,7 +37,8 @@ namespace Tunnelour {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
 //  Description : This controller is responsible for the generation
-//              : and movement of the camera_component.
+//              : and teardown of the middleground, background and foreground
+//              : tiles which make up the game.
 //-----------------------------------------------------------------------------
 class Level_Controller: public Controller {
  public:
@@ -64,39 +65,40 @@ class Level_Controller: public Controller {
  protected:
 
  private:
-  Avatar_Controller *m_avatar_controller;
-  Avatar_Component *m_avatar;
-  Camera_Component *m_camera;
-  Game_Settings_Component *m_game_settings;
-  Level_Component *m_level;
-
-  std::vector<Level_Component::Level_Metadata> m_levels;
-
-  //---------------------------------------------------------------------------
-  // Description : Creates a Bitmap Component using the given collision block
-  //--------------------------------------------------------------------------
   void LoadLevelMetadata();
   Level_Component::Level_Metadata LoadLevelMetadataIntoStruct(std::string metadata_path);
   void LoadLevelCSVIntoStruct(std::string metadata_path, Level_Component::Level_Metadata *out_struct);
   Avatar_Component::Avatar_Collision_Block GetNamedCollisionBlock(std::string id, std::list<Avatar_Component::Avatar_Collision_Block> avatar_collision_blocks);
   Level_Component::Level_Metadata GetNamedLevel(std::string level_name);
 
+  const int m_z_position;
+
+  Avatar_Component *m_avatar;
+
+  // Components gathered by the mutator
+  Camera_Component *m_camera;
+  Game_Settings_Component *m_game_settings;
+  Tunnelour::Splash_Screen_Component *m_splash_screen_component;
+  Tunnelour::Input_Component *m_input_component;
+
+  Level_Component *m_level;
+  std::vector<Level_Component::Level_Metadata> m_levels;
+
   Text_Component *m_level_name_heading;
   Text_Component *m_level_blurb;
   std::string m_font_path;
-  int m_z_position;
 
   Level_Component::Level_Metadata m_next_level;
   Level_Component::Level_Metadata m_current_level;
 
+  // These are components and controllers which are owned by this controller
   Tunnelour::Level_Tile_Controller *m_level_tile_controller;
-  Tunnelour::Splash_Screen_Component *m_splash_screen_component;
   Tunnelour::Level_Transition_Controller *m_level_transition_controller;
   Tunnelour::Screen_Wipeout_Controller *m_screen_wipeout_controller;
   Tunnelour::Game_Over_Screen_Controller *m_game_over_screen_controller;
   Tunnelour::Game_Metrics_Controller *m_game_metrics_controller;
   Tunnelour::Score_Display_Controller *m_score_display_controller;
-  Tunnelour::Input_Component *m_input_component;
+  Tunnelour::Avatar_Controller *m_avatar_controller;
 
   bool m_has_transition_been_initalised;
   bool m_has_level_been_destroyed;

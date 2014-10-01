@@ -14,6 +14,7 @@
 //
 
 #include "Screen_Wipeout_Controller.h"
+
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -23,13 +24,16 @@
 #include "String_Helper.h"
 #include "Bitmap_Helper.h"
 #include "Level_Transition_Controller_Mutator.h"
+#include "Tileset_Helper.h"
 
 namespace Tunnelour {
 
 //------------------------------------------------------------------------------
 // public:
 //------------------------------------------------------------------------------
-Screen_Wipeout_Controller::Screen_Wipeout_Controller() : Controller() {
+Screen_Wipeout_Controller::Screen_Wipeout_Controller() : Controller(),
+  m_z_bitmap_position(-4.0f),
+  m_z_text_position(-5.0f) {
   m_game_settings = 0;
   m_camera = 0;
   m_tileset_filename = "";
@@ -37,8 +41,6 @@ Screen_Wipeout_Controller::Screen_Wipeout_Controller() : Controller() {
   m_white_metadata_file_path = "";
   m_top_slash = 0;
   m_bottom_slash = 0;
-  m_z_bitmap_position = -4;
-  m_z_text_position = -5;
   m_animation_tick = false;
   m_background = 0;
 }
@@ -46,11 +48,14 @@ Screen_Wipeout_Controller::Screen_Wipeout_Controller() : Controller() {
 //------------------------------------------------------------------------------
 Screen_Wipeout_Controller::~Screen_Wipeout_Controller() {
   m_game_settings = 0;
-  m_camera->Ignore(this);
-  m_camera = 0;
+  if (m_camera != 0) {
+    m_camera->Ignore(this);
+    m_camera = 0;
+  }
   m_tileset_filename = "";
   m_black_metadata_file_path = "";
   m_white_metadata_file_path = "";
+
   if (m_top_slash != 0) {
     m_model->Remove(m_top_slash);
     m_top_slash = 0;
@@ -63,10 +68,13 @@ Screen_Wipeout_Controller::~Screen_Wipeout_Controller() {
     m_model->Remove(m_background);
     m_background = 0;
   }
+
+  m_animation_tick = false;
 }
 
 //------------------------------------------------------------------------------
 bool Screen_Wipeout_Controller::Init(Component_Composite * const model) {
+  bool result = true;
   Controller::Init(model);
   std::srand(static_cast<unsigned int>(std::time(0)));
 
@@ -77,26 +85,34 @@ bool Screen_Wipeout_Controller::Init(Component_Composite * const model) {
     m_camera = mutator.GetCamera();
     m_camera->Observe(this);
     LoadTilesetMetadata();
-    m_current_tileset = GetNamedTileset("Black");
-    m_current_tileset_subset = GetCurrentForegroundSubset();
+    m_current_tileset = Tileset_Helper::GetNamedTileset("Black", m_tilesets);
+    m_current_tileset_subset = Tileset_Helper::GetForegroundSubset(m_current_tileset);
     m_has_been_initialised = true;
     StartTimer();
     if (m_top_slash == 0) {
       // Create the Spash Black Tile
       m_top_slash = CreateTile(128);
-      m_top_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + (m_game_settings->GetResolution().y/1.5), m_z_bitmap_position);
-      m_top_slash->SetScale(D3DXVECTOR3((m_game_settings->GetResolution().x/128), ((m_game_settings->GetResolution().y/128)/4), 1.0f));
+      m_top_slash->SetPosition(m_camera->GetPosition().x,
+                               m_camera->GetPosition().y + (m_game_settings->GetResolution().y / 1.5f),
+                               m_z_bitmap_position);
+      m_top_slash->SetScale((m_game_settings->GetResolution().x / 128.0f),
+                           ((m_game_settings->GetResolution().y / 128.0f) / 4.0f),
+                             1.0f);
       m_model->Add(m_top_slash);
     }
     if (m_bottom_slash == 0) {
-      // Create the Spash Black Tile
+      // Create the Splash Black Tile
       m_bottom_slash = CreateTile(128);
-      m_bottom_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y - (m_game_settings->GetResolution().y/1.5), m_z_bitmap_position);
-      m_bottom_slash->SetScale(D3DXVECTOR3((m_game_settings->GetResolution().x/128), ((m_game_settings->GetResolution().y/128)/4), 1.0f));
+      m_bottom_slash->SetPosition(m_camera->GetPosition().x,
+                                  m_camera->GetPosition().y - (m_game_settings->GetResolution().y / 1.5f),
+                                  m_z_bitmap_position);
+      m_bottom_slash->SetScale((m_game_settings->GetResolution().x / 128.0f),
+                                ((m_game_settings->GetResolution().y / 128.0f) / 4.0f),
+                                1.0f);
       m_model->Add(m_bottom_slash);
     }
   } else {
-    return false;
+    result = false;
   }
   return true;
 }
@@ -109,8 +125,12 @@ bool Screen_Wipeout_Controller::Run() {
   if (m_top_slash != 0 && m_bottom_slash != 0) {
     IsItTimeToAnimateAFrame();
     if (m_animation_tick) {
-      m_top_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + (m_game_settings->GetResolution().y/1.5), m_z_bitmap_position);
-      m_bottom_slash->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y - (m_game_settings->GetResolution().y/1.5), m_z_bitmap_position);
+      m_top_slash->SetPosition(m_camera->GetPosition().x,
+                               m_camera->GetPosition().y + (m_game_settings->GetResolution().y / 1.5f),
+                               m_z_bitmap_position);
+      m_bottom_slash->SetPosition(m_camera->GetPosition().x,
+                                  m_camera->GetPosition().y - (m_game_settings->GetResolution().y / 1.5f),
+                                  m_z_bitmap_position);
 
       float bottom = m_top_slash->GetBottomRightPostion().y;
       float top = m_bottom_slash->GetTopLeftPostion().y;
@@ -120,22 +140,31 @@ bool Screen_Wipeout_Controller::Run() {
         m_model->Remove(m_bottom_slash);
         m_bottom_slash = 0;
         if (m_background == 0) {
-          // Create the Spash Black Tile
           m_background = CreateTile(128);
-          m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
-          m_background->SetScale(D3DXVECTOR3((m_game_settings->GetResolution().x/128), (m_game_settings->GetResolution().y/128), 1.0f));
+          m_background->SetPosition(m_camera->GetPosition().x,
+                                    m_camera->GetPosition().y,
+                                    m_z_bitmap_position);
+          m_background->SetScale((m_game_settings->GetResolution().x / 128.0f),
+                                  (m_game_settings->GetResolution().y / 128.0f),
+                                  1.0f);
           m_model->Add(m_background);
           m_is_finished = true;
         }
       } else {
-        m_top_slash->SetScale(D3DXVECTOR3(m_top_slash->GetScale()->x,m_top_slash->GetScale()->y + 0.2, 1.0f));
-        m_bottom_slash->SetScale(D3DXVECTOR3(m_bottom_slash->GetScale()->x,m_bottom_slash->GetScale()->y + 0.2, 1.0f));
+        m_top_slash->SetScale(m_top_slash->GetScale()->x,
+                              m_top_slash->GetScale()->y + 0.2f,
+                              1.0f);
+        m_bottom_slash->SetScale(m_bottom_slash->GetScale()->x,
+                                 m_bottom_slash->GetScale()->y + 0.2f,
+                                 1.0f);
       }
     }
   }
 
   if (m_background != 0) {
-    m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
+    m_background->SetPosition(m_camera->GetPosition().x,
+                              m_camera->GetPosition().y,
+                              m_z_bitmap_position);
   }
 
   return true;
@@ -162,42 +191,6 @@ void Screen_Wipeout_Controller::LoadTilesetMetadata() {
   m_black_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Black_Tileset_0_0.txt");
   Tileset_Helper::LoadTilesetMetadataIntoStruct(m_black_metadata_file_path, &debug_tileset_metadata);
   m_tilesets.push_back(debug_tileset_metadata);
-
-  Tileset_Helper::Tileset_Metadata dirt_tileset_metadata;
-  m_white_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"White_Tileset_0_0.txt");
-  Tileset_Helper::LoadTilesetMetadataIntoStruct(m_white_metadata_file_path, &dirt_tileset_metadata);
-  m_tilesets.push_back(dirt_tileset_metadata);
-
-  m_current_tileset = GetNamedTileset("White");
-  m_current_tileset_subset = GetCurrentForegroundSubset();
-}
-
-//---------------------------------------------------------------------------
-Tileset_Helper::Tileset_Metadata Screen_Wipeout_Controller::GetNamedTileset(std::string name) {
-  Tileset_Helper::Tileset_Metadata found_tileset_metadata;
-
-  std::vector<Tileset_Helper::Tileset_Metadata>::iterator tileset_metadata;
-  for (tileset_metadata = m_tilesets.begin(); tileset_metadata != m_tilesets.end(); tileset_metadata++) {
-    if (tileset_metadata->name.compare(name) == 0) {
-      found_tileset_metadata = (*tileset_metadata);
-    }
-  }
-
-  return found_tileset_metadata;
-}
-
-//---------------------------------------------------------------------------
-Tileset_Helper::Subset Screen_Wipeout_Controller::GetCurrentForegroundSubset() {
-  Tileset_Helper::Subset found_subset;
-
-  std::vector<Tileset_Helper::Subset>::iterator tileset;
-  for (tileset = m_current_tileset.tilesets.begin(); tileset != m_current_tileset.tilesets.end(); tileset++) {
-    if (tileset->type.compare("Foreground") == 0) {
-      found_subset = *tileset;
-    }
-  }
-
-  return found_subset;
 }
 
 //------------------------------------------------------------------------------
@@ -238,20 +231,6 @@ Tile_Bitmap* Screen_Wipeout_Controller::CreateTile(float base_tile_size) {
   return tile;
 }
 
-//---------------------------------------------------------------------------
-Tileset_Helper::Line Screen_Wipeout_Controller::GetCurrentSizedLine(float size) {
-  Tileset_Helper::Line middleground_line;
-  std::vector<Tileset_Helper::Line>::iterator line;
-  for (line = m_current_tileset_subset.lines.begin(); line != m_current_tileset_subset.lines.end(); line++) {
-    if (line->tile_size_x == size) {
-      if (line->tile_size_y == size) {
-        middleground_line = *line;
-      }
-    }
-  }
-  return middleground_line;
-}
-
 //------------------------------------------------------------------------------
 bool Screen_Wipeout_Controller::StartTimer() {
   // Check to see if this system supports high performance timers.
@@ -289,4 +268,4 @@ void Screen_Wipeout_Controller::IsItTimeToAnimateAFrame() {
   }
 }
 
-} // Tunnelour
+}  // namespace Tunnelour

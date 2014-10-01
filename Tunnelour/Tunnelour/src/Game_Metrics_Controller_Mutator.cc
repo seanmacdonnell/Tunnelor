@@ -23,9 +23,9 @@ namespace Tunnelour {
 Game_Metrics_Controller_Mutator::Game_Metrics_Controller_Mutator() {
   m_found_game_settings = false;
   m_found_avatar_component = false;
+  m_found_world_settings = false;
   m_game_settings = 0;
   m_avatar_controller = 0;
-  m_found_world_settings = false;
   m_world_settings = 0;
 }
 
@@ -33,8 +33,10 @@ Game_Metrics_Controller_Mutator::Game_Metrics_Controller_Mutator() {
 Game_Metrics_Controller_Mutator::~Game_Metrics_Controller_Mutator() {
   m_found_game_settings = false;
   m_found_avatar_component = false;
+  m_found_world_settings = false;
   m_game_settings = 0;
   m_avatar_controller = 0;
+  m_world_settings = 0;
 }
 
 //------------------------------------------------------------------------------

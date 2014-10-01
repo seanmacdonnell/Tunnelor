@@ -28,12 +28,11 @@
 #include "Avatar_Component.h"
 #include "Input_Component.h"
 
-
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
-//  Description : This controller adds all the components to the model
-//                which are require for an intialised state.
+//  Description : This controller monitors the keyboard and modifies the 
+//              : relevant components
 //-----------------------------------------------------------------------------
 class Input_Controller: public Controller {
  public:
@@ -83,16 +82,18 @@ class Input_Controller: public Controller {
   // Member Variables
   //---------------------------------------------------------------------------
   Game_Settings_Component *m_game_settings;
+  Input_Component *m_input_component;
   IDirectInput8 *m_directInput;
   IDirectInputDevice8 *m_keyboard;
   IDirectInputDevice8 *m_mouse;
   unsigned char m_keyboardState[256];
   DIMOUSESTATE m_mouseState;
-  int m_screenWidth, m_screenHeight;
-  int m_mouseX, m_mouseY;
+  int m_screenWidth;
+  int m_screenHeight;
+  int m_mouseX;
+  int m_mouseY;
   Avatar_Component *m_avatar_component;
   bool m_dik_grave_pressed;  // Tilda
-  Input_Component *m_input_component;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_INPUT_CONTROLLER_H_
