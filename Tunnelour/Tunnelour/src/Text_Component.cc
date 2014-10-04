@@ -184,7 +184,6 @@ void Text_Component::Load_Font_Struct() {
   // Example line: char id=32   x=88    y=25    width=1     height=1     xoffset=0     yoffset=0     xadvance=7     page=0  chnl=15
   for (int line_count = 0; line_count <= number_of_chars; line_count++) {
     fgets(line, 225, pFile);
-    int number_of_chars = 0;
     if (line != NULL) {
       token = strtok_s(line, " ", &next_token);
       if (strcmp(token, "char") == 0) {
@@ -354,12 +353,12 @@ void Text_Component::Create_String_Frame() {
       m_frame->vertices[vertex_index].position.x += static_cast<float>(offset);
 
       if (i != 0) {
-        m_frame->vertices[vertex_index].position.y -= (m_font.raw_char_frames[m_text.text.c_str()[0]].height - m_font.raw_char_frames[m_text.text.c_str()[i]].height);
+        m_frame->vertices[vertex_index].position.y -= static_cast<float>((m_font.raw_char_frames[m_text.text.c_str()[0]].height - m_font.raw_char_frames[m_text.text.c_str()[i]].height));
       }
 
       if (character_index == 103 || character_index == 112 || character_index == 113 || character_index == 121) {
         if (m_text.text.c_str()[0] != 97) {
-          m_frame->vertices[vertex_index].position.y += (m_font.raw_char_frames[97].height - m_font.raw_char_frames[m_text.text.c_str()[i]].height);
+          m_frame->vertices[vertex_index].position.y += static_cast<float>(m_font.raw_char_frames[97].height - m_font.raw_char_frames[m_text.text.c_str()[i]].height);
         }
       }
       vertex_index++;

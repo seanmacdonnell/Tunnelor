@@ -13,8 +13,8 @@
 //  limitations under the License.
 //
 
-#ifndef TUNNELOUR_INTRODUCTION_CONTROLLER_H_
-#define TUNNELOUR_INTRODUCTION_CONTROLLER_H_
+#ifndef TUNNELOUR_SPLASH_SCREEN_CONTROLLER_H_
+#define TUNNELOUR_SPLASH_SCREEN_CONTROLLER_H_
 
 #include <vector>
 #include <string>
@@ -60,41 +60,14 @@ class Splash_Screen_Controller: public Controller,
   //---------------------------------------------------------------------------
   virtual bool Run();
 
+  //---------------------------------------------------------------------------
+  // Description : Handles any movement by the camera
+  //---------------------------------------------------------------------------
   virtual void HandleEvent(Tunnelour::Component * const component);
 
  protected:
 
  private:
-  std::vector<Tileset_Helper::Tileset_Metadata> m_tilesets;
-  Tileset_Helper::Tileset_Metadata m_current_tileset;
-  Tileset_Helper::Subset m_current_tileset_subset;
-  void LoadTilesetMetadata();
-  Tileset_Helper::Tileset_Metadata GetNamedTileset(std::string name);
-  Tileset_Helper::Subset GetCurrentForegroundSubset();
-  Tile_Bitmap* CreateTile(float base_tile_size);
-  Tileset_Helper::Line GetCurrentSizedLine(float size);
-
-  //---------------------------------------------------------------------------
-  // Description : Switches the tileset from Debug to Dirt and vise versa
-  //---------------------------------------------------------------------------
-  Game_Settings_Component* m_game_settings;
-  Camera_Component *m_camera;
-  Level_Component *m_level;
-  std::string m_tileset_filename;
-  bool m_is_debug_mode;
-  std::string m_black_metadata_file_path;
-  std::string m_white_metadata_file_path;
-
-  Tile_Bitmap* m_background;
-  std::string m_heading_font_path;
-  std::string m_text_font_path;
-  int m_z_bitmap_position;
-  int m_z_text_position;
-
-  Text_Component *m_game_name_heading;
-  Text_Component *m_author;
-  Text_Component *m_version;
-
   //---------------------------------------------------------------------------
   // Description : Initialises the timer used for the animation ticks
   //---------------------------------------------------------------------------
@@ -104,7 +77,49 @@ class Splash_Screen_Controller: public Controller,
   // Description : Updates and determines if the animation needs to update
   //---------------------------------------------------------------------------
   void IsItTimeToAnimateAFrame();
+
+  //---------------------------------------------------------------------------
+  // Description : Is it time to fade?
+  //---------------------------------------------------------------------------
   void UpdateFadeoutTimer();
+
+  //---------------------------------------------------------------------------
+  // Description : Is it time to fade?
+  //---------------------------------------------------------------------------
+  void LoadTilesetMetadata();
+
+  //---------------------------------------------------------------------------
+  // Description : Creates a new dummy tile with the specified size 
+  //---------------------------------------------------------------------------
+  Tile_Bitmap* CreateTile(float base_tile_size);
+
+  //---------------------------------------------------------------------------
+  // Description : Member Variables
+  //---------------------------------------------------------------------------
+  const float m_z_bitmap_position;
+  const float m_z_text_position;
+
+  Tileset_Helper::Subset m_current_tileset_subset;
+  std::vector<Tileset_Helper::Tileset_Metadata> m_tilesets;
+  Tileset_Helper::Tileset_Metadata m_current_tileset;
+
+  Game_Settings_Component* m_game_settings;
+  Camera_Component *m_camera;
+  Level_Component *m_level;
+  Input_Component *m_input;
+
+  std::string m_tileset_filename;
+  bool m_is_debug_mode;
+  std::string m_black_metadata_file_path;
+  std::string m_white_metadata_file_path;
+
+  Tile_Bitmap* m_background;
+  std::string m_heading_font_path;
+  std::string m_text_font_path;
+
+  Text_Component *m_game_name_heading;
+  Text_Component *m_author;
+  Text_Component *m_version;
 
   INT64 m_frequency;
   float m_ticksPerMs;
@@ -118,13 +133,8 @@ class Splash_Screen_Controller: public Controller,
   INT64 m_fadeout_startTime;
 
   INT64 m_fadeout_frequency;
-  
-  bool m_fadeout;
 
   Splash_Screen_Component *m_splash_screen_component;
-  Input_Component *m_input;
-  bool m_has_space_been_pressed;
-  float m_loading_transparency;
 };
 }  // namespace Tunnelour
-#endif  // TUNNELOUR_INTRODUCTION_CONTROLLER_H_
+#endif  // TUNNELOUR_SPLASH_SCREEN_CONTROLLER_H_

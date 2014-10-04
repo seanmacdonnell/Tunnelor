@@ -145,7 +145,7 @@ class Avatar_Controller: public Controller,
 
   float m_y_fallen;
 
-  int m_distance_traveled;
+  float m_distance_traveled;
 
   Bitmap_Component *m_currently_grabbed_tile;
   Avatar_Helper::Tile_Collision m_adjacent_wall;

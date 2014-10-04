@@ -218,9 +218,9 @@ std::vector<Tile_Bitmap*> Level_Tile_Controller::GenerateTunnelFromMetadata(Leve
   for (line = level_metadata.level.begin(); line != level_metadata.level.end(); line++) {
     std::vector<Level_Component::Tile_Metadata>::iterator tile;
     std::vector<Tile_Bitmap*> tile_line;
-    unsigned int current_block_x = 0;
-    unsigned int current_block_y = 0;
-    unsigned int offset_x = 0;
+    float current_block_x = 0;
+    float current_block_y = 0;
+    float offset_x = 0.0f;
     for (tile = (*line).begin(); tile != (*line).end(); tile++) {
       Tile_Bitmap* new_tile = 0;
       float position_x = 0;
@@ -1055,7 +1055,7 @@ void Level_Tile_Controller::SwitchTileset() {
     ResetBackgroundTileTexture((*tile));
   }
 }
-
+/* DEPRECIATED
 //---------------------------------------------------------------------------
 void Level_Tile_Controller::TileUp(float camera_top, float middleground_top) {
   std::vector<Tile_Bitmap*> new_top_tiles;
@@ -1086,10 +1086,8 @@ void Level_Tile_Controller::TileUp(float camera_top, float middleground_top) {
     if (tile->IsLeftEdge()) {
       m_left_edge_tiles.push_back(tile);
     }
-    //if (m_is_debug_mode) {
-      ResetMiddlegroundTileTexture((*edge_tile));
-      ResetMiddlegroundTileTexture(tile);
-    //}
+    ResetMiddlegroundTileTexture((*edge_tile));
+    ResetMiddlegroundTileTexture(tile);
     m_created_tiles.push_back(tile);
   }
   m_top_edge_tiles.clear();
@@ -1219,5 +1217,5 @@ void Level_Tile_Controller::TileLeft(float camera_left, float middleground_left)
 
   m_left_edge_tiles = new_left_edge_tiles;
 }
-
+*/
 } // Tunnelour

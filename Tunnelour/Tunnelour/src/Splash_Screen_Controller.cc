@@ -22,16 +22,21 @@
 #include "Exceptions.h"
 #include "String_Helper.h"
 #include "Bitmap_Helper.h"
+#include "Colour_Helper.h"
+#include "Tileset_Helper.h"
 
 namespace Tunnelour {
 
 //------------------------------------------------------------------------------
 // public:
 //------------------------------------------------------------------------------
-Splash_Screen_Controller::Splash_Screen_Controller() : Controller() {
+Splash_Screen_Controller::Splash_Screen_Controller() : Controller(),
+  m_z_bitmap_position(-4),
+  m_z_text_position(-5) {
   m_game_settings = 0;
   m_camera = 0;
   m_level = 0;
+  m_input = 0;
   m_tileset_filename = "";
   m_is_debug_mode = false;
   m_black_metadata_file_path = "";
@@ -40,13 +45,8 @@ Splash_Screen_Controller::Splash_Screen_Controller() : Controller() {
   m_game_name_heading = 0;
   m_author = 0;
   m_version = 0;
-  m_z_bitmap_position = -4;
-  m_z_text_position = -5;
   m_animation_tick = false;
   m_splash_screen_component = 0;
-  m_input = 0;
-  m_has_space_been_pressed = false;
-  m_loading_transparency = 0.0;
 }
 
 //------------------------------------------------------------------------------
@@ -55,6 +55,7 @@ Splash_Screen_Controller::~Splash_Screen_Controller() {
   m_camera->Ignore(this);
   m_camera = 0;
   m_level = 0;
+  m_input = 0;
   m_tileset_filename = "";
   m_is_debug_mode = false;
   m_black_metadata_file_path = "";
@@ -63,7 +64,6 @@ Splash_Screen_Controller::~Splash_Screen_Controller() {
   if (m_author != 0) { m_model->Remove(m_author); }
   if (m_version != 0) { m_model->Remove(m_version); }
   if (m_background != 0) { m_model->Remove(m_background); }
-  m_has_space_been_pressed = false;
 }
 
 //------------------------------------------------------------------------------
@@ -80,13 +80,10 @@ bool Splash_Screen_Controller::Init(Component_Composite * const model) {
     m_level = mutator.GetLevel();
     m_input = mutator.GetInput();
     LoadTilesetMetadata();
-    m_current_tileset = GetNamedTileset("Black");
-    m_current_tileset_subset = GetCurrentForegroundSubset();
+    m_current_tileset = Tileset_Helper::GetNamedTileset("Black", m_tilesets);
+    m_current_tileset_subset = Tileset_Helper::GetForegroundSubset(m_current_tileset);
     m_has_been_initialised = true;
-    //m_heading_font_path = "resource\\tilesets\\DestroyEarthRoughBB.fnt";
-    //m_heading_font_path = "resource\\tilesets\\tnt_x_plosion.fnt";
     m_heading_font_path = "resource\\tilesets\\victor_320.fnt";
-    //m_text_font_path = "resource\\tilesets\\CC-Red-Alert-LAN.fnt";
     m_text_font_path = "resource\\tilesets\\victor_32.fnt";
     StartTimer();
     if (m_splash_screen_component == 0) {
@@ -95,21 +92,20 @@ bool Splash_Screen_Controller::Init(Component_Composite * const model) {
       m_model->Add(m_splash_screen_component);
     }
     if (m_background == 0) {
-      // Create the Black Tile
       m_background = CreateTile(128);
-      m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
-      m_background->SetScale(D3DXVECTOR3((m_game_settings->GetResolution().x/128), (m_game_settings->GetResolution().y/128), 1.0f));
+      m_background->SetPosition(m_camera->GetPosition().x,
+                                m_camera->GetPosition().y,
+                                m_z_bitmap_position);
+      m_background->SetScale(m_game_settings->GetResolution().x / 128.0f,
+                             m_game_settings->GetResolution().y / 128.0f,
+                             1.0f);
       m_model->Add(m_background);
     }
     if (m_game_name_heading == 0) {
       m_game_name_heading = new Text_Component();
       m_game_name_heading->GetText()->font_csv_file = m_heading_font_path;
       m_game_name_heading->GetText()->text = "TUNNELOR";
-      //m_game_name_heading->GetFont()->font_color = D3DXCOLOR(0.22745098039215686,0.3333333333333333,0.5490196078431373, 1.0f);
-      //m_game_name_heading->GetFont()->font_color = D3DXCOLOR(0.3333333333333333, 0.611764705882353, 0.788235294117647, 1.0f);
-      m_game_name_heading->GetFont()->font_color = D3DXCOLOR(0.24705882352941178f, 0.4549019607843137f, 0.7098039215686275f, 1.0f);
-      //m_game_name_heading->GetFont()->font_color = D3DXCOLOR(0.06274509803921569, 0.054901960784313725, 0.17254901960784313, 1.0f);
-      //m_game_name_heading->GetFont()->font_color = D3DXCOLOR(0.1803921568627451, 0.23921568627450981, 0.3764705882352941, 1.0f);
+      m_game_name_heading->GetFont()->font_color = Colours::Text_Blue;
       m_game_name_heading->GetTexture()->transparency = 1.0f;
       m_game_name_heading->SetPosition(0, 0, m_z_text_position);
       m_game_name_heading->GetFrame()->index_buffer = 0;
@@ -122,9 +118,7 @@ bool Splash_Screen_Controller::Init(Component_Composite * const model) {
       m_version = new Text_Component();
       m_version->GetText()->font_csv_file = m_text_font_path;
       m_version->GetText()->text = "ALPHA";
-      //m_version->GetFont()->font_color = D3DXCOLOR(0.3333333333333333, 0.611764705882353, 0.788235294117647, 1.0f);
-      //m_version->GetFont()->font_color = D3DXCOLOR(0.24705882352941178f, 0.4549019607843137f, 0.7098039215686275f, 1.0f);
-      m_version->GetFont()->font_color = D3DXCOLOR(0.7529411764705882, 0.0, 0.0, 1.0f);
+      m_version->GetFont()->font_color = Colours::Text_Red;
       m_version->GetTexture()->transparency = 1.0f;
       m_version->SetPosition(0, 0, m_z_text_position);
       m_version->GetFrame()->index_buffer = 0;
@@ -137,9 +131,7 @@ bool Splash_Screen_Controller::Init(Component_Composite * const model) {
       m_author = new Text_Component();
       m_author->GetText()->font_csv_file = m_text_font_path;
       m_author->GetText()->text = "SEAN.MACDONNELL@GMAIL.COM";
-      m_author->GetFont()->font_color = D3DXCOLOR(0.3333333333333333, 0.611764705882353, 0.788235294117647, 1.0f);
-      //m_author->GetFont()->font_color = D3DXCOLOR(0.24705882352941178f, 0.4549019607843137f, 0.7098039215686275f, 1.0f);
-      //m_author->GetFont()->font_color = D3DXCOLOR(0.7529411764705882, 0.0, 0.0, 1.0f);
+      m_author->GetFont()->font_color = Colours::Text_Light_Blue;
       m_author->GetTexture()->transparency = 1.0f;
       m_author->SetPosition(0, 0, m_z_text_position);
       m_author->GetFrame()->index_buffer = 0;
@@ -161,25 +153,28 @@ bool Splash_Screen_Controller::Run() {
   if (!m_has_been_initialised) { return false; }
 
   if (m_background != 0) {
-    m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
+    m_background->SetPosition(m_camera->GetPosition().x,
+                              m_camera->GetPosition().y,
+                              m_z_bitmap_position);
   }
 
   if (m_game_name_heading != 0) {
-    m_game_name_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_text_position);
+    m_game_name_heading->SetPosition(m_camera->GetPosition().x,
+                                     m_camera->GetPosition().y,
+                                     m_z_text_position);
   }
 
   if (m_game_name_heading != 0 && m_version != 0) {
-    float position_y = m_game_name_heading->GetPosition()->y - (m_game_name_heading->GetSize().y / 2);
-    position_y -= (m_version->GetSize().y /2);
-    float position_x = m_camera->GetPosition().x + 480;
+    float position_y = m_game_name_heading->GetPosition()->y - (m_game_name_heading->GetSize().y / 2.0f);
+    position_y -= (m_version->GetSize().y / 2.0f);
+    float position_x = m_camera->GetPosition().x + 480.0f;
     m_version->SetPosition(position_x, position_y, m_z_text_position);
   }
 
   if (m_version != 0 && m_author != 0) {
-    float position_y = m_version->GetPosition()->y - (m_version->GetSize().y / 2);
-    position_y -= (m_author->GetSize().y /2);
-    position_y -= 0;
-    float position_x = m_camera->GetPosition().x + 340;
+    float position_y = m_version->GetPosition()->y - (m_version->GetSize().y / 2.0f);
+    position_y -= (m_author->GetSize().y / 2.0f);
+    float position_x = m_camera->GetPosition().x + 340.0f;
     m_author->SetPosition(position_x, position_y, m_z_text_position);
   }
 
@@ -194,10 +189,10 @@ bool Splash_Screen_Controller::Run() {
   }
 
   if (m_splash_screen_component->IsFading()) {
-    m_background->GetTexture()->transparency = m_background->GetTexture()->transparency - 0.05f;
-    m_game_name_heading->GetTexture()->transparency = m_game_name_heading->GetTexture()->transparency - 0.05f;
-    m_author->GetTexture()->transparency = m_author->GetTexture()->transparency - 0.05f;
-    m_version->GetTexture()->transparency = m_version->GetTexture()->transparency - 0.05f;
+    m_background->GetTexture()->transparency -= 0.005f;
+    m_game_name_heading->GetTexture()->transparency -= 0.005f;
+    m_author->GetTexture()->transparency -= 0.005f;
+    m_version->GetTexture()->transparency -= 0.005f;
 
     if (m_background->GetTexture()->transparency < 0.0) {
       m_background->GetTexture()->transparency = 0.0f;
@@ -205,20 +200,20 @@ bool Splash_Screen_Controller::Run() {
       m_author->GetTexture()->transparency = 0.0f;
       m_version->GetTexture()->transparency = 0.0f;
 
-      if (m_game_name_heading != 0) { 
+      if (m_game_name_heading != 0) {
         m_model->Remove(m_game_name_heading);
         m_game_name_heading = 0;
       }
       if (m_author != 0) {
-        m_model->Remove(m_author); 
+        m_model->Remove(m_author);
         m_author = 0;
       }
       if (m_version != 0) {
-        m_model->Remove(m_version); 
+        m_model->Remove(m_version);
         m_version = 0;
       }
       if (m_background != 0) {
-        m_model->Remove(m_background); 
+        m_model->Remove(m_background);
         m_background = 0;
       }
       m_splash_screen_component->SetHasFaded(true);
@@ -233,25 +228,28 @@ bool Splash_Screen_Controller::Run() {
 void Splash_Screen_Controller::HandleEvent(Tunnelour::Component * const component) {
   if (component->GetType().compare("Camera_Component") == 0) {
     if (m_background != 0) {
-      m_background->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_bitmap_position);
+      m_background->SetPosition(m_camera->GetPosition().x,
+                                m_camera->GetPosition().y,
+                                m_z_bitmap_position);
     }
 
     if (m_game_name_heading != 0) {
-      m_game_name_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y, m_z_text_position);
+      m_game_name_heading->SetPosition(m_camera->GetPosition().x,
+                                       m_camera->GetPosition().y,
+                                       m_z_text_position);
     }
 
     if (m_game_name_heading != 0 && m_version != 0) {
-      float position_y = m_game_name_heading->GetPosition()->y - (m_game_name_heading->GetSize().y / 2);
-      position_y -= (m_version->GetSize().y /2);
-      float position_x = m_camera->GetPosition().x + 480;
+      float position_y = m_game_name_heading->GetPosition()->y - (m_game_name_heading->GetSize().y / 2.0f);
+      position_y -= (m_version->GetSize().y / 2.0f);
+      float position_x = m_camera->GetPosition().x + 480.0f;
       m_version->SetPosition(position_x, position_y, m_z_text_position);
     }
 
     if (m_version != 0 && m_author != 0) {
-      float position_y = m_version->GetPosition()->y - (m_version->GetSize().y / 2);
-      position_y -= (m_author->GetSize().y /2);
-      position_y -= 0;
-      float position_x = m_camera->GetPosition().x + 340;
+      float position_y = m_version->GetPosition()->y - (m_version->GetSize().y / 2.0f);
+      position_y -= (m_author->GetSize().y / 2.0f);
+      float position_x = m_camera->GetPosition().x + 340.0f;
       m_author->SetPosition(position_x, position_y, m_z_text_position);
     }
   }
@@ -271,42 +269,6 @@ void Splash_Screen_Controller::LoadTilesetMetadata() {
   m_black_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"Black_Tileset_0_0.txt");
   Tileset_Helper::LoadTilesetMetadataIntoStruct(m_black_metadata_file_path, &debug_tileset_metadata);
   m_tilesets.push_back(debug_tileset_metadata);
-
-  Tileset_Helper::Tileset_Metadata dirt_tileset_metadata;
-  m_white_metadata_file_path = String_Helper::WStringToString(m_game_settings->GetTilesetPath() + L"White_Tileset_0_0.txt");
-  Tileset_Helper::LoadTilesetMetadataIntoStruct(m_white_metadata_file_path, &dirt_tileset_metadata);
-  m_tilesets.push_back(dirt_tileset_metadata);
-
-  m_current_tileset = GetNamedTileset("White");
-  m_current_tileset_subset = GetCurrentForegroundSubset();
-}
-
-//---------------------------------------------------------------------------
-Tileset_Helper::Tileset_Metadata Splash_Screen_Controller::GetNamedTileset(std::string name) {
-  Tileset_Helper::Tileset_Metadata found_tileset_metadata;
-
-  std::vector<Tileset_Helper::Tileset_Metadata>::iterator tileset_metadata;
-  for (tileset_metadata = m_tilesets.begin(); tileset_metadata != m_tilesets.end(); tileset_metadata++) {
-    if (tileset_metadata->name.compare(name) == 0) {
-      found_tileset_metadata = (*tileset_metadata);
-    }
-  }
-
-  return found_tileset_metadata;
-}
-
-//---------------------------------------------------------------------------
-Tileset_Helper::Subset Splash_Screen_Controller::GetCurrentForegroundSubset() {
-  Tileset_Helper::Subset found_subset;
-
-  std::vector<Tileset_Helper::Subset>::iterator tileset;
-  for (tileset = m_current_tileset.tilesets.begin(); tileset != m_current_tileset.tilesets.end(); tileset++) {
-    if (tileset->type.compare("Foreground") == 0) {
-      found_subset = *tileset;
-    }
-  }
-
-  return found_subset;
 }
 
 //------------------------------------------------------------------------------
@@ -345,20 +307,6 @@ Tile_Bitmap* Splash_Screen_Controller::CreateTile(float base_tile_size) {
   tile->SetSize(D3DXVECTOR2(base_tile_size, base_tile_size));
 
   return tile;
-}
-
-//---------------------------------------------------------------------------
-Tileset_Helper::Line Splash_Screen_Controller::GetCurrentSizedLine(float size) {
-  Tileset_Helper::Line middleground_line;
-  std::vector<Tileset_Helper::Line>::iterator line;
-  for (line = m_current_tileset_subset.lines.begin(); line != m_current_tileset_subset.lines.end(); line++) {
-    if (line->tile_size_x == size) {
-      if (line->tile_size_y == size) {
-        middleground_line = *line;
-      }
-    }
-  }
-  return middleground_line;
 }
 
 //------------------------------------------------------------------------------
@@ -417,4 +365,4 @@ void Splash_Screen_Controller::UpdateFadeoutTimer() {
   }
 }
 
-} // Tunnelour
+} // namespace Tunnelour

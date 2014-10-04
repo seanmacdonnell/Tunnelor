@@ -105,8 +105,8 @@ class Level_Transition_Controller: public Controller,
   Tile_Bitmap* m_background;
   std::string m_heading_font_path;
   std::string m_text_font_path;
-  int m_z_bitmap_position;
-  int m_z_text_position;
+  float m_z_bitmap_position;
+  float m_z_text_position;
 
   Text_Component *m_level_complete_heading;
   std::string m_level_complete_heading_text;

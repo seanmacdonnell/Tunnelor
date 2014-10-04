@@ -81,7 +81,10 @@ Input_Component *const Score_Display_Controller_Mutator::GetInput() {
 
 //------------------------------------------------------------------------------
 bool Score_Display_Controller_Mutator::WasSuccessful() {
-  return m_found_camera && m_found_game_settings && m_found_game_metrics && m_found_input;
+  return (m_found_camera &&
+          m_found_game_settings &&
+          m_found_game_metrics &&
+          m_found_input);
 }
 
 }  // namespace Tunnelour

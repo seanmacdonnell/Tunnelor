@@ -22,6 +22,7 @@
 #include "Exceptions.h"
 #include "String_Helper.h"
 #include "Bitmap_Helper.h"
+#include "Colour_Helper.h"
 
 namespace Tunnelour {
 
@@ -134,10 +135,7 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
     m_current_tileset = GetNamedTileset("Black");
     m_current_tileset_subset = GetCurrentForegroundSubset();
     m_has_been_initialised = true;
-    //m_heading_font_path = "resource\\tilesets\\tnt_x_plosion_2.fnt";
     m_heading_font_path = "resource\\tilesets\\victor_192.fnt";
-    //m_heading_font_path = "resource\\tilesets\\CC-Red-Alert-LAN.fnt";
-    //m_text_font_path = "resource\\tilesets\\CC-Red-Alert-LAN.fnt";
     m_text_font_path = "resource\\tilesets\\victor_32.fnt";
     StartTimer();
     if (m_level_transition_component == 0) {
@@ -158,7 +156,7 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
       m_level_complete_heading->GetText()->text = m_level_complete_heading_text;
       m_level_complete_heading->GetTexture()->transparency = 1.0f;
       m_level_complete_heading->SetPosition(m_camera->GetPosition().x, m_camera->GetPosition().y + m_level_complete_heading_y_offset, m_z_text_position);
-      m_level_complete_heading->GetFont()->font_color = D3DXCOLOR(0.24705882352941178f, 0.4549019607843137f, 0.7098039215686275f, 1.0f);
+      m_level_complete_heading->GetFont()->font_color = Colours::Text_Blue;
       m_level_complete_heading->GetFrame()->index_buffer = 0;
       m_level_complete_heading->GetTexture()->texture = 0;
       m_level_complete_heading->GetFrame()->vertex_buffer = 0;
@@ -173,7 +171,7 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
       m_next_level_heading->GetFrame()->index_buffer = 0;
       m_next_level_heading->GetTexture()->texture = 0;
       m_next_level_heading->GetFrame()->vertex_buffer = 0;
-      m_next_level_heading->GetFont()->font_color = D3DXCOLOR(0.3333333333333333, 0.611764705882353, 0.788235294117647, 1.0f);
+      m_next_level_heading->GetFont()->font_color = Colours::Text_Light_Blue; 
       m_model->Add(m_next_level_heading);
     }
     if (m_next_level_name == 0) {
@@ -185,7 +183,7 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
       m_next_level_name->GetFrame()->index_buffer = 0;
       m_next_level_name->GetTexture()->texture = 0;
       m_next_level_name->GetFrame()->vertex_buffer = 0;
-      m_next_level_name->GetFont()->font_color = D3DXCOLOR(0.3333333333333333, 0.611764705882353, 0.788235294117647, 1.0f);
+      m_next_level_name->GetFont()->font_color = Colours::Text_Light_Blue; 
       m_model->Add(m_next_level_name);
     }
     if (m_next_level_blurb == 0) {
@@ -197,7 +195,7 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
       m_next_level_blurb->GetFrame()->index_buffer = 0;
       m_next_level_blurb->GetTexture()->texture = 0;
       m_next_level_blurb->GetFrame()->vertex_buffer = 0;
-      m_next_level_blurb->GetFont()->font_color = D3DXCOLOR(0.3333333333333333, 0.611764705882353, 0.788235294117647, 1.0f);
+      m_next_level_blurb->GetFont()->font_color = Colours::Text_Light_Blue; 
       m_model->Add(m_next_level_blurb);
     }
     if (m_looking_key == 0) {
@@ -210,7 +208,7 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
       m_looking_key->GetFrame()->index_buffer = 0;
       m_looking_key->GetTexture()->texture = 0;
       m_looking_key->GetFrame()->vertex_buffer = 0;
-      m_looking_key->GetFont()->font_color = D3DXCOLOR(0.3333333333333333, 0.611764705882353, 0.788235294117647, 1.0f);
+      m_looking_key->GetFont()->font_color = Colours::Text_Light_Blue; 
       m_model->Add(m_looking_key);
     }
     if (m_loading == 0) {
@@ -222,7 +220,7 @@ bool Level_Transition_Controller::Init(Component_Composite * const model) {
       m_loading->GetFrame()->index_buffer = 0;
       m_loading->GetTexture()->texture = 0;
       m_loading->GetFrame()->vertex_buffer = 0;
-      m_loading->GetFont()->font_color = D3DXCOLOR(0.3333333333333333, 0.611764705882353, 0.788235294117647, 1.0f);
+      m_loading->GetFont()->font_color = Colours::Text_Light_Blue; 
       m_model->Add(m_loading);
       SetIsLoading(true);
     } 

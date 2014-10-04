@@ -211,7 +211,6 @@ bool Level_Controller::Run() {
           m_avatar_controller->HideAvatar();
           m_game_over_screen_controller = new Game_Over_Screen_Controller();
           m_game_over_screen_controller->Init(m_model);
-          m_game_over_screen_controller->Run();
         }
         delete m_score_display_controller;
         m_score_display_controller = 0;

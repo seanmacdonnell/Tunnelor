@@ -35,10 +35,10 @@ namespace Tunnelour {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
 //  Description : This controller is responsible for the generation of the
-//                introduction to Tunnelor
+//                screen which displays the score to the user
 //-----------------------------------------------------------------------------
 class Score_Display_Controller: public Controller,
-                                   public Component::Component_Observer {
+                                public Component::Component_Observer {
  public:
   //---------------------------------------------------------------------------
   // Description : Constructor
@@ -55,43 +55,74 @@ class Score_Display_Controller: public Controller,
   //---------------------------------------------------------------------------
   virtual bool Init(Component_Composite * const model);
 
-  //---------------------------------------------------------------------------
-  // Description : Controller Runner
+  //--------------------------------------------------------------------------
+  // Description : Runs this controller
   //---------------------------------------------------------------------------
   virtual bool Run();
 
+  //---------------------------------------------------------------------------
+  // Description : Handles whether the camera has moved since run
+  //---------------------------------------------------------------------------
   bool IsFading();
 
+  //---------------------------------------------------------------------------
+  // Description : Handles whether the camera has moved since run
+  //---------------------------------------------------------------------------
   virtual void HandleEvent(Tunnelour::Component * const component);
 
  protected:
 
  private:
-  std::vector<Tileset_Helper::Tileset_Metadata> m_tilesets;
-  Tileset_Helper::Tileset_Metadata m_current_tileset;
-  Tileset_Helper::Subset m_current_tileset_subset;
-  void LoadTilesetMetadata();
-  Tileset_Helper::Tileset_Metadata GetNamedTileset(std::string name);
-  Tileset_Helper::Subset GetCurrentForegroundSubset();
-  Tile_Bitmap* CreateTile(float base_tile_size);
-  Tileset_Helper::Line GetCurrentSizedLine(float size);
+  //---------------------------------------------------------------------------
+  // Private Functions
+  //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
-  // Description : Switches the tileset from Debug to Dirt and vise versa
+  // Description : Loads the specific tileset metadata into the object
+  //---------------------------------------------------------------------------
+  void LoadTilesetMetadata();
+
+  //---------------------------------------------------------------------------
+  // Description : Handles whether the camera has moved since run
+  //---------------------------------------------------------------------------
+  Tile_Bitmap* CreateTile(float base_tile_size);
+
+  //---------------------------------------------------------------------------
+  // Description : Initialises the timer used for the animation ticks
+  //---------------------------------------------------------------------------
+  bool StartTimer();
+
+  //---------------------------------------------------------------------------
+  // Description : Updates and determines if the animation needs to update
+  //---------------------------------------------------------------------------
+  void IsItTimeToAnimateAFrame();
+
+  //---------------------------------------------------------------------------
+  // Constant Variables
+  //---------------------------------------------------------------------------
+  const float m_z_bitmap_position;
+  const float m_z_text_position;
+
+  //---------------------------------------------------------------------------
+  // Private Variables
   //---------------------------------------------------------------------------
   Game_Settings_Component* m_game_settings;
   Camera_Component *m_camera;
   Level_Component *m_level;
+  Input_Component *m_input;
+  Game_Metrics_Component *m_game_metrics;
+
   std::string m_tileset_filename;
   bool m_is_debug_mode;
   std::string m_black_metadata_file_path;
   std::string m_white_metadata_file_path;
 
-  Tile_Bitmap* m_background;
+  std::vector<Tileset_Helper::Tileset_Metadata> m_tilesets;
+  Tileset_Helper::Tileset_Metadata m_current_tileset;
+  Tileset_Helper::Subset m_current_tileset_subset;
+
   std::string m_heading_font_path;
   std::string m_text_font_path;
-  int m_z_bitmap_position;
-  int m_z_text_position;
 
   Text_Component *m_level_complete_heading;
   std::string m_level_complete_heading_text;
@@ -107,30 +138,17 @@ class Score_Display_Controller: public Controller,
   float m_next_level_blurb_y_offset;
   Text_Component *m_loading;
   float m_loading_y_offset;
-
-  //---------------------------------------------------------------------------
-  // Description : Initialises the timer used for the animation ticks
-  //---------------------------------------------------------------------------
-  bool StartTimer();
-
-  //---------------------------------------------------------------------------
-  // Description : Updates and determines if the animation needs to update
-  //---------------------------------------------------------------------------
-  void IsItTimeToAnimateAFrame();
+  float m_loading_transparency;
+  Tile_Bitmap* m_background;
 
   INT64 m_frequency;
   float m_ticksPerMs;
   INT64 m_startTime;
   float m_frameTime;
-  bool m_animation_tick;
   int m_current_animation_fps;
-
-  Input_Component *m_input;
+  bool m_animation_tick;
 
   bool m_is_fading;
-  float m_loading_transparency;
-
-  Game_Metrics_Component *m_game_metrics;
 };
 }  // namespace Tunnelour
 #endif  // SCORE_DISPLAY_CONTROLLER_H_

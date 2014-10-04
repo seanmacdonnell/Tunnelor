@@ -167,11 +167,11 @@ class Level_Tile_Controller: public Controller,
   std::vector<Tile_Bitmap*> m_top_edge_tiles;
   std::vector<Tile_Bitmap*> m_tunnel_edge_tiles;
   std::vector<Tile_Bitmap*> m_exit_tiles;
-
+  /* DEPRECIATED
   //---------------------------------------------------------------------------
   // Description : Tiles up from the current background edge
   //---------------------------------------------------------------------------
-  void TileUp(float camera_top, float middleground_top);
+  void TileUp(camera_top, float middleground_top);
 
   //---------------------------------------------------------------------------
   // Description : Tiles down from the current background edge
@@ -187,7 +187,7 @@ class Level_Tile_Controller: public Controller,
   // Description : Tiles left from the current background edge
   //---------------------------------------------------------------------------
   void TileLeft(float camera_left, float middleground_left);
-
+  */
   //---------------------------------------------------------------------------
   // Description : Switches the tileset from Debug to Dirt and vise versa
   //---------------------------------------------------------------------------
@@ -211,8 +211,8 @@ class Level_Tile_Controller: public Controller,
   std::string m_current_level_name;
   std::vector<Tile_Bitmap*> m_created_tiles;
 
-  unsigned int m_blocksize_x;
-  unsigned int m_blocksize_y;
+  float m_blocksize_x;
+  float m_blocksize_y;
   std::vector<std::vector<Tile_Bitmap*>> m_block_tile_lines;
   std::vector<Tile_Bitmap*> m_block_tile_line;
   Tile_Bitmap* m_back_block;

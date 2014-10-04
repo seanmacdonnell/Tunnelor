@@ -188,7 +188,7 @@ void Avatar_State_Controller::SetYFallen(float *y_fallen) {
 }
 
 //------------------------------------------------------------------------------
-void Avatar_State_Controller::SetDistanceTraveled(int *distance_traveled) {
+void Avatar_State_Controller::SetDistanceTraveled(float *distance_traveled) {
   m_distance_traveled = distance_traveled;
 }
 

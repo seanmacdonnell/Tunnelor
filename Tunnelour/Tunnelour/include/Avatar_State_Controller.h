@@ -97,7 +97,7 @@ class Avatar_State_Controller: public Controller,
 
   void SetYFallen(float *y_fallen);
 
-  void SetDistanceTraveled(int *distance_traveled);
+  void SetDistanceTraveled(float *distance_traveled);
 
   void SetIsMovingContinuously(bool *is_moving_continuously);
 
@@ -131,7 +131,7 @@ class Avatar_State_Controller: public Controller,
   World_Settings_Component *m_world_settings;
   int *m_last_frame_time;
   float *m_y_fallen;
-  int *m_distance_traveled;
+  float *m_distance_traveled;
   bool *m_is_moving_continuously;
   Bitmap_Component *m_currently_grabbed_tile;
  private:

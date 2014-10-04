@@ -542,7 +542,7 @@ void Charlie_Running_Controller::Run_Avatar_State() {
         position += velocity;
         m_avatar->SetPosition(position);
         if (velocity.x < 0) {
-          (*m_distance_traveled) += (velocity.x * -1);
+          (*m_distance_traveled) += (velocity.x * -1.0f);
         } else {
           (*m_distance_traveled) += velocity.x;
         }

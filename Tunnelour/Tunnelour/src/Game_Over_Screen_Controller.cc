@@ -165,6 +165,13 @@ bool Game_Over_Screen_Controller::Run() {
   // Get game settings component from the model with the Mutator.
   if (!m_has_been_initialised || m_is_finished) { return false; }
 
+  Move_Bitmaps();
+  Fade_Bitmaps();
+
+  return true;
+}
+//------------------------------------------------------------------------------
+void Game_Over_Screen_Controller::Move_Bitmaps() {
   if (m_background != 0) {
     m_background->SetPosition(m_camera->GetPosition().x,
                               m_camera->GetPosition().y,
@@ -202,7 +209,10 @@ bool Game_Over_Screen_Controller::Run() {
     float position_x = m_camera->GetPosition().x + 340;
     m_author->SetPosition(position_x, position_y, m_z_text_position);
   }
+}
 
+//------------------------------------------------------------------------------
+void Game_Over_Screen_Controller::Fade_Bitmaps() {
   IsItTimeToAnimateAFrame();
   if (m_animation_tick) {
     m_is_fading = true;
@@ -248,13 +258,13 @@ bool Game_Over_Screen_Controller::Run() {
       m_is_finished = true;
     }
   }
-
-  return true;
 }
 
 //------------------------------------------------------------------------------
 void Game_Over_Screen_Controller::HandleEvent(Tunnelour::Component * const component) {
-  Run();
+  if (component->GetType().compare("Camera_Component") == 0) {
+    Move_Bitmaps();
+  }
 }
 
 //------------------------------------------------------------------------------

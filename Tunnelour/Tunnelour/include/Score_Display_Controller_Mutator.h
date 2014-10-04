@@ -28,7 +28,7 @@ class Score_Display_Controller_Mutator: public Component::Component_Mutator  {
 //-----------------------------------------------------------------------------
 //  Author(s)   : Sean MacDonnell
 //  Description : Score_Display_Controller_Mutator is a mutator run on the model
-//                which collects the game settings component and the 
+//                which collects the game settings component and the
 //                camera component.
 //-----------------------------------------------------------------------------
  public:
@@ -73,7 +73,10 @@ class Score_Display_Controller_Mutator: public Component::Component_Mutator  {
   bool WasSuccessful();
 
  private:
-  bool m_found_game_settings, m_found_camera, m_found_input, m_found_game_metrics;
+  bool m_found_game_settings;
+  bool m_found_camera;
+  bool m_found_input;
+  bool m_found_game_metrics;
   Game_Settings_Component *m_game_settings;
   Camera_Component *m_camera;
   Input_Component *m_input;

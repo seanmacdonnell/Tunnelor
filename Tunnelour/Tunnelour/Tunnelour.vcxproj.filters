@@ -82,6 +82,12 @@
     <Filter Include="Include Files\Controllers\Level">
       <UniqueIdentifier>{77184d95-d7b1-401e-8740-444971c7fab4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Controllers\Input">
+      <UniqueIdentifier>{af16acd7-084e-4f4a-89a8-bdcca3082e85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\Controllers\Input">
+      <UniqueIdentifier>{11eb0cde-1803-4a01-8edd-05e827f1e0c4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Direct3D11_View.cc">
@@ -156,9 +162,6 @@
     <ClCompile Include="src\Text_Component.cc">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
-    <ClCompile Include="src\Input_Controller.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
     <ClCompile Include="src\Avatar_Component.cc">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
@@ -180,29 +183,14 @@
     <ClCompile Include="src\Level_Component.cc">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
-    <ClCompile Include="src\Splash_Screen_Controller.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Splash_Screen_Controller_Mutator.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
     <ClCompile Include="src\Splash_Screen_Component.cc">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
     <ClCompile Include="src\Input_Component.cc">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
-    <ClCompile Include="src\Screen_Wipeout_Controller.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
     <ClCompile Include="src\Get_Game_Metrics_Component_Mutator.cc">
       <Filter>Source Files\Model</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Score_Display_Controller.cc">
-      <Filter>Source Files\Controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Score_Display_Controller_Mutator.cc">
-      <Filter>Source Files\Controllers</Filter>
     </ClCompile>
     <ClCompile Include="src\Avatar_Helper.cc">
       <Filter>Source Files\Utility</Filter>
@@ -285,6 +273,24 @@
     <ClCompile Include="src\Level_Tile_Controller_Mutator.cc">
       <Filter>Source Files\Controllers\Mutators</Filter>
     </ClCompile>
+    <ClCompile Include="src\Screen_Wipeout_Controller.cc">
+      <Filter>Source Files\Controllers\Display</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Score_Display_Controller.cc">
+      <Filter>Source Files\Controllers\Display</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Score_Display_Controller_Mutator.cc">
+      <Filter>Source Files\Controllers\Mutators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Splash_Screen_Controller.cc">
+      <Filter>Source Files\Controllers\Display</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Splash_Screen_Controller_Mutator.cc">
+      <Filter>Source Files\Controllers\Mutators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Input_Controller.cc">
+      <Filter>Source Files\Controllers\Input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Init_Controller.h">
@@ -362,9 +368,6 @@
     <ClInclude Include="include\Text_Component.h">
       <Filter>Include Files\Model</Filter>
     </ClInclude>
-    <ClInclude Include="include\Input_Controller.h">
-      <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
     <ClInclude Include="include\Avatar_Component.h">
       <Filter>Include Files\Model</Filter>
     </ClInclude>
@@ -389,29 +392,14 @@
     <ClInclude Include="include\Level_Component.h">
       <Filter>Include Files\Model</Filter>
     </ClInclude>
-    <ClInclude Include="include\Splash_Screen_Controller.h">
-      <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Splash_Screen_Controller_Mutator.h">
-      <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
     <ClInclude Include="include\Splash_Screen_Component.h">
       <Filter>Include Files\Model</Filter>
     </ClInclude>
     <ClInclude Include="include\Input_Component.h">
       <Filter>Include Files\Model</Filter>
     </ClInclude>
-    <ClInclude Include="include\Screen_Wipeout_Controller.h">
-      <Filter>Include Files\Controllers</Filter>
-    </ClInclude>
     <ClInclude Include="include\Get_Game_Metrics_Component_Mutator.h">
       <Filter>Source Files\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Score_Display_Controller.h">
-      <Filter>Source Files\Controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Score_Display_Controller_Mutator.h">
-      <Filter>Source Files\Controllers</Filter>
     </ClInclude>
     <ClInclude Include="include\Avatar_Helper.h">
       <Filter>Include Files\Utility</Filter>
@@ -495,6 +483,24 @@
       <Filter>Include Files\Controllers\Mutators</Filter>
     </ClInclude>
     <ClInclude Include="include\Level_Transition_Controller_Mutator.h">
+      <Filter>Include Files\Controllers\Mutators</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Screen_Wipeout_Controller.h">
+      <Filter>Include Files\Controllers\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Score_Display_Controller.h">
+      <Filter>Include Files\Controllers\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Score_Display_Controller_Mutator.h">
+      <Filter>Include Files\Controllers\Mutators</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Input_Controller.h">
+      <Filter>Include Files\Controllers\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Splash_Screen_Controller.h">
+      <Filter>Include Files\Controllers\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Splash_Screen_Controller_Mutator.h">
       <Filter>Include Files\Controllers\Mutators</Filter>
     </ClInclude>
   </ItemGroup>
