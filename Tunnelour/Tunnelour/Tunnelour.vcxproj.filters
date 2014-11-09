@@ -189,9 +189,6 @@
     <ClCompile Include="src\Input_Component.cc">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
-    <ClCompile Include="src\Get_Game_Metrics_Component_Mutator.cc">
-      <Filter>Source Files\Model</Filter>
-    </ClCompile>
     <ClCompile Include="src\Avatar_Helper.cc">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
@@ -290,6 +287,9 @@
     </ClCompile>
     <ClCompile Include="src\Input_Controller.cc">
       <Filter>Source Files\Controllers\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Get_Game_Metrics_Component_Mutator.cc">
+      <Filter>Source Files\Controllers\Mutators</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -398,9 +398,6 @@
     <ClInclude Include="include\Input_Component.h">
       <Filter>Include Files\Model</Filter>
     </ClInclude>
-    <ClInclude Include="include\Get_Game_Metrics_Component_Mutator.h">
-      <Filter>Source Files\Model</Filter>
-    </ClInclude>
     <ClInclude Include="include\Avatar_Helper.h">
       <Filter>Include Files\Utility</Filter>
     </ClInclude>
@@ -501,6 +498,9 @@
       <Filter>Include Files\Controllers\Display</Filter>
     </ClInclude>
     <ClInclude Include="include\Splash_Screen_Controller_Mutator.h">
+      <Filter>Include Files\Controllers\Mutators</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Get_Game_Metrics_Component_Mutator.h">
       <Filter>Include Files\Controllers\Mutators</Filter>
     </ClInclude>
   </ItemGroup>

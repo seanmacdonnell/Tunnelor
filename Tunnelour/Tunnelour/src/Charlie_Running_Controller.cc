@@ -758,7 +758,7 @@ void Charlie_Running_Controller::Run_Avatar_State() {
         }
       }
       delete adjacent_tiles;
-
+      
       vector<Avatar_Helper::Tile_Collision> *out_colliding_floor_tiles = new vector<Avatar_Helper::Tile_Collision>();
       bool is_floor_colliding = Avatar_Helper::IsAvatarFloorColliding(m_avatar, out_colliding_floor_tiles, &m_floor_tiles);
       if (is_floor_colliding) {

@@ -39,19 +39,20 @@ namespace String_Helper {
 //-----------------------------------------------------------------------------
 inline std::wstring CharToWChar(const char* pstrSrc) {
     // OLDER UNSAFE VERSION OF THIS ALGORITHM
-    /*
     const size_t cSize = strlen(pstrSrc)+1;
     std::wstring wc( cSize, L'#' );
     mbstowcs( &wc[0], pstrSrc, cSize );
     
     return wc;
-    */
+    
 
+    /*
     size_t origsize = strlen(pstrSrc) + 1;
     size_t convertedChars = 0;
     wchar_t wcstring[100];
     mbstowcs_s(&convertedChars, wcstring, origsize, pstrSrc, _TRUNCATE);
     return std::wstring(wcstring);
+    */
 }
 
 //-----------------------------------------------------------------------------

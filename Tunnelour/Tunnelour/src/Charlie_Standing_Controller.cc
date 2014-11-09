@@ -146,10 +146,15 @@ void Charlie_Standing_Controller::Run_Avatar_State() {
       has_state_changed = true;
     }
     Avatar_Helper::AlignAvatarOnLastContactingFoot(m_avatar);
+    // If there was an adjacent tile before
     if (!adjacent_tiles->empty()) {
-      Avatar_Helper::MoveAvatarTileAdjacent(m_avatar,
-                                            "Top",
-                                            *(adjacent_tiles->begin()));
+      // Check to see if we need to move the avatar back to adjacent
+      std::vector<Tile_Bitmap*> *adjacent_tiles_now = new std::vector<Tile_Bitmap*>();
+      if (!Avatar_Helper::IsAvatarFloorAdjacent(m_avatar, adjacent_tiles_now, &m_floor_tiles)) {
+        Avatar_Helper::MoveAvatarTileAdjacent(m_avatar,
+                                              "Top",
+                                              *(adjacent_tiles->begin()));
+      }
     }
   } else {  // No command, run the standing animation,
     unsigned int state_index = current_state.state_index;
