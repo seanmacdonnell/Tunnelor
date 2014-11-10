@@ -43,8 +43,8 @@ Charlie_Running_Controller::Charlie_Running_Controller():
   m_wall_jump_y_initial_velocity(16),
   m_wall_jump_x_initial_velocity(4),
   m_wall_jump_boost_distance_threshold(128),
-  m_wall_colliding_y_initial_velocity(4),
-  m_wall_colliding_x_initial_velocity(16),
+  m_wall_colliding_y_initial_velocity(16),
+  m_wall_colliding_x_initial_velocity(8),
   m_safe_falling_limit(-1280) {
 }
 
@@ -84,7 +84,8 @@ void Charlie_Running_Controller::Run_Avatar_State() {
         m_avatar->SetVelocity(D3DXVECTOR3(m_running_x_velocity * -1, 0, 0));
       }
     }
-  } else if (current_state.state == "Stopping")  {
+  } else if (current_state.state == "Stopping" ||
+             current_state.state == "False_Start")  {
     if (current_state.direction == "Right") {
       float new_x_velocity = m_avatar->GetVelocity().x - ceil(m_avatar->GetVelocity().x/2);
       m_avatar->SetVelocity(D3DXVECTOR3(new_x_velocity, 0, 0));
@@ -102,14 +103,16 @@ void Charlie_Running_Controller::Run_Avatar_State() {
        // The states listed below can be canceled with a different
        // direction or command.
        (current_state.state != "Stopping" || current_state.state_index == (m_current_animation_subset->number_of_frames -1)) &&
+       (current_state.state != "False_Start" || current_state.state_index == (m_current_animation_subset->number_of_frames -1)) &&
         current_state.state != "Wall_Colliding_From_Mid_Speed_Arc"  &&
+        current_state.state != "Wall_Colliding_From_Mid_Speed_Falling"  &&
        (current_state.state != "Wall_Colliding_From_Mid_Speed_Landing" || current_state.state_index == (m_current_animation_subset->number_of_frames -1)) &&
         current_state.state != "Wall_Colliding_From_High_Speed_Arc" &&
        (current_state.state != "Wall_Colliding_From_High_Speed_Landing" || current_state.state_index == (m_current_animation_subset->number_of_frames -1)) &&
         current_state.state != "Standing_To_Running") {
     // Ignore these commands
     if (current_command.state == "Down" ||
-          current_command.state == "Looking" ) {
+        current_command.state == "Looking" ) {
       current_command.state = "";
     }
 
@@ -244,20 +247,21 @@ void Charlie_Running_Controller::Run_Avatar_State() {
       }
     } else if (current_command.state == "") {
       if (current_state.state != "Wall_Colliding_From_Mid_Speed_Takeoff" &&
-            current_state.state != "Wall_Colliding_From_High_Speed_Takeoff") {
+          current_state.state != "Wall_Colliding_From_High_Speed_Takeoff") {
         if (current_state.state == "Standing_To_Running" ||
-             (current_state.state == "Running" && current_state.state_index != 0)) {
-          Avatar_Helper::SetAvatarState(m_avatar,
+           (current_state.state == "Running" && current_state.state_index == 0)) {
+           Avatar_Helper::SetAvatarState(m_avatar,
                                         m_game_settings->GetTilesetPath(),
                                         m_animation_metadata,
                                         "Charlie_Running",
-                                        "Stopping",
-                                        m_avatar->GetState().direction,
+                                        "False_Start",
+                                        current_state.direction,
                                         m_current_metadata_file_path,
                                         m_current_metadata,
                                         m_current_animation_subset);
-        } else {
-          Avatar_Helper::SetAvatarState(m_avatar,
+        } else if (current_state.state == "False_Start" ||
+                   current_state.state == "Stopping") {
+           Avatar_Helper::SetAvatarState(m_avatar,
                                         m_game_settings->GetTilesetPath(),
                                         m_animation_metadata,
                                         "Charlie_Standing",
@@ -266,7 +270,17 @@ void Charlie_Running_Controller::Run_Avatar_State() {
                                         m_current_metadata_file_path,
                                         m_current_metadata,
                                         m_current_animation_subset);
-        }
+       } else {
+           Avatar_Helper::SetAvatarState(m_avatar,
+                                        m_game_settings->GetTilesetPath(),
+                                        m_animation_metadata,
+                                        "Charlie_Running",
+                                        "Stopping",
+                                        m_avatar->GetState().direction,
+                                        m_current_metadata_file_path,
+                                        m_current_metadata,
+                                        m_current_animation_subset);
+       }
         Avatar_Helper::AlignAvatarOnLastContactingFoot(m_avatar);
         has_state_changed = true;
       }
@@ -407,12 +421,24 @@ void Charlie_Running_Controller::Run_Avatar_State() {
                                         m_current_metadata,
                                         m_current_animation_subset);
           Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlock(m_avatar);
-          D3DXVECTOR3 velocity = m_avatar->GetVelocity();
+          D3DXVECTOR3 velocity = D3DXVECTOR3(0, 0, 0);
           velocity.y = m_wall_colliding_y_initial_velocity;
-          velocity.x = m_wall_colliding_y_initial_velocity * -1;
+          velocity.x = m_wall_colliding_x_initial_velocity * -1;
           m_avatar->SetVelocity(velocity);
           has_state_changed = true;
         } else if (current_state.state == "Wall_Colliding_From_Mid_Speed_Arc") {
+          Avatar_Helper::SetAvatarState(m_avatar,
+                                        m_game_settings->GetTilesetPath(),
+                                        m_animation_metadata,
+                                        "Charlie_Running",
+                                        "Wall_Colliding_From_Mid_Speed_Falling",
+                                        current_state.direction,
+                                        m_current_metadata_file_path,
+                                        m_current_metadata,
+                                        m_current_animation_subset);
+          Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlock(m_avatar);
+          has_state_changed = true;
+        } else if (current_state.state == "Wall_Colliding_From_Mid_Speed_Falling") {
           Avatar_Helper::SetAvatarState(m_avatar,
                                         m_game_settings->GetTilesetPath(),
                                         m_animation_metadata,
@@ -423,7 +449,8 @@ void Charlie_Running_Controller::Run_Avatar_State() {
                                         m_current_metadata,
                                         m_current_animation_subset);
           Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlock(m_avatar);
-          m_avatar->SetVelocity(D3DXVECTOR3(0, 0, 0));
+          D3DXVECTOR3 velocity = D3DXVECTOR3(0, 0, 0);
+          m_avatar->SetVelocity(velocity);
           has_state_changed = true;
         } else if (current_state.state == "Wall_Colliding_From_High_Speed_Takeoff") {
           Avatar_Helper::SetAvatarState(m_avatar,
@@ -436,9 +463,7 @@ void Charlie_Running_Controller::Run_Avatar_State() {
                                         m_current_metadata,
                                         m_current_animation_subset);
           Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlock(m_avatar);
-          D3DXVECTOR3 velocity = m_avatar->GetVelocity();
-          velocity.y = m_wall_colliding_y_initial_velocity;
-          velocity.x = m_wall_colliding_y_initial_velocity * -1;
+          D3DXVECTOR3 velocity = D3DXVECTOR3(0, 0, 0);
           m_avatar->SetVelocity(velocity);
           has_state_changed = true;
         } else if (current_state.state == "Wall_Colliding_From_High_Speed_Arc") {
@@ -515,16 +540,11 @@ void Charlie_Running_Controller::Run_Avatar_State() {
       }
 
       if (current_state.state == "Wall_Colliding_From_Mid_Speed_Arc" ||
-            current_state.state == "Wall_Colliding_From_High_Speed_Arc") {
+          current_state.state == "Wall_Colliding_From_Mid_Speed_Falling" ||
+          current_state.state == "Wall_Colliding_From_High_Speed_Arc") {
         D3DXVECTOR3 position = *m_avatar->GetPosition();
         position = *m_avatar->GetPosition();
 
-        /* // This is an older algorithm
-        D3DXVECTOR3 new_velocity = m_avatar->GetVelocity();
-        new_velocity.y += m_world_settings->GetGravityInPixPerFrame();
-        if ((new_velocity.y/((*m_last_frame_time) * -1)) >= m_world_settings->GetMaxVelocityInPixPerMs()) {
-          new_velocity.y = ceil((-1 * m_world_settings->GetMaxVelocityInPixPerMs() * (*m_last_frame_time)));
-        } */
         D3DXVECTOR3 new_velocity = m_avatar->GetVelocity();
         new_velocity.y += m_world_settings->GetGravityInPixPerFrame();
         if (new_velocity.y < m_world_settings->GetMaxVelocityInPixPerFrame()) {
@@ -559,6 +579,8 @@ void Charlie_Running_Controller::Run_Avatar_State() {
                last_state.state != "Wall_Colliding_From_Mid_Speed_Takeoff" &&
                current_state.state != "Wall_Colliding_From_Mid_Speed_Arc" &&
                last_state.state != "Wall_Colliding_From_Mid_Speed_Arc" &&
+               current_state.state != "Wall_Colliding_From_Mid_Speed_Falling" &&
+               last_state.state != "Wall_Colliding_From_Mid_Speed_Falling" &&
                current_state.state != "Wall_Colliding_From_Mid_Speed_Landing" &&
                last_state.state != "Wall_Colliding_From_Mid_Speed_Landing" &&
                current_state.state != "Wall_Colliding_From_High_Speed_Takeoff" &&
@@ -654,6 +676,7 @@ void Charlie_Running_Controller::Run_Avatar_State() {
       if (!Avatar_Helper::IsAvatarFloorAdjacent(m_avatar, adjacent_tiles, &m_floor_tiles) &&
            current_state.state != "Wall_Colliding_From_Mid_Speed_Takeoff" &&
            current_state.state != "Wall_Colliding_From_Mid_Speed_Arc" &&
+           current_state.state != "Wall_Colliding_From_Mid_Speed_Falling" &&
            current_state.state != "Wall_Colliding_From_Mid_Speed_Landing" &&
            current_state.state != "Wall_Colliding_From_High_Speed_Takeoff" &&
            current_state.state != "Wall_Colliding_From_High_Speed_Arc" &&
@@ -762,7 +785,8 @@ void Charlie_Running_Controller::Run_Avatar_State() {
       vector<Avatar_Helper::Tile_Collision> *out_colliding_floor_tiles = new vector<Avatar_Helper::Tile_Collision>();
       bool is_floor_colliding = Avatar_Helper::IsAvatarFloorColliding(m_avatar, out_colliding_floor_tiles, &m_floor_tiles);
       if (is_floor_colliding) {
-        if (current_state.state == "Wall_Colliding_From_Mid_Speed_Arc") {
+        if (current_state.state == "Wall_Colliding_From_Mid_Speed_Arc" ||
+            current_state.state == "Wall_Colliding_From_Mid_Speed_Falling") {
           Avatar_Helper::SetAvatarState(m_avatar,
                                         m_game_settings->GetTilesetPath(),
                                         m_animation_metadata,
@@ -776,7 +800,6 @@ void Charlie_Running_Controller::Run_Avatar_State() {
           Avatar_Helper::MoveAvatarTileAdjacent(m_avatar,
                                                 "Top",
                                                 out_colliding_floor_tiles->begin()->colliding_tile);
-
           m_avatar->SetVelocity(D3DXVECTOR3(0, 0, 0));
           (*m_distance_traveled) = 0;
           has_state_changed = true;
@@ -798,13 +821,10 @@ void Charlie_Running_Controller::Run_Avatar_State() {
           m_avatar->SetVelocity(D3DXVECTOR3(0, 0, 0));
           (*m_distance_traveled) = 0;
           has_state_changed = true;
-        } else {
-          Avatar_Helper::MoveAvatarTileAdjacent(m_avatar,
-                                                "Top",
-                                                out_colliding_floor_tiles->begin()->colliding_tile);
         }
       }
       delete adjacent_tiles;
+      
     }
   }
 }

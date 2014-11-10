@@ -446,8 +446,8 @@ void Avatar_Helper::MoveAvatarTileAdjacent(Avatar_Component *avatar, std::string
     new_avatar_position.x = tile_position.x - foot_x_offset;
   } else if (direction.compare("Top") == 0) {
     D3DXVECTOR3 tile_position = tile->GetTopLeftPostion();
-    float foot_x_offset = GetNamedCollisionBlock("Avatar", avatar->GetState().avatar_collision_blocks).offset_from_avatar_centre.y + (GetNamedCollisionBlock("Avatar", avatar->GetState().avatar_collision_blocks).size.y / 2);
-    new_avatar_position.y = tile_position.y + foot_x_offset;
+    float foot_y_offset = GetNamedCollisionBlock("Avatar", avatar->GetState().avatar_collision_blocks).offset_from_avatar_centre.y - (GetNamedCollisionBlock("Avatar", avatar->GetState().avatar_collision_blocks).size.y / 2);
+    new_avatar_position.y = tile_position.y - foot_y_offset;
   }
   avatar->SetPosition(new_avatar_position);
 }
