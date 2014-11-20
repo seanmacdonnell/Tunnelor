@@ -94,7 +94,15 @@ bool Camera_Controller::Init(Component_Composite * const model) {
 
 //------------------------------------------------------------------------------
 bool Camera_Controller::Run() {
-  bool result = false;;
+  bool result = false;
+  if (m_has_been_initialised) {
+      result = true;
+      D3DXVECTOR3 avatar_position = *m_avatar->GetPosition();
+      D3DXVECTOR3 camera_position = m_camera->GetPosition();
+      m_camera->SetPosition(avatar_position);
+  }
+  /*
+  bool result = false;
   Camera_Controller_Mutator mutator;
   if (m_has_been_initialised) {
     Avatar_Component::Avatar_State current_state = m_avatar->GetState();
@@ -117,7 +125,6 @@ bool Camera_Controller::Run() {
       D3DXVECTOR3 camera_position = m_camera->GetPosition();
 
       Avatar_Component::Avatar_Collision_Block avatar_collision_block = Avatar_Helper::GetNamedCollisionBlock("Avatar", m_avatar->GetState().avatar_collision_blocks);
-
 
       if (current_state.state.compare("Looking") == 0) {
         if (last_state.state.compare("Looking") != 0) {
@@ -221,6 +228,7 @@ bool Camera_Controller::Run() {
   } else {
     result = false;
   }
+  */
   return result;
 }
 

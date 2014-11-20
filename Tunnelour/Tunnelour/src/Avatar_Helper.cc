@@ -220,13 +220,13 @@ Avatar_Component::Avatar_Collision_Block Avatar_Helper::TilesetCollisionBlockToA
 
   if (direction.compare("Left") == 0) {
     // We need to reverse the x on the collision block.
-    if (new_avatar_collision_block.id.compare("Left_Foot") == 0) {
+//    if (new_avatar_collision_block.id.compare("Left_Foot") == 0) {
       //new_avatar_collision_block.id = "Right_Foot";
       new_avatar_collision_block.offset_from_avatar_centre.x = (new_avatar_collision_block.offset_from_avatar_centre.x * -1);
-    } else if (new_avatar_collision_block.id.compare("Right_Foot") == 0) {
+//    } else if (new_avatar_collision_block.id.compare("Right_Foot") == 0) {
       //new_avatar_collision_block.id = "Left_Foot";
-      new_avatar_collision_block.offset_from_avatar_centre.x = (new_avatar_collision_block.offset_from_avatar_centre.x * -1);
-    }
+//      new_avatar_collision_block.offset_from_avatar_centre.x = (new_avatar_collision_block.offset_from_avatar_centre.x * -1);
+//    }
   }
 
   return new_avatar_collision_block;
@@ -437,9 +437,8 @@ void Avatar_Helper::MoveAvatarTileAdjacent(Avatar_Component *avatar, std::string
   D3DXVECTOR3 new_avatar_position = *avatar->GetPosition();
   if (direction.compare("Right") == 0) {
     D3DXVECTOR3 tile_position = tile->GetBottomRightPostion();
-    Avatar_Component::Avatar_Collision_Block avatar_collision_block = GetNamedCollisionBlock("Avatar", avatar->GetState().avatar_collision_blocks);
-    float foot_x_offset = avatar_collision_block.offset_from_avatar_centre.x + (avatar_collision_block.size.x / 2);
-    new_avatar_position.x = tile_position.x + foot_x_offset;
+    float foot_x_offset = GetNamedCollisionBlock("Avatar", avatar->GetState().avatar_collision_blocks).offset_from_avatar_centre.x - (GetNamedCollisionBlock("Avatar", avatar->GetState().avatar_collision_blocks).size.x / 2);
+    new_avatar_position.x = tile_position.x - foot_x_offset;
   } else if (direction.compare("Left") == 0) {
     D3DXVECTOR3 tile_position = tile->GetTopLeftPostion();
     float foot_x_offset = GetNamedCollisionBlock("Avatar", avatar->GetState().avatar_collision_blocks).offset_from_avatar_centre.x + (GetNamedCollisionBlock("Avatar", avatar->GetState().avatar_collision_blocks).size.x / 2);

@@ -40,8 +40,8 @@ Charlie_Standing_Controller::Charlie_Standing_Controller():
   m_wall_jump_y_initial_velocity(16),
   m_wall_jump_x_initial_velocity(4),
   m_wall_jump_boost_distance_threshold(128),
-  m_wall_colliding_y_initial_velocity(4),
-  m_wall_colliding_x_initial_velocity(16),
+  m_wall_colliding_mid_y_initial_velocity(0),
+  m_wall_colliding_mid_x_initial_velocity(16),
   m_safe_falling_limit(-1280) {
 }
 

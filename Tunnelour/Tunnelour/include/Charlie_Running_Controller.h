@@ -68,9 +68,15 @@ class Charlie_Running_Controller: public Avatar_State_Controller {
   const float m_wall_jump_y_initial_velocity;
   const float m_wall_jump_x_initial_velocity;
   const float m_wall_jump_boost_distance_threshold;
-  const float m_wall_colliding_y_initial_velocity;
-  const float m_wall_colliding_x_initial_velocity;
+  const float m_wall_colliding_mid_y_initial_velocity;
+  const float m_wall_colliding_mid_x_initial_velocity;
+  const float m_wall_colliding_mid_distance;
+  const float m_wall_colliding_high_y_initial_velocity;
+  const float m_wall_colliding_high_x_initial_velocity;
+  const float m_wall_colliding_high_distance;
   const float m_safe_falling_limit;
+
+  void Align_New_Avatar_State();
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_CHARLIE_RUNNING_CONTROLLER_H_

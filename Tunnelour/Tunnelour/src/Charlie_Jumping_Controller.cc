@@ -294,7 +294,7 @@ void Charlie_Jumping_Controller::Run_Avatar_State() {
           Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlock(m_avatar);;
           has_state_changed = true;
         } else if (current_state.state == "Gap_Jump_Landing") {
-          m_avatar->SetVelocity(D3DXVECTOR3(0, 0, 0));
+          m_avatar->SetVelocity(D3DXVECTOR3(m_avatar->GetVelocity().x, 0, 0));
           if (current_command.state == "Jumping") {
             // Avatar is Jumping after a Gap Jump
             if (current_command.direction == current_state.direction) {
