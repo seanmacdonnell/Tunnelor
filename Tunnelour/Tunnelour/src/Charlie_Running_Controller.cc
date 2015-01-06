@@ -35,7 +35,7 @@ Charlie_Running_Controller::Charlie_Running_Controller():
   m_takeoff_gap_jump_y_initial_velocity(18),
   m_takeoff_gap_jump_x_initial_velocity(18),
   m_running_x_velocity(32),
-  m_takeoff_running_x_velocity(16),
+  m_takeoff_running_x_velocity(32),
   m_takeoff_running_x_distance(128),
   m_stopping_from_running_distance(64),
   m_overbalancing_x_velocity(16),
