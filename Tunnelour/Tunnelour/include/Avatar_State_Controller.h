@@ -101,7 +101,7 @@ class Avatar_State_Controller: public Controller,
 
   void SetIsMovingContinuously(bool *is_moving_continuously);
 
-  void SetCurrentlyGrabbedTile(Bitmap_Component *currently_grabbed_tile);
+  void SetCurrentlyGrabbedTile(Bitmap_Component *& currently_grabbed_tile);
 
   //---------------------------------------------------------------------------
   // Description : Called when handling an "Add" call in the model
@@ -133,7 +133,7 @@ class Avatar_State_Controller: public Controller,
   float *m_y_fallen;
   float *m_distance_traveled;
   bool *m_is_moving_continuously;
-  Bitmap_Component *m_currently_grabbed_tile;
+  Bitmap_Component ** m_currently_grabbed_tile;
  private:
 };
 }  // namespace Tunnelour

@@ -56,7 +56,7 @@ void Charlie_Climbing_Controller::Run_Avatar_State() {
   if (current_command.state.compare("") != 0 && current_state.state.compare("Hanging") == 0) {
     if (current_state.direction.compare(current_command.direction) == 0) {
       // Go up the ledge
-      Avatar_Helper::SetAvatarState(m_avatar, m_game_settings->GetTilesetPath(), m_animation_metadata, "Charlie_Climbing", "Climbing", m_avatar->GetState().direction, m_current_metadata_file_path, m_current_metadata, m_current_animation_subset);
+      Avatar_Helper::SetAvatarState(m_avatar, m_game_settings->GetTilesetPath(), m_animation_metadata, "Charlie_Climbing", "Climbing_1", m_avatar->GetState().direction, m_current_metadata_file_path, m_current_metadata, m_current_animation_subset);
       Avatar_Helper::AlignAvatarOnLastHand(m_avatar);
       has_state_changed = true;
     } else if (current_command.state.compare("Down") == 0) {
@@ -64,10 +64,10 @@ void Charlie_Climbing_Controller::Run_Avatar_State() {
       Avatar_Helper::SetAvatarState(m_avatar, m_game_settings->GetTilesetPath(), m_animation_metadata, "Charlie_Jumping", "Wall_Jump_Fall_Arc", m_avatar->GetState().direction, m_current_metadata_file_path, m_current_metadata, m_current_animation_subset);
       if (m_avatar->GetState().direction.compare("Right") == 0) {
         Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlockRightTop(m_avatar);
-        Avatar_Helper::MoveAvatarTileAdjacent(m_avatar, "Left", m_currently_grabbed_tile);
+        Avatar_Helper::MoveAvatarTileAdjacent(m_avatar, "Left", *m_currently_grabbed_tile);
       } else {
         Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlockLeftTop(m_avatar);
-        Avatar_Helper::MoveAvatarTileAdjacent(m_avatar, "Right", m_currently_grabbed_tile);
+        Avatar_Helper::MoveAvatarTileAdjacent(m_avatar, "Right", *m_currently_grabbed_tile);
       }
       has_state_changed = true;
     }
@@ -82,19 +82,27 @@ void Charlie_Climbing_Controller::Run_Avatar_State() {
         state_index = 0;
       } else {
         // Find the next state
-        if (current_state.state.compare("Wall_Jump_To_Hanging") == 0) {
+        if (current_state.state.compare("Ascending_To_Grabbing") == 0) {
+          Avatar_Helper::SetAvatarState(m_avatar, m_game_settings->GetTilesetPath(), m_animation_metadata, "Charlie_Climbing", "Grabbing_To_Hanging", m_avatar->GetState().direction, m_current_metadata_file_path, m_current_metadata, m_current_animation_subset);
+          Avatar_Helper::AlignAvatarOnLastHand(m_avatar);
+          has_state_changed = true;
+        } else if (current_state.state.compare("Grabbing_To_Hanging") == 0) {
           Avatar_Helper::SetAvatarState(m_avatar, m_game_settings->GetTilesetPath(), m_animation_metadata, "Charlie_Climbing", "Hanging", m_avatar->GetState().direction, m_current_metadata_file_path, m_current_metadata, m_current_animation_subset);
           Avatar_Helper::AlignAvatarOnLastHand(m_avatar);
           has_state_changed = true;
-        } else if (current_state.state.compare("Vertical_Jump_To_Hanging") == 0) {
-          Avatar_Helper::SetAvatarState(m_avatar, m_game_settings->GetTilesetPath(), m_animation_metadata, "Charlie_Climbing", "Hanging", m_avatar->GetState().direction, m_current_metadata_file_path, m_current_metadata, m_current_animation_subset);
+        } else if (current_state.state.compare("Descending_To_Grabbing") == 0) {
+          Avatar_Helper::SetAvatarState(m_avatar, m_game_settings->GetTilesetPath(), m_animation_metadata, "Charlie_Climbing", "Grabbing_To_Hanging", m_avatar->GetState().direction, m_current_metadata_file_path, m_current_metadata, m_current_animation_subset);
           Avatar_Helper::AlignAvatarOnLastHand(m_avatar);
           has_state_changed = true;
-        } else if (current_state.state.compare("Climbing") == 0) {
-          Avatar_Helper::SetAvatarState(m_avatar, m_game_settings->GetTilesetPath(), m_animation_metadata, "Charlie_Climbing", "Standing", m_avatar->GetState().direction, m_current_metadata_file_path, m_current_metadata, m_current_animation_subset);
-          Avatar_Helper::AlignAvatarOnLastContactingFoot(m_avatar);
+        } else if (current_state.state.compare("Climbing_1") == 0) {
+          Avatar_Helper::SetAvatarState(m_avatar, m_game_settings->GetTilesetPath(), m_animation_metadata, "Charlie_Climbing", "Climbing_2", m_avatar->GetState().direction, m_current_metadata_file_path, m_current_metadata, m_current_animation_subset);
+          Avatar_Helper::AlignAvatarOnLastHand(m_avatar);
           has_state_changed = true;
-        } else if (current_state.state.compare("Standing") == 0) {
+        } else if (current_state.state.compare("Climbing_2") == 0) {
+          Avatar_Helper::SetAvatarState(m_avatar, m_game_settings->GetTilesetPath(), m_animation_metadata, "Charlie_Climbing", "Climbing_To_Standing", m_avatar->GetState().direction, m_current_metadata_file_path, m_current_metadata, m_current_animation_subset);
+          Avatar_Helper::AlignAvatarOnLastHand(m_avatar);
+          has_state_changed = true;
+        } else if (current_state.state.compare("Climbing_To_Standing") == 0) {
           m_avatar->SetVelocity(D3DXVECTOR3(0, 0, 0));
           if (current_command.state.compare("Jumping") == 0) {
             D3DXVECTOR3 position = *m_avatar->GetPosition();
@@ -135,7 +143,7 @@ void Charlie_Climbing_Controller::Run_Avatar_State() {
     if (!has_state_changed) {
       if (current_state == last_state) {
         Avatar_Helper::SetAvatarStateAnimationFrame(m_avatar, state_index, m_current_animation_subset);
-        if (current_state.state.compare("Standing") == 0) {
+        if (current_state.state.compare("Climbing_To_Standing") == 0) {
           Avatar_Helper::AlignAvatarOnLastContactingFoot(m_avatar);
         } else {
           Avatar_Helper::AlignAvatarOnLastHand(m_avatar);

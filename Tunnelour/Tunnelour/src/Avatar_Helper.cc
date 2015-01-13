@@ -871,12 +871,6 @@ void Avatar_Helper::AlignAvatarOnLastLedgeEdge(Avatar_Component *avatar, Avatar_
 
   Avatar_Component::Avatar_Collision_Block avatar_hand;
   avatar_hand = Avatar_Helper::GetNamedCollisionBlock("Hand", avatar->GetState().avatar_collision_blocks);
-  // I don't know why this is required, but it is.
-  // If you remove it, the avatar will not align correctly on the ledge edge
-  // even though this is already done when the avatar collision blocks are parsed.
-  if (avatar->GetState().direction.compare("Left") == 0) {
-    avatar_hand.offset_from_avatar_centre.x = (avatar_hand.offset_from_avatar_centre.x * -1);
-  }
   Bitmap_Component *avatar_hand_bitmap = Avatar_Helper::CollisionBlockToBitmapComponent(avatar_hand, *(avatar->GetPosition()));
 
   D3DXVECTOR3 grab_point;
@@ -921,9 +915,6 @@ void Avatar_Helper::AlignAvatarOnLastHand(Avatar_Component *avatar) {
 
   Avatar_Component::Avatar_Collision_Block last_hand;
   last_hand = Avatar_Helper::GetNamedCollisionBlock("Hand", avatar->GetLastRenderedState().avatar_collision_blocks);
-  if (avatar->GetLastRenderedState().direction.compare("Left") == 0) {
-    last_hand.offset_from_avatar_centre.x = (last_hand.offset_from_avatar_centre.x * -1);
-  }
   if (last_hand.id.compare("") == 0) {
     Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlock(avatar);
     return;
@@ -933,9 +924,6 @@ void Avatar_Helper::AlignAvatarOnLastHand(Avatar_Component *avatar) {
 
   Avatar_Component::Avatar_Collision_Block current_hand;
   current_hand = Avatar_Helper::GetNamedCollisionBlock("Hand", avatar->GetState().avatar_collision_blocks);
-  if (avatar->GetState().direction.compare("Left") == 0) {
-    current_hand.offset_from_avatar_centre.x = (current_hand.offset_from_avatar_centre.x * -1);
-  }
   if (current_hand.id.compare("") == 0) {
     Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlock(avatar);
     return;

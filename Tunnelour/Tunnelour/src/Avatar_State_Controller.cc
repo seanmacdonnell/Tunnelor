@@ -198,8 +198,8 @@ void Avatar_State_Controller::SetIsMovingContinuously(bool *is_moving_continuous
 }
 
 //------------------------------------------------------------------------------
-void Avatar_State_Controller::SetCurrentlyGrabbedTile(Bitmap_Component *currently_grabbed_tile) {
-  m_currently_grabbed_tile = currently_grabbed_tile;
+void Avatar_State_Controller::SetCurrentlyGrabbedTile(Bitmap_Component *& currently_grabbed_tile) {
+  m_currently_grabbed_tile = &currently_grabbed_tile;
 }
 
 //------------------------------------------------------------------------------

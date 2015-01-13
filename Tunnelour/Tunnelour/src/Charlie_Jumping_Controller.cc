@@ -515,14 +515,14 @@ void Charlie_Jumping_Controller::Run_Avatar_State() {
                                       m_game_settings->GetTilesetPath(),
                                       m_animation_metadata,
                                       "Charlie_Climbing",
-                                      "Vertical_Jump_To_Hanging",
+                                      "Descending_To_Grabbing",
                                       m_avatar->GetState().direction,
                                       m_current_metadata_file_path,
                                       m_current_metadata,
                                       m_current_animation_subset);
         Avatar_Helper::AlignAvatarOnLastLedgeEdge(m_avatar,
                                                 *(out_colliding_ledge_tiles->begin()));
-        m_currently_grabbed_tile = out_colliding_ledge_tiles->begin()->colliding_tile;
+        *m_currently_grabbed_tile = out_colliding_ledge_tiles->begin()->colliding_tile;
         (*m_y_fallen) = 0;
         (*m_distance_traveled) = 0;
         has_state_changed = true;
@@ -841,14 +841,14 @@ void Charlie_Jumping_Controller::Run_Avatar_State() {
                                           m_game_settings->GetTilesetPath(),
                                           m_animation_metadata,
                                           "Charlie_Climbing",
-                                          "Wall_Jump_To_Hanging",
+                                          "Ascending_To_Grabbing",
                                           m_avatar->GetState().direction,
                                           m_current_metadata_file_path,
                                           m_current_metadata,
                                           m_current_animation_subset);
             Avatar_Helper::AlignAvatarOnLastLedgeEdge(m_avatar,
                                                     *(out_colliding_floor_tiles->begin()));
-            m_currently_grabbed_tile = out_colliding_floor_tiles->begin()->colliding_tile;
+            *m_currently_grabbed_tile = out_colliding_floor_tiles->begin()->colliding_tile;
             (*m_y_fallen) = 0;
             (*m_distance_traveled) = 0;
             has_state_changed = true;
@@ -857,14 +857,14 @@ void Charlie_Jumping_Controller::Run_Avatar_State() {
                                           m_game_settings->GetTilesetPath(),
                                           m_animation_metadata,
                                           "Charlie_Climbing",
-                                          "Vertical_Jump_To_Hanging",
+                                          "Descending_To_Grabbing",
                                           m_avatar->GetState().direction,
                                           m_current_metadata_file_path,
                                           m_current_metadata,
                                           m_current_animation_subset);
             Avatar_Helper::AlignAvatarOnLastLedgeEdge(m_avatar,
                                                     *(out_colliding_floor_tiles->begin()));
-            m_currently_grabbed_tile = out_colliding_floor_tiles->begin()->colliding_tile;
+            *m_currently_grabbed_tile = out_colliding_floor_tiles->begin()->colliding_tile;
             (*m_y_fallen) = 0;
             (*m_distance_traveled) = 0;
             has_state_changed = true;
