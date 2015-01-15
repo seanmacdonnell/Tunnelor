@@ -658,7 +658,7 @@ void Charlie_Jumping_Controller::Run_Avatar_State() {
                                           m_game_settings->GetTilesetPath(),
                                           m_animation_metadata,
                                           "Charlie_Falling",
-                                          "Up_Falling_Wall_Impact_Left",
+                                          "Down_Falling_Wall_Impact_Right",
                                           m_avatar->GetState().direction,
                                           m_current_metadata_file_path,
                                           m_current_metadata,

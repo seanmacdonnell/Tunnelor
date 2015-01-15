@@ -207,7 +207,11 @@ void Charlie_Falling_Controller::Run_Avatar_State() {
       } else if (current_state.state.compare("Up_Facing_Falling") == 0 || current_state.state.compare("Up_Falling_Wall_Impact_Left") == 0) {
         Avatar_Helper::SetAvatarState(m_avatar, m_game_settings->GetTilesetPath(), m_animation_metadata, "Charlie_Falling", "Up_Facing_Falling_To_Death", m_avatar->GetState().direction, m_current_metadata_file_path, m_current_metadata, m_current_animation_subset);
       }
-      Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlock(m_avatar);
+      if (m_avatar->GetState().direction.compare("Left") == 0) {
+          Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlockLeftBottom(m_avatar);
+      } else {
+          Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlockRightBottom(m_avatar);
+      }
       Avatar_Helper::MoveAvatarTileAdjacent(m_avatar, "Top", out_colliding_floor_tiles.begin()->colliding_tile);
       has_state_changed = true;
     } else {
