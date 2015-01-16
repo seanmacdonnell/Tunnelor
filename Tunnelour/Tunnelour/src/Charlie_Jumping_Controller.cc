@@ -565,19 +565,9 @@ void Charlie_Jumping_Controller::Run_Avatar_State() {
             x_velocity = (x_velocity * -1);
           }
 
-          m_avatar->SetVelocity(D3DXVECTOR3(x_velocity, y_velocity, 0));
           if (current_command.direction == "Right" ||
                 current_command.direction == "Left" ) {
-            Avatar_Helper::SetAvatarState(m_avatar,
-                                          m_game_settings->GetTilesetPath(),
-                                          m_animation_metadata,
-                                          "Charlie_Jumping",
-                                          "Wall_Jump_Takeoff",
-                                          m_avatar->GetState().direction,
-                                          m_current_metadata_file_path,
-                                          m_current_metadata,
-                                          m_current_animation_subset);
-          } else {
+            m_avatar->SetVelocity(D3DXVECTOR3(x_velocity, y_velocity, 0));
             Avatar_Helper::SetAvatarState(m_avatar,
                                           m_game_settings->GetTilesetPath(),
                                           m_animation_metadata,
