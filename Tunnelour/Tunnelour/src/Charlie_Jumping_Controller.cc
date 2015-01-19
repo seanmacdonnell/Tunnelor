@@ -31,10 +31,10 @@ Charlie_Jumping_Controller::Charlie_Jumping_Controller():
   m_avatar_z_position(-2),
   m_vertical_jump_y_initial_velocity(22),
   m_vertical_jump_x_initial_velocity(4),
-  m_gap_jump_y_initial_velocity(24),
-  m_gap_jump_x_initial_velocity(24),
+  m_gap_jump_y_initial_velocity(38),
+  m_gap_jump_x_initial_velocity(38),
   m_running_x_velocity(32),
-  m_wall_jump_y_initial_velocity(16),
+  m_wall_jump_y_initial_velocity(8),
   m_wall_jump_x_initial_velocity(4),
   m_wall_jump_boost_distance_threshold(128),
   m_safe_falling_limit(-1280) {
@@ -555,9 +555,7 @@ void Charlie_Jumping_Controller::Run_Avatar_State() {
                      (current_state.state_index == 0 ||
                       current_state.state_index == 1))) {
                 y_velocity = m_vertical_jump_y_initial_velocity + m_wall_jump_y_initial_velocity;
-              } else {
-                y_velocity = m_avatar->GetVelocity().y + m_wall_jump_y_initial_velocity;
-              }
+              } 
             }
           }
 
@@ -565,10 +563,8 @@ void Charlie_Jumping_Controller::Run_Avatar_State() {
             x_velocity = (x_velocity * -1);
           }
 
-          if (current_command.direction == "Right" ||
-                current_command.direction == "Left" ) {
-            m_avatar->SetVelocity(D3DXVECTOR3(x_velocity, y_velocity, 0));
-            Avatar_Helper::SetAvatarState(m_avatar,
+          m_avatar->SetVelocity(D3DXVECTOR3(x_velocity, y_velocity, 0));
+          Avatar_Helper::SetAvatarState(m_avatar,
                                           m_game_settings->GetTilesetPath(),
                                           m_animation_metadata,
                                           "Charlie_Jumping",
@@ -577,7 +573,6 @@ void Charlie_Jumping_Controller::Run_Avatar_State() {
                                           m_current_metadata_file_path,
                                           m_current_metadata,
                                           m_current_animation_subset);
-          }
           has_state_changed = true;
           if (out_colliding_wall_tiles->begin()->collision_side == "Right") {
             Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlockRightBottom(m_avatar);

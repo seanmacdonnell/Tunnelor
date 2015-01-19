@@ -30,8 +30,8 @@ Charlie_Running_Controller::Charlie_Running_Controller():
   m_avatar_z_position(-2),
   m_vertical_jump_y_initial_velocity(22),
   m_vertical_jump_x_initial_velocity(4),
-  m_gap_jump_y_initial_velocity(24),
-  m_gap_jump_x_initial_velocity(24),
+  m_gap_jump_y_initial_velocity(32),
+  m_gap_jump_x_initial_velocity(32),
   m_takeoff_gap_jump_y_initial_velocity(18),
   m_takeoff_gap_jump_x_initial_velocity(18),
   m_running_x_velocity(32),
@@ -123,33 +123,37 @@ void Charlie_Running_Controller::Run_Avatar_State() {
 
     if (current_command.state == "Jumping") {
       if (current_state.state == "Wall_Colliding_From_Mid_Speed_Takeoff" ||
-        current_state.state == "Wall_Colliding_From_High_Speed_Takeoff") {
+          current_state.state == "Wall_Colliding_From_High_Speed_Takeoff" ){
         if (current_state.state_index == 0 || current_state.state_index == 1) {
-          float y_velocity = m_vertical_jump_y_initial_velocity;
-          y_velocity += m_wall_jump_y_initial_velocity;
+            float y_velocity = m_wall_jump_y_initial_velocity;
+            if (last_state.parent_state == "Charlie_Jumping") {
+                y_velocity += m_avatar->GetVelocity().y;
+            } else {
+                y_velocity += m_vertical_jump_y_initial_velocity;
+            }
 
-          float x_velocity = m_vertical_jump_x_initial_velocity;
-          if (current_state.direction == "Left") {
-            x_velocity = (x_velocity * -1);
+            float x_velocity = m_vertical_jump_x_initial_velocity;
+            if (current_state.direction == "Left") {
+              x_velocity = (x_velocity * -1);
+            }
+
+            m_avatar->SetVelocity(D3DXVECTOR3(x_velocity, y_velocity, 0));
+
+            Avatar_Helper::SetAvatarState(m_avatar,
+                                          m_game_settings->GetTilesetPath(),
+                                          m_animation_metadata,
+                                          "Charlie_Jumping",
+                                          "Wall_Jump_Takeoff",
+                                          m_avatar->GetState().direction,
+                                          m_current_metadata_file_path,
+                                          m_current_metadata,
+                                          m_current_animation_subset);
+            Avatar_Helper::MoveAvatarTileAdjacent(m_avatar,
+                                                  m_adjacent_wall->collision_side,
+                                                  m_adjacent_wall->colliding_tile);
+
+            has_state_changed = true;
           }
-
-          m_avatar->SetVelocity(D3DXVECTOR3(x_velocity, y_velocity, 0));
-
-          Avatar_Helper::SetAvatarState(m_avatar,
-                                        m_game_settings->GetTilesetPath(),
-                                        m_animation_metadata,
-                                        "Charlie_Jumping",
-                                        "Wall_Jump_Takeoff",
-                                        m_avatar->GetState().direction,
-                                        m_current_metadata_file_path,
-                                        m_current_metadata,
-                                        m_current_animation_subset);
-          Avatar_Helper::MoveAvatarTileAdjacent(m_avatar,
-                                                m_adjacent_wall->collision_side,
-                                                m_adjacent_wall->colliding_tile);
-
-          has_state_changed = true;
-        }
       } else if (current_state.state == "Wall_Colliding") {
         float y_velocity = m_vertical_jump_y_initial_velocity;
         float x_velocity = m_vertical_jump_x_initial_velocity;
@@ -597,7 +601,11 @@ void Charlie_Running_Controller::Run_Avatar_State() {
       // Detect if the avatar is intersecting with a wall
       vector<Avatar_Helper::Tile_Collision> *out_colliding_wall_tiles = new vector<Avatar_Helper::Tile_Collision>();
       if (Avatar_Helper::IsAvatarWallColliding(m_avatar, out_colliding_wall_tiles, &m_wall_tiles)) {
-        m_adjacent_wall = &(*(out_colliding_wall_tiles->begin()));
+        if (m_adjacent_wall == 0) {
+          m_adjacent_wall = new Avatar_Helper::Tile_Collision();  
+        } 
+        *m_adjacent_wall = *(out_colliding_wall_tiles->begin());
+          
         if (current_state.state != "Wall_Colliding" && last_state.state != "Wall_Colliding") {
           if  (current_state.state != "Stopping" &&
                last_state.state != "Stopping" &&
