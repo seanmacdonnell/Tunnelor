@@ -36,8 +36,6 @@ Avatar_Helper::~Avatar_Helper() {
 bool Avatar_Helper::IsAvatarFloorAdjacent(Avatar_Component *m_avatar, std::vector<Tile_Bitmap*> *adjacent_tiles, std::vector<Tile_Bitmap*> *floor_tiles) {
   if (adjacent_tiles != 0) {
     adjacent_tiles->clear();
-  } else {
-    adjacent_tiles = new std::vector<Tile_Bitmap*>();
   }
 
   // Going to deal only with gravity only
@@ -582,7 +580,7 @@ bool Avatar_Helper::IsAvatarWallColliding(Avatar_Component *avatar, std::vector<
           istherearight_wall_intersection = Geometry_Helper::DoTheseLinesIntersect(Tile_Top_Right, Tile_Bottom_Right, Current_Avatar_Position, Last_Avatar_Position, &right_wall_intersection);
         }
 
-        if (istherealeft_wall_intersection) {
+        if (istherealeft_wall_intersection && velocity.z >= 0) {
           if (isthereafloor_intersection) {
             if (left_wall_intersection < floor_intersection) {
               Tile_Collision collision;
@@ -599,7 +597,7 @@ bool Avatar_Helper::IsAvatarWallColliding(Avatar_Component *avatar, std::vector<
             out_collisions->push_back(collision);
           }
         }
-        if (istherearight_wall_intersection) {
+        if (istherearight_wall_intersection && velocity.x <= 0) {
           if (isthereafloor_intersection) {
             if (right_wall_intersection < floor_intersection) {
               Tile_Collision collision;
