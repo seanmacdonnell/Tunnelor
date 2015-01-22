@@ -1,5 +1,3 @@
-CURRENTLY BROKEN BECAUSE OF BAD ALLOCATION ERROR SORRY
-
 Tunnelor
 ========
 
@@ -12,16 +10,13 @@ Current release is a movement technology demo, designed to test the avatars flow
 
 Screenshots
 
-![Screenshot 1](https://github.com/seanmacdonnell/Tunnelor/blob/master/Tunnelour/Screenshots/Alpha%200.4.4/1.PNG?raw=true)
+![Screenshot 1](https://github.com/seanmacdonnell/Tunnelor/blob/master/Tunnelour/Screenshots/Alpha%200.5/Tunnelor_Alpha_0.5_0.JPG?raw=true)
 
-![Screenshot 2](https://github.com/seanmacdonnell/Tunnelor/blob/master/Tunnelour/Screenshots/Alpha%200.4.4/2.PNG?raw=true)
+![Screenshot 2](https://github.com/seanmacdonnell/Tunnelor/blob/master/Tunnelour/Screenshots/Alpha%200.5/Tunnelor_Alpha_0.5_1.JPG?raw=true)
 
-![Screenshot 3](https://github.com/seanmacdonnell/Tunnelor/blob/master/Tunnelour/Screenshots/Alpha%200.4.4/3.PNG?raw=true)
+![Screenshot 3](https://github.com/seanmacdonnell/Tunnelor/blob/master/Tunnelour/Screenshots/Alpha%200.5/Tunnelor_Alpha_0.5_2.JPG?raw=true)
 
-![Screenshot 4](https://github.com/seanmacdonnell/Tunnelor/blob/master/Tunnelour/Screenshots/Alpha%200.4.4/4.PNG?raw=true)
-
-![Screenshot 5](https://github.com/seanmacdonnell/Tunnelor/blob/master/Tunnelour/Screenshots/Alpha%200.4.4/5.PNG?raw=true)
-
+![Screenshot 4](https://github.com/seanmacdonnell/Tunnelor/blob/master/Tunnelour/Screenshots/Alpha%200.5/Tunnelor_Alpha_0.5_3.JPG?raw=true)
 
 !!! IF you are running Windows 8 or greater, please run in Windows 7 Compatability mode!!!!
 
