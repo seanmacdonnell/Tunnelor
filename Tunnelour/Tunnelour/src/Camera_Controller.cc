@@ -34,7 +34,7 @@ Camera_Controller::Camera_Controller() : Controller() {
   m_is_shaking = false;
   m_adjacent_floor_tile = 0;
   m_distance_travelled = 0;
-  m_leash_length = 384;
+  m_leash_length = 128;
   m_stationary_avatar_position.x = 0;
   m_stationary_avatar_position.y = 0;
   m_max_x_look_distance = 600;
@@ -95,14 +95,7 @@ bool Camera_Controller::Init(Component_Composite * const model) {
 //------------------------------------------------------------------------------
 bool Camera_Controller::Run() {
   bool result = false;
-  if (m_has_been_initialised) {
-      result = true;
-      D3DXVECTOR3 avatar_position = *m_avatar->GetPosition();
-      D3DXVECTOR3 camera_position = m_camera->GetPosition();
-      m_camera->SetPosition(avatar_position);
-  }
-  /*
-  bool result = false;
+
   Camera_Controller_Mutator mutator;
   if (m_has_been_initialised) {
     Avatar_Component::Avatar_State current_state = m_avatar->GetState();
@@ -200,7 +193,7 @@ bool Camera_Controller::Run() {
           }
 
           if ((m_avatar->GetState().state.compare("Up_Facing_Falling_To_Death") == 0 && m_avatar->GetState().state_index == 0) ||
-             (m_avatar->GetState().state.compare("Down_Facing_Falling_To_Death") == 0 && m_avatar->GetState().state_index == 0)) {
+              (m_avatar->GetState().state.compare("Down_Facing_Falling_To_Death") == 0 && m_avatar->GetState().state_index == 0)) {
             m_radius = 30.0;
             m_randomAngle = static_cast<float>(rand()%360);
             m_is_shaking = true;
@@ -228,7 +221,7 @@ bool Camera_Controller::Run() {
   } else {
     result = false;
   }
-  */
+
   return result;
 }
 
