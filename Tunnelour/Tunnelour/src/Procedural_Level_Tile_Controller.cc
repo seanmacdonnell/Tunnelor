@@ -55,7 +55,7 @@ bool Procedural_Level_Tile_Controller::Run() {
 //------------------------------------------------------------------------------
 void Procedural_Level_Tile_Controller::CreateLevel() {
   m_current_level_name = m_level->GetCurrentLevel().level_name;
-  m_created_tiles = GenerateTunnelFromMetadata(m_level->GetCurrentLevel());
+  m_created_tiles = GenerateTunnel(m_level->GetCurrentLevel());
   SwitchTileset();
 }
 
@@ -65,5 +65,43 @@ void Procedural_Level_Tile_Controller::HandleEvent(Tunnelour::Component * const 
     Run();
   }
 }
+
+//------------------------------------------------------------------------------
+std::vector<Tile_Bitmap*> Procedural_Level_Tile_Controller::GenerateTunnel(Level_Component::Level_Metadata level_metadata) {
+  LoadTilesetMetadata();
+
+  std::vector<Tile_Bitmap*> tiles;
+
+  // Find Avatar
+  float avatar_x = level_metadata.start_avatar_top_left_x;
+  float avatar_y = level_metadata.start_avatar_top_left_y;
+  // Place tile under avatar
+  Tile_Bitmap* new_tile = 0;
+  new_tile = CreateBackgroundTile(128);
+  float position_z = 0;
+  new_tile->SetPosition(D3DXVECTOR3(avatar_x, avatar_y, position_z));
+  tiles.push_back(new_tile);
+  new_tile = 0;
+  new_tile = CreateMiddlegroundTile(128);
+  new_tile->SetPosition(D3DXVECTOR3(avatar_x, avatar_y-128, position_z));
+  new_tile->SetIsFloor(true);
+  new_tile->SetIsRightWall(true);
+  new_tile->SetIsLeftWall(true);
+  new_tile->SetIsRoof(true);
+
+  tiles.push_back(new_tile);
+
+  for (std::vector<Tile_Bitmap*>::iterator tile = tiles.begin(); tile != tiles.end(); ++tile) {
+    if ((*tile)->GetTexture()->transparency != 0.0f) {
+      ResetMiddlegroundTileTexture(*tile);
+    } else {
+      ResetBackgroundTileTexture(*tile);
+    }
+  }
+
+  return tiles;
+}
+
+
 
 } // Tunnelour

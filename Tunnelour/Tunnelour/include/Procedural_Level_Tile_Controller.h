@@ -53,6 +53,7 @@ class Procedural_Level_Tile_Controller: public Tunnelour::Level_Tile_Controller 
  protected:
 
  private:
+  std::vector<Tile_Bitmap*> GenerateTunnel(Level_Component::Level_Metadata level_metadata);
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_PROCEDURAL_LEVEL_TILE_CONTROLLER_H_
