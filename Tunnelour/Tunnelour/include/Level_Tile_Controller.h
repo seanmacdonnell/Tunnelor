@@ -135,7 +135,6 @@ class Level_Tile_Controller: public Controller,
 
  protected:
 
- private:
   std::vector<Tile_Bitmap*> GenerateTunnelFromMetadata(Level_Component::Level_Metadata level_metadata);
   std::vector<Tileset_Helper::Tileset_Metadata> m_tilesets;
   Tileset_Helper::Tileset_Metadata m_current_tileset;
@@ -216,6 +215,7 @@ class Level_Tile_Controller: public Controller,
   std::vector<std::vector<Tile_Bitmap*>> m_block_tile_lines;
   std::vector<Tile_Bitmap*> m_block_tile_line;
   Tile_Bitmap* m_back_block;
+ private:
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_LEVEL_TILE_CONTROLLER_H_

@@ -53,7 +53,7 @@ void Game_Settings_Component::Init() {
   m_level_path = L"resource\\levels\\";
   m_is_debug_mode = false;
   m_is_camera_following = true;
-  m_is_using_level_file = true;
+  m_is_using_level_file = false;
 }
 
 //------------------------------------------------------------------------------
