@@ -19,6 +19,8 @@
 #include "Get_Avatar_Mutator.h"
 #include "Bitmap_Helper.h"
 #include "Score_Display_Controller.h"
+#include "File_Level_Tile_Controller.h"
+#include "Procedural_Level_Tile_Controller.h"
 
 namespace Tunnelour {
 
@@ -141,7 +143,11 @@ bool Level_Controller::Init(Component_Composite * const model) {
     m_font_path = "resource\\tilesets\\Ariel.fnt";
 
     if (m_level_tile_controller == 0) {
-      m_level_tile_controller = new Level_Tile_Controller();
+      if (m_game_settings->IsUsingLevelFile()) {
+        m_level_tile_controller = new File_Level_Tile_Controller();
+      } else {
+        m_level_tile_controller = new Procedural_Level_Tile_Controller();
+      }
       m_level_tile_controller->Init(m_model);
     }
 

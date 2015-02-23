@@ -32,6 +32,7 @@ Game_Settings_Component::Game_Settings_Component(): Component() {
   m_hinstance = 0;
   m_hwnd = 0;
   m_is_camera_following = false;
+  m_is_using_level_file = false;
 }
 
 //------------------------------------------------------------------------------
@@ -52,6 +53,7 @@ void Game_Settings_Component::Init() {
   m_level_path = L"resource\\levels\\";
   m_is_debug_mode = false;
   m_is_camera_following = true;
+  m_is_using_level_file = true;
 }
 
 //------------------------------------------------------------------------------
@@ -172,6 +174,11 @@ bool Game_Settings_Component::IsCameraFollowing() {
 //------------------------------------------------------------------------------
 void Game_Settings_Component::SetIsCameraFollowing(bool is_camera_following) {
   m_is_camera_following = is_camera_following;
+}
+
+//------------------------------------------------------------------------------
+bool Game_Settings_Component::IsUsingLevelFile() {
+  return m_is_using_level_file;
 }
 
 //------------------------------------------------------------------------------

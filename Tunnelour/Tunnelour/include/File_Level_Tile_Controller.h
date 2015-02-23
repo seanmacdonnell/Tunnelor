@@ -13,20 +13,10 @@
 //  limitations under the License.
 //
 
-#ifndef TUNNELOUR_LEVEL_TILE_CONTROLLER_H_
-#define TUNNELOUR_LEVEL_TILE_CONTROLLER_H_
+#ifndef TUNNELOUR_FILE_LEVEL_TILE_CONTROLLER_H_
+#define TUNNELOUR_FILE_LEVEL_TILE_CONTROLLER_H_
 
-#include <vector>
-#include <string>
-#include <list>
-#include "Component_Composite.h"
-#include "Controller.h"
-#include "Tile_Bitmap.h"
-#include "Game_Settings_Component.h"
-#include "Level_Tile_Controller_Mutator.h"
-#include "Camera_Component.h"
-#include "Tileset_Helper.h"
-#include "Level_Component.h"
+#include "Level_Tile_Controller.h"
 
 namespace Tunnelour {
 //-----------------------------------------------------------------------------
@@ -34,8 +24,7 @@ namespace Tunnelour {
 //  Description : This controller is responsible for the generation of the
 //                middleground (Layer 0)
 //-----------------------------------------------------------------------------
-class Level_Tile_Controller: public Controller,
-                             public Component::Component_Observer {
+class File_Level_Tile_Controller: public Tunnelour::Level_Tile_Controller {
  public:
   struct Background_Tile_Type {
     bool found_right_exit;
@@ -103,12 +92,12 @@ class Level_Tile_Controller: public Controller,
   //---------------------------------------------------------------------------
   // Description : Constructor
   //---------------------------------------------------------------------------
-  Level_Tile_Controller();
+  File_Level_Tile_Controller();
 
   //---------------------------------------------------------------------------
   // Description : Deconstructor
   //---------------------------------------------------------------------------
-  virtual ~Level_Tile_Controller();
+  virtual ~File_Level_Tile_Controller();
 
   //--------------------------------------------------------------------------
   // Description : Initialisation function for the Controller
@@ -123,13 +112,13 @@ class Level_Tile_Controller: public Controller,
   //---------------------------------------------------------------------------
   // Description : Create the tiles for the current level
   //---------------------------------------------------------------------------
-  virtual void CreateLevel();
-  virtual void AddLevelToModel();
-  virtual void ShowLevel();
-  virtual void HideLevel();
-  virtual void DestroyLevel();
+  void CreateLevel();
+  void AddLevelToModel();
+  void ShowLevel();
+  void HideLevel();
+  void DestroyLevel();
 
-  virtual std::vector<Tile_Bitmap*> GetExitTiles();
+  std::vector<Tile_Bitmap*> GetExitTiles();
 
   virtual void HandleEvent(Tunnelour::Component * const component);
 
@@ -137,6 +126,7 @@ class Level_Tile_Controller: public Controller,
 
  private:
   std::vector<Tile_Bitmap*> GenerateTunnelFromMetadata(Level_Component::Level_Metadata level_metadata);
+  std::vector<Tile_Bitmap*> GenerateStartingTunnel(Level_Component::Level_Metadata level_metadata);
   std::vector<Tileset_Helper::Tileset_Metadata> m_tilesets;
   Tileset_Helper::Tileset_Metadata m_current_tileset;
   Tileset_Helper::Subset m_current_middleground_subset;
@@ -144,8 +134,8 @@ class Level_Tile_Controller: public Controller,
   void LoadTilesetMetadata();
   Tileset_Helper::Tileset_Metadata GetNamedTileset(std::string name);
   Tileset_Helper::Subset GetCurrentMiddlegroundSubset();
-  Tileset_Helper::Subset GetCurrentMiddlegroundSubsetType(Level_Tile_Controller::Middleground_Tile_Type types);
-  Tileset_Helper::Subset GetCurrentBackgroundSubsetType(Level_Tile_Controller::Background_Tile_Type types);
+  Tileset_Helper::Subset GetCurrentMiddlegroundSubsetType(File_Level_Tile_Controller::Middleground_Tile_Type types);
+  Tileset_Helper::Subset GetCurrentBackgroundSubsetType(File_Level_Tile_Controller::Background_Tile_Type types);
   Middleground_Tile_Type ParseSubsetTypesFromString(std::string type);
   Background_Tile_Type ParseSubsetBackgroundTypesFromString(std::string type);
   Tileset_Helper::Subset GetCurrentNamedSubset(std::string name);
@@ -218,4 +208,4 @@ class Level_Tile_Controller: public Controller,
   Tile_Bitmap* m_back_block;
 };
 }  // namespace Tunnelour
-#endif  // TUNNELOUR_LEVEL_TILE_CONTROLLER_H_
+#endif  // TUNNELOUR_FILE_LEVEL_TILE_CONTROLLER_H_

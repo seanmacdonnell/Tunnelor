@@ -115,6 +115,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Direct3D11_View_TextureShader.cpp" />
     <ClCompile Include="src\Direct3D11_View_TransparentShader.cpp" />
     <ClCompile Include="src\Engine.cc" />
+    <ClCompile Include="src\File_Level_Tile_Controller.cc" />
     <ClCompile Include="src\Frame_Component.cc" />
     <ClCompile Include="src\Game_Metrics_Component.cc" />
     <ClCompile Include="src\Game_Metrics_Controller.cc" />
@@ -139,6 +140,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClCompile Include="src\Level_Transition_Controller_Mutator.cc" />
     <ClCompile Include="src\Message_Wrapper.cc" />
     <ClCompile Include="src\Bitmap_Component.cc" />
+    <ClCompile Include="src\Procedural_Level_Tile_Controller.cc" />
     <ClCompile Include="src\Score_Display_Controller.cc" />
     <ClCompile Include="src\Score_Display_Controller_Mutator.cc" />
     <ClCompile Include="src\Screen_Wipeout_Controller.cc" />
@@ -186,6 +188,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Direct3D11_View_TransparentShader.h" />
     <ClInclude Include="include\Engine.h" />
     <ClInclude Include="include\Exceptions.h" />
+    <ClInclude Include="include\File_Level_Tile_Controller.h" />
     <ClInclude Include="include\Frame_Component.h" />
     <ClInclude Include="include\Game_Metrics_Component.h" />
     <ClInclude Include="include\Game_Metrics_Controller.h" />
@@ -210,6 +213,7 @@ xcopy /E /I /Q /Y /Z "$(ProjectDir)resource" "$(TargetDir)resource"</Command>
     <ClInclude Include="include\Level_Transition_Controller_Mutator.h" />
     <ClInclude Include="include\Message_Wrapper.h" />
     <ClInclude Include="include\Bitmap_Component.h" />
+    <ClInclude Include="include\Procedural_Level_Tile_Controller.h" />
     <ClInclude Include="include\Score_Display_Controller.h" />
     <ClInclude Include="include\Score_Display_Controller_Mutator.h" />
     <ClInclude Include="include\Screen_Wipeout_Controller.h" />

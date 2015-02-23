@@ -166,6 +166,11 @@ class Game_Settings_Component: public Tunnelour::Component {
   //---------------------------------------------------------------------------
   void SetIsCameraFollowing(bool is_camera_following);
 
+  //---------------------------------------------------------------------------
+  // Description : Accessor for the is using level file flag
+  //---------------------------------------------------------------------------
+  bool IsUsingLevelFile();
+
  protected:
 
  private:
@@ -184,7 +189,7 @@ class Game_Settings_Component: public Tunnelour::Component {
   HWND m_hwnd;
   bool m_is_debug_mode;
   bool m_is_camera_following;
-
+  bool m_is_using_level_file;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_BACKGROUND_COLOR_COMPONENT_H_

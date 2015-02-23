@@ -291,6 +291,12 @@
     <ClCompile Include="src\Get_Game_Metrics_Component_Mutator.cc">
       <Filter>Source Files\Controllers\Mutators</Filter>
     </ClCompile>
+    <ClCompile Include="src\File_Level_Tile_Controller.cc">
+      <Filter>Source Files\Controllers\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Procedural_Level_Tile_Controller.cc">
+      <Filter>Source Files\Controllers\Level</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Init_Controller.h">
@@ -502,6 +508,12 @@
     </ClInclude>
     <ClInclude Include="include\Get_Game_Metrics_Component_Mutator.h">
       <Filter>Include Files\Controllers\Mutators</Filter>
+    </ClInclude>
+    <ClInclude Include="include\File_Level_Tile_Controller.h">
+      <Filter>Include Files\Controllers\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Procedural_Level_Tile_Controller.h">
+      <Filter>Include Files\Controllers\Level</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
