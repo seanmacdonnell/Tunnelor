@@ -251,7 +251,7 @@ bool Level_Controller::Run() {
           }
           m_has_level_been_added = true;
         } else if (!m_has_level_been_shown) {
-          m_level_tile_controller->Run();
+          //m_level_tile_controller->Run();
           m_level_tile_controller->ShowLevel();
           m_has_level_been_shown = true;
         } else {
@@ -273,7 +273,7 @@ bool Level_Controller::Run() {
         }
       } else {
         if (m_level_tile_controller != 0) {
-          m_level_tile_controller->Run();
+          //m_level_tile_controller->Run();
         }
         if (m_avatar_controller != 0) {
           m_avatar_controller->Run();

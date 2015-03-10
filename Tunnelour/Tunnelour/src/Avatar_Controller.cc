@@ -262,9 +262,6 @@ void Avatar_Controller::RunAvatarState() {
       if (!m_charlie_standing_controller.HasBeenInitalised()) {
         m_charlie_standing_controller.Init(m_model);
         m_charlie_standing_controller.SetAvatarComponent(m_avatar);
-        m_charlie_standing_controller.SetFloorTiles(m_floor_tiles);
-        m_charlie_standing_controller.SetWallTiles(m_wall_tiles);
-        m_charlie_standing_controller.SetLedgeTiles(m_ledge_tiles);
         m_charlie_standing_controller.SetGameSettings(m_game_settings);
         m_charlie_standing_controller.SetAnimationMetadata(&m_animation_metadata);
         m_charlie_standing_controller.SetCurrentAnimationSubset(&m_current_animation_subset);
@@ -280,6 +277,9 @@ void Avatar_Controller::RunAvatarState() {
       }
 
       if (m_charlie_standing_controller.HasBeenInitalised()) {
+        m_charlie_standing_controller.SetFloorTiles(m_floor_tiles);
+        m_charlie_standing_controller.SetWallTiles(m_wall_tiles);
+        m_charlie_standing_controller.SetLedgeTiles(m_ledge_tiles);
         m_charlie_standing_controller.Run();
       }
 
@@ -290,9 +290,6 @@ void Avatar_Controller::RunAvatarState() {
       if (!m_charlie_falling_controller.HasBeenInitalised()) {
         m_charlie_falling_controller.Init(m_model);
         m_charlie_falling_controller.SetAvatarComponent(m_avatar);
-        m_charlie_falling_controller.SetFloorTiles(m_floor_tiles);
-        m_charlie_falling_controller.SetWallTiles(m_wall_tiles);
-        m_charlie_falling_controller.SetLedgeTiles(m_ledge_tiles);
         m_charlie_falling_controller.SetGameSettings(m_game_settings);
         m_charlie_falling_controller.SetAnimationMetadata(&m_animation_metadata);
         m_charlie_falling_controller.SetCurrentAnimationSubset(&m_current_animation_subset);
@@ -308,6 +305,9 @@ void Avatar_Controller::RunAvatarState() {
       }
 
       if (m_charlie_falling_controller.HasBeenInitalised()) {
+        m_charlie_falling_controller.SetFloorTiles(m_floor_tiles);
+        m_charlie_falling_controller.SetWallTiles(m_wall_tiles);
+        m_charlie_falling_controller.SetLedgeTiles(m_ledge_tiles);
         m_charlie_falling_controller.Run();
       }
 
@@ -318,9 +318,6 @@ void Avatar_Controller::RunAvatarState() {
       if (!m_charlie_running_controller.HasBeenInitalised()) {
         m_charlie_running_controller.Init(m_model);
         m_charlie_running_controller.SetAvatarComponent(m_avatar);
-        m_charlie_running_controller.SetFloorTiles(m_floor_tiles);
-        m_charlie_running_controller.SetWallTiles(m_wall_tiles);
-        m_charlie_running_controller.SetLedgeTiles(m_ledge_tiles);
         m_charlie_running_controller.SetGameSettings(m_game_settings);
         m_charlie_running_controller.SetAnimationMetadata(&m_animation_metadata);
         m_charlie_running_controller.SetCurrentAnimationSubset(&m_current_animation_subset);
@@ -336,6 +333,9 @@ void Avatar_Controller::RunAvatarState() {
       }
 
       if (m_charlie_running_controller.HasBeenInitalised()) {
+        m_charlie_running_controller.SetFloorTiles(m_floor_tiles);
+        m_charlie_running_controller.SetWallTiles(m_wall_tiles);
+        m_charlie_running_controller.SetLedgeTiles(m_ledge_tiles);
         m_charlie_running_controller.Run();
       }
 
@@ -346,9 +346,6 @@ void Avatar_Controller::RunAvatarState() {
       if (!m_charlie_jumping_controller.HasBeenInitalised()) {
         m_charlie_jumping_controller.Init(m_model);
         m_charlie_jumping_controller.SetAvatarComponent(m_avatar);
-        m_charlie_jumping_controller.SetFloorTiles(m_floor_tiles);
-        m_charlie_jumping_controller.SetWallTiles(m_wall_tiles);
-        m_charlie_jumping_controller.SetLedgeTiles(m_ledge_tiles);
         m_charlie_jumping_controller.SetGameSettings(m_game_settings);
         m_charlie_jumping_controller.SetAnimationMetadata(&m_animation_metadata);
         m_charlie_jumping_controller.SetCurrentAnimationSubset(&m_current_animation_subset);
@@ -364,6 +361,9 @@ void Avatar_Controller::RunAvatarState() {
       }
 
       if (m_charlie_jumping_controller.HasBeenInitalised()) {
+        m_charlie_jumping_controller.SetFloorTiles(m_floor_tiles);
+        m_charlie_jumping_controller.SetWallTiles(m_wall_tiles);
+        m_charlie_jumping_controller.SetLedgeTiles(m_ledge_tiles);
         m_charlie_jumping_controller.Run();
       }
 
@@ -374,9 +374,6 @@ void Avatar_Controller::RunAvatarState() {
       if (!m_charlie_climbing_controller.HasBeenInitalised()) {
         m_charlie_climbing_controller.Init(m_model);
         m_charlie_climbing_controller.SetAvatarComponent(m_avatar);
-        m_charlie_climbing_controller.SetFloorTiles(m_floor_tiles);
-        m_charlie_climbing_controller.SetWallTiles(m_wall_tiles);
-        m_charlie_climbing_controller.SetLedgeTiles(m_ledge_tiles);
         m_charlie_climbing_controller.SetGameSettings(m_game_settings);
         m_charlie_climbing_controller.SetAnimationMetadata(&m_animation_metadata);
         m_charlie_climbing_controller.SetCurrentAnimationSubset(&m_current_animation_subset);
@@ -392,6 +389,9 @@ void Avatar_Controller::RunAvatarState() {
       }
 
       if (m_charlie_climbing_controller.HasBeenInitalised()) {
+        m_charlie_climbing_controller.SetFloorTiles(m_floor_tiles);
+        m_charlie_climbing_controller.SetWallTiles(m_wall_tiles);
+        m_charlie_climbing_controller.SetLedgeTiles(m_ledge_tiles);
         m_charlie_climbing_controller.Run();
       }
 

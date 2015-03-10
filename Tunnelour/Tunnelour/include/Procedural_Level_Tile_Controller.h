@@ -50,10 +50,39 @@ class Procedural_Level_Tile_Controller: public Tunnelour::Level_Tile_Controller 
 
   virtual void HandleEvent(Tunnelour::Component * const component);
 
+  virtual void AddTilesToModel(std::vector<Tile_Bitmap*> tiles);
+  virtual void RemoveTilesFromModel(int count);
+
  protected:
+  void RandomTheRoof();
+  void RandomTheFloor();
+  void EnsureMinTunnel();
+  void EnsureMaxTunnel();
+  void EnsureAPath();
+  void EnsureAClimbablePath();
 
  private:
   std::vector<Tile_Bitmap*> GenerateTunnel(Level_Component::Level_Metadata level_metadata);
+  float m_floor_offset_x;
+  float m_floor_offset_y;
+  float m_roof_offset_x;
+  float m_roof_offset_y;
+  float m_back_offset_x;
+  float m_back_offset_y;
+  std::vector<Tile_Bitmap*> m_roof_tiles;
+  std::vector<std::vector<Tile_Bitmap*>> m_level_tiles;
+  float m_roof_level;
+  float m_floor_level;
+  float m_last_roof_level;
+  float m_last_floor_level;
+  float m_last_last_roof_level;
+  float m_last_last_floor_level;
+  float m_tile_start_point_x;
+  float m_tile_start_point_y;
+  float m_level_right;
+  float m_level_count;
+  float m_min_tunnel_size;
+  float m_max_tunnel_size;
 };
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_PROCEDURAL_LEVEL_TILE_CONTROLLER_H_

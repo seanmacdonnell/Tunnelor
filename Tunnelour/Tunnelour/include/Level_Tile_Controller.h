@@ -166,6 +166,7 @@ class Level_Tile_Controller: public Controller,
   std::vector<Tile_Bitmap*> m_top_edge_tiles;
   std::vector<Tile_Bitmap*> m_tunnel_edge_tiles;
   std::vector<Tile_Bitmap*> m_exit_tiles;
+  std::vector<Tile_Bitmap*> m_floor_tiles;
   /* DEPRECIATED
   //---------------------------------------------------------------------------
   // Description : Tiles up from the current background edge
