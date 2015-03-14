@@ -290,7 +290,7 @@ Tileset_NumOfSubSets "22"
     Line_TopLeftY "1188"
     Tile_SizeX "128"
     Tile_SizeY "128"
-    Line_NumOfTiles 
+    Line_NumOfTiles "4"
   SubSet_Name "Background"
   SubSet_Type "Background"
   SubSet_TopLeftX "0"

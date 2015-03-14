@@ -100,10 +100,10 @@ bool Procedural_Level_Tile_Controller::Run() {
     AddBackgroundTiles(new_line);
     AddFloorTile(new_line);
 
-    AddRoofLeftWalls();
     AddRoofRightWalls(new_line);
-    AddFloorLeftWalls();
+    AddRoofLeftWalls();
     AddFloorRightWalls(new_line);
+    AddFloorLeftWalls();
 
     // Add Line to Level Tiles
     if (!new_line.empty()) {
@@ -278,16 +278,16 @@ void Procedural_Level_Tile_Controller::RandomTheRoof() {
     roof_rand *= -1; 
   }
 
-  m_roof_level += roof_rand;
-  
-  if (m_roof_level == 0) {
-    if (roof_coin == 1) { 
-      m_roof_level = 1; 
-    } else {
-      m_roof_level = -1;
+  while (m_roof_level + roof_rand <= m_floor_level) {
+    roof_coin = rand() % 2;
+    roof_rand = rand() % 2;
+
+    if (roof_coin == 1) {
+      roof_rand *= -1; 
     }
   }
-  
+
+  m_roof_level += roof_rand;
 }
 
 //------------------------------------------------------------------------------
@@ -300,15 +300,6 @@ void Procedural_Level_Tile_Controller::RandomTheFloor() {
   }
 
   m_floor_level += floor_rand;
-  
-  if (m_floor_level == 0) {
-    if (floor_coin == 1) { 
-      m_floor_level = -1; 
-    } else {
-      m_floor_level = 1;
-    }
-  }
-  
 }
 
 //------------------------------------------------------------------------------
@@ -483,10 +474,14 @@ void Procedural_Level_Tile_Controller::AddRoofLeftWalls() {
     */
     if (!m_level_tiles.empty()) {
       for (std::vector<Tile_Bitmap*>::iterator i = (m_level_tiles.back()).begin(); i != (m_level_tiles.back()).end(); ++i ) { 
-        if (!(*i)->IsTopLeftWallEnd() && !(*i)->IsLeftFloorEnd()) {
+        if (!(*i)->IsTopRightWallEnd() && 
+            !(*i)->IsRightRoofEnd()) {
           (*i)->SetIsLeftWall(true);
-          ResetMiddlegroundTileTexture(*i);
+        } else {
+          (*i)->SetIsTopLeftWallEnd(true);
+          (*i)->SetIsLeftRoofEnd(true);
         }
+        ResetMiddlegroundTileTexture(*i);
         if ((*i)->IsRoof()) {
           break;
         } 
@@ -506,8 +501,8 @@ void Procedural_Level_Tile_Controller::AddRoofLeftWalls() {
         }
 
         m_model->Add(new_tile);
-        (m_level_tiles.back()).insert((m_level_tiles.back()).begin(), new_tile);
         ResetMiddlegroundTileTexture(new_tile);
+        (m_level_tiles.back()).insert((m_level_tiles.back()).begin(), new_tile);
       }
     }
   }
@@ -622,8 +617,9 @@ void Procedural_Level_Tile_Controller::AddFloorLeftWalls() {
     */
     if (!m_level_tiles.empty()) {
       for (std::vector<Tile_Bitmap*>::reverse_iterator i = (m_level_tiles.back()).rbegin(); i != (m_level_tiles.back()).rend(); ++i ) { 
-        if (!(*i)->IsBotRightWallEnd() && !(*i)->IsRightFloorEnd()) {
-          (*i)->SetIsLeftWall(true);
+        if (!(*i)->IsBotRightWallEnd() &&
+            !(*i)->IsRightFloorEnd()) {
+            (*i)->SetIsLeftWall(true);
         } else {
           (*i)->SetIsBotLeftWallEnd(true);
           (*i)->SetIsLeftFloorEnd(true);

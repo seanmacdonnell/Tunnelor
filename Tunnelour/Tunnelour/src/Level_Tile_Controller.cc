@@ -964,9 +964,9 @@ void Level_Tile_Controller::ResetMiddlegroundTileTexture(Tile_Bitmap *out_tile) 
     Middleground_Tile_Type Middleground_Tile_Type = ParseSubsetTypesFromString(types);
     edge_subset = GetCurrentMiddlegroundSubsetType(Middleground_Tile_Type);
     tile_line = GetSizedNamedLine(edge_subset, out_tile->GetSize().x);
-    random_variable = random_variable = rand() % tile_line.number_of_tiles;
+    random_variable = rand() % tile_line.number_of_tiles;
   } else {
-    random_variable = random_variable = rand() % tile_line.number_of_tiles;;
+    random_variable = rand() % tile_line.number_of_tiles;;
   }     
 
   float left = random_variable * tile_line.tile_size_x + tile_line.top_left_x;
