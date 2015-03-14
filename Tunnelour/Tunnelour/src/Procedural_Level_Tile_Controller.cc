@@ -42,6 +42,7 @@ Procedural_Level_Tile_Controller::Procedural_Level_Tile_Controller() : Level_Til
   m_level_count = 0;
   m_min_tunnel_size = 0;
   m_max_tunnel_size = 0;
+  m_tile_size = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -60,19 +61,21 @@ Procedural_Level_Tile_Controller::~Procedural_Level_Tile_Controller() {
   m_level_count = 0;
   m_min_tunnel_size = 0;
   m_max_tunnel_size = 0;
+  m_tile_size = 0;
 }
 
 //------------------------------------------------------------------------------
 bool Procedural_Level_Tile_Controller::Init(Component_Composite * const model) {
   bool result = Level_Tile_Controller::Init(model);
   std::srand(static_cast<unsigned int>(std::time(0)));
-  m_roof_level = 2;
-  m_floor_level = -2;
-  m_last_roof_level = 2;
-  m_last_floor_level = -2;
+  m_roof_level = 1;
+  m_floor_level = -1;
+  m_last_roof_level = 1;
+  m_last_floor_level = -1;
   m_level_count = 2;
-  m_min_tunnel_size = 3;
-  m_max_tunnel_size = 5;
+  m_min_tunnel_size = 1;
+  m_max_tunnel_size = 6;
+  m_tile_size = 128;
   return result;
 }
 
@@ -85,200 +88,36 @@ bool Procedural_Level_Tile_Controller::Run() {
   D3DXVECTOR3 camera_position = m_camera->GetPosition();
   std::vector<Tile_Bitmap*> new_line;
   float camera_right = (camera_position.x + 256);
-  if (!m_background_tiles.empty()) {
-    while (camera_right > m_level_right) {
-      float adjusted_roof_level;
-      float adjusted_floor_level;
-      float adjusted_last_roof_level;
-      float adjusted_last_floor_level;
+  while (camera_right > m_level_right) {
+    RandomTheFloor();
+    RandomTheRoof();
+    EnsureAPath();
+//    EnsureMinTunnel();
+    EnsureMaxTunnel();
+    //EnsureAClimbablePath();
 
-      RandomTheFloor();
-      RandomTheRoof();
-      EnsureMinTunnel();
-      EnsureMaxTunnel();
-      EnsureAPath();
-      EnsureAClimbablePath();
+    AddRoofTile(new_line);
+    AddBackgroundTiles(new_line);
+    AddFloorTile(new_line);
 
-      Tile_Bitmap* new_tile = 0;
-      float tile_size = 128; 
-      adjusted_roof_level = m_roof_level;
-      adjusted_floor_level = m_floor_level;
-      if (m_roof_level < 0) {
-        adjusted_roof_level -= 1; 
+    AddRoofLeftWalls();
+    AddRoofRightWalls(new_line);
+    AddFloorLeftWalls();
+    AddFloorRightWalls(new_line);
+
+    // Add Line to Level Tiles
+    if (!new_line.empty()) {
+      AddTilesToModel(new_line);
+      if (m_level_tiles.size() > 4) {
+        RemoveTilesFromModel(m_level_tiles.front());
+        m_level_tiles.erase(m_level_tiles.begin());
       }
-      if (m_floor_level < 0) {
-        adjusted_floor_level -= 1; 
-      }
-      // Add Roof Tile
-      new_tile = CreateMiddlegroundTile(tile_size);
-      float position_y = m_tile_start_point_y + (tile_size * adjusted_roof_level);
-      float position_x = m_level_right + tile_size;
-      float position_z = 0;
-      new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
-      new_tile->SetIsRoof(true);
-      new_line.push_back(new_tile);
-
-      // Add Background (Tunnel) Tiles
-      for (float i = (adjusted_floor_level + 1); i <= (adjusted_roof_level - 1); i++) {
-        new_tile = CreateBackgroundTile(tile_size);
-        position_y = m_tile_start_point_y + (tile_size * i);
-        position_x = m_level_right + tile_size;
-        position_z = 0;
-   
-        new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
-        new_line.push_back(new_tile);
-      }
-
-      // Add Floor Tile
-      new_tile = CreateMiddlegroundTile(tile_size);
-      position_y = m_tile_start_point_y + (tile_size * adjusted_floor_level);
-      position_x = m_level_right + tile_size;
-      position_z = 0;
-      new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
-      new_tile->SetIsFloor(true);
-      new_line.push_back(new_tile);
-
-      // Sets the Right Wall property on the line before
-      if (m_roof_level > m_last_roof_level) {
-        float adjusted_last_roof_level = m_last_roof_level;
-        if (m_last_roof_level < 0) {
-          adjusted_last_roof_level -= 1; 
-        }
-
-        if (!m_level_tiles.empty()) {
-          for (std::vector<Tile_Bitmap*>::iterator i = (m_level_tiles.back()).begin(); i != (m_level_tiles.back()).end(); ++i ) { 
-            if (!(*i)->IsTopLeftWallEnd() && !(*i)->IsLeftFloorEnd()) {
-              (*i)->SetIsLeftWall(true);
-              ResetMiddlegroundTileTexture(*i);
-            }
-            if ((*i)->IsRoof()) {
-              break;
-            } 
-          } 
-
-          for (float i = adjusted_last_roof_level; i <= adjusted_roof_level; i++) {
-            new_tile = CreateMiddlegroundTile(tile_size);
-            position_y = m_tile_start_point_y + (tile_size * i);
-            position_x = m_level_right;
-            position_z = 0;
-            new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
-            if (i == adjusted_roof_level) {
-              new_tile->SetIsTopLeftWallEnd(true);
-              new_tile->SetIsLeftRoofEnd(true);
-            } else {
-              new_tile->SetIsLeftWall(true);
-            }
-
-            new_line.insert(new_line.begin(), new_tile);
-            ResetMiddlegroundTileTexture(new_tile);
-          }
-        }
-      }
-
-      if (m_roof_level < m_last_roof_level) {
-        float adjusted_last_roof_level = m_last_roof_level;
-        if (m_last_roof_level < 0) {
-          adjusted_last_roof_level -= 1; 
-        }
-
-        if (!new_line.empty()) {
-          (*new_line.begin())->SetIsRightWall(true);
-        }
-     
-        for (float i = (adjusted_roof_level + 1); i <= adjusted_last_roof_level; i++) {
-          new_tile = CreateMiddlegroundTile(tile_size);
-          position_y = m_tile_start_point_y + (tile_size * i);
-          position_x = m_level_right + tile_size;
-          position_z = 0;
-          new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
-          if (i == adjusted_last_roof_level) {
-            new_tile->SetIsTopRightWallEnd(true);
-            new_tile->SetIsRightRoofEnd(true);
-          } else {
-            new_tile->SetIsRightWall(true);
-          }
-          new_line.insert(new_line.begin(), new_tile);
-        }
-      }
-
-      if (m_floor_level > m_last_floor_level) {
-        float adjusted_last_floor_level = m_last_floor_level;
-        if (m_last_floor_level < 0) {
-          adjusted_last_floor_level -= 1; 
-        }
-
-        if (!new_line.empty()) {
-          (new_line.back())->SetIsRightWall(true);
-        }
-     
-        for (float i = adjusted_last_floor_level; i <= (adjusted_floor_level - 1); i++) {
-          new_tile = CreateMiddlegroundTile(tile_size);
-          position_y = m_tile_start_point_y + (tile_size * i);
-          position_x = m_level_right + tile_size;
-          position_z = 0;
-          new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
-
-          if (i == adjusted_last_floor_level) {
-            new_tile->SetIsBotRightWallEnd(true);
-            new_tile->SetIsRightFloorEnd(true);
-          } else {
-            new_tile->SetIsRightWall(true);
-          }
-
-          new_line.push_back(new_tile);
-        }
-      }
-
-      if (m_floor_level < m_last_floor_level) {
-        float adjusted_last_floor_level = m_last_floor_level;
-        if (m_last_floor_level < 0) {
-          adjusted_last_floor_level -= 1; 
-        }
-
-        if (!m_level_tiles.empty()) {
-          for (std::vector<Tile_Bitmap*>::reverse_iterator i = (m_level_tiles.back()).rbegin(); i != (m_level_tiles.back()).rend(); ++i ) { 
-            if (!(*i)->IsBotRightWallEnd() && !(*i)->IsRightFloorEnd()) {
-              (*i)->SetIsLeftWall(true);
-            } else {
-              (*i)->SetIsBotLeftWallEnd(true);
-              (*i)->SetIsLeftFloorEnd(true);
-            }
-            ResetMiddlegroundTileTexture(*i);
-            if ((*i)->IsFloor()) {
-              break;
-            } 
-          } 
-
-          for (float i = adjusted_floor_level; i <= adjusted_last_floor_level; i++) {
-            new_tile = CreateMiddlegroundTile(tile_size);
-            position_y = m_tile_start_point_y + (tile_size * i);
-            position_x = m_level_right;
-            position_z = 0;
-            new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
-            if (i == adjusted_floor_level) {
-              new_tile->SetIsBotLeftWallEnd(true);
-              new_tile->SetIsLeftFloorEnd(true);
-            } else {
-              new_tile->SetIsLeftWall(true);
-            }
-
-            m_model->Add(new_tile);
-            ResetMiddlegroundTileTexture(new_tile);
-            (m_level_tiles.back()).push_back(new_tile);
-          }
-        }
-      }
-
-      // Add Line to Level Tiles
-      if (!new_line.empty()) {
-        AddTilesToModel(new_line);
-      }
-
-      m_level_tiles.push_back(new_line);
-      m_level_right += tile_size;
-      m_last_roof_level = m_roof_level;
-      m_last_floor_level = m_floor_level;
     }
+
+    m_level_tiles.push_back(new_line);
+    m_level_right += m_tile_size;
+    m_last_roof_level = m_roof_level;
+    m_last_floor_level = m_floor_level;
   }
 
   if (m_is_debug_mode != m_game_settings->IsDebugMode()) {
@@ -316,19 +155,9 @@ void Procedural_Level_Tile_Controller::AddTilesToModel(std::vector<Tile_Bitmap*>
 }
 
 //------------------------------------------------------------------------------
-void Procedural_Level_Tile_Controller::RemoveTilesFromModel(int count) {
-  for (int i = 0; i != count; i++) {
-    Tile_Bitmap* tile = *(m_floor_tiles.begin());
-    m_model->Remove(tile);
-    m_floor_tiles.erase(m_floor_tiles.begin());
-
-    tile = *(m_roof_tiles.begin());
-    m_model->Remove(tile);
-    m_roof_tiles.erase(m_roof_tiles.begin());
-
-    tile = *(m_background_tiles.begin());
-    m_model->Remove(tile);
-    m_background_tiles.erase(m_background_tiles.begin());
+void Procedural_Level_Tile_Controller::RemoveTilesFromModel(std::vector<Tile_Bitmap*> tiles) {
+  for (std::vector<Tile_Bitmap*>::iterator tile = tiles.begin(); tile != tiles.end(); ++tile) {
+    m_model->Remove(*tile);
   }
 }
 
@@ -339,65 +168,96 @@ std::vector<Tile_Bitmap*> Procedural_Level_Tile_Controller::GenerateTunnel(Level
   std::vector<Tile_Bitmap*> tiles;
 
   // Find Avatar
-  m_tile_start_point_x = level_metadata.start_avatar_top_left_x;
+  float level_left = level_metadata.start_avatar_top_left_x - (m_tile_size * 4);
+  m_level_right = level_metadata.start_avatar_top_left_x - (m_tile_size * 4);
   m_tile_start_point_y = level_metadata.start_avatar_top_left_y;
-  float tile_size = 128; 
-  // Place background tile under avatar
-  Tile_Bitmap* new_tile = 0;
 
+  m_floor_level = -1;
+  m_roof_level = 0;
+
+  std::vector<Tile_Bitmap*> new_line;
+  AddRoofTile(new_line);
+  (new_line.back())->SetIsRoof(false);
+  (new_line.back())->SetIsTopLeftWallEnd(true);
+  (new_line.back())->SetIsLeftRoofEnd(true);
+  AddFloorTile(new_line);
+  (new_line.back())->SetIsFloor(false);
+  (new_line.back())->SetIsBotLeftWallEnd(true);
+  (new_line.back())->SetIsLeftFloorEnd(true);
+  m_level_right += m_tile_size;
+
+  m_level_tiles.push_back(new_line);
+  tiles.insert(tiles.end(), new_line.begin(), new_line.end()); 
+
+
+  while (m_level_right < level_metadata.start_avatar_top_left_x - m_tile_size) {
+    std::vector<Tile_Bitmap*> new_line;
+    AddRoofTile(new_line);
+    AddBackgroundTiles(new_line);
+    AddFloorTile(new_line);
+    m_level_right += m_tile_size;
+
+    m_level_tiles.push_back(new_line);
+    tiles.insert(tiles.end(), new_line.begin(), new_line.end());
+  }
+
+  m_last_roof_level = m_roof_level;
+  m_last_floor_level = m_floor_level;
+  m_floor_level = -1;
+  m_roof_level = 2;
+  for (int i = 0; i < 3; i++) {
+    std::vector<Tile_Bitmap*> new_line;
+    AddRoofTile(new_line);
+    AddBackgroundTiles(new_line);
+    AddFloorTile(new_line);
+    AddRoofLeftWalls();
+    m_level_right += m_tile_size;
+
+    m_level_tiles.push_back(new_line);
+    tiles.insert(tiles.end(), new_line.begin(), new_line.end());
+    m_last_roof_level = m_roof_level;
+    m_last_floor_level = m_floor_level;
+  }  
+
+/*
   // Create Tunnel 
-  for (int tile = -10; tile < 10; tile++) {
-    new_tile = CreateBackgroundTile(tile_size);
+  for (int tile = -2; tile < 2; tile++) {
+    new_tile = CreateBackgroundTile(m_tile_size);
     float position_z = 0;
-    new_tile->SetPosition(D3DXVECTOR3(m_tile_start_point_x + (tile_size * tile), m_tile_start_point_y, position_z));
+    new_tile->SetPosition(D3DXVECTOR3(m_tile_start_point_x + (m_tile_size * tile), m_tile_start_point_y, position_z));
     tiles.push_back(new_tile);
     m_background_tiles.push_back(new_tile);
-    m_back_offset_x = m_tile_start_point_x + (tile_size * tile);
+    m_back_offset_x = m_tile_start_point_x + (m_tile_size * tile);
     m_back_offset_y = m_tile_start_point_y;
     m_level_right = m_back_offset_x;
   }
-  /*
-  for (int tile = -10; tile < 10; tile++) {
-    new_tile = CreateBackgroundTile(tile_size);
-    float position_z = 0;
-    new_tile->SetPosition(D3DXVECTOR3(m_tile_start_point_x + (tile_size * tile), m_tile_start_point_y, position_z));
-    tiles.push_back(new_tile);
-    m_background_tiles.push_back(new_tile);
-  }
-  for (int tile = -10; tile < 10; tile++) {
-    new_tile = CreateBackgroundTile(tile_size);
-    float position_z = 0;
-    new_tile->SetPosition(D3DXVECTOR3(m_tile_start_point_x + (tile_size * tile), m_tile_start_point_y+tile_size, position_z));
-    tiles.push_back(new_tile);
-    m_background_tiles.push_back(new_tile);
-  }
-*/
+
   // Create Floor
-  for (int tile = -10; tile < 10; tile++) {
-    new_tile = CreateMiddlegroundTile(tile_size);
+  for (int tile = -2; tile < 2; tile++) {
+    new_tile = CreateMiddlegroundTile(m_tile_size);
     float position_z = 0;
-    new_tile->SetPosition(D3DXVECTOR3(m_tile_start_point_x + (tile_size * tile), m_tile_start_point_y - (tile_size * 3), position_z));
+    new_tile->SetPosition(D3DXVECTOR3(m_tile_start_point_x + (m_tile_size * tile), m_tile_start_point_y - (m_tile_size * 3), position_z));
     new_tile->SetIsFloor(true);
     tiles.push_back(new_tile);
     m_middleground_tiles.push_back(new_tile);
     m_floor_tiles.push_back(new_tile);
-    m_floor_offset_x = m_tile_start_point_x + (tile_size * tile);
-    m_floor_offset_y = m_tile_start_point_y - tile_size;
+    m_floor_offset_x = m_tile_start_point_x + (m_tile_size * tile);
+    m_floor_offset_y = m_tile_start_point_y - m_tile_size;
   }
 
   // Create Roof 
-  for (int tile = -10; tile < 10; tile++) {
-    new_tile = CreateMiddlegroundTile(tile_size);
+  for (int tile = -2; tile < 2; tile++) {
+    new_tile = CreateMiddlegroundTile(m_tile_size);
     float position_z = 0;
-    new_tile->SetPosition(D3DXVECTOR3(m_tile_start_point_x + (tile_size * tile), m_tile_start_point_y+(tile_size), position_z));
+    new_tile->SetPosition(D3DXVECTOR3(m_tile_start_point_x + (m_tile_size * tile), m_tile_start_point_y+(m_tile_size), position_z));
     new_tile->SetIsRoof(true);
     tiles.push_back(new_tile);
     m_middleground_tiles.push_back(new_tile);
     m_roof_tiles.push_back(new_tile);
-    m_roof_offset_x = m_tile_start_point_x + (tile_size * tile);
-    m_roof_offset_y = m_tile_start_point_y + (tile_size);
+    m_roof_offset_x = m_tile_start_point_x + (m_tile_size * tile);
+    m_roof_offset_y = m_tile_start_point_y + (m_tile_size);
   }
-
+  */
   for (std::vector<Tile_Bitmap*>::iterator tile = tiles.begin(); tile != tiles.end(); ++tile) {
     if ((*tile)->GetTexture()->transparency != 0.0f) {
       ResetMiddlegroundTileTexture(*tile);
@@ -411,10 +271,8 @@ std::vector<Tile_Bitmap*> Procedural_Level_Tile_Controller::GenerateTunnel(Level
 
 //------------------------------------------------------------------------------
 void Procedural_Level_Tile_Controller::RandomTheRoof() {
-//  float roof_coin = rand() % 2;
-//  float roof_rand = rand() % 2;
-  float roof_rand = 1;
-  float roof_coin = 1;
+  float roof_coin = rand() % 2;
+  float roof_rand = rand() % 2;
 
   if (roof_coin == 1) {
     roof_rand *= -1; 
@@ -434,10 +292,8 @@ void Procedural_Level_Tile_Controller::RandomTheRoof() {
 
 //------------------------------------------------------------------------------
 void Procedural_Level_Tile_Controller::RandomTheFloor() {
-  //float floor_rand = rand() % 2;
-   float floor_coin = rand() % 2;
-  //float floor_coin = 0;
-  float floor_rand = 1;
+  float floor_rand = rand() % 2;
+  float floor_coin = rand() % 2;
 
   if (floor_coin == 1) {
     floor_rand *= -1; 
@@ -457,14 +313,7 @@ void Procedural_Level_Tile_Controller::RandomTheFloor() {
 
 //------------------------------------------------------------------------------
 void Procedural_Level_Tile_Controller::EnsureMinTunnel() {
-  float distance_deductor = 0;
-  if (m_roof_level > 0) {
-    distance_deductor--; 
-  }
-  if (m_floor_level < 0) {
-    distance_deductor--; 
-  }
-  float tunnel_size = (m_roof_level - m_floor_level) - distance_deductor;
+  float tunnel_size = (m_roof_level -1) - m_floor_level;
 
   if (tunnel_size < m_min_tunnel_size) {
     m_roof_level += (m_min_tunnel_size - tunnel_size);
@@ -473,14 +322,7 @@ void Procedural_Level_Tile_Controller::EnsureMinTunnel() {
 
 //------------------------------------------------------------------------------
 void Procedural_Level_Tile_Controller::EnsureMaxTunnel() {
-  float distance_deductor = 0;
-  if (m_roof_level > 0) {
-    distance_deductor--; 
-  }
-  if (m_floor_level < 0) {
-    distance_deductor--; 
-  }
-  float tunnel_size = (m_roof_level - m_floor_level) - distance_deductor;
+  float tunnel_size = ((m_roof_level -1 ) - m_floor_level);
 
   if (tunnel_size > m_max_tunnel_size) {
     m_roof_level -= (tunnel_size - m_max_tunnel_size);
@@ -495,19 +337,19 @@ void Procedural_Level_Tile_Controller::EnsureMaxTunnel() {
 void Procedural_Level_Tile_Controller::EnsureAPath() {
   float last_distance_deductor = 0;
   if (m_last_roof_level > 0) {
-    last_distance_deductor--; 
+    //last_distance_deductor--; 
   }
   if (m_last_floor_level < 0) {
-    last_distance_deductor--; 
+    //last_distance_deductor--; 
   }
   float last_tunnel_size = (m_last_roof_level - m_last_floor_level) - last_distance_deductor;
 
   float distance_deductor = 0;
   if (m_roof_level > 0) {
-    distance_deductor--; 
+    //distance_deductor--; 
   }
   if (m_floor_level < 0) {
-    distance_deductor--; 
+    //distance_deductor--; 
   }
   float tunnel_size = (m_roof_level - m_floor_level) - distance_deductor;
 
@@ -545,4 +387,272 @@ void Procedural_Level_Tile_Controller::EnsureAClimbablePath() {
     m_floor_level -= (climb_size - 2);
   }
 }
+
+//------------------------------------------------------------------------------
+void Procedural_Level_Tile_Controller::AddRoofTile(std::vector<Tile_Bitmap*> &new_line) {
+  Tile_Bitmap* new_tile = 0;
+
+  float adjusted_roof_level = m_roof_level;
+  float adjusted_floor_level = m_floor_level;
+  /*if (m_roof_level < 0) {
+    adjusted_roof_level -= 1; 
+  }
+  if (m_floor_level < 0) {
+    adjusted_floor_level -= 1; 
+  }
+  */
+  // Add Roof Tile
+  new_tile = CreateMiddlegroundTile(m_tile_size);
+  float position_y = m_tile_start_point_y + (m_tile_size * adjusted_roof_level);
+  float position_x = m_level_right + m_tile_size;
+  float position_z = 0;
+  new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
+  new_tile->SetIsRoof(true);
+  new_line.push_back(new_tile);
+}
+
+//------------------------------------------------------------------------------
+void Procedural_Level_Tile_Controller::AddBackgroundTiles(std::vector<Tile_Bitmap*> &new_line) {
+  Tile_Bitmap* new_tile = 0;
+
+  float adjusted_roof_level = m_roof_level;
+  float adjusted_floor_level = m_floor_level;
+  /*
+  if (m_roof_level < 0) {
+    adjusted_roof_level -= 1; 
+  }
+  if (m_floor_level < 0) {
+    adjusted_floor_level -= 1; 
+  }
+  */
+   for (float i = (adjusted_floor_level + 1); i <= (adjusted_roof_level - 1); i++) {
+    new_tile = CreateBackgroundTile(m_tile_size);
+    float position_y = m_tile_start_point_y + (m_tile_size * i);
+    float position_x = m_level_right + m_tile_size;
+    float position_z = 0;
+
+    new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
+    new_line.push_back(new_tile);
+  }
+}
+
+//------------------------------------------------------------------------------
+void Procedural_Level_Tile_Controller::AddFloorTile(std::vector<Tile_Bitmap*> &new_line) {
+  Tile_Bitmap* new_tile = 0;
+
+  float adjusted_roof_level = m_roof_level;
+  float adjusted_floor_level = m_floor_level;
+  /*
+  if (m_roof_level < 0) {
+    adjusted_roof_level -= 1; 
+  }
+  if (m_floor_level < 0) {
+    adjusted_floor_level -= 1; 
+  }
+  */
+   new_tile = CreateMiddlegroundTile(m_tile_size);
+  float position_y = m_tile_start_point_y + (m_tile_size * adjusted_floor_level);
+  float position_x = m_level_right + m_tile_size;
+  float position_z = 0;
+  new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
+  new_tile->SetIsFloor(true);
+  new_line.push_back(new_tile);
+}
+
+//------------------------------------------------------------------------------
+void Procedural_Level_Tile_Controller::AddRoofLeftWalls() {
+  Tile_Bitmap* new_tile = 0;
+
+  float adjusted_roof_level = m_roof_level;
+  float adjusted_floor_level = m_floor_level;
+  /*
+  if (m_roof_level < 0) {
+    adjusted_roof_level -= 1; 
+  }
+  if (m_floor_level < 0) {
+    adjusted_floor_level -= 1; 
+  }
+  */
+  // Sets the Left Wall property on the line before
+  if (m_roof_level > m_last_roof_level) {
+    float adjusted_last_roof_level = m_last_roof_level;
+    /*
+    if (m_last_roof_level < 0) {
+      adjusted_last_roof_level -= 1; 
+    }
+    */
+    if (!m_level_tiles.empty()) {
+      for (std::vector<Tile_Bitmap*>::iterator i = (m_level_tiles.back()).begin(); i != (m_level_tiles.back()).end(); ++i ) { 
+        if (!(*i)->IsTopLeftWallEnd() && !(*i)->IsLeftFloorEnd()) {
+          (*i)->SetIsLeftWall(true);
+          ResetMiddlegroundTileTexture(*i);
+        }
+        if ((*i)->IsRoof()) {
+          break;
+        } 
+      } 
+
+      for (float i = adjusted_last_roof_level + 1; i <= adjusted_roof_level; i++) {
+        new_tile = CreateMiddlegroundTile(m_tile_size);
+        float position_y = m_tile_start_point_y + (m_tile_size * i);
+        float position_x = m_level_right;
+        float position_z = 0;
+        new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
+        if (i == adjusted_roof_level) {
+          new_tile->SetIsTopLeftWallEnd(true);
+          new_tile->SetIsLeftRoofEnd(true);
+        } else {
+          new_tile->SetIsLeftWall(true);
+        }
+
+        m_model->Add(new_tile);
+        (m_level_tiles.back()).insert((m_level_tiles.back()).begin(), new_tile);
+        ResetMiddlegroundTileTexture(new_tile);
+      }
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
+void Procedural_Level_Tile_Controller::AddRoofRightWalls(std::vector<Tile_Bitmap*> &new_line) {
+  Tile_Bitmap* new_tile = 0;
+
+  float adjusted_roof_level = m_roof_level;
+  float adjusted_floor_level = m_floor_level;
+  /*
+  if (m_roof_level < 0) {
+    adjusted_roof_level -= 1; 
+  }
+  if (m_floor_level < 0) {
+    adjusted_floor_level -= 1; 
+  }
+  */
+  if (m_roof_level < m_last_roof_level) {
+    float adjusted_last_roof_level = m_last_roof_level;
+    /*
+    if (m_last_roof_level < 0) {
+      adjusted_last_roof_level -= 1; 
+    }
+    */
+    if (!new_line.empty()) {
+      (*new_line.begin())->SetIsRightWall(true);
+    }
+ 
+    for (float i = (adjusted_roof_level + 1); i <= adjusted_last_roof_level; i++) {
+      new_tile = CreateMiddlegroundTile(m_tile_size);
+      float position_y = m_tile_start_point_y + (m_tile_size * i);
+      float position_x = m_level_right + m_tile_size;
+      float position_z = 0;
+      new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
+      if (i == adjusted_last_roof_level) {
+        new_tile->SetIsTopRightWallEnd(true);
+        new_tile->SetIsRightRoofEnd(true);
+      } else {
+        new_tile->SetIsRightWall(true);
+      }
+      new_line.insert(new_line.begin(), new_tile);
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
+void Procedural_Level_Tile_Controller::AddFloorRightWalls(std::vector<Tile_Bitmap*> &new_line) {
+  Tile_Bitmap* new_tile = 0;
+
+  float adjusted_roof_level = m_roof_level;
+  float adjusted_floor_level = m_floor_level;
+  /*
+  if (m_roof_level < 0) {
+    adjusted_roof_level -= 1; 
+  }
+  if (m_floor_level < 0) {
+    adjusted_floor_level -= 1; 
+  }
+  */
+  if (m_floor_level > m_last_floor_level) {
+    float adjusted_last_floor_level = m_last_floor_level;
+    /*
+    if (m_last_floor_level < 0) {
+      adjusted_last_floor_level -= 1; 
+    }
+    */
+    if (!new_line.empty()) {
+      (new_line.back())->SetIsRightWall(true);
+    }
+ 
+    for (float i = adjusted_last_floor_level; i <= (adjusted_floor_level - 1); i++) {
+      new_tile = CreateMiddlegroundTile(m_tile_size);
+      float position_y = m_tile_start_point_y + (m_tile_size * i);
+      float position_x = m_level_right + m_tile_size;
+      float position_z = 0;
+      new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
+
+      if (i == adjusted_last_floor_level) {
+        new_tile->SetIsBotRightWallEnd(true);
+        new_tile->SetIsRightFloorEnd(true);
+      } else {
+        new_tile->SetIsRightWall(true);
+      }
+
+      new_line.push_back(new_tile);
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
+void Procedural_Level_Tile_Controller::AddFloorLeftWalls() {
+  Tile_Bitmap* new_tile = 0;
+
+  float adjusted_roof_level = m_roof_level;
+  float adjusted_floor_level = m_floor_level;
+  /*
+  if (m_roof_level < 0) {
+    adjusted_roof_level -= 1; 
+  }
+  if (m_floor_level < 0) {
+    adjusted_floor_level -= 1; 
+  }
+  */
+  if (m_floor_level < m_last_floor_level) {
+    float adjusted_last_floor_level = m_last_floor_level;
+    /*
+    if (m_last_floor_level < 0) {
+      adjusted_last_floor_level -= 1; 
+    }
+    */
+    if (!m_level_tiles.empty()) {
+      for (std::vector<Tile_Bitmap*>::reverse_iterator i = (m_level_tiles.back()).rbegin(); i != (m_level_tiles.back()).rend(); ++i ) { 
+        if (!(*i)->IsBotRightWallEnd() && !(*i)->IsRightFloorEnd()) {
+          (*i)->SetIsLeftWall(true);
+        } else {
+          (*i)->SetIsBotLeftWallEnd(true);
+          (*i)->SetIsLeftFloorEnd(true);
+        }
+        ResetMiddlegroundTileTexture(*i);
+        if ((*i)->IsFloor()) {
+          break;
+        } 
+      } 
+
+      for (float i = adjusted_floor_level; i <= adjusted_last_floor_level; i++) {
+        new_tile = CreateMiddlegroundTile(m_tile_size);
+        float position_y = m_tile_start_point_y + (m_tile_size * i);
+        float position_x = m_level_right;
+        float position_z = 0;
+        new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
+        if (i == adjusted_floor_level) {
+          new_tile->SetIsBotLeftWallEnd(true);
+          new_tile->SetIsLeftFloorEnd(true);
+        } else {
+          new_tile->SetIsLeftWall(true);
+        }
+
+        m_model->Add(new_tile);
+        ResetMiddlegroundTileTexture(new_tile);
+        (m_level_tiles.back()).push_back(new_tile);
+      }
+    }
+  }
+}
+
 } // Tunnelour

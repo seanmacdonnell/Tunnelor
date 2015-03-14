@@ -179,32 +179,44 @@ void Avatar_Controller::HandleEventRemove(Tunnelour::Component * const component
   Tunnelour::Tile_Bitmap *target_bitmap = 0;
   target_bitmap = static_cast<Tunnelour::Tile_Bitmap*>(component);
   std::vector<Tile_Bitmap*>::iterator found_bitmap;
+  bool found = false;
   if (target_bitmap->IsWall()) {
     std::vector<Tile_Bitmap*>::iterator bitmap;
     for (bitmap = m_wall_tiles.begin(); bitmap != m_wall_tiles.end(); bitmap++) {
       if ((*bitmap)->GetID() == target_bitmap->GetID()) {
         found_bitmap = bitmap;
+        found = true;
       }
     }
-    m_wall_tiles.erase(found_bitmap);
+    if (found) {
+      m_wall_tiles.erase(found_bitmap);
+    }
   }
+  found = false;
   if (target_bitmap->IsFloor()) {
     std::vector<Tile_Bitmap*>::iterator bitmap;
     for (bitmap = m_floor_tiles.begin(); bitmap != m_floor_tiles.end(); bitmap++) {
       if ((*bitmap)->GetID() == target_bitmap->GetID()) {
         found_bitmap = bitmap;
+        found = true;
       }
     }
-    m_floor_tiles.erase(found_bitmap);
+    if (found) {
+      m_floor_tiles.erase(found_bitmap);
+    }
   }
+  found = false;
   if (target_bitmap->IsFloor() && target_bitmap->IsWall()) {
     std::vector<Tile_Bitmap*>::iterator bitmap;
     for (bitmap = m_ledge_tiles.begin(); bitmap != m_ledge_tiles.end(); bitmap++) {
       if ((*bitmap)->GetID() == target_bitmap->GetID()) {
         found_bitmap = bitmap;
+        found = true;
       }
     }
-    m_ledge_tiles.erase(found_bitmap);
+    if (found) {
+      m_ledge_tiles.erase(found_bitmap);
+    }
   }
 }
 
