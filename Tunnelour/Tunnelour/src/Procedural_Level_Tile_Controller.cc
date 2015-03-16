@@ -92,7 +92,7 @@ bool Procedural_Level_Tile_Controller::Run() {
     RandomTheFloor();
     RandomTheRoof();
     EnsureAPath();
-//    EnsureMinTunnel();
+    EnsureMinTunnel();
     EnsureMaxTunnel();
     //EnsureAClimbablePath();
 
