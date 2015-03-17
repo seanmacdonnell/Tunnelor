@@ -506,7 +506,6 @@ bool Avatar_Helper::IsAvatarWallColliding(Avatar_Component *avatar, std::vector<
     // Create a list of floor tiles which are colliding with the collision block
     std::vector<Tile_Bitmap*>::iterator border_tile;
     for (border_tile = wall_tiles->begin(); border_tile != wall_tiles->end(); border_tile++) {
-      (*border_tile)->GetTexture()->transparency = 1.0f;
       if ((*border_tile)->IsRightWall() && avatar->GetBottomRightPostion().x >= (*border_tile)->GetTopLeftPostion().x ||
           (*border_tile)->IsLeftWall() && avatar->GetTopLeftPostion().x <= (*border_tile)->GetBottomRightPostion().x) {
         D3DXVECTOR2 Tile_Top_Left;

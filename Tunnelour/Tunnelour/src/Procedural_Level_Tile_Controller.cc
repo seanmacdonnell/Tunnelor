@@ -87,7 +87,7 @@ bool Procedural_Level_Tile_Controller::Run() {
   D3DXVECTOR2 game_resolution = m_game_settings->GetResolution();
   D3DXVECTOR3 camera_position = m_camera->GetPosition();
   std::vector<Tile_Bitmap*> new_line;
-  float camera_right = (camera_position.x + 256);
+  float camera_right = (camera_position.x + game_resolution.x);
   while (camera_right > m_level_right) {
     RandomTheFloor();
     RandomTheRoof();
@@ -105,16 +105,72 @@ bool Procedural_Level_Tile_Controller::Run() {
     AddFloorRightWalls(new_line);
     AddFloorLeftWalls();
 
+    m_level_tiles.push_back(new_line);
+
     // Add Line to Level Tiles
     if (!new_line.empty()) {
       AddTilesToModel(new_line);
-      if (m_level_tiles.size() > 4) {
-        RemoveTilesFromModel(m_level_tiles.front());
+
+      if (m_level_tiles.size() > 16) {
+        RemoveTilesFromModel((*m_level_tiles.begin()));
         m_level_tiles.erase(m_level_tiles.begin());
+
+        new_line.clear();
+        std::vector<Tile_Bitmap*>::iterator old_tile;
+        for (old_tile = (*(m_level_tiles.begin())).begin(); old_tile != (*(m_level_tiles.begin())).end(); old_tile++) {
+          Tile_Bitmap* new_tile = CreateMiddlegroundTile(m_tile_size);
+          new_tile->SetPosition((*old_tile)->GetPosition()->x , (*old_tile)->GetPosition()->y, (*old_tile)->GetPosition()->z);
+          (*old_tile)->GetTexture()->transparency = 0.0f;
+          ResetMiddlegroundTileTexture((*old_tile));
+
+          if ((*old_tile)->IsRoof() ||
+              (*old_tile)->IsLeftRoofEnd() ||
+              (*old_tile)->IsTopLeftWallEnd()) {
+            new_tile->SetIsLeftRoofEnd(true);
+            new_tile->SetIsTopLeftWallEnd(true);
+            if (!new_line.empty()) {
+              if (new_line.back()->IsLeftRoofEnd() ||
+                  new_line.back()->IsTopLeftWallEnd() ||
+                  new_line.back()->IsLeftWall()) {
+                new_tile->SetIsLeftRoofEnd(false);
+                new_tile->SetIsTopLeftWallEnd(false);
+                new_tile->SetIsLeftWall(true);
+              }
+            }
+          } else if ((*old_tile)->IsFloor() ||
+                     (*old_tile)->IsLeftFloorEnd() ||
+                     (*old_tile)->IsBotLeftWallEnd()) {
+            new_tile->SetIsLeftFloorEnd(true);
+            new_tile->SetIsBotLeftWallEnd(true);
+            if (!new_line.empty()) {
+              if (new_line.back()->IsLeftFloorEnd() ||
+                  new_line.back()->IsBotLeftWallEnd() ||
+                  new_line.back()->IsLeftWall()) {
+                new_line.back()->SetIsLeftFloorEnd(false);
+                new_line.back()->SetIsBotLeftWallEnd(false);
+                new_line.back()->SetIsLeftWall(true);
+                ResetMiddlegroundTileTexture(new_line.back());
+              }
+            }
+          } else if ((*old_tile)->IsLeftWall()) {
+            new_tile->SetIsLeftWall(true);
+          } else if (!(*old_tile)->IsRightWall() &&
+                     !(*old_tile)->IsRightRoofEnd() &&
+                     !(*old_tile)->IsTopRightWallEnd() &&
+                     !(*old_tile)->IsRightFloorEnd() && 
+                     !(*old_tile)->IsBotRightWallEnd()) {
+            new_tile->SetIsLeftWall(true);
+          }
+
+          m_model->Add(new_tile);
+          ResetMiddlegroundTileTexture(new_tile);
+          new_line.push_back(new_tile);
+       }
+       (*(m_level_tiles.begin())).insert(((*m_level_tiles.begin())).begin(), new_line.begin(), new_line.end());
+
       }
     }
 
-    m_level_tiles.push_back(new_line);
     m_level_right += m_tile_size;
     m_last_roof_level = m_roof_level;
     m_last_floor_level = m_floor_level;
@@ -158,6 +214,7 @@ void Procedural_Level_Tile_Controller::AddTilesToModel(std::vector<Tile_Bitmap*>
 void Procedural_Level_Tile_Controller::RemoveTilesFromModel(std::vector<Tile_Bitmap*> tiles) {
   for (std::vector<Tile_Bitmap*>::iterator tile = tiles.begin(); tile != tiles.end(); ++tile) {
     m_model->Remove(*tile);
+    (*tile) = 0;
   }
 }
 
@@ -205,7 +262,7 @@ std::vector<Tile_Bitmap*> Procedural_Level_Tile_Controller::GenerateTunnel(Level
   m_last_floor_level = m_floor_level;
   m_floor_level = -1;
   m_roof_level = 2;
-  for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < 10; i++) {
     std::vector<Tile_Bitmap*> new_line;
     AddRoofTile(new_line);
     AddBackgroundTiles(new_line);
@@ -616,6 +673,7 @@ void Procedural_Level_Tile_Controller::AddFloorLeftWalls() {
     }
     */
     if (!m_level_tiles.empty()) {
+      bool found_corner = false;
       for (std::vector<Tile_Bitmap*>::reverse_iterator i = (m_level_tiles.back()).rbegin(); i != (m_level_tiles.back()).rend(); ++i ) { 
         if (!(*i)->IsBotRightWallEnd() &&
             !(*i)->IsRightFloorEnd()) {
@@ -623,6 +681,7 @@ void Procedural_Level_Tile_Controller::AddFloorLeftWalls() {
         } else {
           (*i)->SetIsBotLeftWallEnd(true);
           (*i)->SetIsLeftFloorEnd(true);
+          found_corner = true;
         }
         ResetMiddlegroundTileTexture(*i);
         if ((*i)->IsFloor()) {
@@ -630,22 +689,27 @@ void Procedural_Level_Tile_Controller::AddFloorLeftWalls() {
         } 
       } 
 
-      for (float i = adjusted_floor_level; i <= adjusted_last_floor_level; i++) {
+      for (float i = adjusted_floor_level; i <= adjusted_last_floor_level - 1; i++) {
         new_tile = CreateMiddlegroundTile(m_tile_size);
         float position_y = m_tile_start_point_y + (m_tile_size * i);
         float position_x = m_level_right;
         float position_z = 0;
         new_tile->SetPosition(D3DXVECTOR3(position_x, position_y, position_z));
         if (i == adjusted_floor_level) {
-          new_tile->SetIsBotLeftWallEnd(true);
-          new_tile->SetIsLeftFloorEnd(true);
+          if (!found_corner) {
+            new_tile->SetIsBotLeftWallEnd(true);
+            new_tile->SetIsLeftFloorEnd(true);
+            m_model->Add(new_tile);
+            ResetMiddlegroundTileTexture(new_tile);
+            (m_level_tiles.back()).push_back(new_tile);
+          }
         } else {
           new_tile->SetIsLeftWall(true);
+          m_model->Add(new_tile);
+          ResetMiddlegroundTileTexture(new_tile);
+          (m_level_tiles.back()).push_back(new_tile);
         }
 
-        m_model->Add(new_tile);
-        ResetMiddlegroundTileTexture(new_tile);
-        (m_level_tiles.back()).push_back(new_tile);
       }
     }
   }
