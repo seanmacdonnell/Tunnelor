@@ -222,45 +222,6 @@ std::vector<Tile_Bitmap*> Procedural_Level_Tile_Controller::GenerateTunnel(Level
     m_last_floor_level = m_floor_level;
   }  
 
-/*
-  // Create Tunnel 
-  for (int tile = -2; tile < 2; tile++) {
-    new_tile = CreateBackgroundTile(m_tile_size);
-    float position_z = 0;
-    new_tile->SetPosition(D3DXVECTOR3(m_tile_start_point_x + (m_tile_size * tile), m_tile_start_point_y, position_z));
-    tiles.push_back(new_tile);
-    m_background_tiles.push_back(new_tile);
-    m_back_offset_x = m_tile_start_point_x + (m_tile_size * tile);
-    m_back_offset_y = m_tile_start_point_y;
-    m_level_right = m_back_offset_x;
-  }
-
-  // Create Floor
-  for (int tile = -2; tile < 2; tile++) {
-    new_tile = CreateMiddlegroundTile(m_tile_size);
-    float position_z = 0;
-    new_tile->SetPosition(D3DXVECTOR3(m_tile_start_point_x + (m_tile_size * tile), m_tile_start_point_y - (m_tile_size * 3), position_z));
-    new_tile->SetIsFloor(true);
-    tiles.push_back(new_tile);
-    m_middleground_tiles.push_back(new_tile);
-    m_floor_tiles.push_back(new_tile);
-    m_floor_offset_x = m_tile_start_point_x + (m_tile_size * tile);
-    m_floor_offset_y = m_tile_start_point_y - m_tile_size;
-  }
-
-  // Create Roof 
-  for (int tile = -2; tile < 2; tile++) {
-    new_tile = CreateMiddlegroundTile(m_tile_size);
-    float position_z = 0;
-    new_tile->SetPosition(D3DXVECTOR3(m_tile_start_point_x + (m_tile_size * tile), m_tile_start_point_y+(m_tile_size), position_z));
-    new_tile->SetIsRoof(true);
-    tiles.push_back(new_tile);
-    m_middleground_tiles.push_back(new_tile);
-    m_roof_tiles.push_back(new_tile);
-    m_roof_offset_x = m_tile_start_point_x + (m_tile_size * tile);
-    m_roof_offset_y = m_tile_start_point_y + (m_tile_size);
-  }
-  */
   for (std::vector<Tile_Bitmap*>::iterator tile = tiles.begin(); tile != tiles.end(); ++tile) {
     if ((*tile)->GetTexture()->transparency != 0.0f) {
       ResetMiddlegroundTileTexture(*tile);
@@ -388,13 +349,7 @@ void Procedural_Level_Tile_Controller::AddRoofTile(std::vector<Tile_Bitmap*> &ne
 
   float adjusted_roof_level = m_roof_level;
   float adjusted_floor_level = m_floor_level;
-  /*if (m_roof_level < 0) {
-    adjusted_roof_level -= 1; 
-  }
-  if (m_floor_level < 0) {
-    adjusted_floor_level -= 1; 
-  }
-  */
+
   // Add Roof Tile
   new_tile = CreateMiddlegroundTile(m_tile_size);
   float position_y = m_tile_start_point_y + (m_tile_size * adjusted_roof_level);
@@ -411,15 +366,8 @@ void Procedural_Level_Tile_Controller::AddBackgroundTiles(std::vector<Tile_Bitma
 
   float adjusted_roof_level = m_roof_level;
   float adjusted_floor_level = m_floor_level;
-  /*
-  if (m_roof_level < 0) {
-    adjusted_roof_level -= 1; 
-  }
-  if (m_floor_level < 0) {
-    adjusted_floor_level -= 1; 
-  }
-  */
-   for (float i = (adjusted_floor_level + 1); i <= (adjusted_roof_level - 1); i++) {
+
+  for (float i = (adjusted_floor_level + 1); i <= (adjusted_roof_level - 1); i++) {
     new_tile = CreateBackgroundTile(m_tile_size);
     float position_y = m_tile_start_point_y + (m_tile_size * i);
     float position_x = m_level_right + m_tile_size;
@@ -436,15 +384,8 @@ void Procedural_Level_Tile_Controller::AddFloorTile(std::vector<Tile_Bitmap*> &n
 
   float adjusted_roof_level = m_roof_level;
   float adjusted_floor_level = m_floor_level;
-  /*
-  if (m_roof_level < 0) {
-    adjusted_roof_level -= 1; 
-  }
-  if (m_floor_level < 0) {
-    adjusted_floor_level -= 1; 
-  }
-  */
-   new_tile = CreateMiddlegroundTile(m_tile_size);
+
+  new_tile = CreateMiddlegroundTile(m_tile_size);
   float position_y = m_tile_start_point_y + (m_tile_size * adjusted_floor_level);
   float position_x = m_level_right + m_tile_size;
   float position_z = 0;
@@ -459,22 +400,10 @@ void Procedural_Level_Tile_Controller::AddRoofLeftWalls() {
 
   float adjusted_roof_level = m_roof_level;
   float adjusted_floor_level = m_floor_level;
-  /*
-  if (m_roof_level < 0) {
-    adjusted_roof_level -= 1; 
-  }
-  if (m_floor_level < 0) {
-    adjusted_floor_level -= 1; 
-  }
-  */
+
   // Sets the Left Wall property on the line before
   if (m_roof_level > m_last_roof_level) {
     float adjusted_last_roof_level = m_last_roof_level;
-    /*
-    if (m_last_roof_level < 0) {
-      adjusted_last_roof_level -= 1; 
-    }
-    */
     if (!m_level_tiles.empty()) {
       for (std::vector<Tile_Bitmap*>::iterator i = (m_level_tiles.back()).begin(); i != (m_level_tiles.back()).end(); ++i ) { 
         if (!(*i)->IsTopRightWallEnd() && 
@@ -517,21 +446,9 @@ void Procedural_Level_Tile_Controller::AddRoofRightWalls(std::vector<Tile_Bitmap
 
   float adjusted_roof_level = m_roof_level;
   float adjusted_floor_level = m_floor_level;
-  /*
-  if (m_roof_level < 0) {
-    adjusted_roof_level -= 1; 
-  }
-  if (m_floor_level < 0) {
-    adjusted_floor_level -= 1; 
-  }
-  */
   if (m_roof_level < m_last_roof_level) {
     float adjusted_last_roof_level = m_last_roof_level;
-    /*
-    if (m_last_roof_level < 0) {
-      adjusted_last_roof_level -= 1; 
-    }
-    */
+
     if (!new_line.empty()) {
       (*new_line.begin())->SetIsRightWall(true);
     }
@@ -559,21 +476,8 @@ void Procedural_Level_Tile_Controller::AddFloorRightWalls(std::vector<Tile_Bitma
 
   float adjusted_roof_level = m_roof_level;
   float adjusted_floor_level = m_floor_level;
-  /*
-  if (m_roof_level < 0) {
-    adjusted_roof_level -= 1; 
-  }
-  if (m_floor_level < 0) {
-    adjusted_floor_level -= 1; 
-  }
-  */
   if (m_floor_level > m_last_floor_level) {
     float adjusted_last_floor_level = m_last_floor_level;
-    /*
-    if (m_last_floor_level < 0) {
-      adjusted_last_floor_level -= 1; 
-    }
-    */
     if (!new_line.empty()) {
       (new_line.back())->SetIsRightWall(true);
     }
@@ -603,21 +507,8 @@ void Procedural_Level_Tile_Controller::AddFloorLeftWalls() {
 
   float adjusted_roof_level = m_roof_level;
   float adjusted_floor_level = m_floor_level;
-  /*
-  if (m_roof_level < 0) {
-    adjusted_roof_level -= 1; 
-  }
-  if (m_floor_level < 0) {
-    adjusted_floor_level -= 1; 
-  }
-  */
   if (m_floor_level < m_last_floor_level) {
     float adjusted_last_floor_level = m_last_floor_level;
-    /*
-    if (m_last_floor_level < 0) {
-      adjusted_last_floor_level -= 1; 
-    }
-    */
     if (!m_level_tiles.empty()) {
       bool found_corner = false;
       for (std::vector<Tile_Bitmap*>::reverse_iterator i = (m_level_tiles.back()).rbegin(); i != (m_level_tiles.back()).rend(); ++i ) { 
