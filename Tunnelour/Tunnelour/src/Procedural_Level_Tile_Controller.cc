@@ -110,66 +110,12 @@ bool Procedural_Level_Tile_Controller::Run() {
     // Add Line to Level Tiles
     if (!new_line.empty()) {
       AddTilesToModel(new_line);
-
       if (m_level_tiles.size() > 16) {
         RemoveTilesFromModel((*m_level_tiles.begin()));
         m_level_tiles.erase(m_level_tiles.begin());
-
-        new_line.clear();
-        std::vector<Tile_Bitmap*>::iterator old_tile;
-        for (old_tile = (*(m_level_tiles.begin())).begin(); old_tile != (*(m_level_tiles.begin())).end(); old_tile++) {
-          Tile_Bitmap* new_tile = CreateMiddlegroundTile(m_tile_size);
-          new_tile->SetPosition((*old_tile)->GetPosition()->x , (*old_tile)->GetPosition()->y, (*old_tile)->GetPosition()->z);
-          (*old_tile)->GetTexture()->transparency = 0.0f;
-          ResetMiddlegroundTileTexture((*old_tile));
-
-          if ((*old_tile)->IsRoof() ||
-              (*old_tile)->IsLeftRoofEnd() ||
-              (*old_tile)->IsTopLeftWallEnd()) {
-            new_tile->SetIsLeftRoofEnd(true);
-            new_tile->SetIsTopLeftWallEnd(true);
-            if (!new_line.empty()) {
-              if (new_line.back()->IsLeftRoofEnd() ||
-                  new_line.back()->IsTopLeftWallEnd() ||
-                  new_line.back()->IsLeftWall()) {
-                new_tile->SetIsLeftRoofEnd(false);
-                new_tile->SetIsTopLeftWallEnd(false);
-                new_tile->SetIsLeftWall(true);
-              }
-            }
-          } else if ((*old_tile)->IsFloor() ||
-                     (*old_tile)->IsLeftFloorEnd() ||
-                     (*old_tile)->IsBotLeftWallEnd()) {
-            new_tile->SetIsLeftFloorEnd(true);
-            new_tile->SetIsBotLeftWallEnd(true);
-            if (!new_line.empty()) {
-              if (new_line.back()->IsLeftFloorEnd() ||
-                  new_line.back()->IsBotLeftWallEnd() ||
-                  new_line.back()->IsLeftWall()) {
-                new_line.back()->SetIsLeftFloorEnd(false);
-                new_line.back()->SetIsBotLeftWallEnd(false);
-                new_line.back()->SetIsLeftWall(true);
-                ResetMiddlegroundTileTexture(new_line.back());
-              }
-            }
-          } else if ((*old_tile)->IsLeftWall()) {
-            new_tile->SetIsLeftWall(true);
-          } else if (!(*old_tile)->IsRightWall() &&
-                     !(*old_tile)->IsRightRoofEnd() &&
-                     !(*old_tile)->IsTopRightWallEnd() &&
-                     !(*old_tile)->IsRightFloorEnd() && 
-                     !(*old_tile)->IsBotRightWallEnd()) {
-            new_tile->SetIsLeftWall(true);
-          }
-
-          m_model->Add(new_tile);
-          ResetMiddlegroundTileTexture(new_tile);
-          new_line.push_back(new_tile);
-       }
-       (*(m_level_tiles.begin())).insert(((*m_level_tiles.begin())).begin(), new_line.begin(), new_line.end());
-
+        CloseTunnelBehindAvatar();
       }
-    }
+   }
 
     m_level_right += m_tile_size;
     m_last_roof_level = m_roof_level;
@@ -713,6 +659,62 @@ void Procedural_Level_Tile_Controller::AddFloorLeftWalls() {
       }
     }
   }
+}
+
+//------------------------------------------------------------------------------
+void Procedural_Level_Tile_Controller::CloseTunnelBehindAvatar() {
+  std::vector<Tile_Bitmap*> new_line;
+  std::vector<Tile_Bitmap*>::iterator old_tile;
+  for (old_tile = (*(m_level_tiles.begin())).begin(); old_tile != (*(m_level_tiles.begin())).end(); old_tile++) {
+    Tile_Bitmap* new_tile = CreateMiddlegroundTile(m_tile_size);
+    new_tile->SetPosition((*old_tile)->GetPosition()->x , (*old_tile)->GetPosition()->y, (*old_tile)->GetPosition()->z);
+    (*old_tile)->GetTexture()->transparency = 0.0f;
+    ResetMiddlegroundTileTexture((*old_tile));
+
+    if ((*old_tile)->IsRoof() ||
+        (*old_tile)->IsLeftRoofEnd() ||
+        (*old_tile)->IsTopLeftWallEnd()) {
+      new_tile->SetIsLeftRoofEnd(true);
+      new_tile->SetIsTopLeftWallEnd(true);
+      if (!new_line.empty()) {
+        if (new_line.back()->IsLeftRoofEnd() ||
+            new_line.back()->IsTopLeftWallEnd() ||
+            new_line.back()->IsLeftWall()) {
+          new_tile->SetIsLeftRoofEnd(false);
+          new_tile->SetIsTopLeftWallEnd(false);
+          new_tile->SetIsLeftWall(true);
+        }
+      }
+    } else if ((*old_tile)->IsFloor() ||
+               (*old_tile)->IsLeftFloorEnd() ||
+               (*old_tile)->IsBotLeftWallEnd()) {
+      new_tile->SetIsLeftFloorEnd(true);
+      new_tile->SetIsBotLeftWallEnd(true);
+      if (!new_line.empty()) {
+        if (new_line.back()->IsLeftFloorEnd() ||
+            new_line.back()->IsBotLeftWallEnd() ||
+            new_line.back()->IsLeftWall()) {
+          new_line.back()->SetIsLeftFloorEnd(false);
+          new_line.back()->SetIsBotLeftWallEnd(false);
+          new_line.back()->SetIsLeftWall(true);
+          ResetMiddlegroundTileTexture(new_line.back());
+        }
+      }
+    } else if ((*old_tile)->IsLeftWall()) {
+      new_tile->SetIsLeftWall(true);
+    } else if (!(*old_tile)->IsRightWall() &&
+               !(*old_tile)->IsRightRoofEnd() &&
+               !(*old_tile)->IsTopRightWallEnd() &&
+               !(*old_tile)->IsRightFloorEnd() && 
+               !(*old_tile)->IsBotRightWallEnd()) {
+      new_tile->SetIsLeftWall(true);
+    }
+
+    m_model->Add(new_tile);
+    ResetMiddlegroundTileTexture(new_tile);
+    new_line.push_back(new_tile);
+ }
+ (*(m_level_tiles.begin())).insert(((*m_level_tiles.begin())).begin(), new_line.begin(), new_line.end());
 }
 
 } // Tunnelour
