@@ -40,19 +40,18 @@ namespace Tunnelour {
                                                  0.788235294117647f,
                                                  1.0f);
                                                  */
-     const D3DXCOLOR Text_Blue = D3DXCOLOR(0.2607843137254902f,
-                                           0.3705882352941176f,
-                                           0.5862745098039216f,
-                                           1.0f);
-
      const D3DXCOLOR Text_Red = D3DXCOLOR(0.7529411764705882f,
                                           0.3f,
                                           0.0f,
                                           1.0f);
 
-     const D3DXCOLOR Text_Light_Blue = D3DXCOLOR(0.2392156862745098f,
-                                                 0.4f,
-                                                 0.7215686274509804f,
+     const D3DXCOLOR Text_Light_Blue = D3DXCOLOR(0.2941176470588235f,
+                                                 0.4549019607843137f,
+                                                 0.7843137254901961F,
+                                                 1.0f);
+     const D3DXCOLOR Text_Blue = D3DXCOLOR(0.2941176470588235f,
+                                                 0.4549019607843137f,
+                                                 0.7843137254901961F,
                                                  1.0f);
  
   }  // namespace Colours
