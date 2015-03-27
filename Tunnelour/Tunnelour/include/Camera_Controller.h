@@ -70,6 +70,11 @@ class Camera_Controller: public Controller,
   virtual void HandleEventRemove(Tunnelour::Component * const component);
 
   //---------------------------------------------------------------------------
+  // Description : Called when handling an "Add" call in the model
+  //---------------------------------------------------------------------------
+  virtual void HandleEventUpdate(Tunnelour::Component * const component);
+
+  //---------------------------------------------------------------------------
   // Description : Returns how far the avatar has traveled in x from
   //               the stationary position.
   //---------------------------------------------------------------------------

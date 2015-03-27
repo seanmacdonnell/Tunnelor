@@ -258,6 +258,10 @@ void Camera_Controller::HandleEventRemove(Tunnelour::Component * const component
 }
 
 //------------------------------------------------------------------------------
+void Camera_Controller::HandleEventUpdate(Tunnelour::Component * const component) {
+}
+
+//------------------------------------------------------------------------------
 float Camera_Controller::HowFarHasAvatarTravelled() {
   D3DXVECTOR2 point_1;
   point_1.x = m_avatar->GetPosition()->x;

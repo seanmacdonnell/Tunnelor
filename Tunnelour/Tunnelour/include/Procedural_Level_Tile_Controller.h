@@ -53,6 +53,9 @@ class Procedural_Level_Tile_Controller: public Tunnelour::Level_Tile_Controller 
   virtual void AddTilesToModel(std::vector<Tile_Bitmap*> tiles);
   virtual void RemoveTilesFromModel(std::vector<Tile_Bitmap*> tiles);
 
+  virtual void AddLevelToModel();
+  virtual void DestroyLevel();
+
  protected:
   void RandomTheRoof();
   void RandomTheFloor();
@@ -68,6 +71,7 @@ class Procedural_Level_Tile_Controller: public Tunnelour::Level_Tile_Controller 
   void AddFloorLeftWalls();
   void AddFloorRightWalls(std::vector<Tile_Bitmap*> &new_line);
   void CloseTunnelBehindAvatar();
+  void GenerateDefaultTunnel(std::vector<Tile_Bitmap*> &new_line);
 
  private:
   std::vector<Tile_Bitmap*> GenerateTunnel(Level_Component::Level_Metadata level_metadata);
@@ -77,8 +81,7 @@ class Procedural_Level_Tile_Controller: public Tunnelour::Level_Tile_Controller 
   float m_roof_offset_y;
   float m_back_offset_x;
   float m_back_offset_y;
-  std::vector<Tile_Bitmap*> m_roof_tiles;
-  std::vector<std::vector<Tile_Bitmap*>> m_level_tiles;
+  std::vector<std::vector<Tile_Bitmap*>> m_level_tile_lines;
   float m_roof_level;
   float m_floor_level;
   float m_last_roof_level;

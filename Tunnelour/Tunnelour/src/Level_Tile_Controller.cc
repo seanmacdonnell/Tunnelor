@@ -144,27 +144,27 @@ bool Level_Tile_Controller::Run() {
 //------------------------------------------------------------------------------
 void Level_Tile_Controller::CreateLevel() {
   m_current_level_name = m_level->GetCurrentLevel().level_name;
-  m_created_tiles = GenerateTunnelFromMetadata(m_level->GetCurrentLevel());
+  m_level_tiles = GenerateTunnelFromMetadata(m_level->GetCurrentLevel());
   SwitchTileset();
 }
 
 //------------------------------------------------------------------------------
 void Level_Tile_Controller::AddLevelToModel() {
-  for (std::vector<Tile_Bitmap*>::iterator tile = m_created_tiles.begin(); tile != m_created_tiles.end(); ++tile) {
+  for (std::vector<Tile_Bitmap*>::iterator tile = m_level_tiles.begin(); tile != m_level_tiles.end(); ++tile) {
     m_model->Add(*tile);
   }
 }
 
 //------------------------------------------------------------------------------
 void Level_Tile_Controller::ShowLevel() {
-  for (std::vector<Tile_Bitmap*>::iterator tile = m_created_tiles.begin(); tile != m_created_tiles.end(); ++tile) {
+  for (std::vector<Tile_Bitmap*>::iterator tile = m_level_tiles.begin(); tile != m_level_tiles.end(); ++tile) {
     (*tile)->GetTexture()->transparency = 1.0f;      
   }
 }
 
 //------------------------------------------------------------------------------
 void Level_Tile_Controller::HideLevel() {
-  for (std::vector<Tile_Bitmap*>::iterator tile = m_created_tiles.begin(); tile != m_created_tiles.end(); ++tile) {
+  for (std::vector<Tile_Bitmap*>::iterator tile = m_level_tiles.begin(); tile != m_level_tiles.end(); ++tile) {
     (*tile)->GetTexture()->transparency = 0.0f;      
   }
 }
@@ -172,10 +172,10 @@ void Level_Tile_Controller::HideLevel() {
 //------------------------------------------------------------------------------
 void Level_Tile_Controller::DestroyLevel() {
   // Add tiles to Model
-  for (std::vector<Tile_Bitmap*>::iterator tile = m_created_tiles.begin(); tile != m_created_tiles.end(); ++tile) {
+  for (std::vector<Tile_Bitmap*>::iterator tile = m_level_tiles.begin(); tile != m_level_tiles.end(); ++tile) {
     m_model->Remove(*tile);
   }
-  m_created_tiles.clear();
+  m_level_tiles.clear();
   m_middleground_tiles.clear();
   m_background_tiles.clear();
   m_top_edge_tiles.clear();
@@ -620,7 +620,7 @@ Tileset_Helper::Subset Level_Tile_Controller::GetCurrentMiddlegroundSubset() {
 
   std::vector<Tileset_Helper::Subset>::iterator tileset;
   for (tileset = m_current_tileset.tilesets.begin(); tileset != m_current_tileset.tilesets.end(); tileset++) {
-    if (tileset->type.compare("Middleground") == 0) {
+    if (tileset->type.compare("|Middleground|") == 0) {
       found_subset = *tileset;
     }
   }
@@ -634,13 +634,29 @@ Tileset_Helper::Subset Level_Tile_Controller::GetCurrentMiddlegroundSubset() {
 Tileset_Helper::Subset Level_Tile_Controller::GetCurrentMiddlegroundSubsetType(Level_Tile_Controller::Middleground_Tile_Type types) {
   Tileset_Helper::Subset found_subset;
 
-  found_subset = (*m_current_tileset.tilesets.begin());
+  //Set Default
+  Middleground_Tile_Type default_type;
+  default_type.found_roof = true;
+  default_type.found_floor = true;
+  default_type.found_left_wall = true;
+  default_type.found_right_wall = true;
+  Tileset_Helper::Subset default_subset;
+
+  bool found = false;
   std::vector<Tileset_Helper::Subset>::iterator tileset;
   for (tileset = m_current_tileset.tilesets.begin(); tileset != m_current_tileset.tilesets.end(); tileset++) {    
     Middleground_Tile_Type found_types = ParseSubsetTypesFromString(tileset->type);
     if (found_types == types) {
       found_subset = *tileset;
+      found = true;
     }
+    if (default_type == found_types) {
+      default_subset = *tileset;
+    }
+  }
+  
+  if (!found) {
+    found_subset = default_subset;
   }
 
   return found_subset;
@@ -666,58 +682,55 @@ Tileset_Helper::Subset Level_Tile_Controller::GetCurrentBackgroundSubsetType(Lev
 Level_Tile_Controller::Middleground_Tile_Type Level_Tile_Controller::ParseSubsetTypesFromString(std::string type) {
   Middleground_Tile_Type found_types;
   std::size_t found;
-  found = type.find(" End");
-  if (found == std::string::npos) {
-    found = type.find("Roof");
-    if (found != std::string::npos) {
-      found_types.found_roof = true;
-    }
-    found = type.find("Floor");
-    if (found != std::string::npos) {
-      found_types.found_floor = true;
-    }
-    found = type.find("Right Wall");
-    if (found != std::string::npos) {
-      found_types.found_right_wall = true;
-    }
-    found = type.find("Left Wall");
-    if (found != std::string::npos) {
-      found_types.found_left_wall = true;
-    }
-  } else {
-    found = type.find("Right Roof End");
-    if (found != std::string::npos) {
-      found_types.found_roof_right_end = true;
-    }
-    found = type.find("Left Roof End");
-    if (found != std::string::npos) {
-      found_types.found_roof_left_end = true;
-    }
-    found = type.find("Right Floor End");
-    if (found != std::string::npos) {
-      found_types.found_floor_right_end = true;
-    }
-    found = type.find("Left Floor End");
-    if (found != std::string::npos) {
-      found_types.found_floor_left_end = true;
-    }
-    found = type.find("Right Wall Top End");
-    if (found != std::string::npos) {
-      found_types.found_right_wall_top_end = true;
-    }
-    found = type.find("Right Wall Bot End");
-    if (found != std::string::npos) {
-      found_types.found_right_wall_bot_end = true;
-    }
-    found = type.find("Left Wall Top End");
-    if (found != std::string::npos) {
-      found_types.found_left_wall_top_end = true;
-    }
-    found = type.find("Left Wall Bot End");
-    if (found != std::string::npos) {
-      found_types.found_right_wall_bot_end = true;
-    }
+  found = type.find("|Roof|");
+  if (found != std::string::npos) {
+    found_types.found_roof = true;
   }
+  found = type.find("|Floor|");
+  if (found != std::string::npos) {
+    found_types.found_floor = true;
+  }
+  found = type.find("|Right Wall|");
+  if (found != std::string::npos) {
+    found_types.found_right_wall = true;
+  }
+  found = type.find("|Left Wall|");
+  if (found != std::string::npos) {
+    found_types.found_left_wall = true;
+  }
+  found = type.find("|Right Roof End|");
+  if (found != std::string::npos) {
+    found_types.found_roof_right_end = true;
+  }
+  found = type.find("|Left Roof End|");
+  if (found != std::string::npos) {
+    found_types.found_roof_left_end = true;
+  }
+  found = type.find("|Right Floor End|");
+  if (found != std::string::npos) {
+    found_types.found_floor_right_end = true;
+  }
+  found = type.find("|Left Floor End|");
+  if (found != std::string::npos) {
+    found_types.found_floor_left_end = true;
+  }
+  found = type.find("|Right Wall Top End|");
+  if (found != std::string::npos) {
+    found_types.found_right_wall_top_end = true;
+  }
+  found = type.find("|Right Wall Bot End|");
+  if (found != std::string::npos) {
+    found_types.found_right_wall_bot_end = true;
+  }
+  found = type.find("|Left Wall Top End|");
+  if (found != std::string::npos) {
+    found_types.found_left_wall_top_end = true;
+  }
+  found = type.find("|Left Wall Bot End|");
+  if (found != std::string::npos) {
+    found_types.found_right_wall_bot_end = true;
+  }
+
   return found_types;
 }
 
@@ -726,11 +739,11 @@ Level_Tile_Controller::Background_Tile_Type Level_Tile_Controller::ParseSubsetBa
   Background_Tile_Type found_types;
   std::size_t found;
 
-  found = type.find("Right Exit");
+  found = type.find("|Right Exit|");
   if (found != std::string::npos) {
     found_types.found_right_exit = true;
   }
-  found = type.find("Left Exit");
+  found = type.find("|Left Exit|");
   if (found != std::string::npos) {
     found_types.found_left_exit = true;
   }
@@ -758,7 +771,7 @@ Tileset_Helper::Subset Level_Tile_Controller::GetCurrentBackgroundSubset() {
 
   std::vector<Tileset_Helper::Subset>::iterator tileset;
   for (tileset = m_current_tileset.tilesets.begin(); tileset != m_current_tileset.tilesets.end(); tileset++) {
-    if (tileset->type.compare("Background") == 0) {
+    if (tileset->type.compare("|Background|") == 0) {
       found_subset = *tileset;
     }
   }
@@ -913,61 +926,49 @@ void Level_Tile_Controller::ResetMiddlegroundTileTexture(Tile_Bitmap *out_tile) 
   Tileset_Helper::Subset edge_subset;
   int random_variable = 0;
 
-  if (out_tile->IsLeftWall() || out_tile->IsRightWall() || out_tile->IsRoof() || out_tile->IsFloor()) {
-    Middleground_Tile_Type middleground_tile_type;
-    //std::string types;
-    if (out_tile->IsLeftWall()) {
-      middleground_tile_type.found_left_wall = true;
-    }
-    if (out_tile->IsRightWall()) {
-      middleground_tile_type.found_right_wall = true;
-    }
-    if (out_tile->IsRoof()) {
-      middleground_tile_type.found_roof = true;
-    }
-    if (out_tile->IsFloor()) {
-      middleground_tile_type.found_floor = true;
-    }
-    //Middleground_Tile_Type middleground_tile_type = ParseSubsetTypesFromString(types);
-    edge_subset = GetCurrentMiddlegroundSubsetType(middleground_tile_type);
-    tile_line = GetSizedNamedLine(edge_subset, out_tile->GetSize().x);
-    random_variable = random_variable = rand() % tile_line.number_of_tiles;
-  } else if (out_tile->IsRightFloorEnd() || out_tile->IsLeftFloorEnd() ||
-              out_tile->IsRightRoofEnd() || out_tile->IsLeftRoofEnd() ||
-              out_tile->IsTopLeftWallEnd() || out_tile->IsBotLeftWallEnd() ||
-              out_tile->IsTopRightWallEnd() || out_tile->IsBotRightWallEnd()) {
-    std::string types;
-    if (out_tile->IsRightFloorEnd()) {
-      types += "Right Floor End";
-    }
-    if (out_tile->IsLeftFloorEnd()) {
-      types += "Left Floor End";
-    }
-    if (out_tile->IsRightRoofEnd()) {
-      types += "Right Roof End";
-    }
-    if (out_tile->IsLeftRoofEnd()) {
-      types += "Left Roof End";
-    }
-    if (out_tile->IsTopLeftWallEnd()) {
-      types += "Left Wall Top End";
-    }
-    if (out_tile->IsBotLeftWallEnd()) {
-      types += "Left Wall Bot End";
-    }
-    if (out_tile->IsTopRightWallEnd()) {
-      types += "Right Wall Top End";
-    }
-    if (out_tile->IsBotRightWallEnd()) {
-      types += "Right Wall Bot End";
-    }
-    Middleground_Tile_Type Middleground_Tile_Type = ParseSubsetTypesFromString(types);
-    edge_subset = GetCurrentMiddlegroundSubsetType(Middleground_Tile_Type);
-    tile_line = GetSizedNamedLine(edge_subset, out_tile->GetSize().x);
-    random_variable = rand() % tile_line.number_of_tiles;
-  } else {
-    random_variable = rand() % tile_line.number_of_tiles;;
-  }     
+  Middleground_Tile_Type middleground_tile_type;
+  std::string types;
+  if (out_tile->IsLeftWall()) {
+    types += "|Left Wall|";
+  }
+  if (out_tile->IsRightWall()) {
+    types += "|Right Wall|";
+  }
+  if (out_tile->IsRoof()) {
+    types += "|Roof|";
+  }
+  if (out_tile->IsFloor()) {
+    types += "|Floor|";
+  }
+  if (out_tile->IsRightFloorEnd()) {
+    types += "|Right Floor End|";
+  }
+  if (out_tile->IsLeftFloorEnd()) {
+    types += "|Left Floor End|";
+  }
+  if (out_tile->IsRightRoofEnd()) {
+    types += "|Right Roof End|";
+  }
+  if (out_tile->IsLeftRoofEnd()) {
+    types += "|Left Roof End|";
+  }
+  if (out_tile->IsTopLeftWallEnd()) {
+    types += "|Left Wall Top End|";
+  }
+  if (out_tile->IsBotLeftWallEnd()) {
+    types += "|Left Wall Bot End|";
+  }
+  if (out_tile->IsTopRightWallEnd()) {
+    types += "|Right Wall Top End|";
+  }
+  if (out_tile->IsBotRightWallEnd()) {
+    types += "|Right Wall Bot End|";
+  }
+
+  Middleground_Tile_Type Middleground_Tile_Type = ParseSubsetTypesFromString(types);
+  edge_subset = GetCurrentMiddlegroundSubsetType(Middleground_Tile_Type);
+  tile_line = GetSizedNamedLine(edge_subset, out_tile->GetSize().x);
+  random_variable = rand() % tile_line.number_of_tiles;
 
   float left = random_variable * tile_line.tile_size_x + tile_line.top_left_x;
   left += edge_subset.top_left_x_offset + (random_variable * edge_subset.top_left_x_offset);
@@ -1055,167 +1056,5 @@ void Level_Tile_Controller::SwitchTileset() {
     ResetBackgroundTileTexture((*tile));
   }
 }
-/* DEPRECIATED
-//---------------------------------------------------------------------------
-void Level_Tile_Controller::TileUp(float camera_top, float middleground_top) {
-  std::vector<Tile_Bitmap*> new_top_tiles;
 
-  std::vector<Tile_Bitmap*>::iterator edge_tile;
-  for (edge_tile = m_top_edge_tiles.begin(); edge_tile != m_top_edge_tiles.end(); edge_tile++) {
-    Tile_Bitmap* tile = CreateMiddlegroundTile(128);
-    D3DXVECTOR3 position;
-    position.x = (*edge_tile)->GetPosition()->x;
-    position.y = (*edge_tile)->GetPosition()->y + tile->GetSize().y;
-    position.z = -1.0; // Middleground Z Space is -1
-    tile->SetPosition(position);
-    tile->SetIsTopEdge((*edge_tile)->IsTopEdge());
-    tile->SetIsBottomEdge((*edge_tile)->IsBottomEdge());
-    tile->SetIsRightEdge((*edge_tile)->IsRightEdge());
-    tile->SetIsLeftEdge((*edge_tile)->IsLeftEdge());
-    m_model->Add(tile);
-    m_middleground_tiles.push_back(tile);
-    new_top_tiles.push_back(tile);
-
-    (*edge_tile)->SetIsTopEdge(false);
-    if (tile->IsBottomEdge()) {
-      m_bottom_edge_tiles.push_back(tile);
-    }
-    if (tile->IsRightEdge()) {
-      m_right_edge_tiles.push_back(tile);
-    }
-    if (tile->IsLeftEdge()) {
-      m_left_edge_tiles.push_back(tile);
-    }
-    ResetMiddlegroundTileTexture((*edge_tile));
-    ResetMiddlegroundTileTexture(tile);
-    m_created_tiles.push_back(tile);
-  }
-  m_top_edge_tiles.clear();
-
-  m_top_edge_tiles = new_top_tiles;
-}
-
-//---------------------------------------------------------------------------
-void Level_Tile_Controller::TileDown(float camera_bottom, float middleground_bottom) {
-  std::vector<Tile_Bitmap*> new_bottom_tiles;
-
-  std::vector<Tile_Bitmap*>::iterator edge_tile;
-  for (edge_tile = m_bottom_edge_tiles.begin(); edge_tile != m_bottom_edge_tiles.end(); edge_tile++) {
-    Tile_Bitmap* tile = CreateMiddlegroundTile(128);
-    D3DXVECTOR3 position;
-    position.x = (*edge_tile)->GetPosition()->x;
-    position.y = (*edge_tile)->GetPosition()->y - tile->GetSize().y;
-    position.z = -1.0; // Middleground Z Space is -1
-    tile->SetPosition(position);
-    tile->SetIsTopEdge((*edge_tile)->IsTopEdge());
-    tile->SetIsBottomEdge((*edge_tile)->IsBottomEdge());
-    tile->SetIsRightEdge((*edge_tile)->IsRightEdge());
-    tile->SetIsLeftEdge((*edge_tile)->IsLeftEdge());
-    m_middleground_tiles.push_back(tile);
-    new_bottom_tiles.push_back(tile);
-
-    (*edge_tile)->SetIsBottomEdge(false);
-    if (tile->IsTopEdge()) {
-      m_top_edge_tiles.push_back(tile);
-    }
-    if (tile->IsRightEdge()) {
-      m_right_edge_tiles.push_back(tile);
-    }
-    if (tile->IsLeftEdge()) {
-      m_left_edge_tiles.push_back(tile);
-    }
-    //if (m_is_debug_mode) {
-      ResetMiddlegroundTileTexture((*edge_tile));
-      ResetMiddlegroundTileTexture(tile);
-    //}
-    m_created_tiles.push_back(tile);
-    m_model->Add(tile);
-  }
-
-  m_bottom_edge_tiles.clear();
-  m_bottom_edge_tiles = new_bottom_tiles;
-}
-
-//---------------------------------------------------------------------------
-void Level_Tile_Controller::TileRight(float camera_right, float middleground_right) {
-  std::vector<Tile_Bitmap*> new_right_edge_tiles;
-
-  std::vector<Tile_Bitmap*>::iterator edge_tile;
-  for (edge_tile = m_right_edge_tiles.begin(); edge_tile != m_right_edge_tiles.end(); edge_tile++) {
-    Tile_Bitmap* tile = CreateMiddlegroundTile(128);
-    D3DXVECTOR3 position;
-    position.x = (*edge_tile)->GetPosition()->x + tile->GetSize().x;
-    position.y = (*edge_tile)->GetPosition()->y;
-    position.z = -1.0; // Middleground Z Space is -1
-    tile->SetPosition(position);
-    tile->SetIsTopEdge((*edge_tile)->IsTopEdge());
-    tile->SetIsBottomEdge((*edge_tile)->IsBottomEdge());
-    tile->SetIsRightEdge((*edge_tile)->IsRightEdge());
-    tile->SetIsLeftEdge((*edge_tile)->IsLeftEdge());
-    m_model->Add(tile);
-    m_middleground_tiles.push_back(tile);
-    new_right_edge_tiles.push_back(tile);
-
-    (*edge_tile)->SetIsRightEdge(false);
-    if (tile->IsTopEdge()) {
-      m_top_edge_tiles.push_back(tile);
-    }
-    if (tile->IsBottomEdge()) {
-      m_bottom_edge_tiles.push_back(tile);
-    }
-    if (tile->IsLeftEdge()) {
-      m_left_edge_tiles.push_back(tile);
-    }
-    //if (m_is_debug_mode) {
-      ResetMiddlegroundTileTexture((*edge_tile));
-      ResetMiddlegroundTileTexture(tile);
-    //}
-    m_created_tiles.push_back(tile);
-  }
-  m_right_edge_tiles.clear();
-
-  m_right_edge_tiles = new_right_edge_tiles;
-}
-
-//---------------------------------------------------------------------------
-void Level_Tile_Controller::TileLeft(float camera_left, float middleground_left) {
-  std::vector<Tile_Bitmap*> new_left_edge_tiles;
-
-  std::vector<Tile_Bitmap*>::iterator edge_tile;
-  for (edge_tile = m_left_edge_tiles.begin(); edge_tile != m_left_edge_tiles.end(); edge_tile++) {
-    Tile_Bitmap* tile = CreateMiddlegroundTile(128);
-    D3DXVECTOR3 position;
-    position.x = (*edge_tile)->GetPosition()->x - tile->GetSize().x;
-    position.y = (*edge_tile)->GetPosition()->y;
-    position.z = -1.0; // Middleground Z Space is -1
-    tile->SetPosition(position);
-    tile->SetIsTopEdge((*edge_tile)->IsTopEdge());
-    tile->SetIsBottomEdge((*edge_tile)->IsBottomEdge());
-    tile->SetIsRightEdge((*edge_tile)->IsRightEdge());
-    tile->SetIsLeftEdge((*edge_tile)->IsLeftEdge());
-    m_model->Add(tile);
-    m_middleground_tiles.push_back(tile);
-    new_left_edge_tiles.push_back(tile);
-
-    (*edge_tile)->SetIsLeftEdge(false);
-    if (tile->IsTopEdge()) {
-      m_top_edge_tiles.push_back(tile);
-    }
-    if (tile->IsBottomEdge()) {
-      m_bottom_edge_tiles.push_back(tile);
-    }
-    if (tile->IsRightEdge()) {
-      m_right_edge_tiles.push_back(tile);
-    }
-    //if (m_is_debug_mode) {
-      ResetMiddlegroundTileTexture((*edge_tile));
-      ResetMiddlegroundTileTexture(tile);
-    //}
-    m_created_tiles.push_back(tile);
-  }
-  m_left_edge_tiles.clear();
-
-  m_left_edge_tiles = new_left_edge_tiles;
-}
-*/
 } // Tunnelour

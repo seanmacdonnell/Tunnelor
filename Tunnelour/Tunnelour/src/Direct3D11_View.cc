@@ -418,7 +418,9 @@ void Direct3D11_View::HandleEventRemove(Tunnelour::Component * const component){
           found_renderable = true;
         }
       }
-      m_renderables.Layer_00.erase(found_bitmap_renderable);
+      if (found_renderable) {
+        m_renderables.Layer_00.erase(found_bitmap_renderable);
+      }
     } else  if (bitmap_component->GetPosition()->z == -1) {
       std::vector<Bitmap_Renderable*>::iterator bitmap_renderable;
       for (bitmap_renderable = m_renderables.Layer_01.begin(); bitmap_renderable != m_renderables.Layer_01.end(); bitmap_renderable++) {
@@ -427,7 +429,9 @@ void Direct3D11_View::HandleEventRemove(Tunnelour::Component * const component){
           found_renderable = true;
         }
       }
-      m_renderables.Layer_01.erase(found_bitmap_renderable);
+      if (found_renderable) {
+        m_renderables.Layer_01.erase(found_bitmap_renderable);
+      }
     } else  if (bitmap_component->GetPosition()->z == -2) {
       std::vector<Bitmap_Renderable*>::iterator bitmap_renderable;
       for (bitmap_renderable = m_renderables.Layer_02.begin(); bitmap_renderable != m_renderables.Layer_02.end(); bitmap_renderable++) {
@@ -436,7 +440,9 @@ void Direct3D11_View::HandleEventRemove(Tunnelour::Component * const component){
           found_renderable = true;
         }
       }
-      m_renderables.Layer_02.erase(found_bitmap_renderable);
+      if (found_renderable) {
+        m_renderables.Layer_02.erase(found_bitmap_renderable);
+      }
     } else  if (bitmap_component->GetPosition()->z == -4) {
       std::vector<Bitmap_Renderable*>::iterator bitmap_renderable;
       for (bitmap_renderable = m_renderables.Layer_04.begin(); bitmap_renderable != m_renderables.Layer_04.end(); bitmap_renderable++) {
@@ -445,11 +451,13 @@ void Direct3D11_View::HandleEventRemove(Tunnelour::Component * const component){
           found_renderable = true;
         }
       }
-      m_renderables.Layer_04.erase(found_bitmap_renderable);
+      if (found_renderable) {
+        m_renderables.Layer_04.erase(found_bitmap_renderable);
+      }
     }
 
     if (!found_renderable) {
-      throw Exceptions::run_error("Could not find Bitmap Renderable to Delete!");
+      throw Exceptions::run_error("View Could not find Bitmap Renderable to Delete!");
     }
   } else if (component->GetType().compare("Text_Component") == 0) {
     // Found Text_Component
@@ -465,7 +473,9 @@ void Direct3D11_View::HandleEventRemove(Tunnelour::Component * const component){
           found_renderable = true;
         }
       }
-      m_renderables.Layer_03.erase(found_text_renderable);
+      if (found_renderable) {
+        m_renderables.Layer_03.erase(found_text_renderable);
+      }
     } else if (text_component->GetPosition()->z == -5) {
       for (text_renderable = m_renderables.Layer_05.begin(); text_renderable != m_renderables.Layer_05.end(); text_renderable++) {
         if ((*text_renderable)->text->GetID() == text_component->GetID()) {
@@ -473,13 +483,19 @@ void Direct3D11_View::HandleEventRemove(Tunnelour::Component * const component){
           found_renderable = true;
         }
       }
-      m_renderables.Layer_05.erase(found_text_renderable);
+      if (found_renderable) {
+        m_renderables.Layer_05.erase(found_text_renderable);
+      }
     }
 
     if (!found_renderable) {
-      throw Exceptions::run_error("Could not find Text Renderable to Delete!");
+      throw Exceptions::run_error("View Could not find Text Renderable to Delete!");
     }
   }
+}
+
+//------------------------------------------------------------------------------
+void Direct3D11_View::HandleEventUpdate(Tunnelour::Component * const component){
 }
 
 //------------------------------------------------------------------------------

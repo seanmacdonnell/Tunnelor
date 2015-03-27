@@ -113,6 +113,10 @@ class Avatar_State_Controller: public Controller,
   //---------------------------------------------------------------------------
   virtual void HandleEventRemove(Tunnelour::Component * const component);
 
+  //---------------------------------------------------------------------------
+  // Description : Called when handling a "Update" call in the model
+  //---------------------------------------------------------------------------
+  virtual void HandleEventUpdate(Tunnelour::Component * const component);
  protected:
   //---------------------------------------------------------------------------
   // Member Variables

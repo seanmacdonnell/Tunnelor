@@ -235,20 +235,20 @@ bool Level_Controller::Run() {
          }
           m_has_transition_been_initalised = true;
         } else if (!m_has_level_been_destroyed) {
-          if (m_current_level.level_name.compare(m_next_level.level_name) != 0) {
+//          if (m_current_level.level_name.compare(m_next_level.level_name) != 0) {
             m_level_tile_controller->DestroyLevel();
-          }
+//          }
           m_has_level_been_destroyed = true;
         } else if (!m_has_level_been_created) {
-          if (m_current_level.level_name.compare(m_next_level.level_name) != 0) {
+//          if (m_current_level.level_name.compare(m_next_level.level_name) != 0) {
             m_level_tile_controller->CreateLevel();
             m_exit_tiles = m_level_tile_controller->GetExitTiles();
-          }
+//          }
           m_has_level_been_created = true;
         } else if (!m_has_level_been_added) {
-          if (m_current_level.level_name.compare(m_next_level.level_name) != 0) {
+//          if (m_current_level.level_name.compare(m_next_level.level_name) != 0) {
             m_level_tile_controller->AddLevelToModel();
-          }
+//          }
           m_has_level_been_added = true;
         } else if (!m_has_level_been_shown) {
           //m_level_tile_controller->Run();
@@ -327,7 +327,7 @@ bool Level_Controller::Run() {
                     is_and = false;
                   }
                 } else {
-                  throw Tunnelour::Exceptions::run_error("Level_Controller: Unhis_andled State");
+                  throw Tunnelour::Exceptions::run_error("Level_Controller: Unhandled State");
                 }
               } else if ((*end_condition)->is_or) {
                 if ((*condition)->type.compare("State") == 0) {

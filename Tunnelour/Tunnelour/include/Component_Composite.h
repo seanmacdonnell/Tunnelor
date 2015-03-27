@@ -40,6 +40,7 @@ class Component_Composite: public Component {
     //-------------------------------------------------------------------------
     virtual void HandleEventAdd(Tunnelour::Component * const component) = 0;
     virtual void HandleEventRemove(Tunnelour::Component * const component) = 0;
+    virtual void HandleEventUpdate(Tunnelour::Component * const component) = 0;
   };
 
   //---------------------------------------------------------------------------
@@ -73,6 +74,11 @@ class Component_Composite: public Component {
   void Apply(Tunnelour::Component::Component_Mutator * const mutator);
 
   //---------------------------------------------------------------------------
+  // Description : Updates a single component in the model  
+  //---------------------------------------------------------------------------
+  void Update(Tunnelour::Component * component);
+
+  //---------------------------------------------------------------------------
   // Description : Observe all components of this type
   //---------------------------------------------------------------------------
   void ObserveType(Component_Composite_Type_Observer* component_observer, std::string type);
@@ -93,6 +99,7 @@ class Component_Composite: public Component {
   //---------------------------------------------------------------------------
   void NotifyOnAddType(Tunnelour::Component * component);
   void NotifyOnRemoveType(Tunnelour::Component * component);
+  void NotifyOnUpdateType(Tunnelour::Component * component);
 
  private:
   std::list<std::pair<std::string, Component_Composite_Type_Observer*>> m_type_observers;

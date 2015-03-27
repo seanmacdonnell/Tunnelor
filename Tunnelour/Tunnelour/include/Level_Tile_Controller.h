@@ -209,7 +209,7 @@ class Level_Tile_Controller: public Controller,
   std::string m_the_void_metadata_file_path;
 
   std::string m_current_level_name;
-  std::vector<Tile_Bitmap*> m_created_tiles;
+  std::vector<Tile_Bitmap*> m_level_tiles;
 
   float m_blocksize_x;
   float m_blocksize_y;

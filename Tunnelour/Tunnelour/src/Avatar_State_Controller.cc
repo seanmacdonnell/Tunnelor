@@ -263,6 +263,13 @@ void Avatar_State_Controller::HandleEventRemove(Tunnelour::Component * const com
   }
 }
 
+
+//------------------------------------------------------------------------------
+void Avatar_State_Controller::HandleEventUpdate(Tunnelour::Component * const component) {
+  HandleEventRemove(component);
+  HandleEventAdd(component);
+}
+
 //------------------------------------------------------------------------------
 // protected:
 //------------------------------------------------------------------------------

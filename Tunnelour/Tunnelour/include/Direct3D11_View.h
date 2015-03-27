@@ -113,6 +113,7 @@ class Direct3D11_View : public Tunnelour::View,
 
   virtual void HandleEventAdd(Tunnelour::Component * const component);
   virtual void HandleEventRemove(Tunnelour::Component * const component);
+  virtual void HandleEventUpdate(Tunnelour::Component * const component);
 
  protected:
 

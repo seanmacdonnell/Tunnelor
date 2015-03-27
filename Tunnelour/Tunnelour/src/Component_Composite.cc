@@ -17,36 +17,46 @@
 
 namespace Tunnelour {
 
-//------------------------------------------------------------------------------
-// public:
-//------------------------------------------------------------------------------
-Component_Composite::Component_Composite() : Component() {
-}
-
-//------------------------------------------------------------------------------
-Component_Composite::~Component_Composite() {
-  while (!m_components.empty()) {
-    Remove(m_components.front());
+  //------------------------------------------------------------------------------
+  // public:
+  //------------------------------------------------------------------------------
+  Component_Composite::Component_Composite() : Component() {
   }
-}
+
+  //------------------------------------------------------------------------------
+  Component_Composite::~Component_Composite() {
+    while (!m_components.empty()) {
+      Remove(m_components.front());
+    }
+  }
+
+  //------------------------------------------------------------------------------
+  void Component_Composite::Init() {
+  }
+
+  //------------------------------------------------------------------------------
+  Tunnelour::Component * const Component_Composite::Add(Tunnelour::Component * component) {
+    m_components.push_back(component);
+    NotifyOnAddType(component);
+    return m_components.back();
+  }
+
+  //------------------------------------------------------------------------------
+  void Component_Composite::Remove(Tunnelour::Component * component) {
+    NotifyOnRemoveType(component);
+    m_components.remove(component);
+    delete component;
+    component = 0;
+  }
 
 //------------------------------------------------------------------------------
-void Component_Composite::Init() {
-}
-
+// NOTE: This should be changed to somthing like this
+// void Component_Composite::Update(Tunnelour::Component * component, Tunnelour::Component component) {
+// component = component
+// When we have time, right now its an ugly hack
 //------------------------------------------------------------------------------
-Tunnelour::Component * const Component_Composite::Add(Tunnelour::Component * component) {
-  m_components.push_back(component);
-  NotifyOnAddType(component);
-  return m_components.back();
-}
-
-//------------------------------------------------------------------------------
-void Component_Composite::Remove(Tunnelour::Component * component) {
-  m_components.remove(component);
-  NotifyOnRemoveType(component);
-  delete component;
-  component = 0;
+void Component_Composite::Update(Tunnelour::Component * component) {
+  NotifyOnUpdateType(component);
 }
 
 //------------------------------------------------------------------------------
@@ -80,18 +90,33 @@ void Component_Composite::IgnoreType(Component_Composite_Type_Observer* componen
 
 //---------------------------------------------------------------------------
 void Component_Composite::NotifyOnAddType(Tunnelour::Component * component) {
-  for each(std::pair<std::string, Component_Composite_Type_Observer*> observer in m_type_observers) {
-    if (observer.first.compare(component->GetType()) == 0) {
-      observer.second->HandleEventAdd(component);
+  if (!m_type_observers.empty()) {
+    for each(std::pair<std::string, Component_Composite_Type_Observer*> observer in m_type_observers) {
+      if (observer.first.compare(component->GetType()) == 0) {
+        observer.second->HandleEventAdd(component);
+      }
     }
   }
 }
 
 //---------------------------------------------------------------------------
 void Component_Composite::NotifyOnRemoveType(Tunnelour::Component * component) {
-  for each(std::pair<std::string, Component_Composite_Type_Observer*> observer in m_type_observers) {
-    if (observer.first.compare(component->GetType()) == 0) {
-      if (observer.second != 0) { observer.second->HandleEventRemove(component); }
+  if (!m_type_observers.empty()) {
+    for each(std::pair<std::string, Component_Composite_Type_Observer*> observer in m_type_observers) {
+      if (observer.first.compare(component->GetType()) == 0) {
+        if (observer.second != 0) { observer.second->HandleEventRemove(component); }
+      }
+    }
+  }
+}
+
+//---------------------------------------------------------------------------
+void Component_Composite::NotifyOnUpdateType(Tunnelour::Component * component) {
+  if (!m_type_observers.empty()) {
+    for each(std::pair<std::string, Component_Composite_Type_Observer*> observer in m_type_observers) {
+      if (observer.first.compare(component->GetType()) == 0) {
+        if (observer.second != 0) { observer.second->HandleEventUpdate(component); }
+      }
     }
   }
 }

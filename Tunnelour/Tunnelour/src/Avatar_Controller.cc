@@ -221,6 +221,12 @@ void Avatar_Controller::HandleEventRemove(Tunnelour::Component * const component
 }
 
 //------------------------------------------------------------------------------
+void Avatar_Controller::HandleEventUpdate(Tunnelour::Component * const component) {
+  HandleEventRemove(component);
+  HandleEventAdd(component);
+}
+
+//------------------------------------------------------------------------------
 void Avatar_Controller::HideAvatar() {
   m_avatar->GetTexture()->transparency = 0.0f;
 }
