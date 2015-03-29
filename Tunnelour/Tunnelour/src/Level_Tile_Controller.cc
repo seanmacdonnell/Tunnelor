@@ -823,6 +823,8 @@ Tile_Bitmap* Level_Tile_Controller::CreateMiddlegroundTile(float base_tile_size)
 
   tile->SetSize(D3DXVECTOR2(base_tile_size, base_tile_size));
 
+  tile->SetIsMiddleground(true);
+
   return tile;
 }
 
@@ -874,6 +876,8 @@ Tile_Bitmap* Level_Tile_Controller::CreateBackgroundTile(float base_tile_size) {
   tile->GetTexture()->top_left_position = D3DXVECTOR2(random_tile_x, random_tile_y);
 
   tile->SetSize(D3DXVECTOR2(base_tile_size, base_tile_size));
+
+  tile->SetIsBackground(true);
 
   return tile;
 }
@@ -1031,29 +1035,27 @@ void Level_Tile_Controller::SwitchTileset() {
   }
 
   std::vector<Tile_Bitmap*>::iterator tile;
-  
-  m_current_middleground_subset = GetCurrentMiddlegroundSubset();
-  for (tile = m_middleground_tiles.begin(); tile != m_middleground_tiles.end(); tile++) {
-    Tileset_Helper::Line tile_line = GetCurrentSizedMiddlegroundLine((*tile)->GetSize().x);
-    std::wstring texture_path = m_game_settings->GetTilesetPath();
-    texture_path += String_Helper::StringToWString(m_current_tileset.filename);
-    (*tile)->GetTexture()->texture_path = texture_path;
-    D3DXVECTOR2 size = D3DXVECTOR2(m_current_tileset.size_x,
-                                   m_current_tileset.size_y);
-    (*tile)->GetTexture()->texture_size = size;
-    ResetMiddlegroundTileTexture((*tile));
-  }
-  
-  m_current_background_subset = GetCurrentBackgroundSubset();
-  for (tile = m_background_tiles.begin(); tile != m_background_tiles.end(); tile++) {
-    Tileset_Helper::Line background_line = GetCurrentSizedBackgroundLine((*tile)->GetSize().x);
-    std::wstring texture_path = m_game_settings->GetTilesetPath();
-    texture_path += String_Helper::StringToWString(m_current_tileset.filename);
-    (*tile)->GetTexture()->texture_path = texture_path;
-    D3DXVECTOR2 size = D3DXVECTOR2(m_current_tileset.size_x,
-                                   m_current_tileset.size_y);
-    (*tile)->GetTexture()->texture_size = size;
-    ResetBackgroundTileTexture((*tile));
+  for (tile = m_level_tiles.begin(); tile != m_level_tiles.end(); tile++) {
+    if ((*tile)->IsMiddleground()) {
+      Tileset_Helper::Line tile_line = GetCurrentSizedMiddlegroundLine((*tile)->GetSize().x);
+      std::wstring texture_path = m_game_settings->GetTilesetPath();
+      texture_path += String_Helper::StringToWString(m_current_tileset.filename);
+      (*tile)->GetTexture()->texture_path = texture_path;
+      D3DXVECTOR2 size = D3DXVECTOR2(m_current_tileset.size_x,
+                                     m_current_tileset.size_y);
+      (*tile)->GetTexture()->texture_size = size;
+      ResetMiddlegroundTileTexture((*tile));
+      }
+    else {
+      Tileset_Helper::Line background_line = GetCurrentSizedBackgroundLine((*tile)->GetSize().x);
+      std::wstring texture_path = m_game_settings->GetTilesetPath();
+      texture_path += String_Helper::StringToWString(m_current_tileset.filename);
+      (*tile)->GetTexture()->texture_path = texture_path;
+      D3DXVECTOR2 size = D3DXVECTOR2(m_current_tileset.size_x,
+                                     m_current_tileset.size_y);
+      (*tile)->GetTexture()->texture_size = size;
+      ResetBackgroundTileTexture((*tile));
+    }
   }
 }
 

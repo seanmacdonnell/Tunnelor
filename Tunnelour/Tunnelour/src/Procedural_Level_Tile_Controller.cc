@@ -90,7 +90,7 @@ bool Procedural_Level_Tile_Controller::Run() {
   std::vector<Tile_Bitmap*> new_line;
   float camera_right = (camera_position.x + game_resolution.x);
   while (camera_right > m_level_right) {
-	GenerateDefaultTunnel(new_line);
+	  GenerateDefaultTunnel(new_line);
 
     m_level_tile_lines.push_back(new_line);
 
@@ -119,7 +119,15 @@ bool Procedural_Level_Tile_Controller::Run() {
 //------------------------------------------------------------------------------
 void Procedural_Level_Tile_Controller::CreateLevel() {
   m_current_level_name = m_level->GetCurrentLevel().level_name;
-  m_level_tiles = GenerateTunnel(m_level->GetCurrentLevel());
+  m_level_tiles.clear();
+  std::vector<Tile_Bitmap*> new_tiles;
+  new_tiles = GenerateTunnel(m_level->GetCurrentLevel());
+  if (m_level_tiles.empty()) {
+    m_level_tiles = new_tiles;
+  }
+  else {
+    m_level_tiles.insert(m_level_tiles.end(), new_tiles.begin(), new_tiles.end());
+  }
   SwitchTileset();
 }
 
@@ -147,16 +155,16 @@ void Procedural_Level_Tile_Controller::AddTilesToModel(std::vector<Tile_Bitmap*>
 //------------------------------------------------------------------------------
 void Procedural_Level_Tile_Controller::RemoveTilesFromModel(std::vector<Tile_Bitmap*> tiles) {
   for (std::vector<Tile_Bitmap*>::iterator tile = tiles.begin(); tile != tiles.end(); ++tile) {
-    m_model->Remove(*tile);
     m_level_tiles.erase(std::remove(m_level_tiles.begin(), m_level_tiles.end(), (*tile)), m_level_tiles.end());
+    m_model->Remove(*tile);
   }
 }
 
 //------------------------------------------------------------------------------
 void Procedural_Level_Tile_Controller::AddLevelToModel() {
-  for (std::vector<Tile_Bitmap*>::iterator tile = m_level_tiles.begin(); tile != m_level_tiles.end(); ++tile) {
-    m_model->Add(*tile);
-  }
+  //for (std::vector<Tile_Bitmap*>::iterator tile = m_level_tiles.begin(); tile != m_level_tiles.end(); ++tile) {
+  //  m_model->Add(*tile);
+  //}
 }
 
 //------------------------------------------------------------------------------
@@ -164,7 +172,6 @@ void Procedural_Level_Tile_Controller::DestroyLevel() {
   // Add tiles to Model
   for (std::vector<Tile_Bitmap*>::iterator tile = m_level_tiles.begin(); tile != m_level_tiles.end(); ++tile) {
     m_model->Remove(*tile);
-    (*tile) = 0;
   }
   m_level_tiles.clear();
   m_middleground_tiles.clear();
@@ -237,6 +244,7 @@ std::vector<Tile_Bitmap*> Procedural_Level_Tile_Controller::GenerateTunnel(Level
   }  
 
   for (std::vector<Tile_Bitmap*>::iterator tile = tiles.begin(); tile != tiles.end(); ++tile) {
+    m_model->Add(*tile);
     if ((*tile)->GetTexture()->transparency != 0.0f) {
       ResetMiddlegroundTileTexture(*tile);
     } else {

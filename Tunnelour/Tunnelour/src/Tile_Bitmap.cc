@@ -43,6 +43,9 @@ Tile_Bitmap::Tile_Bitmap(): Bitmap_Component() {
 
   m_is_left_exit = false;
   m_is_right_exit = false;
+
+  m_is_middleground = false;
+  m_is_background = false;
 }
 
 //------------------------------------------------------------------------------
@@ -56,6 +59,9 @@ Tile_Bitmap::~Tile_Bitmap() {
   m_is_right_edge = false;
   m_is_left_edge = false;
   m_is_collidable = false;
+
+  m_is_middleground = false;
+  m_is_background = false;
 }
 
 //------------------------------------------------------------------------------
@@ -361,6 +367,26 @@ bool Tile_Bitmap::IsRightExit() {
 //------------------------------------------------------------------------------
 void Tile_Bitmap::SetIsRightExit(bool is_right_exit) {
   m_is_right_exit = is_right_exit;
+}
+
+//------------------------------------------------------------------------------
+bool Tile_Bitmap::IsMiddleground() {
+  return m_is_middleground;
+}
+
+//------------------------------------------------------------------------------
+void Tile_Bitmap::SetIsMiddleground(bool is_middleground) {
+  m_is_middleground = is_middleground;
+}
+
+//------------------------------------------------------------------------------
+bool Tile_Bitmap::IsBackground() {
+  return m_is_background;
+}
+
+//------------------------------------------------------------------------------
+void Tile_Bitmap::SetIsBackground(bool is_background) {
+  m_is_background = is_background;
 }
 
 }  // namespace Tunnelour

@@ -123,6 +123,13 @@ class Tile_Bitmap: public Tunnelour::Bitmap_Component {
 
   void SetIsRightExit(bool is_right_exit);
 
+  bool IsMiddleground();
+
+  void SetIsMiddleground(bool is_middleground);
+
+  bool IsBackground();
+
+  void SetIsBackground(bool is_background);
 
  protected:
 
@@ -152,6 +159,9 @@ class Tile_Bitmap: public Tunnelour::Bitmap_Component {
 
   bool m_is_left_exit;
   bool m_is_right_exit;
+
+  bool m_is_middleground;
+  bool m_is_background;
 };  // class Tile_Bitmap
 }  // namespace Tunnelour
 #endif  // TUNNELOUR_TILE_BITMAP_H_
