@@ -74,7 +74,7 @@ bool Procedural_Level_Tile_Controller::Init(Component_Composite * const model) {
   m_last_roof_level = 1;
   m_last_floor_level = -1;
   m_level_count = 2;
-  m_min_tunnel_size = 1;
+  m_min_tunnel_size = 4;
   m_max_tunnel_size = 6;
   m_tile_size = 128;
   return result;
@@ -87,26 +87,24 @@ bool Procedural_Level_Tile_Controller::Run() {
 
   D3DXVECTOR2 game_resolution = m_game_settings->GetResolution();
   D3DXVECTOR3 camera_position = m_camera->GetPosition();
-  std::vector<Tile_Bitmap*> new_line;
+  std::vector<Tile_Bitmap*> new_tiles;
   float camera_right = (camera_position.x + game_resolution.x);
   while (camera_right > m_level_right) {
-	  GenerateDefaultTunnel(new_line);
-
-    m_level_tile_lines.push_back(new_line);
-
-    // Add Line to Level Tiles
-    if (!new_line.empty()) {
-      AddTilesToModel(new_line);
-      if (m_level_tile_lines.size() > 16) {
-        RemoveTilesFromModel((*m_level_tile_lines.begin()));
-        m_level_tile_lines.erase(m_level_tile_lines.begin());
-        CloseTunnelBehindAvatar();
+    float feature_rand = rand() % 10;
+    if (feature_rand == 0) {
+      feature_rand = rand() % 10;
+      if (feature_rand == 0) {
+        MakeAFeature1(new_tiles);
       }
-   }
-
-    m_level_right += m_tile_size;
-    m_last_roof_level = m_roof_level;
-    m_last_floor_level = m_floor_level;
+      else {
+        MakeAJump(new_tiles);
+      }
+    }
+    else {
+      RandomTheFloor();
+      RandomTheRoof();
+      GenerateDefaultTunnel(new_tiles);
+    }
   }
 
   if (m_is_debug_mode != m_game_settings->IsDebugMode()) {
@@ -257,7 +255,7 @@ std::vector<Tile_Bitmap*> Procedural_Level_Tile_Controller::GenerateTunnel(Level
 
 //------------------------------------------------------------------------------
 void Procedural_Level_Tile_Controller::RandomTheRoof() {
-  float roof_rand = rand() % 4;
+  float roof_rand = rand() % 2;
   float roof_coin = rand() % 2;
 
   if (roof_coin == 1) {
@@ -278,7 +276,7 @@ void Procedural_Level_Tile_Controller::RandomTheRoof() {
 
 //------------------------------------------------------------------------------
 void Procedural_Level_Tile_Controller::RandomTheFloor() {
-  float floor_rand = rand() % 4;
+  float floor_rand = rand() % 2;
   float floor_coin = rand() % 2;
 
   if (floor_coin == 1) {
@@ -641,8 +639,6 @@ void Procedural_Level_Tile_Controller::CloseTunnelBehindAvatar() {
 
 //------------------------------------------------------------------------------
 void Procedural_Level_Tile_Controller::GenerateDefaultTunnel(std::vector<Tile_Bitmap*> &new_line) {
-    RandomTheFloor();
-    RandomTheRoof();
     EnsureAPath();
     EnsureMinTunnel();
     EnsureMaxTunnel();
@@ -656,7 +652,145 @@ void Procedural_Level_Tile_Controller::GenerateDefaultTunnel(std::vector<Tile_Bi
     AddRoofLeftWalls();
     AddFloorRightWalls(new_line);
     AddFloorLeftWalls();
+
+    m_level_tile_lines.push_back(new_line);
+
+    // Add Line to Level Tiles
+    if (!new_line.empty()) {
+      AddTilesToModel(new_line);
+      if (m_level_tile_lines.size() > 14) {
+        RemoveTilesFromModel((*m_level_tile_lines.begin()));
+        m_level_tile_lines.erase(m_level_tile_lines.begin());
+        CloseTunnelBehindAvatar();
+      }
+   }
+
+   m_level_right += m_tile_size;
+   m_last_roof_level = m_roof_level;
+   m_last_floor_level = m_floor_level;
 }
 
+//------------------------------------------------------------------------------
+// Feature, Basic Jump
+// _     _
+//  |   |
+//  |   |
+//  |   |
+//  -----
+//------------------------------------------------------------------------------
+void Procedural_Level_Tile_Controller::MakeAJump(std::vector<Tile_Bitmap*> &new_line) {
+  // Four Lines
+  float m_original_floor = m_last_floor_level;
+  float m_original_roof = m_last_roof_level;
+  for (int i = 0; i < 4; i++) {
+    if (i == 0) {
+    }
+    else if (i == 1) {
+      m_floor_level = m_last_floor_level - 10;
+    }
+    else if (i == 2) {
+    }
+    else if (i == 3) {
+      m_floor_level = m_original_floor;
+    }
+
+    AddRoofTile(new_line);
+    AddBackgroundTiles(new_line);
+    AddFloorTile(new_line);
+
+    AddRoofRightWalls(new_line);
+    AddRoofLeftWalls();
+    AddFloorRightWalls(new_line);
+    AddFloorLeftWalls();
+
+    m_level_tile_lines.push_back(new_line);
+
+    // Add Line to Level Tiles
+    if (!new_line.empty()) {
+      AddTilesToModel(new_line);
+      if (m_level_tile_lines.size() > 40) {
+        RemoveTilesFromModel((*m_level_tile_lines.begin()));
+        m_level_tile_lines.erase(m_level_tile_lines.begin());
+        CloseTunnelBehindAvatar();
+      }
+    }
+
+    m_level_right += m_tile_size;
+    m_last_roof_level = m_roof_level;
+    m_last_floor_level = m_floor_level;
+    new_line.clear();
+  }
+}
+
+//------------------------------------------------------------------------------
+// Feature, Debug 
+// _             _
+//  |           |
+//  |           |
+//  --|       |--
+//    |       |
+//    --|   |--
+//      |   |
+//      -----
+//------------------------------------------------------------------------------
+void Procedural_Level_Tile_Controller::MakeAFeature1(std::vector<Tile_Bitmap*> &new_line) {
+  // Four Lines
+  float m_original_floor = m_last_floor_level;
+  float m_original_roof = m_last_roof_level;
+  for (int i = 0; i < 8; i++) {
+    if (i == 0) {
+    }
+    else if (i == 1) {
+      m_floor_level = m_last_floor_level - 2;
+    }
+    else if (i == 2) {
+      m_floor_level = m_last_floor_level - 2;
+    }
+    else if (i == 3) {
+      m_floor_level = m_last_floor_level - 2;
+    }
+    else if (i == 4) {
+      m_floor_level = m_last_floor_level;
+    }
+    else if (i == 5) {
+      m_floor_level = m_last_floor_level + 2;
+    }
+    else if (i == 6) {
+      m_floor_level = m_last_floor_level + 2;
+    }
+    else if (i == 7) {
+      m_floor_level = m_last_floor_level + 2;
+    }
+    else if (i == 8) {
+      m_floor_level = m_original_floor;
+    }
+
+    AddRoofTile(new_line);
+    AddBackgroundTiles(new_line);
+    AddFloorTile(new_line);
+
+    AddRoofRightWalls(new_line);
+    AddRoofLeftWalls();
+    AddFloorRightWalls(new_line);
+    AddFloorLeftWalls();
+
+    m_level_tile_lines.push_back(new_line);
+
+    // Add Line to Level Tiles
+    if (!new_line.empty()) {
+      AddTilesToModel(new_line);
+      if (m_level_tile_lines.size() > 40) {
+        RemoveTilesFromModel((*m_level_tile_lines.begin()));
+        m_level_tile_lines.erase(m_level_tile_lines.begin());
+        CloseTunnelBehindAvatar();
+      }
+    }
+
+    m_level_right += m_tile_size;
+    m_last_roof_level = m_roof_level;
+    m_last_floor_level = m_floor_level;
+    new_line.clear();
+  }
+}
 
 } // Tunnelour

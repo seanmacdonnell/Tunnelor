@@ -37,7 +37,7 @@ Charlie_Jumping_Controller::Charlie_Jumping_Controller():
   m_wall_jump_y_initial_velocity(8),
   m_wall_jump_x_initial_velocity(4),
   m_wall_jump_boost_distance_threshold(128),
-  m_safe_falling_limit(-1280) {
+  m_safe_falling_limit(-512) {
 }
 
 //------------------------------------------------------------------------------
@@ -689,7 +689,8 @@ void Charlie_Jumping_Controller::Run_Avatar_State() {
                                         "Down_Facing_Falling_To_Death",
                                         m_avatar->GetState().direction,
                                         m_current_metadata_file_path,
-                                        m_current_metadata, m_current_animation_subset);
+                                        m_current_metadata, 
+                                        m_current_animation_subset);
         } else {
           if (current_state.state == "Vertical_Jump_Arc") {
             Avatar_Helper::SetAvatarState(m_avatar,
@@ -727,9 +728,9 @@ void Charlie_Jumping_Controller::Run_Avatar_State() {
         }
 
         if (m_avatar->GetState().direction == "Right") {
-          Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlockRightBottom(m_avatar);
-        } else {
           Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlockLeftBottom(m_avatar);
+        } else {
+          Avatar_Helper::AlignAvatarOnLastAvatarCollisionBlockRightBottom(m_avatar);
         }
         Avatar_Helper::MoveAvatarTileAdjacent(m_avatar,
                                               "Top",
@@ -842,7 +843,7 @@ void Charlie_Jumping_Controller::Run_Avatar_State() {
                                           m_game_settings->GetTilesetPath(),
                                           m_animation_metadata,
                                           "Charlie_Climbing",
-                                          "Descending_To_Grabbing",
+                                          "Pop_Up",
                                           m_avatar->GetState().direction,
                                           m_current_metadata_file_path,
                                           m_current_metadata,

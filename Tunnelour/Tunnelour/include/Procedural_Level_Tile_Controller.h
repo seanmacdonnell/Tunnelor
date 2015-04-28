@@ -72,6 +72,8 @@ class Procedural_Level_Tile_Controller: public Tunnelour::Level_Tile_Controller 
   void AddFloorRightWalls(std::vector<Tile_Bitmap*> &new_line);
   void CloseTunnelBehindAvatar();
   void GenerateDefaultTunnel(std::vector<Tile_Bitmap*> &new_line);
+  void MakeAJump(std::vector<Tile_Bitmap*> &new_line);
+  void MakeAFeature1(std::vector<Tile_Bitmap*> &new_line);
 
  private:
   std::vector<Tile_Bitmap*> GenerateTunnel(Level_Component::Level_Metadata level_metadata);

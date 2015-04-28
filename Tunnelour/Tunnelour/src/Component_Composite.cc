@@ -92,8 +92,10 @@ void Component_Composite::IgnoreType(Component_Composite_Type_Observer* componen
 void Component_Composite::NotifyOnAddType(Tunnelour::Component * component) {
   if (!m_type_observers.empty()) {
     for each(std::pair<std::string, Component_Composite_Type_Observer*> observer in m_type_observers) {
-      if (observer.first.compare(component->GetType()) == 0) {
-        observer.second->HandleEventAdd(component);
+      if (component != NULL) {
+        if (observer.first.compare(component->GetType()) == 0) {
+          observer.second->HandleEventAdd(component);
+        }
       }
     }
   }
@@ -103,8 +105,10 @@ void Component_Composite::NotifyOnAddType(Tunnelour::Component * component) {
 void Component_Composite::NotifyOnRemoveType(Tunnelour::Component * component) {
   if (!m_type_observers.empty()) {
     for each(std::pair<std::string, Component_Composite_Type_Observer*> observer in m_type_observers) {
-      if (observer.first.compare(component->GetType()) == 0) {
-        if (observer.second != 0) { observer.second->HandleEventRemove(component); }
+      if (component != NULL) {
+        if (observer.first.compare(component->GetType()) == 0) {
+          if (observer.second != 0) { observer.second->HandleEventRemove(component); }
+        }
       }
     }
   }
@@ -114,8 +118,10 @@ void Component_Composite::NotifyOnRemoveType(Tunnelour::Component * component) {
 void Component_Composite::NotifyOnUpdateType(Tunnelour::Component * component) {
   if (!m_type_observers.empty()) {
     for each(std::pair<std::string, Component_Composite_Type_Observer*> observer in m_type_observers) {
-      if (observer.first.compare(component->GetType()) == 0) {
-        if (observer.second != 0) { observer.second->HandleEventUpdate(component); }
+      if (component != NULL) {
+        if (observer.first.compare(component->GetType()) == 0) {
+          if (observer.second != 0) { observer.second->HandleEventUpdate(component); }
+        }
       }
     }
   }

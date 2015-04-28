@@ -102,7 +102,8 @@ void Charlie_Climbing_Controller::Run_Avatar_State() {
           Avatar_Helper::SetAvatarState(m_avatar, m_game_settings->GetTilesetPath(), m_animation_metadata, "Charlie_Climbing", "Climbing_To_Standing", m_avatar->GetState().direction, m_current_metadata_file_path, m_current_metadata, m_current_animation_subset);
           Avatar_Helper::AlignAvatarOnLastHand(m_avatar);
           has_state_changed = true;
-        } else if (current_state.state.compare("Climbing_To_Standing") == 0) {
+        } else if (current_state.state.compare("Climbing_To_Standing") == 0 || 
+                   current_state.state.compare("Pop_Up") == 0) {
           m_avatar->SetVelocity(D3DXVECTOR3(0, 0, 0));
           if (current_command.state.compare("Jumping") == 0) {
             D3DXVECTOR3 position = *m_avatar->GetPosition();
